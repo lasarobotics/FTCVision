@@ -4,7 +4,7 @@ include $(CLEAR_VARS)
 
 #opencv
 OPENCVROOT:= ../opencv-build/sdk
-OPENCV_CAMERA_MODULES:=on
+OPENCV_CAMERA_MODULES:=off
 OPENCV_INSTALL_MODULES:=on
 OPENCV_LIB_TYPE:=SHARED
 include ${OPENCVROOT}/sdk/native/jni/OpenCV.mk

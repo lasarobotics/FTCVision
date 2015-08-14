@@ -5,14 +5,16 @@
 #include <jni.h>
 #include <stdio.h>
 #include <iostream>
-#include "opencv2/core/core.hpp"
-#include "opencv2/features2d/features2d.hpp"
-#include "opencv2/highgui/highgui.hpp"
-#include "opencv2/calib3d/calib3d.hpp"
-#include "opencv2/xfeatures2d/nonfree.hpp"
+#include <opencv2/core/core.hpp>
+#include <opencv2/xfeatures2d/nonfree.hpp>
+#include <opencv2/features2d/features2d.hpp>
+#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/calib3d/calib3d.hpp>
 
 using namespace std;
 using namespace cv;
+using namespace cv::xfeatures2d;
 
 extern "C"
 {
@@ -25,20 +27,20 @@ JNIEXPORT void JNICALL Java_com_lasarobotics_ftc_camera_detection_Detection_find
     //-- Step 1: Detect the keypoints using SURF Detector
     int minHessian = 400;
 
-    SurfFeatureDetector detector(minHessian);
+    SurfFeatureDetector* detector = SURF::create(minHessian);
 
     std::vector <KeyPoint> keypoints_object, keypoints_scene;
 
-    detector.detect(img_object, keypoints_object);
-    detector.detect(img_scene, keypoints_scene);
+    detector->detect(img_object, keypoints_object);
+    detector->detect(img_scene, keypoints_scene);
 
     //-- Step 2: Calculate descriptors (feature vectors)
-    SurfDescriptorExtractor extractor;
+    SurfDescriptorExtractor* extractor = SURF::create();
 
     Mat descriptors_object, descriptors_scene;
 
-    extractor.compute(img_object, keypoints_object, descriptors_object);
-    extractor.compute(img_scene, keypoints_scene, descriptors_scene);
+    extractor->compute(img_object, keypoints_object, descriptors_object);
+    extractor->compute(img_scene, keypoints_scene, descriptors_scene);
 
     //-- Step 3: Matching descriptor vectors using FLANN matcher
     FlannBasedMatcher matcher;
@@ -105,8 +107,7 @@ JNIEXPORT void JNICALL Java_com_lasarobotics_ftc_camera_detection_Detection_find
     //-- Show detected matches
     imshow("Good Matches & Object detection", img_matches);
 
-    waitKey(0);
-    return 0;
+    return;
 }
 
 } //extern "C"
