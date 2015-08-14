@@ -1,4 +1,4 @@
-package com.lasarobotics.camera;
+package com.lasarobotics.vision;
 
 import android.os.Environment;
 

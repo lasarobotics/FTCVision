@@ -1,4 +1,4 @@
-package com.lasarobotics.camera.detection;
+package com.lasarobotics.vision.detection;
 
 /**
  * Implememts feature detection
