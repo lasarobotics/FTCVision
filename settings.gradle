@@ -1,5 +1,5 @@
 //Libraries
 include ':opencv-java', ':ftc-jnibuild'
-include ':ftc-vision'
+include ':ftc-visionlib'
 //Demos and Tests
 include ':ftc-cameratest'
