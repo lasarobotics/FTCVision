@@ -1,0 +1,36 @@
+apply plugin: 'com.android.library'
+android {
+    compileSdkVersion 21
+    buildToolsVersion "21.1.2"
+
+    defaultConfig {
+        minSdkVersion 16
+        targetSdkVersion 21
+
+        ndk {
+            moduleName "libftc"
+        }
+    }
+
+    sourceSets.main {
+        jni.srcDirs = [] //disable automatic ndk-build call
+    }
+    task (ndkBuild, type: JavaExec) {
+        classpath files('../../libjnibuild/build/libs/libjnibuild.jar')
+        args = ["../../local.properties"]
+        main 'com.arthurpachachura.jni.Build'
+    }
+    tasks.withType(JavaCompile) {
+        compileTask -> compileTask.dependsOn ndkBuild
+    }
+}
+
+repositories {
+    flatDir {
+        dirs 'libs'
+    }
+}
+dependencies {
+    compile project(':libjnibuild')
+    compile project(':opencv-java')
+}

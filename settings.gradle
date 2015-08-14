@@ -1,0 +1,6 @@
+//Libraries
+include ':opencv-java', ':libjnibuild'
+include ':libftc'
+project(':libftc').projectDir = new File('vision-library/app')
+//Demos and Tests
+include ':ftc-cameratest'
