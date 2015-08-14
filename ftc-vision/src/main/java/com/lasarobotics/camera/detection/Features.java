@@ -1,4 +1,4 @@
-package com.lasarobotics.ftc.camera.detection;
+package com.lasarobotics.camera.detection;
 
 /**
  * Implememts feature detection

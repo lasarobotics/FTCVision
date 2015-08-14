@@ -1,8 +1,8 @@
-package com.lasarobotics.ftc.camera;
+package com.lasarobotics.camera;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
-import com.lasarobotics.ftc.camera.Camera;
+import com.lasarobotics.camera.Camera;
 /**
  * Implements the Android camera
  */
