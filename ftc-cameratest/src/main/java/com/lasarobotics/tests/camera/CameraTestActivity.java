@@ -15,12 +15,12 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.WindowManager;
 
-import com.lasarobotics.ftc.camera.Cameras;
-import com.lasarobotics.ftc.camera.Util;
-import com.lasarobotics.ftc.camera.detection.Features;
-import com.lasarobotics.ftc.camera.Camera;
-import com.lasarobotics.ftc.camera.detection.Features;
-import com.lasarobotics.ftc.camera.detection.Detection;
+import com.lasarobotics.camera.Cameras;
+import com.lasarobotics.camera.Util;
+import com.lasarobotics.camera.detection.Features;
+import com.lasarobotics.camera.Camera;
+import com.lasarobotics.camera.detection.Features;
+import com.lasarobotics.camera.detection.Detection;
 
 import java.io.File;
 
