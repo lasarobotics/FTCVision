@@ -1,0 +1,4 @@
+[submodule "opencv-build"]
+	path = opencv-build
+	url = https://github.com/lasarobotics/opencv-builds
+	branch = master
