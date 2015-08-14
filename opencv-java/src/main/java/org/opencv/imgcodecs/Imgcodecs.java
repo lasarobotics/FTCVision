@@ -63,52 +63,6 @@ public class Imgcodecs {
 
 
     //
-    // C++:  Mat imread(String filename, int flags = IMREAD_COLOR)
-    //
-
-    //javadoc: imread(filename, flags)
-    public static Mat imread(String filename, int flags)
-    {
-
-        Mat retVal = new Mat(imread_0(filename, flags));
-
-        return retVal;
-    }
-
-    //javadoc: imread(filename)
-    public static Mat imread(String filename)
-    {
-
-        Mat retVal = new Mat(imread_1(filename));
-
-        return retVal;
-    }
-
-
-    //
-    // C++:  bool imreadmulti(String filename, vector_Mat mats, int flags = IMREAD_ANYCOLOR)
-    //
-
-    //javadoc: imreadmulti(filename, mats, flags)
-    public static boolean imreadmulti(String filename, List<Mat> mats, int flags)
-    {
-        Mat mats_mat = Converters.vector_Mat_to_Mat(mats);
-        boolean retVal = imreadmulti_0(filename, mats_mat.nativeObj, flags);
-
-        return retVal;
-    }
-
-    //javadoc: imreadmulti(filename, mats)
-    public static boolean imreadmulti(String filename, List<Mat> mats)
-    {
-        Mat mats_mat = Converters.vector_Mat_to_Mat(mats);
-        boolean retVal = imreadmulti_1(filename, mats_mat.nativeObj);
-
-        return retVal;
-    }
-
-
-    //
     // C++:  bool imwrite(String filename, Mat img, vector_int params = std::vector<int>())
     //
 
@@ -117,16 +71,16 @@ public class Imgcodecs {
     {
         Mat params_mat = params;
         boolean retVal = imwrite_0(filename, img.nativeObj, params_mat.nativeObj);
-
+        
         return retVal;
     }
 
     //javadoc: imwrite(filename, img)
     public static boolean imwrite(String filename, Mat img)
     {
-
+        
         boolean retVal = imwrite_1(filename, img.nativeObj);
-
+        
         return retVal;
     }
 
@@ -138,9 +92,9 @@ public class Imgcodecs {
     //javadoc: imdecode(buf, flags)
     public static Mat imdecode(Mat buf, int flags)
     {
-
+        
         Mat retVal = new Mat(imdecode_0(buf.nativeObj, flags));
-
+        
         return retVal;
     }
 
@@ -155,7 +109,7 @@ public class Imgcodecs {
         Mat buf_mat = buf;
         Mat params_mat = params;
         boolean retVal = imencode_0(ext, img.nativeObj, buf_mat.nativeObj, params_mat.nativeObj);
-
+        
         return retVal;
     }
 
@@ -164,20 +118,81 @@ public class Imgcodecs {
     {
         Mat buf_mat = buf;
         boolean retVal = imencode_1(ext, img.nativeObj, buf_mat.nativeObj);
+        
+        return retVal;
+    }
 
+
+    //
+    // C++:  Mat imread(String filename, int flags = IMREAD_COLOR)
+    //
+
+    //javadoc: imread(filename, flags)
+    public static Mat imread(String filename, int flags)
+    {
+        
+        Mat retVal = new Mat(imread_0(filename, flags));
+        
+        return retVal;
+    }
+
+    //javadoc: imread(filename)
+    public static Mat imread(String filename)
+    {
+        
+        Mat retVal = new Mat(imread_1(filename));
+        
+        return retVal;
+    }
+
+
+    //
+    // C++:  Mat imread_reduced(String filename, int flags = IMREAD_COLOR, int scale_denom = 1)
+    //
+
+    //javadoc: imread_reduced(filename, flags, scale_denom)
+    public static Mat imread_reduced(String filename, int flags, int scale_denom)
+    {
+        
+        Mat retVal = new Mat(imread_reduced_0(filename, flags, scale_denom));
+        
+        return retVal;
+    }
+
+    //javadoc: imread_reduced(filename)
+    public static Mat imread_reduced(String filename)
+    {
+        
+        Mat retVal = new Mat(imread_reduced_1(filename));
+        
+        return retVal;
+    }
+
+
+    //
+    // C++:  bool imreadmulti(String filename, vector_Mat mats, int flags = IMREAD_ANYCOLOR)
+    //
+
+    //javadoc: imreadmulti(filename, mats, flags)
+    public static boolean imreadmulti(String filename, List<Mat> mats, int flags)
+    {
+        Mat mats_mat = Converters.vector_Mat_to_Mat(mats);
+        boolean retVal = imreadmulti_0(filename, mats_mat.nativeObj, flags);
+        
+        return retVal;
+    }
+
+    //javadoc: imreadmulti(filename, mats)
+    public static boolean imreadmulti(String filename, List<Mat> mats)
+    {
+        Mat mats_mat = Converters.vector_Mat_to_Mat(mats);
+        boolean retVal = imreadmulti_1(filename, mats_mat.nativeObj);
+        
         return retVal;
     }
 
 
 
-
-    // C++:  Mat imread(String filename, int flags = IMREAD_COLOR)
-    private static native long imread_0(String filename, int flags);
-    private static native long imread_1(String filename);
-
-    // C++:  bool imreadmulti(String filename, vector_Mat mats, int flags = IMREAD_ANYCOLOR)
-    private static native boolean imreadmulti_0(String filename, long mats_mat_nativeObj, int flags);
-    private static native boolean imreadmulti_1(String filename, long mats_mat_nativeObj);
 
     // C++:  bool imwrite(String filename, Mat img, vector_int params = std::vector<int>())
     private static native boolean imwrite_0(String filename, long img_nativeObj, long params_mat_nativeObj);
@@ -189,5 +204,17 @@ public class Imgcodecs {
     // C++:  bool imencode(String ext, Mat img, vector_uchar& buf, vector_int params = std::vector<int>())
     private static native boolean imencode_0(String ext, long img_nativeObj, long buf_mat_nativeObj, long params_mat_nativeObj);
     private static native boolean imencode_1(String ext, long img_nativeObj, long buf_mat_nativeObj);
+
+    // C++:  Mat imread(String filename, int flags = IMREAD_COLOR)
+    private static native long imread_0(String filename, int flags);
+    private static native long imread_1(String filename);
+
+    // C++:  Mat imread_reduced(String filename, int flags = IMREAD_COLOR, int scale_denom = 1)
+    private static native long imread_reduced_0(String filename, int flags, int scale_denom);
+    private static native long imread_reduced_1(String filename);
+
+    // C++:  bool imreadmulti(String filename, vector_Mat mats, int flags = IMREAD_ANYCOLOR)
+    private static native boolean imreadmulti_0(String filename, long mats_mat_nativeObj, int flags);
+    private static native boolean imreadmulti_1(String filename, long mats_mat_nativeObj);
 
 }

@@ -29,34 +29,6 @@ public class TrainData {
 
 
     //
-    // C++:  int getNSamples()
-    //
-
-    //javadoc: TrainData::getNSamples()
-    public  int getNSamples()
-    {
-        
-        int retVal = getNSamples_0(nativeObj);
-        
-        return retVal;
-    }
-
-
-    //
-    // C++:  int getNTestSamples()
-    //
-
-    //javadoc: TrainData::getNTestSamples()
-    public  int getNTestSamples()
-    {
-        
-        int retVal = getNTestSamples_0(nativeObj);
-        
-        return retVal;
-    }
-
-
-    //
     // C++:  int getNTrainSamples()
     //
 
@@ -79,6 +51,34 @@ public class TrainData {
     {
         
         int retVal = getNVars_0(nativeObj);
+        
+        return retVal;
+    }
+
+
+    //
+    // C++:  int getNSamples()
+    //
+
+    //javadoc: TrainData::getNSamples()
+    public  int getNSamples()
+    {
+        
+        int retVal = getNSamples_0(nativeObj);
+        
+        return retVal;
+    }
+
+
+    //
+    // C++:  int getNTestSamples()
+    //
+
+    //javadoc: TrainData::getNTestSamples()
+    public  int getNTestSamples()
+    {
+        
+        int retVal = getNTestSamples_0(nativeObj);
         
         return retVal;
     }
@@ -135,29 +135,6 @@ public class TrainData {
     {
         
         Mat retVal = new Mat(getMissing_0(nativeObj));
-        
-        return retVal;
-    }
-
-
-    //
-    // C++:  Mat getTrainSamples(int layout = ROW_SAMPLE, bool compressSamples = true, bool compressVars = true)
-    //
-
-    //javadoc: TrainData::getTrainSamples(layout, compressSamples, compressVars)
-    public  Mat getTrainSamples(int layout, boolean compressSamples, boolean compressVars)
-    {
-        
-        Mat retVal = new Mat(getTrainSamples_0(nativeObj, layout, compressSamples, compressVars));
-        
-        return retVal;
-    }
-
-    //javadoc: TrainData::getTrainSamples()
-    public  Mat getTrainSamples()
-    {
-        
-        Mat retVal = new Mat(getTrainSamples_1(nativeObj));
         
         return retVal;
     }
@@ -242,6 +219,29 @@ public class TrainData {
     {
         
         Mat retVal = new Mat(getNormCatResponses_0(nativeObj));
+        
+        return retVal;
+    }
+
+
+    //
+    // C++:  Mat getTrainSamples(int layout = ROW_SAMPLE, bool compressSamples = true, bool compressVars = true)
+    //
+
+    //javadoc: TrainData::getTrainSamples(layout, compressSamples, compressVars)
+    public  Mat getTrainSamples(int layout, boolean compressSamples, boolean compressVars)
+    {
+        
+        Mat retVal = new Mat(getTrainSamples_0(nativeObj, layout, compressSamples, compressVars));
+        
+        return retVal;
+    }
+
+    //javadoc: TrainData::getTrainSamples()
+    public  Mat getTrainSamples()
+    {
+        
+        Mat retVal = new Mat(getTrainSamples_1(nativeObj));
         
         return retVal;
     }
@@ -534,17 +534,17 @@ public class TrainData {
     // C++:  int getLayout()
     private static native int getLayout_0(long nativeObj);
 
-    // C++:  int getNSamples()
-    private static native int getNSamples_0(long nativeObj);
-
-    // C++:  int getNTestSamples()
-    private static native int getNTestSamples_0(long nativeObj);
-
     // C++:  int getNTrainSamples()
     private static native int getNTrainSamples_0(long nativeObj);
 
     // C++:  int getNVars()
     private static native int getNVars_0(long nativeObj);
+
+    // C++:  int getNSamples()
+    private static native int getNSamples_0(long nativeObj);
+
+    // C++:  int getNTestSamples()
+    private static native int getNTestSamples_0(long nativeObj);
 
     // C++:  int getNAllVars()
     private static native int getNAllVars_0(long nativeObj);
@@ -557,10 +557,6 @@ public class TrainData {
 
     // C++:  Mat getMissing()
     private static native long getMissing_0(long nativeObj);
-
-    // C++:  Mat getTrainSamples(int layout = ROW_SAMPLE, bool compressSamples = true, bool compressVars = true)
-    private static native long getTrainSamples_0(long nativeObj, int layout, boolean compressSamples, boolean compressVars);
-    private static native long getTrainSamples_1(long nativeObj);
 
     // C++:  Mat getTrainResponses()
     private static native long getTrainResponses_0(long nativeObj);
@@ -579,6 +575,10 @@ public class TrainData {
 
     // C++:  Mat getNormCatResponses()
     private static native long getNormCatResponses_0(long nativeObj);
+
+    // C++:  Mat getTrainSamples(int layout = ROW_SAMPLE, bool compressSamples = true, bool compressVars = true)
+    private static native long getTrainSamples_0(long nativeObj, int layout, boolean compressSamples, boolean compressVars);
+    private static native long getTrainSamples_1(long nativeObj);
 
     // C++:  Mat getSampleWeights()
     private static native long getSampleWeights_0(long nativeObj);

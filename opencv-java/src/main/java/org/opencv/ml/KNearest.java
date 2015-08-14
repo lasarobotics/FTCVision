@@ -19,20 +19,6 @@ public class KNearest extends StatModel {
 
 
     //
-    // C++:  int getDefaultK()
-    //
-
-    //javadoc: KNearest::getDefaultK()
-    public  int getDefaultK()
-    {
-        
-        int retVal = getDefaultK_0(nativeObj);
-        
-        return retVal;
-    }
-
-
-    //
     // C++:  void setDefaultK(int val)
     //
 
@@ -43,6 +29,20 @@ public class KNearest extends StatModel {
         setDefaultK_0(nativeObj, val);
         
         return;
+    }
+
+
+    //
+    // C++:  int getDefaultK()
+    //
+
+    //javadoc: KNearest::getDefaultK()
+    public  int getDefaultK()
+    {
+        
+        int retVal = getDefaultK_0(nativeObj);
+        
+        return retVal;
     }
 
 
@@ -174,11 +174,11 @@ public class KNearest extends StatModel {
 
 
 
-    // C++:  int getDefaultK()
-    private static native int getDefaultK_0(long nativeObj);
-
     // C++:  void setDefaultK(int val)
     private static native void setDefaultK_0(long nativeObj, int val);
+
+    // C++:  int getDefaultK()
+    private static native int getDefaultK_0(long nativeObj);
 
     // C++:  bool getIsClassifier()
     private static native boolean getIsClassifier_0(long nativeObj);

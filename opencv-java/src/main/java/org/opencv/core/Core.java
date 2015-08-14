@@ -17,12 +17,12 @@ import org.opencv.utils.Converters;
 public class Core {
 
     // these constants are wrapped inside functions to prevent inlining
-    private static String getVersion() { return "3.0.0"; }
+    private static String getVersion() { return "3.0.0-dev"; }
     private static String getNativeLibraryName() { return "opencv_java300"; }
     private static int getVersionMajor() { return 3; }
     private static int getVersionMinor() { return 0; }
     private static int getVersionRevision() { return 0; }
-    private static String getVersionStatus() { return ""; }
+    private static String getVersionStatus() { return "-dev"; }
 
     public static final String VERSION = getVersion();
     public static final String NATIVE_LIBRARY_NAME = getNativeLibraryName();
@@ -195,128 +195,152 @@ public class Core {
 
 
     //
-    // C++:  void subtract(Mat src1, Mat src2, Mat& dst, Mat mask = Mat(), int dtype = -1)
+    // C++:  void subtract(Mat src1, Scalar src2, Mat& dst, Mat mask = Mat(), int dtype = -1)
     //
 
     //javadoc: subtract(src1, src2, dst, mask, dtype)
-    public static void subtract(Mat src1, Mat src2, Mat dst, Mat mask, int dtype)
+    public static void subtract(Mat src1, Scalar src2, Mat dst, Mat mask, int dtype)
     {
         
-        subtract_0(src1.nativeObj, src2.nativeObj, dst.nativeObj, mask.nativeObj, dtype);
+        subtract_0(src1.nativeObj, src2.val[0], src2.val[1], src2.val[2], src2.val[3], dst.nativeObj, mask.nativeObj, dtype);
         
         return;
     }
 
     //javadoc: subtract(src1, src2, dst, mask)
-    public static void subtract(Mat src1, Mat src2, Mat dst, Mat mask)
+    public static void subtract(Mat src1, Scalar src2, Mat dst, Mat mask)
     {
         
-        subtract_1(src1.nativeObj, src2.nativeObj, dst.nativeObj, mask.nativeObj);
+        subtract_1(src1.nativeObj, src2.val[0], src2.val[1], src2.val[2], src2.val[3], dst.nativeObj, mask.nativeObj);
         
         return;
     }
 
     //javadoc: subtract(src1, src2, dst)
-    public static void subtract(Mat src1, Mat src2, Mat dst)
+    public static void subtract(Mat src1, Scalar src2, Mat dst)
     {
         
-        subtract_2(src1.nativeObj, src2.nativeObj, dst.nativeObj);
+        subtract_2(src1.nativeObj, src2.val[0], src2.val[1], src2.val[2], src2.val[3], dst.nativeObj);
         
         return;
     }
 
 
     //
-    // C++:  void reduce(Mat src, Mat& dst, int dim, int rtype, int dtype = -1)
+    // C++:  void multiply(Mat src1, Scalar src2, Mat& dst, double scale = 1, int dtype = -1)
     //
 
-    //javadoc: reduce(src, dst, dim, rtype, dtype)
-    public static void reduce(Mat src, Mat dst, int dim, int rtype, int dtype)
+    //javadoc: multiply(src1, src2, dst, scale, dtype)
+    public static void multiply(Mat src1, Scalar src2, Mat dst, double scale, int dtype)
     {
         
-        reduce_0(src.nativeObj, dst.nativeObj, dim, rtype, dtype);
+        multiply_0(src1.nativeObj, src2.val[0], src2.val[1], src2.val[2], src2.val[3], dst.nativeObj, scale, dtype);
         
         return;
     }
 
-    //javadoc: reduce(src, dst, dim, rtype)
-    public static void reduce(Mat src, Mat dst, int dim, int rtype)
+    //javadoc: multiply(src1, src2, dst, scale)
+    public static void multiply(Mat src1, Scalar src2, Mat dst, double scale)
     {
         
-        reduce_1(src.nativeObj, dst.nativeObj, dim, rtype);
+        multiply_1(src1.nativeObj, src2.val[0], src2.val[1], src2.val[2], src2.val[3], dst.nativeObj, scale);
         
         return;
     }
 
-
-    //
-    // C++:  void merge(vector_Mat mv, Mat& dst)
-    //
-
-    //javadoc: merge(mv, dst)
-    public static void merge(List<Mat> mv, Mat dst)
+    //javadoc: multiply(src1, src2, dst)
+    public static void multiply(Mat src1, Scalar src2, Mat dst)
     {
-        Mat mv_mat = Converters.vector_Mat_to_Mat(mv);
-        merge_0(mv_mat.nativeObj, dst.nativeObj);
+        
+        multiply_2(src1.nativeObj, src2.val[0], src2.val[1], src2.val[2], src2.val[3], dst.nativeObj);
         
         return;
     }
 
 
     //
-    // C++:  void split(Mat m, vector_Mat& mv)
+    // C++:  void divide(Mat src1, Scalar src2, Mat& dst, double scale = 1, int dtype = -1)
     //
 
-    //javadoc: split(m, mv)
-    public static void split(Mat m, List<Mat> mv)
+    //javadoc: divide(src1, src2, dst, scale, dtype)
+    public static void divide(Mat src1, Scalar src2, Mat dst, double scale, int dtype)
     {
-        Mat mv_mat = new Mat();
-        split_0(m.nativeObj, mv_mat.nativeObj);
-        Converters.Mat_to_vector_Mat(mv_mat, mv);
-        mv_mat.release();
-        return;
-    }
-
-
-    //
-    // C++:  void mixChannels(vector_Mat src, vector_Mat dst, vector_int fromTo)
-    //
-
-    //javadoc: mixChannels(src, dst, fromTo)
-    public static void mixChannels(List<Mat> src, List<Mat> dst, MatOfInt fromTo)
-    {
-        Mat src_mat = Converters.vector_Mat_to_Mat(src);
-        Mat dst_mat = Converters.vector_Mat_to_Mat(dst);
-        Mat fromTo_mat = fromTo;
-        mixChannels_0(src_mat.nativeObj, dst_mat.nativeObj, fromTo_mat.nativeObj);
+        
+        divide_0(src1.nativeObj, src2.val[0], src2.val[1], src2.val[2], src2.val[3], dst.nativeObj, scale, dtype);
         
         return;
     }
 
-
-    //
-    // C++:  void extractChannel(Mat src, Mat& dst, int coi)
-    //
-
-    //javadoc: extractChannel(src, dst, coi)
-    public static void extractChannel(Mat src, Mat dst, int coi)
+    //javadoc: divide(src1, src2, dst, scale)
+    public static void divide(Mat src1, Scalar src2, Mat dst, double scale)
     {
         
-        extractChannel_0(src.nativeObj, dst.nativeObj, coi);
+        divide_1(src1.nativeObj, src2.val[0], src2.val[1], src2.val[2], src2.val[3], dst.nativeObj, scale);
+        
+        return;
+    }
+
+    //javadoc: divide(src1, src2, dst)
+    public static void divide(Mat src1, Scalar src2, Mat dst)
+    {
+        
+        divide_2(src1.nativeObj, src2.val[0], src2.val[1], src2.val[2], src2.val[3], dst.nativeObj);
         
         return;
     }
 
 
     //
-    // C++:  void insertChannel(Mat src, Mat& dst, int coi)
+    // C++:  void absdiff(Mat src1, Scalar src2, Mat& dst)
     //
 
-    //javadoc: insertChannel(src, dst, coi)
-    public static void insertChannel(Mat src, Mat dst, int coi)
+    //javadoc: absdiff(src1, src2, dst)
+    public static void absdiff(Mat src1, Scalar src2, Mat dst)
     {
         
-        insertChannel_0(src.nativeObj, dst.nativeObj, coi);
+        absdiff_0(src1.nativeObj, src2.val[0], src2.val[1], src2.val[2], src2.val[3], dst.nativeObj);
+        
+        return;
+    }
+
+
+    //
+    // C++:  void min(Mat src1, Scalar src2, Mat& dst)
+    //
+
+    //javadoc: min(src1, src2, dst)
+    public static void min(Mat src1, Scalar src2, Mat dst)
+    {
+        
+        min_0(src1.nativeObj, src2.val[0], src2.val[1], src2.val[2], src2.val[3], dst.nativeObj);
+        
+        return;
+    }
+
+
+    //
+    // C++:  void compare(Mat src1, Scalar src2, Mat& dst, int cmpop)
+    //
+
+    //javadoc: compare(src1, src2, dst, cmpop)
+    public static void compare(Mat src1, Scalar src2, Mat dst, int cmpop)
+    {
+        
+        compare_0(src1.nativeObj, src2.val[0], src2.val[1], src2.val[2], src2.val[3], dst.nativeObj, cmpop);
+        
+        return;
+    }
+
+
+    //
+    // C++:  void max(Mat src1, Scalar src2, Mat& dst)
+    //
+
+    //javadoc: max(src1, src2, dst)
+    public static void max(Mat src1, Scalar src2, Mat dst)
+    {
+        
+        max_0(src1.nativeObj, src2.val[0], src2.val[1], src2.val[2], src2.val[3], dst.nativeObj);
         
         return;
     }
@@ -351,48 +375,400 @@ public class Core {
 
 
     //
-    // C++:  void add(Mat src1, Scalar src2, Mat& dst, Mat mask = Mat(), int dtype = -1)
+    // C++:  void hconcat(vector_Mat src, Mat& dst)
     //
 
-    //javadoc: add(src1, src2, dst, mask, dtype)
-    public static void add(Mat src1, Scalar src2, Mat dst, Mat mask, int dtype)
+    //javadoc: hconcat(src, dst)
+    public static void hconcat(List<Mat> src, Mat dst)
     {
-        
-        add_0(src1.nativeObj, src2.val[0], src2.val[1], src2.val[2], src2.val[3], dst.nativeObj, mask.nativeObj, dtype);
-        
-        return;
-    }
-
-    //javadoc: add(src1, src2, dst, mask)
-    public static void add(Mat src1, Scalar src2, Mat dst, Mat mask)
-    {
-        
-        add_1(src1.nativeObj, src2.val[0], src2.val[1], src2.val[2], src2.val[3], dst.nativeObj, mask.nativeObj);
-        
-        return;
-    }
-
-    //javadoc: add(src1, src2, dst)
-    public static void add(Mat src1, Scalar src2, Mat dst)
-    {
-        
-        add_2(src1.nativeObj, src2.val[0], src2.val[1], src2.val[2], src2.val[3], dst.nativeObj);
+        Mat src_mat = Converters.vector_Mat_to_Mat(src);
+        hconcat_0(src_mat.nativeObj, dst.nativeObj);
         
         return;
     }
 
 
     //
-    // C++:  int getNumberOfCPUs()
+    // C++:  void vconcat(vector_Mat src, Mat& dst)
     //
 
-    //javadoc: getNumberOfCPUs()
-    public static int getNumberOfCPUs()
+    //javadoc: vconcat(src, dst)
+    public static void vconcat(List<Mat> src, Mat dst)
+    {
+        Mat src_mat = Converters.vector_Mat_to_Mat(src);
+        vconcat_0(src_mat.nativeObj, dst.nativeObj);
+        
+        return;
+    }
+
+
+    //
+    // C++:  void bitwise_and(Mat src1, Mat src2, Mat& dst, Mat mask = Mat())
+    //
+
+    //javadoc: bitwise_and(src1, src2, dst, mask)
+    public static void bitwise_and(Mat src1, Mat src2, Mat dst, Mat mask)
     {
         
-        int retVal = getNumberOfCPUs_0();
+        bitwise_and_0(src1.nativeObj, src2.nativeObj, dst.nativeObj, mask.nativeObj);
+        
+        return;
+    }
+
+    //javadoc: bitwise_and(src1, src2, dst)
+    public static void bitwise_and(Mat src1, Mat src2, Mat dst)
+    {
+        
+        bitwise_and_1(src1.nativeObj, src2.nativeObj, dst.nativeObj);
+        
+        return;
+    }
+
+
+    //
+    // C++:  void bitwise_or(Mat src1, Mat src2, Mat& dst, Mat mask = Mat())
+    //
+
+    //javadoc: bitwise_or(src1, src2, dst, mask)
+    public static void bitwise_or(Mat src1, Mat src2, Mat dst, Mat mask)
+    {
+        
+        bitwise_or_0(src1.nativeObj, src2.nativeObj, dst.nativeObj, mask.nativeObj);
+        
+        return;
+    }
+
+    //javadoc: bitwise_or(src1, src2, dst)
+    public static void bitwise_or(Mat src1, Mat src2, Mat dst)
+    {
+        
+        bitwise_or_1(src1.nativeObj, src2.nativeObj, dst.nativeObj);
+        
+        return;
+    }
+
+
+    //
+    // C++:  void bitwise_xor(Mat src1, Mat src2, Mat& dst, Mat mask = Mat())
+    //
+
+    //javadoc: bitwise_xor(src1, src2, dst, mask)
+    public static void bitwise_xor(Mat src1, Mat src2, Mat dst, Mat mask)
+    {
+        
+        bitwise_xor_0(src1.nativeObj, src2.nativeObj, dst.nativeObj, mask.nativeObj);
+        
+        return;
+    }
+
+    //javadoc: bitwise_xor(src1, src2, dst)
+    public static void bitwise_xor(Mat src1, Mat src2, Mat dst)
+    {
+        
+        bitwise_xor_1(src1.nativeObj, src2.nativeObj, dst.nativeObj);
+        
+        return;
+    }
+
+
+    //
+    // C++:  void bitwise_not(Mat src, Mat& dst, Mat mask = Mat())
+    //
+
+    //javadoc: bitwise_not(src, dst, mask)
+    public static void bitwise_not(Mat src, Mat dst, Mat mask)
+    {
+        
+        bitwise_not_0(src.nativeObj, dst.nativeObj, mask.nativeObj);
+        
+        return;
+    }
+
+    //javadoc: bitwise_not(src, dst)
+    public static void bitwise_not(Mat src, Mat dst)
+    {
+        
+        bitwise_not_1(src.nativeObj, dst.nativeObj);
+        
+        return;
+    }
+
+
+    //
+    // C++:  void absdiff(Mat src1, Mat src2, Mat& dst)
+    //
+
+    //javadoc: absdiff(src1, src2, dst)
+    public static void absdiff(Mat src1, Mat src2, Mat dst)
+    {
+        
+        absdiff_1(src1.nativeObj, src2.nativeObj, dst.nativeObj);
+        
+        return;
+    }
+
+
+    //
+    // C++:  void inRange(Mat src, Scalar lowerb, Scalar upperb, Mat& dst)
+    //
+
+    //javadoc: inRange(src, lowerb, upperb, dst)
+    public static void inRange(Mat src, Scalar lowerb, Scalar upperb, Mat dst)
+    {
+        
+        inRange_0(src.nativeObj, lowerb.val[0], lowerb.val[1], lowerb.val[2], lowerb.val[3], upperb.val[0], upperb.val[1], upperb.val[2], upperb.val[3], dst.nativeObj);
+        
+        return;
+    }
+
+
+    //
+    // C++:  void compare(Mat src1, Mat src2, Mat& dst, int cmpop)
+    //
+
+    //javadoc: compare(src1, src2, dst, cmpop)
+    public static void compare(Mat src1, Mat src2, Mat dst, int cmpop)
+    {
+        
+        compare_1(src1.nativeObj, src2.nativeObj, dst.nativeObj, cmpop);
+        
+        return;
+    }
+
+
+    //
+    // C++:  void min(Mat src1, Mat src2, Mat& dst)
+    //
+
+    //javadoc: min(src1, src2, dst)
+    public static void min(Mat src1, Mat src2, Mat dst)
+    {
+        
+        min_1(src1.nativeObj, src2.nativeObj, dst.nativeObj);
+        
+        return;
+    }
+
+
+    //
+    // C++:  void max(Mat src1, Mat src2, Mat& dst)
+    //
+
+    //javadoc: max(src1, src2, dst)
+    public static void max(Mat src1, Mat src2, Mat dst)
+    {
+        
+        max_1(src1.nativeObj, src2.nativeObj, dst.nativeObj);
+        
+        return;
+    }
+
+
+    //
+    // C++:  void sqrt(Mat src, Mat& dst)
+    //
+
+    //javadoc: sqrt(src, dst)
+    public static void sqrt(Mat src, Mat dst)
+    {
+        
+        sqrt_0(src.nativeObj, dst.nativeObj);
+        
+        return;
+    }
+
+
+    //
+    // C++:  void pow(Mat src, double power, Mat& dst)
+    //
+
+    //javadoc: pow(src, power, dst)
+    public static void pow(Mat src, double power, Mat dst)
+    {
+        
+        pow_0(src.nativeObj, power, dst.nativeObj);
+        
+        return;
+    }
+
+
+    //
+    // C++:  void exp(Mat src, Mat& dst)
+    //
+
+    //javadoc: exp(src, dst)
+    public static void exp(Mat src, Mat dst)
+    {
+        
+        exp_0(src.nativeObj, dst.nativeObj);
+        
+        return;
+    }
+
+
+    //
+    // C++:  void log(Mat src, Mat& dst)
+    //
+
+    //javadoc: log(src, dst)
+    public static void log(Mat src, Mat dst)
+    {
+        
+        log_0(src.nativeObj, dst.nativeObj);
+        
+        return;
+    }
+
+
+    //
+    // C++:  void polarToCart(Mat magnitude, Mat angle, Mat& x, Mat& y, bool angleInDegrees = false)
+    //
+
+    //javadoc: polarToCart(magnitude, angle, x, y, angleInDegrees)
+    public static void polarToCart(Mat magnitude, Mat angle, Mat x, Mat y, boolean angleInDegrees)
+    {
+        
+        polarToCart_0(magnitude.nativeObj, angle.nativeObj, x.nativeObj, y.nativeObj, angleInDegrees);
+        
+        return;
+    }
+
+    //javadoc: polarToCart(magnitude, angle, x, y)
+    public static void polarToCart(Mat magnitude, Mat angle, Mat x, Mat y)
+    {
+        
+        polarToCart_1(magnitude.nativeObj, angle.nativeObj, x.nativeObj, y.nativeObj);
+        
+        return;
+    }
+
+
+    //
+    // C++:  void cartToPolar(Mat x, Mat y, Mat& magnitude, Mat& angle, bool angleInDegrees = false)
+    //
+
+    //javadoc: cartToPolar(x, y, magnitude, angle, angleInDegrees)
+    public static void cartToPolar(Mat x, Mat y, Mat magnitude, Mat angle, boolean angleInDegrees)
+    {
+        
+        cartToPolar_0(x.nativeObj, y.nativeObj, magnitude.nativeObj, angle.nativeObj, angleInDegrees);
+        
+        return;
+    }
+
+    //javadoc: cartToPolar(x, y, magnitude, angle)
+    public static void cartToPolar(Mat x, Mat y, Mat magnitude, Mat angle)
+    {
+        
+        cartToPolar_1(x.nativeObj, y.nativeObj, magnitude.nativeObj, angle.nativeObj);
+        
+        return;
+    }
+
+
+    //
+    // C++:  void phase(Mat x, Mat y, Mat& angle, bool angleInDegrees = false)
+    //
+
+    //javadoc: phase(x, y, angle, angleInDegrees)
+    public static void phase(Mat x, Mat y, Mat angle, boolean angleInDegrees)
+    {
+        
+        phase_0(x.nativeObj, y.nativeObj, angle.nativeObj, angleInDegrees);
+        
+        return;
+    }
+
+    //javadoc: phase(x, y, angle)
+    public static void phase(Mat x, Mat y, Mat angle)
+    {
+        
+        phase_1(x.nativeObj, y.nativeObj, angle.nativeObj);
+        
+        return;
+    }
+
+
+    //
+    // C++:  void magnitude(Mat x, Mat y, Mat& magnitude)
+    //
+
+    //javadoc: magnitude(x, y, magnitude)
+    public static void magnitude(Mat x, Mat y, Mat magnitude)
+    {
+        
+        magnitude_0(x.nativeObj, y.nativeObj, magnitude.nativeObj);
+        
+        return;
+    }
+
+
+    //
+    // C++:  bool checkRange(Mat a, bool quiet = true,  _hidden_ * pos = 0, double minVal = -DBL_MAX, double maxVal = DBL_MAX)
+    //
+
+    //javadoc: checkRange(a, quiet, minVal, maxVal)
+    public static boolean checkRange(Mat a, boolean quiet, double minVal, double maxVal)
+    {
+        
+        boolean retVal = checkRange_0(a.nativeObj, quiet, minVal, maxVal);
         
         return retVal;
+    }
+
+    //javadoc: checkRange(a)
+    public static boolean checkRange(Mat a)
+    {
+        
+        boolean retVal = checkRange_1(a.nativeObj);
+        
+        return retVal;
+    }
+
+
+    //
+    // C++:  void patchNaNs(Mat& a, double val = 0)
+    //
+
+    //javadoc: patchNaNs(a, val)
+    public static void patchNaNs(Mat a, double val)
+    {
+        
+        patchNaNs_0(a.nativeObj, val);
+        
+        return;
+    }
+
+    //javadoc: patchNaNs(a)
+    public static void patchNaNs(Mat a)
+    {
+        
+        patchNaNs_1(a.nativeObj);
+        
+        return;
+    }
+
+
+    //
+    // C++:  void gemm(Mat src1, Mat src2, double alpha, Mat src3, double beta, Mat& dst, int flags = 0)
+    //
+
+    //javadoc: gemm(src1, src2, alpha, src3, beta, dst, flags)
+    public static void gemm(Mat src1, Mat src2, double alpha, Mat src3, double beta, Mat dst, int flags)
+    {
+        
+        gemm_0(src1.nativeObj, src2.nativeObj, alpha, src3.nativeObj, beta, dst.nativeObj, flags);
+        
+        return;
+    }
+
+    //javadoc: gemm(src1, src2, alpha, src3, beta, dst)
+    public static void gemm(Mat src1, Mat src2, double alpha, Mat src3, double beta, Mat dst)
+    {
+        
+        gemm_1(src1.nativeObj, src2.nativeObj, alpha, src3.nativeObj, beta, dst.nativeObj);
+        
+        return;
     }
 
 
@@ -725,6 +1101,293 @@ public class Core {
 
 
     //
+    // C++:  int borderInterpolate(int p, int len, int borderType)
+    //
+
+    //javadoc: borderInterpolate(p, len, borderType)
+    public static int borderInterpolate(int p, int len, int borderType)
+    {
+        
+        int retVal = borderInterpolate_0(p, len, borderType);
+        
+        return retVal;
+    }
+
+
+    //
+    // C++:  void normalize(Mat src, Mat& dst, double alpha = 1, double beta = 0, int norm_type = NORM_L2, int dtype = -1, Mat mask = Mat())
+    //
+
+    //javadoc: normalize(src, dst, alpha, beta, norm_type, dtype, mask)
+    public static void normalize(Mat src, Mat dst, double alpha, double beta, int norm_type, int dtype, Mat mask)
+    {
+        
+        normalize_0(src.nativeObj, dst.nativeObj, alpha, beta, norm_type, dtype, mask.nativeObj);
+        
+        return;
+    }
+
+    //javadoc: normalize(src, dst, alpha, beta, norm_type, dtype)
+    public static void normalize(Mat src, Mat dst, double alpha, double beta, int norm_type, int dtype)
+    {
+        
+        normalize_1(src.nativeObj, dst.nativeObj, alpha, beta, norm_type, dtype);
+        
+        return;
+    }
+
+    //javadoc: normalize(src, dst, alpha, beta, norm_type)
+    public static void normalize(Mat src, Mat dst, double alpha, double beta, int norm_type)
+    {
+        
+        normalize_2(src.nativeObj, dst.nativeObj, alpha, beta, norm_type);
+        
+        return;
+    }
+
+    //javadoc: normalize(src, dst)
+    public static void normalize(Mat src, Mat dst)
+    {
+        
+        normalize_3(src.nativeObj, dst.nativeObj);
+        
+        return;
+    }
+
+
+    //
+    // C++:  int getNumberOfCPUs()
+    //
+
+    //javadoc: getNumberOfCPUs()
+    public static int getNumberOfCPUs()
+    {
+        
+        int retVal = getNumberOfCPUs_0();
+        
+        return retVal;
+    }
+
+
+    //
+    // C++:  void add(Mat src1, Scalar src2, Mat& dst, Mat mask = Mat(), int dtype = -1)
+    //
+
+    //javadoc: add(src1, src2, dst, mask, dtype)
+    public static void add(Mat src1, Scalar src2, Mat dst, Mat mask, int dtype)
+    {
+        
+        add_0(src1.nativeObj, src2.val[0], src2.val[1], src2.val[2], src2.val[3], dst.nativeObj, mask.nativeObj, dtype);
+        
+        return;
+    }
+
+    //javadoc: add(src1, src2, dst, mask)
+    public static void add(Mat src1, Scalar src2, Mat dst, Mat mask)
+    {
+        
+        add_1(src1.nativeObj, src2.val[0], src2.val[1], src2.val[2], src2.val[3], dst.nativeObj, mask.nativeObj);
+        
+        return;
+    }
+
+    //javadoc: add(src1, src2, dst)
+    public static void add(Mat src1, Scalar src2, Mat dst)
+    {
+        
+        add_2(src1.nativeObj, src2.val[0], src2.val[1], src2.val[2], src2.val[3], dst.nativeObj);
+        
+        return;
+    }
+
+
+    //
+    // C++:  int64 getTickCount()
+    //
+
+    //javadoc: getTickCount()
+    public static long getTickCount()
+    {
+        
+        long retVal = getTickCount_0();
+        
+        return retVal;
+    }
+
+
+    //
+    // C++:  void setErrorVerbosity(bool verbose)
+    //
+
+    //javadoc: setErrorVerbosity(verbose)
+    public static void setErrorVerbosity(boolean verbose)
+    {
+        
+        setErrorVerbosity_0(verbose);
+        
+        return;
+    }
+
+
+    //
+    // C++:  double getTickFrequency()
+    //
+
+    //javadoc: getTickFrequency()
+    public static double getTickFrequency()
+    {
+        
+        double retVal = getTickFrequency_0();
+        
+        return retVal;
+    }
+
+
+    //
+    // C++:  String getBuildInformation()
+    //
+
+    //javadoc: getBuildInformation()
+    public static String getBuildInformation()
+    {
+        
+        String retVal = getBuildInformation_0();
+        
+        return retVal;
+    }
+
+
+    //
+    // C++:  int getThreadNum()
+    //
+
+    //javadoc: getThreadNum()
+    public static int getThreadNum()
+    {
+        
+        int retVal = getThreadNum_0();
+        
+        return retVal;
+    }
+
+
+    //
+    // C++:  int getNumThreads()
+    //
+
+    //javadoc: getNumThreads()
+    public static int getNumThreads()
+    {
+        
+        int retVal = getNumThreads_0();
+        
+        return retVal;
+    }
+
+
+    //
+    // C++:  int64 getCPUTickCount()
+    //
+
+    //javadoc: getCPUTickCount()
+    public static long getCPUTickCount()
+    {
+        
+        long retVal = getCPUTickCount_0();
+        
+        return retVal;
+    }
+
+
+    //
+    // C++:  int getOptimalDFTSize(int vecsize)
+    //
+
+    //javadoc: getOptimalDFTSize(vecsize)
+    public static int getOptimalDFTSize(int vecsize)
+    {
+        
+        int retVal = getOptimalDFTSize_0(vecsize);
+        
+        return retVal;
+    }
+
+
+    //
+    // C++:  void randu(Mat& dst, double low, double high)
+    //
+
+    //javadoc: randu(dst, low, high)
+    public static void randu(Mat dst, double low, double high)
+    {
+        
+        randu_0(dst.nativeObj, low, high);
+        
+        return;
+    }
+
+
+    //
+    // C++:  void randn(Mat& dst, double mean, double stddev)
+    //
+
+    //javadoc: randn(dst, mean, stddev)
+    public static void randn(Mat dst, double mean, double stddev)
+    {
+        
+        randn_0(dst.nativeObj, mean, stddev);
+        
+        return;
+    }
+
+
+    //
+    // C++:  void randShuffle(Mat& dst, double iterFactor = 1., RNG* rng = 0)
+    //
+
+    //javadoc: randShuffle(dst, iterFactor)
+    public static void randShuffle(Mat dst, double iterFactor)
+    {
+        
+        randShuffle_0(dst.nativeObj, iterFactor);
+        
+        return;
+    }
+
+    //javadoc: randShuffle(dst)
+    public static void randShuffle(Mat dst)
+    {
+        
+        randShuffle_1(dst.nativeObj);
+        
+        return;
+    }
+
+
+    //
+    // C++:  double kmeans(Mat data, int K, Mat& bestLabels, TermCriteria criteria, int attempts, int flags, Mat& centers = Mat())
+    //
+
+    //javadoc: kmeans(data, K, bestLabels, criteria, attempts, flags, centers)
+    public static double kmeans(Mat data, int K, Mat bestLabels, TermCriteria criteria, int attempts, int flags, Mat centers)
+    {
+        
+        double retVal = kmeans_0(data.nativeObj, K, bestLabels.nativeObj, criteria.type, criteria.maxCount, criteria.epsilon, attempts, flags, centers.nativeObj);
+        
+        return retVal;
+    }
+
+    //javadoc: kmeans(data, K, bestLabels, criteria, attempts, flags)
+    public static double kmeans(Mat data, int K, Mat bestLabels, TermCriteria criteria, int attempts, int flags)
+    {
+        
+        double retVal = kmeans_1(data.nativeObj, K, bestLabels.nativeObj, criteria.type, criteria.maxCount, criteria.epsilon, attempts, flags);
+        
+        return retVal;
+    }
+
+
+    //
     // C++:  void PCACompute(Mat data, Mat& mean, Mat& eigenvectors, double retainedVariance)
     //
 
@@ -933,756 +1596,6 @@ public class Core {
 
 
     //
-    // C++:  int getOptimalDFTSize(int vecsize)
-    //
-
-    //javadoc: getOptimalDFTSize(vecsize)
-    public static int getOptimalDFTSize(int vecsize)
-    {
-        
-        int retVal = getOptimalDFTSize_0(vecsize);
-        
-        return retVal;
-    }
-
-
-    //
-    // C++:  void randu(Mat& dst, double low, double high)
-    //
-
-    //javadoc: randu(dst, low, high)
-    public static void randu(Mat dst, double low, double high)
-    {
-        
-        randu_0(dst.nativeObj, low, high);
-        
-        return;
-    }
-
-
-    //
-    // C++:  void randn(Mat& dst, double mean, double stddev)
-    //
-
-    //javadoc: randn(dst, mean, stddev)
-    public static void randn(Mat dst, double mean, double stddev)
-    {
-        
-        randn_0(dst.nativeObj, mean, stddev);
-        
-        return;
-    }
-
-
-    //
-    // C++:  void randShuffle(Mat& dst, double iterFactor = 1., RNG* rng = 0)
-    //
-
-    //javadoc: randShuffle(dst, iterFactor)
-    public static void randShuffle(Mat dst, double iterFactor)
-    {
-        
-        randShuffle_0(dst.nativeObj, iterFactor);
-        
-        return;
-    }
-
-    //javadoc: randShuffle(dst)
-    public static void randShuffle(Mat dst)
-    {
-        
-        randShuffle_1(dst.nativeObj);
-        
-        return;
-    }
-
-
-    //
-    // C++:  double kmeans(Mat data, int K, Mat& bestLabels, TermCriteria criteria, int attempts, int flags, Mat& centers = Mat())
-    //
-
-    //javadoc: kmeans(data, K, bestLabels, criteria, attempts, flags, centers)
-    public static double kmeans(Mat data, int K, Mat bestLabels, TermCriteria criteria, int attempts, int flags, Mat centers)
-    {
-        
-        double retVal = kmeans_0(data.nativeObj, K, bestLabels.nativeObj, criteria.type, criteria.maxCount, criteria.epsilon, attempts, flags, centers.nativeObj);
-        
-        return retVal;
-    }
-
-    //javadoc: kmeans(data, K, bestLabels, criteria, attempts, flags)
-    public static double kmeans(Mat data, int K, Mat bestLabels, TermCriteria criteria, int attempts, int flags)
-    {
-        
-        double retVal = kmeans_1(data.nativeObj, K, bestLabels.nativeObj, criteria.type, criteria.maxCount, criteria.epsilon, attempts, flags);
-        
-        return retVal;
-    }
-
-
-    //
-    // C++:  void setErrorVerbosity(bool verbose)
-    //
-
-    //javadoc: setErrorVerbosity(verbose)
-    public static void setErrorVerbosity(boolean verbose)
-    {
-        
-        setErrorVerbosity_0(verbose);
-        
-        return;
-    }
-
-
-    //
-    // C++:  void max(Mat src1, Scalar src2, Mat& dst)
-    //
-
-    //javadoc: max(src1, src2, dst)
-    public static void max(Mat src1, Scalar src2, Mat dst)
-    {
-        
-        max_0(src1.nativeObj, src2.val[0], src2.val[1], src2.val[2], src2.val[3], dst.nativeObj);
-        
-        return;
-    }
-
-
-    //
-    // C++:  void absdiff(Mat src1, Scalar src2, Mat& dst)
-    //
-
-    //javadoc: absdiff(src1, src2, dst)
-    public static void absdiff(Mat src1, Scalar src2, Mat dst)
-    {
-        
-        absdiff_0(src1.nativeObj, src2.val[0], src2.val[1], src2.val[2], src2.val[3], dst.nativeObj);
-        
-        return;
-    }
-
-
-    //
-    // C++:  void subtract(Mat src1, Scalar src2, Mat& dst, Mat mask = Mat(), int dtype = -1)
-    //
-
-    //javadoc: subtract(src1, src2, dst, mask, dtype)
-    public static void subtract(Mat src1, Scalar src2, Mat dst, Mat mask, int dtype)
-    {
-        
-        subtract_3(src1.nativeObj, src2.val[0], src2.val[1], src2.val[2], src2.val[3], dst.nativeObj, mask.nativeObj, dtype);
-        
-        return;
-    }
-
-    //javadoc: subtract(src1, src2, dst, mask)
-    public static void subtract(Mat src1, Scalar src2, Mat dst, Mat mask)
-    {
-        
-        subtract_4(src1.nativeObj, src2.val[0], src2.val[1], src2.val[2], src2.val[3], dst.nativeObj, mask.nativeObj);
-        
-        return;
-    }
-
-    //javadoc: subtract(src1, src2, dst)
-    public static void subtract(Mat src1, Scalar src2, Mat dst)
-    {
-        
-        subtract_5(src1.nativeObj, src2.val[0], src2.val[1], src2.val[2], src2.val[3], dst.nativeObj);
-        
-        return;
-    }
-
-
-    //
-    // C++:  void multiply(Mat src1, Scalar src2, Mat& dst, double scale = 1, int dtype = -1)
-    //
-
-    //javadoc: multiply(src1, src2, dst, scale, dtype)
-    public static void multiply(Mat src1, Scalar src2, Mat dst, double scale, int dtype)
-    {
-        
-        multiply_0(src1.nativeObj, src2.val[0], src2.val[1], src2.val[2], src2.val[3], dst.nativeObj, scale, dtype);
-        
-        return;
-    }
-
-    //javadoc: multiply(src1, src2, dst, scale)
-    public static void multiply(Mat src1, Scalar src2, Mat dst, double scale)
-    {
-        
-        multiply_1(src1.nativeObj, src2.val[0], src2.val[1], src2.val[2], src2.val[3], dst.nativeObj, scale);
-        
-        return;
-    }
-
-    //javadoc: multiply(src1, src2, dst)
-    public static void multiply(Mat src1, Scalar src2, Mat dst)
-    {
-        
-        multiply_2(src1.nativeObj, src2.val[0], src2.val[1], src2.val[2], src2.val[3], dst.nativeObj);
-        
-        return;
-    }
-
-
-    //
-    // C++:  void divide(Mat src1, Scalar src2, Mat& dst, double scale = 1, int dtype = -1)
-    //
-
-    //javadoc: divide(src1, src2, dst, scale, dtype)
-    public static void divide(Mat src1, Scalar src2, Mat dst, double scale, int dtype)
-    {
-        
-        divide_0(src1.nativeObj, src2.val[0], src2.val[1], src2.val[2], src2.val[3], dst.nativeObj, scale, dtype);
-        
-        return;
-    }
-
-    //javadoc: divide(src1, src2, dst, scale)
-    public static void divide(Mat src1, Scalar src2, Mat dst, double scale)
-    {
-        
-        divide_1(src1.nativeObj, src2.val[0], src2.val[1], src2.val[2], src2.val[3], dst.nativeObj, scale);
-        
-        return;
-    }
-
-    //javadoc: divide(src1, src2, dst)
-    public static void divide(Mat src1, Scalar src2, Mat dst)
-    {
-        
-        divide_2(src1.nativeObj, src2.val[0], src2.val[1], src2.val[2], src2.val[3], dst.nativeObj);
-        
-        return;
-    }
-
-
-    //
-    // C++:  void compare(Mat src1, Scalar src2, Mat& dst, int cmpop)
-    //
-
-    //javadoc: compare(src1, src2, dst, cmpop)
-    public static void compare(Mat src1, Scalar src2, Mat dst, int cmpop)
-    {
-        
-        compare_0(src1.nativeObj, src2.val[0], src2.val[1], src2.val[2], src2.val[3], dst.nativeObj, cmpop);
-        
-        return;
-    }
-
-
-    //
-    // C++:  void min(Mat src1, Scalar src2, Mat& dst)
-    //
-
-    //javadoc: min(src1, src2, dst)
-    public static void min(Mat src1, Scalar src2, Mat dst)
-    {
-        
-        min_0(src1.nativeObj, src2.val[0], src2.val[1], src2.val[2], src2.val[3], dst.nativeObj);
-        
-        return;
-    }
-
-
-    //
-    // C++:  int64 getTickCount()
-    //
-
-    //javadoc: getTickCount()
-    public static long getTickCount()
-    {
-        
-        long retVal = getTickCount_0();
-        
-        return retVal;
-    }
-
-
-    //
-    // C++:  double getTickFrequency()
-    //
-
-    //javadoc: getTickFrequency()
-    public static double getTickFrequency()
-    {
-        
-        double retVal = getTickFrequency_0();
-        
-        return retVal;
-    }
-
-
-    //
-    // C++:  String getBuildInformation()
-    //
-
-    //javadoc: getBuildInformation()
-    public static String getBuildInformation()
-    {
-        
-        String retVal = getBuildInformation_0();
-        
-        return retVal;
-    }
-
-
-    //
-    // C++:  void exp(Mat src, Mat& dst)
-    //
-
-    //javadoc: exp(src, dst)
-    public static void exp(Mat src, Mat dst)
-    {
-        
-        exp_0(src.nativeObj, dst.nativeObj);
-        
-        return;
-    }
-
-
-    //
-    // C++:  void log(Mat src, Mat& dst)
-    //
-
-    //javadoc: log(src, dst)
-    public static void log(Mat src, Mat dst)
-    {
-        
-        log_0(src.nativeObj, dst.nativeObj);
-        
-        return;
-    }
-
-
-    //
-    // C++:  void polarToCart(Mat magnitude, Mat angle, Mat& x, Mat& y, bool angleInDegrees = false)
-    //
-
-    //javadoc: polarToCart(magnitude, angle, x, y, angleInDegrees)
-    public static void polarToCart(Mat magnitude, Mat angle, Mat x, Mat y, boolean angleInDegrees)
-    {
-        
-        polarToCart_0(magnitude.nativeObj, angle.nativeObj, x.nativeObj, y.nativeObj, angleInDegrees);
-        
-        return;
-    }
-
-    //javadoc: polarToCart(magnitude, angle, x, y)
-    public static void polarToCart(Mat magnitude, Mat angle, Mat x, Mat y)
-    {
-        
-        polarToCart_1(magnitude.nativeObj, angle.nativeObj, x.nativeObj, y.nativeObj);
-        
-        return;
-    }
-
-
-    //
-    // C++:  void cartToPolar(Mat x, Mat y, Mat& magnitude, Mat& angle, bool angleInDegrees = false)
-    //
-
-    //javadoc: cartToPolar(x, y, magnitude, angle, angleInDegrees)
-    public static void cartToPolar(Mat x, Mat y, Mat magnitude, Mat angle, boolean angleInDegrees)
-    {
-        
-        cartToPolar_0(x.nativeObj, y.nativeObj, magnitude.nativeObj, angle.nativeObj, angleInDegrees);
-        
-        return;
-    }
-
-    //javadoc: cartToPolar(x, y, magnitude, angle)
-    public static void cartToPolar(Mat x, Mat y, Mat magnitude, Mat angle)
-    {
-        
-        cartToPolar_1(x.nativeObj, y.nativeObj, magnitude.nativeObj, angle.nativeObj);
-        
-        return;
-    }
-
-
-    //
-    // C++:  void phase(Mat x, Mat y, Mat& angle, bool angleInDegrees = false)
-    //
-
-    //javadoc: phase(x, y, angle, angleInDegrees)
-    public static void phase(Mat x, Mat y, Mat angle, boolean angleInDegrees)
-    {
-        
-        phase_0(x.nativeObj, y.nativeObj, angle.nativeObj, angleInDegrees);
-        
-        return;
-    }
-
-    //javadoc: phase(x, y, angle)
-    public static void phase(Mat x, Mat y, Mat angle)
-    {
-        
-        phase_1(x.nativeObj, y.nativeObj, angle.nativeObj);
-        
-        return;
-    }
-
-
-    //
-    // C++:  void magnitude(Mat x, Mat y, Mat& magnitude)
-    //
-
-    //javadoc: magnitude(x, y, magnitude)
-    public static void magnitude(Mat x, Mat y, Mat magnitude)
-    {
-        
-        magnitude_0(x.nativeObj, y.nativeObj, magnitude.nativeObj);
-        
-        return;
-    }
-
-
-    //
-    // C++:  bool checkRange(Mat a, bool quiet = true,  _hidden_ * pos = 0, double minVal = -DBL_MAX, double maxVal = DBL_MAX)
-    //
-
-    //javadoc: checkRange(a, quiet, minVal, maxVal)
-    public static boolean checkRange(Mat a, boolean quiet, double minVal, double maxVal)
-    {
-        
-        boolean retVal = checkRange_0(a.nativeObj, quiet, minVal, maxVal);
-        
-        return retVal;
-    }
-
-    //javadoc: checkRange(a)
-    public static boolean checkRange(Mat a)
-    {
-        
-        boolean retVal = checkRange_1(a.nativeObj);
-        
-        return retVal;
-    }
-
-
-    //
-    // C++:  void patchNaNs(Mat& a, double val = 0)
-    //
-
-    //javadoc: patchNaNs(a, val)
-    public static void patchNaNs(Mat a, double val)
-    {
-        
-        patchNaNs_0(a.nativeObj, val);
-        
-        return;
-    }
-
-    //javadoc: patchNaNs(a)
-    public static void patchNaNs(Mat a)
-    {
-        
-        patchNaNs_1(a.nativeObj);
-        
-        return;
-    }
-
-
-    //
-    // C++:  void gemm(Mat src1, Mat src2, double alpha, Mat src3, double beta, Mat& dst, int flags = 0)
-    //
-
-    //javadoc: gemm(src1, src2, alpha, src3, beta, dst, flags)
-    public static void gemm(Mat src1, Mat src2, double alpha, Mat src3, double beta, Mat dst, int flags)
-    {
-        
-        gemm_0(src1.nativeObj, src2.nativeObj, alpha, src3.nativeObj, beta, dst.nativeObj, flags);
-        
-        return;
-    }
-
-    //javadoc: gemm(src1, src2, alpha, src3, beta, dst)
-    public static void gemm(Mat src1, Mat src2, double alpha, Mat src3, double beta, Mat dst)
-    {
-        
-        gemm_1(src1.nativeObj, src2.nativeObj, alpha, src3.nativeObj, beta, dst.nativeObj);
-        
-        return;
-    }
-
-
-    //
-    // C++:  int64 getCPUTickCount()
-    //
-
-    //javadoc: getCPUTickCount()
-    public static long getCPUTickCount()
-    {
-        
-        long retVal = getCPUTickCount_0();
-        
-        return retVal;
-    }
-
-
-    //
-    // C++:  float cubeRoot(float val)
-    //
-
-    //javadoc: cubeRoot(val)
-    public static float cubeRoot(float val)
-    {
-        
-        float retVal = cubeRoot_0(val);
-        
-        return retVal;
-    }
-
-
-    //
-    // C++:  float fastAtan2(float y, float x)
-    //
-
-    //javadoc: fastAtan2(y, x)
-    public static float fastAtan2(float y, float x)
-    {
-        
-        float retVal = fastAtan2_0(y, x);
-        
-        return retVal;
-    }
-
-
-    //
-    // C++:  void hconcat(vector_Mat src, Mat& dst)
-    //
-
-    //javadoc: hconcat(src, dst)
-    public static void hconcat(List<Mat> src, Mat dst)
-    {
-        Mat src_mat = Converters.vector_Mat_to_Mat(src);
-        hconcat_0(src_mat.nativeObj, dst.nativeObj);
-        
-        return;
-    }
-
-
-    //
-    // C++:  void vconcat(vector_Mat src, Mat& dst)
-    //
-
-    //javadoc: vconcat(src, dst)
-    public static void vconcat(List<Mat> src, Mat dst)
-    {
-        Mat src_mat = Converters.vector_Mat_to_Mat(src);
-        vconcat_0(src_mat.nativeObj, dst.nativeObj);
-        
-        return;
-    }
-
-
-    //
-    // C++:  void bitwise_and(Mat src1, Mat src2, Mat& dst, Mat mask = Mat())
-    //
-
-    //javadoc: bitwise_and(src1, src2, dst, mask)
-    public static void bitwise_and(Mat src1, Mat src2, Mat dst, Mat mask)
-    {
-        
-        bitwise_and_0(src1.nativeObj, src2.nativeObj, dst.nativeObj, mask.nativeObj);
-        
-        return;
-    }
-
-    //javadoc: bitwise_and(src1, src2, dst)
-    public static void bitwise_and(Mat src1, Mat src2, Mat dst)
-    {
-        
-        bitwise_and_1(src1.nativeObj, src2.nativeObj, dst.nativeObj);
-        
-        return;
-    }
-
-
-    //
-    // C++:  void bitwise_or(Mat src1, Mat src2, Mat& dst, Mat mask = Mat())
-    //
-
-    //javadoc: bitwise_or(src1, src2, dst, mask)
-    public static void bitwise_or(Mat src1, Mat src2, Mat dst, Mat mask)
-    {
-        
-        bitwise_or_0(src1.nativeObj, src2.nativeObj, dst.nativeObj, mask.nativeObj);
-        
-        return;
-    }
-
-    //javadoc: bitwise_or(src1, src2, dst)
-    public static void bitwise_or(Mat src1, Mat src2, Mat dst)
-    {
-        
-        bitwise_or_1(src1.nativeObj, src2.nativeObj, dst.nativeObj);
-        
-        return;
-    }
-
-
-    //
-    // C++:  void bitwise_xor(Mat src1, Mat src2, Mat& dst, Mat mask = Mat())
-    //
-
-    //javadoc: bitwise_xor(src1, src2, dst, mask)
-    public static void bitwise_xor(Mat src1, Mat src2, Mat dst, Mat mask)
-    {
-        
-        bitwise_xor_0(src1.nativeObj, src2.nativeObj, dst.nativeObj, mask.nativeObj);
-        
-        return;
-    }
-
-    //javadoc: bitwise_xor(src1, src2, dst)
-    public static void bitwise_xor(Mat src1, Mat src2, Mat dst)
-    {
-        
-        bitwise_xor_1(src1.nativeObj, src2.nativeObj, dst.nativeObj);
-        
-        return;
-    }
-
-
-    //
-    // C++:  void bitwise_not(Mat src, Mat& dst, Mat mask = Mat())
-    //
-
-    //javadoc: bitwise_not(src, dst, mask)
-    public static void bitwise_not(Mat src, Mat dst, Mat mask)
-    {
-        
-        bitwise_not_0(src.nativeObj, dst.nativeObj, mask.nativeObj);
-        
-        return;
-    }
-
-    //javadoc: bitwise_not(src, dst)
-    public static void bitwise_not(Mat src, Mat dst)
-    {
-        
-        bitwise_not_1(src.nativeObj, dst.nativeObj);
-        
-        return;
-    }
-
-
-    //
-    // C++:  void absdiff(Mat src1, Mat src2, Mat& dst)
-    //
-
-    //javadoc: absdiff(src1, src2, dst)
-    public static void absdiff(Mat src1, Mat src2, Mat dst)
-    {
-        
-        absdiff_1(src1.nativeObj, src2.nativeObj, dst.nativeObj);
-        
-        return;
-    }
-
-
-    //
-    // C++:  void inRange(Mat src, Scalar lowerb, Scalar upperb, Mat& dst)
-    //
-
-    //javadoc: inRange(src, lowerb, upperb, dst)
-    public static void inRange(Mat src, Scalar lowerb, Scalar upperb, Mat dst)
-    {
-        
-        inRange_0(src.nativeObj, lowerb.val[0], lowerb.val[1], lowerb.val[2], lowerb.val[3], upperb.val[0], upperb.val[1], upperb.val[2], upperb.val[3], dst.nativeObj);
-        
-        return;
-    }
-
-
-    //
-    // C++:  void compare(Mat src1, Mat src2, Mat& dst, int cmpop)
-    //
-
-    //javadoc: compare(src1, src2, dst, cmpop)
-    public static void compare(Mat src1, Mat src2, Mat dst, int cmpop)
-    {
-        
-        compare_1(src1.nativeObj, src2.nativeObj, dst.nativeObj, cmpop);
-        
-        return;
-    }
-
-
-    //
-    // C++:  void min(Mat src1, Mat src2, Mat& dst)
-    //
-
-    //javadoc: min(src1, src2, dst)
-    public static void min(Mat src1, Mat src2, Mat dst)
-    {
-        
-        min_1(src1.nativeObj, src2.nativeObj, dst.nativeObj);
-        
-        return;
-    }
-
-
-    //
-    // C++:  void max(Mat src1, Mat src2, Mat& dst)
-    //
-
-    //javadoc: max(src1, src2, dst)
-    public static void max(Mat src1, Mat src2, Mat dst)
-    {
-        
-        max_1(src1.nativeObj, src2.nativeObj, dst.nativeObj);
-        
-        return;
-    }
-
-
-    //
-    // C++:  void sqrt(Mat src, Mat& dst)
-    //
-
-    //javadoc: sqrt(src, dst)
-    public static void sqrt(Mat src, Mat dst)
-    {
-        
-        sqrt_0(src.nativeObj, dst.nativeObj);
-        
-        return;
-    }
-
-
-    //
-    // C++:  void pow(Mat src, double power, Mat& dst)
-    //
-
-    //javadoc: pow(src, power, dst)
-    public static void pow(Mat src, double power, Mat dst)
-    {
-        
-        pow_0(src.nativeObj, power, dst.nativeObj);
-        
-        return;
-    }
-
-
-    //
-    // C++:  int borderInterpolate(int p, int len, int borderType)
-    //
-
-    //javadoc: borderInterpolate(p, len, borderType)
-    public static int borderInterpolate(int p, int len, int borderType)
-    {
-        
-        int retVal = borderInterpolate_0(p, len, borderType);
-        
-        return retVal;
-    }
-
-
-    //
     // C++:  void copyMakeBorder(Mat src, Mat& dst, int top, int bottom, int left, int right, int borderType, Scalar value = Scalar())
     //
 
@@ -1732,6 +1645,38 @@ public class Core {
     {
         
         add_5(src1.nativeObj, src2.nativeObj, dst.nativeObj);
+        
+        return;
+    }
+
+
+    //
+    // C++:  void subtract(Mat src1, Mat src2, Mat& dst, Mat mask = Mat(), int dtype = -1)
+    //
+
+    //javadoc: subtract(src1, src2, dst, mask, dtype)
+    public static void subtract(Mat src1, Mat src2, Mat dst, Mat mask, int dtype)
+    {
+        
+        subtract_3(src1.nativeObj, src2.nativeObj, dst.nativeObj, mask.nativeObj, dtype);
+        
+        return;
+    }
+
+    //javadoc: subtract(src1, src2, dst, mask)
+    public static void subtract(Mat src1, Mat src2, Mat dst, Mat mask)
+    {
+        
+        subtract_4(src1.nativeObj, src2.nativeObj, dst.nativeObj, mask.nativeObj);
+        
+        return;
+    }
+
+    //javadoc: subtract(src1, src2, dst)
+    public static void subtract(Mat src1, Mat src2, Mat dst)
+    {
+        
+        subtract_5(src1.nativeObj, src2.nativeObj, dst.nativeObj);
         
         return;
     }
@@ -1885,20 +1830,6 @@ public class Core {
 
 
     //
-    // C++:  void LUT(Mat src, Mat lut, Mat& dst)
-    //
-
-    //javadoc: LUT(src, lut, dst)
-    public static void LUT(Mat src, Mat lut, Mat dst)
-    {
-        
-        LUT_0(src.nativeObj, lut.nativeObj, dst.nativeObj);
-        
-        return;
-    }
-
-
-    //
     // C++:  Scalar sum(Mat src)
     //
 
@@ -1909,6 +1840,20 @@ public class Core {
         Scalar retVal = new Scalar(sumElems_0(src.nativeObj));
         
         return retVal;
+    }
+
+
+    //
+    // C++:  void findNonZero(Mat src, Mat& idx)
+    //
+
+    //javadoc: findNonZero(src, idx)
+    public static void findNonZero(Mat src, Mat idx)
+    {
+        
+        findNonZero_0(src.nativeObj, idx.nativeObj);
+        
+        return;
     }
 
 
@@ -1927,16 +1872,25 @@ public class Core {
 
 
     //
-    // C++:  void findNonZero(Mat src, Mat& idx)
+    // C++:  Scalar mean(Mat src, Mat mask = Mat())
     //
 
-    //javadoc: findNonZero(src, idx)
-    public static void findNonZero(Mat src, Mat idx)
+    //javadoc: mean(src, mask)
+    public static Scalar mean(Mat src, Mat mask)
     {
         
-        findNonZero_0(src.nativeObj, idx.nativeObj);
+        Scalar retVal = new Scalar(mean_0(src.nativeObj, mask.nativeObj));
         
-        return;
+        return retVal;
+    }
+
+    //javadoc: mean(src)
+    public static Scalar mean(Mat src)
+    {
+        
+        Scalar retVal = new Scalar(mean_1(src.nativeObj));
+        
+        return retVal;
     }
 
 
@@ -1962,29 +1916,6 @@ public class Core {
         meanStdDev_1(src.nativeObj, mean_mat.nativeObj, stddev_mat.nativeObj);
         
         return;
-    }
-
-
-    //
-    // C++:  Scalar mean(Mat src, Mat mask = Mat())
-    //
-
-    //javadoc: mean(src, mask)
-    public static Scalar mean(Mat src, Mat mask)
-    {
-        
-        Scalar retVal = new Scalar(mean_0(src.nativeObj, mask.nativeObj));
-        
-        return retVal;
-    }
-
-    //javadoc: mean(src)
-    public static Scalar mean(Mat src)
-    {
-        
-        Scalar retVal = new Scalar(mean_1(src.nativeObj));
-        
-        return retVal;
     }
 
 
@@ -2099,41 +2030,152 @@ public class Core {
 
 
     //
-    // C++:  void normalize(Mat src, Mat& dst, double alpha = 1, double beta = 0, int norm_type = NORM_L2, int dtype = -1, Mat mask = Mat())
+    // C++:  float cubeRoot(float val)
     //
 
-    //javadoc: normalize(src, dst, alpha, beta, norm_type, dtype, mask)
-    public static void normalize(Mat src, Mat dst, double alpha, double beta, int norm_type, int dtype, Mat mask)
+    //javadoc: cubeRoot(val)
+    public static float cubeRoot(float val)
     {
         
-        normalize_0(src.nativeObj, dst.nativeObj, alpha, beta, norm_type, dtype, mask.nativeObj);
+        float retVal = cubeRoot_0(val);
+        
+        return retVal;
+    }
+
+
+    //
+    // C++:  float fastAtan2(float y, float x)
+    //
+
+    //javadoc: fastAtan2(y, x)
+    public static float fastAtan2(float y, float x)
+    {
+        
+        float retVal = fastAtan2_0(y, x);
+        
+        return retVal;
+    }
+
+
+    //
+    // C++:  void reduce(Mat src, Mat& dst, int dim, int rtype, int dtype = -1)
+    //
+
+    //javadoc: reduce(src, dst, dim, rtype, dtype)
+    public static void reduce(Mat src, Mat dst, int dim, int rtype, int dtype)
+    {
+        
+        reduce_0(src.nativeObj, dst.nativeObj, dim, rtype, dtype);
         
         return;
     }
 
-    //javadoc: normalize(src, dst, alpha, beta, norm_type, dtype)
-    public static void normalize(Mat src, Mat dst, double alpha, double beta, int norm_type, int dtype)
+    //javadoc: reduce(src, dst, dim, rtype)
+    public static void reduce(Mat src, Mat dst, int dim, int rtype)
     {
         
-        normalize_1(src.nativeObj, dst.nativeObj, alpha, beta, norm_type, dtype);
+        reduce_1(src.nativeObj, dst.nativeObj, dim, rtype);
         
         return;
     }
 
-    //javadoc: normalize(src, dst, alpha, beta, norm_type)
-    public static void normalize(Mat src, Mat dst, double alpha, double beta, int norm_type)
+
+    //
+    // C++:  void merge(vector_Mat mv, Mat& dst)
+    //
+
+    //javadoc: merge(mv, dst)
+    public static void merge(List<Mat> mv, Mat dst)
     {
-        
-        normalize_2(src.nativeObj, dst.nativeObj, alpha, beta, norm_type);
+        Mat mv_mat = Converters.vector_Mat_to_Mat(mv);
+        merge_0(mv_mat.nativeObj, dst.nativeObj);
         
         return;
     }
 
-    //javadoc: normalize(src, dst)
-    public static void normalize(Mat src, Mat dst)
+
+    //
+    // C++:  void split(Mat m, vector_Mat& mv)
+    //
+
+    //javadoc: split(m, mv)
+    public static void split(Mat m, List<Mat> mv)
+    {
+        Mat mv_mat = new Mat();
+        split_0(m.nativeObj, mv_mat.nativeObj);
+        Converters.Mat_to_vector_Mat(mv_mat, mv);
+        mv_mat.release();
+        return;
+    }
+
+
+    //
+    // C++:  void mixChannels(vector_Mat src, vector_Mat dst, vector_int fromTo)
+    //
+
+    //javadoc: mixChannels(src, dst, fromTo)
+    public static void mixChannels(List<Mat> src, List<Mat> dst, MatOfInt fromTo)
+    {
+        Mat src_mat = Converters.vector_Mat_to_Mat(src);
+        Mat dst_mat = Converters.vector_Mat_to_Mat(dst);
+        Mat fromTo_mat = fromTo;
+        mixChannels_0(src_mat.nativeObj, dst_mat.nativeObj, fromTo_mat.nativeObj);
+        
+        return;
+    }
+
+
+    //
+    // C++:  void extractChannel(Mat src, Mat& dst, int coi)
+    //
+
+    //javadoc: extractChannel(src, dst, coi)
+    public static void extractChannel(Mat src, Mat dst, int coi)
     {
         
-        normalize_3(src.nativeObj, dst.nativeObj);
+        extractChannel_0(src.nativeObj, dst.nativeObj, coi);
+        
+        return;
+    }
+
+
+    //
+    // C++:  void insertChannel(Mat src, Mat& dst, int coi)
+    //
+
+    //javadoc: insertChannel(src, dst, coi)
+    public static void insertChannel(Mat src, Mat dst, int coi)
+    {
+        
+        insertChannel_0(src.nativeObj, dst.nativeObj, coi);
+        
+        return;
+    }
+
+
+    //
+    // C++:  void LUT(Mat src, Mat lut, Mat& dst)
+    //
+
+    //javadoc: LUT(src, lut, dst)
+    public static void LUT(Mat src, Mat lut, Mat dst)
+    {
+        
+        LUT_0(src.nativeObj, lut.nativeObj, dst.nativeObj);
+        
+        return;
+    }
+
+
+    //
+    // C++:  void setNumThreads(int nthreads)
+    //
+
+    //javadoc: setNumThreads(nthreads)
+    public static void setNumThreads(int nthreads)
+    {
+        
+        setNumThreads_0(nthreads);
         
         return;
     }
@@ -2180,29 +2222,32 @@ public class Core {
 
 
 
-    // C++:  void subtract(Mat src1, Mat src2, Mat& dst, Mat mask = Mat(), int dtype = -1)
-    private static native void subtract_0(long src1_nativeObj, long src2_nativeObj, long dst_nativeObj, long mask_nativeObj, int dtype);
-    private static native void subtract_1(long src1_nativeObj, long src2_nativeObj, long dst_nativeObj, long mask_nativeObj);
-    private static native void subtract_2(long src1_nativeObj, long src2_nativeObj, long dst_nativeObj);
+    // C++:  void subtract(Mat src1, Scalar src2, Mat& dst, Mat mask = Mat(), int dtype = -1)
+    private static native void subtract_0(long src1_nativeObj, double src2_val0, double src2_val1, double src2_val2, double src2_val3, long dst_nativeObj, long mask_nativeObj, int dtype);
+    private static native void subtract_1(long src1_nativeObj, double src2_val0, double src2_val1, double src2_val2, double src2_val3, long dst_nativeObj, long mask_nativeObj);
+    private static native void subtract_2(long src1_nativeObj, double src2_val0, double src2_val1, double src2_val2, double src2_val3, long dst_nativeObj);
 
-    // C++:  void reduce(Mat src, Mat& dst, int dim, int rtype, int dtype = -1)
-    private static native void reduce_0(long src_nativeObj, long dst_nativeObj, int dim, int rtype, int dtype);
-    private static native void reduce_1(long src_nativeObj, long dst_nativeObj, int dim, int rtype);
+    // C++:  void multiply(Mat src1, Scalar src2, Mat& dst, double scale = 1, int dtype = -1)
+    private static native void multiply_0(long src1_nativeObj, double src2_val0, double src2_val1, double src2_val2, double src2_val3, long dst_nativeObj, double scale, int dtype);
+    private static native void multiply_1(long src1_nativeObj, double src2_val0, double src2_val1, double src2_val2, double src2_val3, long dst_nativeObj, double scale);
+    private static native void multiply_2(long src1_nativeObj, double src2_val0, double src2_val1, double src2_val2, double src2_val3, long dst_nativeObj);
 
-    // C++:  void merge(vector_Mat mv, Mat& dst)
-    private static native void merge_0(long mv_mat_nativeObj, long dst_nativeObj);
+    // C++:  void divide(Mat src1, Scalar src2, Mat& dst, double scale = 1, int dtype = -1)
+    private static native void divide_0(long src1_nativeObj, double src2_val0, double src2_val1, double src2_val2, double src2_val3, long dst_nativeObj, double scale, int dtype);
+    private static native void divide_1(long src1_nativeObj, double src2_val0, double src2_val1, double src2_val2, double src2_val3, long dst_nativeObj, double scale);
+    private static native void divide_2(long src1_nativeObj, double src2_val0, double src2_val1, double src2_val2, double src2_val3, long dst_nativeObj);
 
-    // C++:  void split(Mat m, vector_Mat& mv)
-    private static native void split_0(long m_nativeObj, long mv_mat_nativeObj);
+    // C++:  void absdiff(Mat src1, Scalar src2, Mat& dst)
+    private static native void absdiff_0(long src1_nativeObj, double src2_val0, double src2_val1, double src2_val2, double src2_val3, long dst_nativeObj);
 
-    // C++:  void mixChannels(vector_Mat src, vector_Mat dst, vector_int fromTo)
-    private static native void mixChannels_0(long src_mat_nativeObj, long dst_mat_nativeObj, long fromTo_mat_nativeObj);
+    // C++:  void min(Mat src1, Scalar src2, Mat& dst)
+    private static native void min_0(long src1_nativeObj, double src2_val0, double src2_val1, double src2_val2, double src2_val3, long dst_nativeObj);
 
-    // C++:  void extractChannel(Mat src, Mat& dst, int coi)
-    private static native void extractChannel_0(long src_nativeObj, long dst_nativeObj, int coi);
+    // C++:  void compare(Mat src1, Scalar src2, Mat& dst, int cmpop)
+    private static native void compare_0(long src1_nativeObj, double src2_val0, double src2_val1, double src2_val2, double src2_val3, long dst_nativeObj, int cmpop);
 
-    // C++:  void insertChannel(Mat src, Mat& dst, int coi)
-    private static native void insertChannel_0(long src_nativeObj, long dst_nativeObj, int coi);
+    // C++:  void max(Mat src1, Scalar src2, Mat& dst)
+    private static native void max_0(long src1_nativeObj, double src2_val0, double src2_val1, double src2_val2, double src2_val3, long dst_nativeObj);
 
     // C++:  void flip(Mat src, Mat& dst, int flipCode)
     private static native void flip_0(long src_nativeObj, long dst_nativeObj, int flipCode);
@@ -2210,13 +2255,81 @@ public class Core {
     // C++:  void repeat(Mat src, int ny, int nx, Mat& dst)
     private static native void repeat_0(long src_nativeObj, int ny, int nx, long dst_nativeObj);
 
-    // C++:  void add(Mat src1, Scalar src2, Mat& dst, Mat mask = Mat(), int dtype = -1)
-    private static native void add_0(long src1_nativeObj, double src2_val0, double src2_val1, double src2_val2, double src2_val3, long dst_nativeObj, long mask_nativeObj, int dtype);
-    private static native void add_1(long src1_nativeObj, double src2_val0, double src2_val1, double src2_val2, double src2_val3, long dst_nativeObj, long mask_nativeObj);
-    private static native void add_2(long src1_nativeObj, double src2_val0, double src2_val1, double src2_val2, double src2_val3, long dst_nativeObj);
+    // C++:  void hconcat(vector_Mat src, Mat& dst)
+    private static native void hconcat_0(long src_mat_nativeObj, long dst_nativeObj);
 
-    // C++:  int getNumberOfCPUs()
-    private static native int getNumberOfCPUs_0();
+    // C++:  void vconcat(vector_Mat src, Mat& dst)
+    private static native void vconcat_0(long src_mat_nativeObj, long dst_nativeObj);
+
+    // C++:  void bitwise_and(Mat src1, Mat src2, Mat& dst, Mat mask = Mat())
+    private static native void bitwise_and_0(long src1_nativeObj, long src2_nativeObj, long dst_nativeObj, long mask_nativeObj);
+    private static native void bitwise_and_1(long src1_nativeObj, long src2_nativeObj, long dst_nativeObj);
+
+    // C++:  void bitwise_or(Mat src1, Mat src2, Mat& dst, Mat mask = Mat())
+    private static native void bitwise_or_0(long src1_nativeObj, long src2_nativeObj, long dst_nativeObj, long mask_nativeObj);
+    private static native void bitwise_or_1(long src1_nativeObj, long src2_nativeObj, long dst_nativeObj);
+
+    // C++:  void bitwise_xor(Mat src1, Mat src2, Mat& dst, Mat mask = Mat())
+    private static native void bitwise_xor_0(long src1_nativeObj, long src2_nativeObj, long dst_nativeObj, long mask_nativeObj);
+    private static native void bitwise_xor_1(long src1_nativeObj, long src2_nativeObj, long dst_nativeObj);
+
+    // C++:  void bitwise_not(Mat src, Mat& dst, Mat mask = Mat())
+    private static native void bitwise_not_0(long src_nativeObj, long dst_nativeObj, long mask_nativeObj);
+    private static native void bitwise_not_1(long src_nativeObj, long dst_nativeObj);
+
+    // C++:  void absdiff(Mat src1, Mat src2, Mat& dst)
+    private static native void absdiff_1(long src1_nativeObj, long src2_nativeObj, long dst_nativeObj);
+
+    // C++:  void inRange(Mat src, Scalar lowerb, Scalar upperb, Mat& dst)
+    private static native void inRange_0(long src_nativeObj, double lowerb_val0, double lowerb_val1, double lowerb_val2, double lowerb_val3, double upperb_val0, double upperb_val1, double upperb_val2, double upperb_val3, long dst_nativeObj);
+
+    // C++:  void compare(Mat src1, Mat src2, Mat& dst, int cmpop)
+    private static native void compare_1(long src1_nativeObj, long src2_nativeObj, long dst_nativeObj, int cmpop);
+
+    // C++:  void min(Mat src1, Mat src2, Mat& dst)
+    private static native void min_1(long src1_nativeObj, long src2_nativeObj, long dst_nativeObj);
+
+    // C++:  void max(Mat src1, Mat src2, Mat& dst)
+    private static native void max_1(long src1_nativeObj, long src2_nativeObj, long dst_nativeObj);
+
+    // C++:  void sqrt(Mat src, Mat& dst)
+    private static native void sqrt_0(long src_nativeObj, long dst_nativeObj);
+
+    // C++:  void pow(Mat src, double power, Mat& dst)
+    private static native void pow_0(long src_nativeObj, double power, long dst_nativeObj);
+
+    // C++:  void exp(Mat src, Mat& dst)
+    private static native void exp_0(long src_nativeObj, long dst_nativeObj);
+
+    // C++:  void log(Mat src, Mat& dst)
+    private static native void log_0(long src_nativeObj, long dst_nativeObj);
+
+    // C++:  void polarToCart(Mat magnitude, Mat angle, Mat& x, Mat& y, bool angleInDegrees = false)
+    private static native void polarToCart_0(long magnitude_nativeObj, long angle_nativeObj, long x_nativeObj, long y_nativeObj, boolean angleInDegrees);
+    private static native void polarToCart_1(long magnitude_nativeObj, long angle_nativeObj, long x_nativeObj, long y_nativeObj);
+
+    // C++:  void cartToPolar(Mat x, Mat y, Mat& magnitude, Mat& angle, bool angleInDegrees = false)
+    private static native void cartToPolar_0(long x_nativeObj, long y_nativeObj, long magnitude_nativeObj, long angle_nativeObj, boolean angleInDegrees);
+    private static native void cartToPolar_1(long x_nativeObj, long y_nativeObj, long magnitude_nativeObj, long angle_nativeObj);
+
+    // C++:  void phase(Mat x, Mat y, Mat& angle, bool angleInDegrees = false)
+    private static native void phase_0(long x_nativeObj, long y_nativeObj, long angle_nativeObj, boolean angleInDegrees);
+    private static native void phase_1(long x_nativeObj, long y_nativeObj, long angle_nativeObj);
+
+    // C++:  void magnitude(Mat x, Mat y, Mat& magnitude)
+    private static native void magnitude_0(long x_nativeObj, long y_nativeObj, long magnitude_nativeObj);
+
+    // C++:  bool checkRange(Mat a, bool quiet = true,  _hidden_ * pos = 0, double minVal = -DBL_MAX, double maxVal = DBL_MAX)
+    private static native boolean checkRange_0(long a_nativeObj, boolean quiet, double minVal, double maxVal);
+    private static native boolean checkRange_1(long a_nativeObj);
+
+    // C++:  void patchNaNs(Mat& a, double val = 0)
+    private static native void patchNaNs_0(long a_nativeObj, double val);
+    private static native void patchNaNs_1(long a_nativeObj);
+
+    // C++:  void gemm(Mat src1, Mat src2, double alpha, Mat src3, double beta, Mat& dst, int flags = 0)
+    private static native void gemm_0(long src1_nativeObj, long src2_nativeObj, double alpha, long src3_nativeObj, double beta, long dst_nativeObj, int flags);
+    private static native void gemm_1(long src1_nativeObj, long src2_nativeObj, double alpha, long src3_nativeObj, double beta, long dst_nativeObj);
 
     // C++:  void mulTransposed(Mat src, Mat& dst, bool aTa, Mat delta = Mat(), double scale = 1, int dtype = -1)
     private static native void mulTransposed_0(long src_nativeObj, long dst_nativeObj, boolean aTa, long delta_nativeObj, double scale, int dtype);
@@ -2279,6 +2392,61 @@ public class Core {
     private static native void PCACompute_0(long data_nativeObj, long mean_nativeObj, long eigenvectors_nativeObj, int maxComponents);
     private static native void PCACompute_1(long data_nativeObj, long mean_nativeObj, long eigenvectors_nativeObj);
 
+    // C++:  int borderInterpolate(int p, int len, int borderType)
+    private static native int borderInterpolate_0(int p, int len, int borderType);
+
+    // C++:  void normalize(Mat src, Mat& dst, double alpha = 1, double beta = 0, int norm_type = NORM_L2, int dtype = -1, Mat mask = Mat())
+    private static native void normalize_0(long src_nativeObj, long dst_nativeObj, double alpha, double beta, int norm_type, int dtype, long mask_nativeObj);
+    private static native void normalize_1(long src_nativeObj, long dst_nativeObj, double alpha, double beta, int norm_type, int dtype);
+    private static native void normalize_2(long src_nativeObj, long dst_nativeObj, double alpha, double beta, int norm_type);
+    private static native void normalize_3(long src_nativeObj, long dst_nativeObj);
+
+    // C++:  int getNumberOfCPUs()
+    private static native int getNumberOfCPUs_0();
+
+    // C++:  void add(Mat src1, Scalar src2, Mat& dst, Mat mask = Mat(), int dtype = -1)
+    private static native void add_0(long src1_nativeObj, double src2_val0, double src2_val1, double src2_val2, double src2_val3, long dst_nativeObj, long mask_nativeObj, int dtype);
+    private static native void add_1(long src1_nativeObj, double src2_val0, double src2_val1, double src2_val2, double src2_val3, long dst_nativeObj, long mask_nativeObj);
+    private static native void add_2(long src1_nativeObj, double src2_val0, double src2_val1, double src2_val2, double src2_val3, long dst_nativeObj);
+
+    // C++:  int64 getTickCount()
+    private static native long getTickCount_0();
+
+    // C++:  void setErrorVerbosity(bool verbose)
+    private static native void setErrorVerbosity_0(boolean verbose);
+
+    // C++:  double getTickFrequency()
+    private static native double getTickFrequency_0();
+
+    // C++:  String getBuildInformation()
+    private static native String getBuildInformation_0();
+
+    // C++:  int getThreadNum()
+    private static native int getThreadNum_0();
+
+    // C++:  int getNumThreads()
+    private static native int getNumThreads_0();
+
+    // C++:  int64 getCPUTickCount()
+    private static native long getCPUTickCount_0();
+
+    // C++:  int getOptimalDFTSize(int vecsize)
+    private static native int getOptimalDFTSize_0(int vecsize);
+
+    // C++:  void randu(Mat& dst, double low, double high)
+    private static native void randu_0(long dst_nativeObj, double low, double high);
+
+    // C++:  void randn(Mat& dst, double mean, double stddev)
+    private static native void randn_0(long dst_nativeObj, double mean, double stddev);
+
+    // C++:  void randShuffle(Mat& dst, double iterFactor = 1., RNG* rng = 0)
+    private static native void randShuffle_0(long dst_nativeObj, double iterFactor);
+    private static native void randShuffle_1(long dst_nativeObj);
+
+    // C++:  double kmeans(Mat data, int K, Mat& bestLabels, TermCriteria criteria, int attempts, int flags, Mat& centers = Mat())
+    private static native double kmeans_0(long data_nativeObj, int K, long bestLabels_nativeObj, int criteria_type, int criteria_maxCount, double criteria_epsilon, int attempts, int flags, long centers_nativeObj);
+    private static native double kmeans_1(long data_nativeObj, int K, long bestLabels_nativeObj, int criteria_type, int criteria_maxCount, double criteria_epsilon, int attempts, int flags);
+
     // C++:  void PCACompute(Mat data, Mat& mean, Mat& eigenvectors, double retainedVariance)
     private static native void PCACompute_2(long data_nativeObj, long mean_nativeObj, long eigenvectors_nativeObj, double retainedVariance);
 
@@ -2318,150 +2486,6 @@ public class Core {
     private static native void mulSpectrums_0(long a_nativeObj, long b_nativeObj, long c_nativeObj, int flags, boolean conjB);
     private static native void mulSpectrums_1(long a_nativeObj, long b_nativeObj, long c_nativeObj, int flags);
 
-    // C++:  int getOptimalDFTSize(int vecsize)
-    private static native int getOptimalDFTSize_0(int vecsize);
-
-    // C++:  void randu(Mat& dst, double low, double high)
-    private static native void randu_0(long dst_nativeObj, double low, double high);
-
-    // C++:  void randn(Mat& dst, double mean, double stddev)
-    private static native void randn_0(long dst_nativeObj, double mean, double stddev);
-
-    // C++:  void randShuffle(Mat& dst, double iterFactor = 1., RNG* rng = 0)
-    private static native void randShuffle_0(long dst_nativeObj, double iterFactor);
-    private static native void randShuffle_1(long dst_nativeObj);
-
-    // C++:  double kmeans(Mat data, int K, Mat& bestLabels, TermCriteria criteria, int attempts, int flags, Mat& centers = Mat())
-    private static native double kmeans_0(long data_nativeObj, int K, long bestLabels_nativeObj, int criteria_type, int criteria_maxCount, double criteria_epsilon, int attempts, int flags, long centers_nativeObj);
-    private static native double kmeans_1(long data_nativeObj, int K, long bestLabels_nativeObj, int criteria_type, int criteria_maxCount, double criteria_epsilon, int attempts, int flags);
-
-    // C++:  void setErrorVerbosity(bool verbose)
-    private static native void setErrorVerbosity_0(boolean verbose);
-
-    // C++:  void max(Mat src1, Scalar src2, Mat& dst)
-    private static native void max_0(long src1_nativeObj, double src2_val0, double src2_val1, double src2_val2, double src2_val3, long dst_nativeObj);
-
-    // C++:  void absdiff(Mat src1, Scalar src2, Mat& dst)
-    private static native void absdiff_0(long src1_nativeObj, double src2_val0, double src2_val1, double src2_val2, double src2_val3, long dst_nativeObj);
-
-    // C++:  void subtract(Mat src1, Scalar src2, Mat& dst, Mat mask = Mat(), int dtype = -1)
-    private static native void subtract_3(long src1_nativeObj, double src2_val0, double src2_val1, double src2_val2, double src2_val3, long dst_nativeObj, long mask_nativeObj, int dtype);
-    private static native void subtract_4(long src1_nativeObj, double src2_val0, double src2_val1, double src2_val2, double src2_val3, long dst_nativeObj, long mask_nativeObj);
-    private static native void subtract_5(long src1_nativeObj, double src2_val0, double src2_val1, double src2_val2, double src2_val3, long dst_nativeObj);
-
-    // C++:  void multiply(Mat src1, Scalar src2, Mat& dst, double scale = 1, int dtype = -1)
-    private static native void multiply_0(long src1_nativeObj, double src2_val0, double src2_val1, double src2_val2, double src2_val3, long dst_nativeObj, double scale, int dtype);
-    private static native void multiply_1(long src1_nativeObj, double src2_val0, double src2_val1, double src2_val2, double src2_val3, long dst_nativeObj, double scale);
-    private static native void multiply_2(long src1_nativeObj, double src2_val0, double src2_val1, double src2_val2, double src2_val3, long dst_nativeObj);
-
-    // C++:  void divide(Mat src1, Scalar src2, Mat& dst, double scale = 1, int dtype = -1)
-    private static native void divide_0(long src1_nativeObj, double src2_val0, double src2_val1, double src2_val2, double src2_val3, long dst_nativeObj, double scale, int dtype);
-    private static native void divide_1(long src1_nativeObj, double src2_val0, double src2_val1, double src2_val2, double src2_val3, long dst_nativeObj, double scale);
-    private static native void divide_2(long src1_nativeObj, double src2_val0, double src2_val1, double src2_val2, double src2_val3, long dst_nativeObj);
-
-    // C++:  void compare(Mat src1, Scalar src2, Mat& dst, int cmpop)
-    private static native void compare_0(long src1_nativeObj, double src2_val0, double src2_val1, double src2_val2, double src2_val3, long dst_nativeObj, int cmpop);
-
-    // C++:  void min(Mat src1, Scalar src2, Mat& dst)
-    private static native void min_0(long src1_nativeObj, double src2_val0, double src2_val1, double src2_val2, double src2_val3, long dst_nativeObj);
-
-    // C++:  int64 getTickCount()
-    private static native long getTickCount_0();
-
-    // C++:  double getTickFrequency()
-    private static native double getTickFrequency_0();
-
-    // C++:  String getBuildInformation()
-    private static native String getBuildInformation_0();
-
-    // C++:  void exp(Mat src, Mat& dst)
-    private static native void exp_0(long src_nativeObj, long dst_nativeObj);
-
-    // C++:  void log(Mat src, Mat& dst)
-    private static native void log_0(long src_nativeObj, long dst_nativeObj);
-
-    // C++:  void polarToCart(Mat magnitude, Mat angle, Mat& x, Mat& y, bool angleInDegrees = false)
-    private static native void polarToCart_0(long magnitude_nativeObj, long angle_nativeObj, long x_nativeObj, long y_nativeObj, boolean angleInDegrees);
-    private static native void polarToCart_1(long magnitude_nativeObj, long angle_nativeObj, long x_nativeObj, long y_nativeObj);
-
-    // C++:  void cartToPolar(Mat x, Mat y, Mat& magnitude, Mat& angle, bool angleInDegrees = false)
-    private static native void cartToPolar_0(long x_nativeObj, long y_nativeObj, long magnitude_nativeObj, long angle_nativeObj, boolean angleInDegrees);
-    private static native void cartToPolar_1(long x_nativeObj, long y_nativeObj, long magnitude_nativeObj, long angle_nativeObj);
-
-    // C++:  void phase(Mat x, Mat y, Mat& angle, bool angleInDegrees = false)
-    private static native void phase_0(long x_nativeObj, long y_nativeObj, long angle_nativeObj, boolean angleInDegrees);
-    private static native void phase_1(long x_nativeObj, long y_nativeObj, long angle_nativeObj);
-
-    // C++:  void magnitude(Mat x, Mat y, Mat& magnitude)
-    private static native void magnitude_0(long x_nativeObj, long y_nativeObj, long magnitude_nativeObj);
-
-    // C++:  bool checkRange(Mat a, bool quiet = true,  _hidden_ * pos = 0, double minVal = -DBL_MAX, double maxVal = DBL_MAX)
-    private static native boolean checkRange_0(long a_nativeObj, boolean quiet, double minVal, double maxVal);
-    private static native boolean checkRange_1(long a_nativeObj);
-
-    // C++:  void patchNaNs(Mat& a, double val = 0)
-    private static native void patchNaNs_0(long a_nativeObj, double val);
-    private static native void patchNaNs_1(long a_nativeObj);
-
-    // C++:  void gemm(Mat src1, Mat src2, double alpha, Mat src3, double beta, Mat& dst, int flags = 0)
-    private static native void gemm_0(long src1_nativeObj, long src2_nativeObj, double alpha, long src3_nativeObj, double beta, long dst_nativeObj, int flags);
-    private static native void gemm_1(long src1_nativeObj, long src2_nativeObj, double alpha, long src3_nativeObj, double beta, long dst_nativeObj);
-
-    // C++:  int64 getCPUTickCount()
-    private static native long getCPUTickCount_0();
-
-    // C++:  float cubeRoot(float val)
-    private static native float cubeRoot_0(float val);
-
-    // C++:  float fastAtan2(float y, float x)
-    private static native float fastAtan2_0(float y, float x);
-
-    // C++:  void hconcat(vector_Mat src, Mat& dst)
-    private static native void hconcat_0(long src_mat_nativeObj, long dst_nativeObj);
-
-    // C++:  void vconcat(vector_Mat src, Mat& dst)
-    private static native void vconcat_0(long src_mat_nativeObj, long dst_nativeObj);
-
-    // C++:  void bitwise_and(Mat src1, Mat src2, Mat& dst, Mat mask = Mat())
-    private static native void bitwise_and_0(long src1_nativeObj, long src2_nativeObj, long dst_nativeObj, long mask_nativeObj);
-    private static native void bitwise_and_1(long src1_nativeObj, long src2_nativeObj, long dst_nativeObj);
-
-    // C++:  void bitwise_or(Mat src1, Mat src2, Mat& dst, Mat mask = Mat())
-    private static native void bitwise_or_0(long src1_nativeObj, long src2_nativeObj, long dst_nativeObj, long mask_nativeObj);
-    private static native void bitwise_or_1(long src1_nativeObj, long src2_nativeObj, long dst_nativeObj);
-
-    // C++:  void bitwise_xor(Mat src1, Mat src2, Mat& dst, Mat mask = Mat())
-    private static native void bitwise_xor_0(long src1_nativeObj, long src2_nativeObj, long dst_nativeObj, long mask_nativeObj);
-    private static native void bitwise_xor_1(long src1_nativeObj, long src2_nativeObj, long dst_nativeObj);
-
-    // C++:  void bitwise_not(Mat src, Mat& dst, Mat mask = Mat())
-    private static native void bitwise_not_0(long src_nativeObj, long dst_nativeObj, long mask_nativeObj);
-    private static native void bitwise_not_1(long src_nativeObj, long dst_nativeObj);
-
-    // C++:  void absdiff(Mat src1, Mat src2, Mat& dst)
-    private static native void absdiff_1(long src1_nativeObj, long src2_nativeObj, long dst_nativeObj);
-
-    // C++:  void inRange(Mat src, Scalar lowerb, Scalar upperb, Mat& dst)
-    private static native void inRange_0(long src_nativeObj, double lowerb_val0, double lowerb_val1, double lowerb_val2, double lowerb_val3, double upperb_val0, double upperb_val1, double upperb_val2, double upperb_val3, long dst_nativeObj);
-
-    // C++:  void compare(Mat src1, Mat src2, Mat& dst, int cmpop)
-    private static native void compare_1(long src1_nativeObj, long src2_nativeObj, long dst_nativeObj, int cmpop);
-
-    // C++:  void min(Mat src1, Mat src2, Mat& dst)
-    private static native void min_1(long src1_nativeObj, long src2_nativeObj, long dst_nativeObj);
-
-    // C++:  void max(Mat src1, Mat src2, Mat& dst)
-    private static native void max_1(long src1_nativeObj, long src2_nativeObj, long dst_nativeObj);
-
-    // C++:  void sqrt(Mat src, Mat& dst)
-    private static native void sqrt_0(long src_nativeObj, long dst_nativeObj);
-
-    // C++:  void pow(Mat src, double power, Mat& dst)
-    private static native void pow_0(long src_nativeObj, double power, long dst_nativeObj);
-
-    // C++:  int borderInterpolate(int p, int len, int borderType)
-    private static native int borderInterpolate_0(int p, int len, int borderType);
-
     // C++:  void copyMakeBorder(Mat src, Mat& dst, int top, int bottom, int left, int right, int borderType, Scalar value = Scalar())
     private static native void copyMakeBorder_0(long src_nativeObj, long dst_nativeObj, int top, int bottom, int left, int right, int borderType, double value_val0, double value_val1, double value_val2, double value_val3);
     private static native void copyMakeBorder_1(long src_nativeObj, long dst_nativeObj, int top, int bottom, int left, int right, int borderType);
@@ -2470,6 +2494,11 @@ public class Core {
     private static native void add_3(long src1_nativeObj, long src2_nativeObj, long dst_nativeObj, long mask_nativeObj, int dtype);
     private static native void add_4(long src1_nativeObj, long src2_nativeObj, long dst_nativeObj, long mask_nativeObj);
     private static native void add_5(long src1_nativeObj, long src2_nativeObj, long dst_nativeObj);
+
+    // C++:  void subtract(Mat src1, Mat src2, Mat& dst, Mat mask = Mat(), int dtype = -1)
+    private static native void subtract_3(long src1_nativeObj, long src2_nativeObj, long dst_nativeObj, long mask_nativeObj, int dtype);
+    private static native void subtract_4(long src1_nativeObj, long src2_nativeObj, long dst_nativeObj, long mask_nativeObj);
+    private static native void subtract_5(long src1_nativeObj, long src2_nativeObj, long dst_nativeObj);
 
     // C++:  void multiply(Mat src1, Mat src2, Mat& dst, double scale = 1, int dtype = -1)
     private static native void multiply_3(long src1_nativeObj, long src2_nativeObj, long dst_nativeObj, double scale, int dtype);
@@ -2496,25 +2525,22 @@ public class Core {
     private static native void convertScaleAbs_0(long src_nativeObj, long dst_nativeObj, double alpha, double beta);
     private static native void convertScaleAbs_1(long src_nativeObj, long dst_nativeObj);
 
-    // C++:  void LUT(Mat src, Mat lut, Mat& dst)
-    private static native void LUT_0(long src_nativeObj, long lut_nativeObj, long dst_nativeObj);
-
     // C++:  Scalar sum(Mat src)
     private static native double[] sumElems_0(long src_nativeObj);
-
-    // C++:  int countNonZero(Mat src)
-    private static native int countNonZero_0(long src_nativeObj);
 
     // C++:  void findNonZero(Mat src, Mat& idx)
     private static native void findNonZero_0(long src_nativeObj, long idx_nativeObj);
 
-    // C++:  void meanStdDev(Mat src, vector_double& mean, vector_double& stddev, Mat mask = Mat())
-    private static native void meanStdDev_0(long src_nativeObj, long mean_mat_nativeObj, long stddev_mat_nativeObj, long mask_nativeObj);
-    private static native void meanStdDev_1(long src_nativeObj, long mean_mat_nativeObj, long stddev_mat_nativeObj);
+    // C++:  int countNonZero(Mat src)
+    private static native int countNonZero_0(long src_nativeObj);
 
     // C++:  Scalar mean(Mat src, Mat mask = Mat())
     private static native double[] mean_0(long src_nativeObj, long mask_nativeObj);
     private static native double[] mean_1(long src_nativeObj);
+
+    // C++:  void meanStdDev(Mat src, vector_double& mean, vector_double& stddev, Mat mask = Mat())
+    private static native void meanStdDev_0(long src_nativeObj, long mean_mat_nativeObj, long stddev_mat_nativeObj, long mask_nativeObj);
+    private static native void meanStdDev_1(long src_nativeObj, long mean_mat_nativeObj, long stddev_mat_nativeObj);
 
     // C++:  double norm(Mat src1, int normType = NORM_L2, Mat mask = Mat())
     private static native double norm_0(long src1_nativeObj, int normType, long mask_nativeObj);
@@ -2534,11 +2560,36 @@ public class Core {
     private static native void batchDistance_1(long src1_nativeObj, long src2_nativeObj, long dist_nativeObj, int dtype, long nidx_nativeObj, int normType, int K);
     private static native void batchDistance_2(long src1_nativeObj, long src2_nativeObj, long dist_nativeObj, int dtype, long nidx_nativeObj);
 
-    // C++:  void normalize(Mat src, Mat& dst, double alpha = 1, double beta = 0, int norm_type = NORM_L2, int dtype = -1, Mat mask = Mat())
-    private static native void normalize_0(long src_nativeObj, long dst_nativeObj, double alpha, double beta, int norm_type, int dtype, long mask_nativeObj);
-    private static native void normalize_1(long src_nativeObj, long dst_nativeObj, double alpha, double beta, int norm_type, int dtype);
-    private static native void normalize_2(long src_nativeObj, long dst_nativeObj, double alpha, double beta, int norm_type);
-    private static native void normalize_3(long src_nativeObj, long dst_nativeObj);
+    // C++:  float cubeRoot(float val)
+    private static native float cubeRoot_0(float val);
+
+    // C++:  float fastAtan2(float y, float x)
+    private static native float fastAtan2_0(float y, float x);
+
+    // C++:  void reduce(Mat src, Mat& dst, int dim, int rtype, int dtype = -1)
+    private static native void reduce_0(long src_nativeObj, long dst_nativeObj, int dim, int rtype, int dtype);
+    private static native void reduce_1(long src_nativeObj, long dst_nativeObj, int dim, int rtype);
+
+    // C++:  void merge(vector_Mat mv, Mat& dst)
+    private static native void merge_0(long mv_mat_nativeObj, long dst_nativeObj);
+
+    // C++:  void split(Mat m, vector_Mat& mv)
+    private static native void split_0(long m_nativeObj, long mv_mat_nativeObj);
+
+    // C++:  void mixChannels(vector_Mat src, vector_Mat dst, vector_int fromTo)
+    private static native void mixChannels_0(long src_mat_nativeObj, long dst_mat_nativeObj, long fromTo_mat_nativeObj);
+
+    // C++:  void extractChannel(Mat src, Mat& dst, int coi)
+    private static native void extractChannel_0(long src_nativeObj, long dst_nativeObj, int coi);
+
+    // C++:  void insertChannel(Mat src, Mat& dst, int coi)
+    private static native void insertChannel_0(long src_nativeObj, long dst_nativeObj, int coi);
+
+    // C++:  void LUT(Mat src, Mat lut, Mat& dst)
+    private static native void LUT_0(long src_nativeObj, long lut_nativeObj, long dst_nativeObj);
+
+    // C++:  void setNumThreads(int nthreads)
+    private static native void setNumThreads_0(int nthreads);
     private static native double[] n_minMaxLocManual(long src_nativeObj, long mask_nativeObj);
 
 }

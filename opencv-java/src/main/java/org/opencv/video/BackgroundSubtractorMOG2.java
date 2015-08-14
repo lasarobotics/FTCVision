@@ -14,6 +14,132 @@ public class BackgroundSubtractorMOG2 extends BackgroundSubtractor {
 
 
     //
+    // C++:  void setNMixtures(int nmixtures)
+    //
+
+    //javadoc: BackgroundSubtractorMOG2::setNMixtures(nmixtures)
+    public  void setNMixtures(int nmixtures)
+    {
+        
+        setNMixtures_0(nativeObj, nmixtures);
+        
+        return;
+    }
+
+
+    //
+    // C++:  double getBackgroundRatio()
+    //
+
+    //javadoc: BackgroundSubtractorMOG2::getBackgroundRatio()
+    public  double getBackgroundRatio()
+    {
+        
+        double retVal = getBackgroundRatio_0(nativeObj);
+        
+        return retVal;
+    }
+
+
+    //
+    // C++:  void setBackgroundRatio(double ratio)
+    //
+
+    //javadoc: BackgroundSubtractorMOG2::setBackgroundRatio(ratio)
+    public  void setBackgroundRatio(double ratio)
+    {
+        
+        setBackgroundRatio_0(nativeObj, ratio);
+        
+        return;
+    }
+
+
+    //
+    // C++:  double getVarThreshold()
+    //
+
+    //javadoc: BackgroundSubtractorMOG2::getVarThreshold()
+    public  double getVarThreshold()
+    {
+        
+        double retVal = getVarThreshold_0(nativeObj);
+        
+        return retVal;
+    }
+
+
+    //
+    // C++:  void setVarThreshold(double varThreshold)
+    //
+
+    //javadoc: BackgroundSubtractorMOG2::setVarThreshold(varThreshold)
+    public  void setVarThreshold(double varThreshold)
+    {
+        
+        setVarThreshold_0(nativeObj, varThreshold);
+        
+        return;
+    }
+
+
+    //
+    // C++:  double getVarThresholdGen()
+    //
+
+    //javadoc: BackgroundSubtractorMOG2::getVarThresholdGen()
+    public  double getVarThresholdGen()
+    {
+        
+        double retVal = getVarThresholdGen_0(nativeObj);
+        
+        return retVal;
+    }
+
+
+    //
+    // C++:  void setVarThresholdGen(double varThresholdGen)
+    //
+
+    //javadoc: BackgroundSubtractorMOG2::setVarThresholdGen(varThresholdGen)
+    public  void setVarThresholdGen(double varThresholdGen)
+    {
+        
+        setVarThresholdGen_0(nativeObj, varThresholdGen);
+        
+        return;
+    }
+
+
+    //
+    // C++:  double getVarInit()
+    //
+
+    //javadoc: BackgroundSubtractorMOG2::getVarInit()
+    public  double getVarInit()
+    {
+        
+        double retVal = getVarInit_0(nativeObj);
+        
+        return retVal;
+    }
+
+
+    //
+    // C++:  void setVarInit(double varInit)
+    //
+
+    //javadoc: BackgroundSubtractorMOG2::setVarInit(varInit)
+    public  void setVarInit(double varInit)
+    {
+        
+        setVarInit_0(nativeObj, varInit);
+        
+        return;
+    }
+
+
+    //
     // C++:  double getVarMin()
     //
 
@@ -223,138 +349,39 @@ public class BackgroundSubtractorMOG2 extends BackgroundSubtractor {
     }
 
 
-    //
-    // C++:  void setNMixtures(int nmixtures)
-    //
-
-    //javadoc: BackgroundSubtractorMOG2::setNMixtures(nmixtures)
-    public  void setNMixtures(int nmixtures)
-    {
-        
-        setNMixtures_0(nativeObj, nmixtures);
-        
-        return;
-    }
-
-
-    //
-    // C++:  double getBackgroundRatio()
-    //
-
-    //javadoc: BackgroundSubtractorMOG2::getBackgroundRatio()
-    public  double getBackgroundRatio()
-    {
-        
-        double retVal = getBackgroundRatio_0(nativeObj);
-        
-        return retVal;
-    }
-
-
-    //
-    // C++:  void setBackgroundRatio(double ratio)
-    //
-
-    //javadoc: BackgroundSubtractorMOG2::setBackgroundRatio(ratio)
-    public  void setBackgroundRatio(double ratio)
-    {
-        
-        setBackgroundRatio_0(nativeObj, ratio);
-        
-        return;
-    }
-
-
-    //
-    // C++:  double getVarThreshold()
-    //
-
-    //javadoc: BackgroundSubtractorMOG2::getVarThreshold()
-    public  double getVarThreshold()
-    {
-        
-        double retVal = getVarThreshold_0(nativeObj);
-        
-        return retVal;
-    }
-
-
-    //
-    // C++:  void setVarThreshold(double varThreshold)
-    //
-
-    //javadoc: BackgroundSubtractorMOG2::setVarThreshold(varThreshold)
-    public  void setVarThreshold(double varThreshold)
-    {
-        
-        setVarThreshold_0(nativeObj, varThreshold);
-        
-        return;
-    }
-
-
-    //
-    // C++:  double getVarThresholdGen()
-    //
-
-    //javadoc: BackgroundSubtractorMOG2::getVarThresholdGen()
-    public  double getVarThresholdGen()
-    {
-        
-        double retVal = getVarThresholdGen_0(nativeObj);
-        
-        return retVal;
-    }
-
-
-    //
-    // C++:  void setVarThresholdGen(double varThresholdGen)
-    //
-
-    //javadoc: BackgroundSubtractorMOG2::setVarThresholdGen(varThresholdGen)
-    public  void setVarThresholdGen(double varThresholdGen)
-    {
-        
-        setVarThresholdGen_0(nativeObj, varThresholdGen);
-        
-        return;
-    }
-
-
-    //
-    // C++:  double getVarInit()
-    //
-
-    //javadoc: BackgroundSubtractorMOG2::getVarInit()
-    public  double getVarInit()
-    {
-        
-        double retVal = getVarInit_0(nativeObj);
-        
-        return retVal;
-    }
-
-
-    //
-    // C++:  void setVarInit(double varInit)
-    //
-
-    //javadoc: BackgroundSubtractorMOG2::setVarInit(varInit)
-    public  void setVarInit(double varInit)
-    {
-        
-        setVarInit_0(nativeObj, varInit);
-        
-        return;
-    }
-
-
     @Override
     protected void finalize() throws Throwable {
         delete(nativeObj);
     }
 
 
+
+    // C++:  void setNMixtures(int nmixtures)
+    private static native void setNMixtures_0(long nativeObj, int nmixtures);
+
+    // C++:  double getBackgroundRatio()
+    private static native double getBackgroundRatio_0(long nativeObj);
+
+    // C++:  void setBackgroundRatio(double ratio)
+    private static native void setBackgroundRatio_0(long nativeObj, double ratio);
+
+    // C++:  double getVarThreshold()
+    private static native double getVarThreshold_0(long nativeObj);
+
+    // C++:  void setVarThreshold(double varThreshold)
+    private static native void setVarThreshold_0(long nativeObj, double varThreshold);
+
+    // C++:  double getVarThresholdGen()
+    private static native double getVarThresholdGen_0(long nativeObj);
+
+    // C++:  void setVarThresholdGen(double varThresholdGen)
+    private static native void setVarThresholdGen_0(long nativeObj, double varThresholdGen);
+
+    // C++:  double getVarInit()
+    private static native double getVarInit_0(long nativeObj);
+
+    // C++:  void setVarInit(double varInit)
+    private static native void setVarInit_0(long nativeObj, double varInit);
 
     // C++:  double getVarMin()
     private static native double getVarMin_0(long nativeObj);
@@ -400,33 +427,6 @@ public class BackgroundSubtractorMOG2 extends BackgroundSubtractor {
 
     // C++:  int getNMixtures()
     private static native int getNMixtures_0(long nativeObj);
-
-    // C++:  void setNMixtures(int nmixtures)
-    private static native void setNMixtures_0(long nativeObj, int nmixtures);
-
-    // C++:  double getBackgroundRatio()
-    private static native double getBackgroundRatio_0(long nativeObj);
-
-    // C++:  void setBackgroundRatio(double ratio)
-    private static native void setBackgroundRatio_0(long nativeObj, double ratio);
-
-    // C++:  double getVarThreshold()
-    private static native double getVarThreshold_0(long nativeObj);
-
-    // C++:  void setVarThreshold(double varThreshold)
-    private static native void setVarThreshold_0(long nativeObj, double varThreshold);
-
-    // C++:  double getVarThresholdGen()
-    private static native double getVarThresholdGen_0(long nativeObj);
-
-    // C++:  void setVarThresholdGen(double varThresholdGen)
-    private static native void setVarThresholdGen_0(long nativeObj, double varThresholdGen);
-
-    // C++:  double getVarInit()
-    private static native double getVarInit_0(long nativeObj);
-
-    // C++:  void setVarInit(double varInit)
-    private static native void setVarInit_0(long nativeObj, double varInit);
 
     // native support for java finalize()
     private static native void delete(long nativeObj);

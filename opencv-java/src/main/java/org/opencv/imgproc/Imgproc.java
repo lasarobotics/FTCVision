@@ -422,1148 +422,6 @@ public class Imgproc {
 
 
     //
-    // C++:  void ellipse2Poly(Point center, Size axes, int angle, int arcStart, int arcEnd, int delta, vector_Point& pts)
-    //
-
-    //javadoc: ellipse2Poly(center, axes, angle, arcStart, arcEnd, delta, pts)
-    public static void ellipse2Poly(Point center, Size axes, int angle, int arcStart, int arcEnd, int delta, MatOfPoint pts)
-    {
-        Mat pts_mat = pts;
-        ellipse2Poly_0(center.x, center.y, axes.width, axes.height, angle, arcStart, arcEnd, delta, pts_mat.nativeObj);
-        
-        return;
-    }
-
-
-    //
-    // C++:  void putText(Mat& img, String text, Point org, int fontFace, double fontScale, Scalar color, int thickness = 1, int lineType = LINE_8, bool bottomLeftOrigin = false)
-    //
-
-    //javadoc: putText(img, text, org, fontFace, fontScale, color, thickness, lineType, bottomLeftOrigin)
-    public static void putText(Mat img, String text, Point org, int fontFace, double fontScale, Scalar color, int thickness, int lineType, boolean bottomLeftOrigin)
-    {
-        
-        putText_0(img.nativeObj, text, org.x, org.y, fontFace, fontScale, color.val[0], color.val[1], color.val[2], color.val[3], thickness, lineType, bottomLeftOrigin);
-        
-        return;
-    }
-
-    //javadoc: putText(img, text, org, fontFace, fontScale, color, thickness)
-    public static void putText(Mat img, String text, Point org, int fontFace, double fontScale, Scalar color, int thickness)
-    {
-        
-        putText_1(img.nativeObj, text, org.x, org.y, fontFace, fontScale, color.val[0], color.val[1], color.val[2], color.val[3], thickness);
-        
-        return;
-    }
-
-    //javadoc: putText(img, text, org, fontFace, fontScale, color)
-    public static void putText(Mat img, String text, Point org, int fontFace, double fontScale, Scalar color)
-    {
-        
-        putText_2(img.nativeObj, text, org.x, org.y, fontFace, fontScale, color.val[0], color.val[1], color.val[2], color.val[3]);
-        
-        return;
-    }
-
-
-    //
-    // C++:  void ellipse(Mat& img, RotatedRect box, Scalar color, int thickness = 1, int lineType = LINE_8)
-    //
-
-    //javadoc: ellipse(img, box, color, thickness, lineType)
-    public static void ellipse(Mat img, RotatedRect box, Scalar color, int thickness, int lineType)
-    {
-        
-        ellipse_0(img.nativeObj, box.center.x, box.center.y, box.size.width, box.size.height, box.angle, color.val[0], color.val[1], color.val[2], color.val[3], thickness, lineType);
-        
-        return;
-    }
-
-    //javadoc: ellipse(img, box, color, thickness)
-    public static void ellipse(Mat img, RotatedRect box, Scalar color, int thickness)
-    {
-        
-        ellipse_1(img.nativeObj, box.center.x, box.center.y, box.size.width, box.size.height, box.angle, color.val[0], color.val[1], color.val[2], color.val[3], thickness);
-        
-        return;
-    }
-
-    //javadoc: ellipse(img, box, color)
-    public static void ellipse(Mat img, RotatedRect box, Scalar color)
-    {
-        
-        ellipse_2(img.nativeObj, box.center.x, box.center.y, box.size.width, box.size.height, box.angle, color.val[0], color.val[1], color.val[2], color.val[3]);
-        
-        return;
-    }
-
-
-    //
-    // C++:  void fillConvexPoly(Mat& img, vector_Point points, Scalar color, int lineType = LINE_8, int shift = 0)
-    //
-
-    //javadoc: fillConvexPoly(img, points, color, lineType, shift)
-    public static void fillConvexPoly(Mat img, MatOfPoint points, Scalar color, int lineType, int shift)
-    {
-        Mat points_mat = points;
-        fillConvexPoly_0(img.nativeObj, points_mat.nativeObj, color.val[0], color.val[1], color.val[2], color.val[3], lineType, shift);
-        
-        return;
-    }
-
-    //javadoc: fillConvexPoly(img, points, color)
-    public static void fillConvexPoly(Mat img, MatOfPoint points, Scalar color)
-    {
-        Mat points_mat = points;
-        fillConvexPoly_1(img.nativeObj, points_mat.nativeObj, color.val[0], color.val[1], color.val[2], color.val[3]);
-        
-        return;
-    }
-
-
-    //
-    // C++:  void fillPoly(Mat& img, vector_vector_Point pts, Scalar color, int lineType = LINE_8, int shift = 0, Point offset = Point())
-    //
-
-    //javadoc: fillPoly(img, pts, color, lineType, shift, offset)
-    public static void fillPoly(Mat img, List<MatOfPoint> pts, Scalar color, int lineType, int shift, Point offset)
-    {
-        List<Mat> pts_tmplm = new ArrayList<Mat>((pts != null) ? pts.size() : 0);
-        Mat pts_mat = Converters.vector_vector_Point_to_Mat(pts, pts_tmplm);
-        fillPoly_0(img.nativeObj, pts_mat.nativeObj, color.val[0], color.val[1], color.val[2], color.val[3], lineType, shift, offset.x, offset.y);
-        
-        return;
-    }
-
-    //javadoc: fillPoly(img, pts, color)
-    public static void fillPoly(Mat img, List<MatOfPoint> pts, Scalar color)
-    {
-        List<Mat> pts_tmplm = new ArrayList<Mat>((pts != null) ? pts.size() : 0);
-        Mat pts_mat = Converters.vector_vector_Point_to_Mat(pts, pts_tmplm);
-        fillPoly_1(img.nativeObj, pts_mat.nativeObj, color.val[0], color.val[1], color.val[2], color.val[3]);
-        
-        return;
-    }
-
-
-    //
-    // C++:  void polylines(Mat& img, vector_vector_Point pts, bool isClosed, Scalar color, int thickness = 1, int lineType = LINE_8, int shift = 0)
-    //
-
-    //javadoc: polylines(img, pts, isClosed, color, thickness, lineType, shift)
-    public static void polylines(Mat img, List<MatOfPoint> pts, boolean isClosed, Scalar color, int thickness, int lineType, int shift)
-    {
-        List<Mat> pts_tmplm = new ArrayList<Mat>((pts != null) ? pts.size() : 0);
-        Mat pts_mat = Converters.vector_vector_Point_to_Mat(pts, pts_tmplm);
-        polylines_0(img.nativeObj, pts_mat.nativeObj, isClosed, color.val[0], color.val[1], color.val[2], color.val[3], thickness, lineType, shift);
-        
-        return;
-    }
-
-    //javadoc: polylines(img, pts, isClosed, color, thickness)
-    public static void polylines(Mat img, List<MatOfPoint> pts, boolean isClosed, Scalar color, int thickness)
-    {
-        List<Mat> pts_tmplm = new ArrayList<Mat>((pts != null) ? pts.size() : 0);
-        Mat pts_mat = Converters.vector_vector_Point_to_Mat(pts, pts_tmplm);
-        polylines_1(img.nativeObj, pts_mat.nativeObj, isClosed, color.val[0], color.val[1], color.val[2], color.val[3], thickness);
-        
-        return;
-    }
-
-    //javadoc: polylines(img, pts, isClosed, color)
-    public static void polylines(Mat img, List<MatOfPoint> pts, boolean isClosed, Scalar color)
-    {
-        List<Mat> pts_tmplm = new ArrayList<Mat>((pts != null) ? pts.size() : 0);
-        Mat pts_mat = Converters.vector_vector_Point_to_Mat(pts, pts_tmplm);
-        polylines_2(img.nativeObj, pts_mat.nativeObj, isClosed, color.val[0], color.val[1], color.val[2], color.val[3]);
-        
-        return;
-    }
-
-
-    //
-    // C++:  void drawContours(Mat& image, vector_vector_Point contours, int contourIdx, Scalar color, int thickness = 1, int lineType = LINE_8, Mat hierarchy = Mat(), int maxLevel = INT_MAX, Point offset = Point())
-    //
-
-    //javadoc: drawContours(image, contours, contourIdx, color, thickness, lineType, hierarchy, maxLevel, offset)
-    public static void drawContours(Mat image, List<MatOfPoint> contours, int contourIdx, Scalar color, int thickness, int lineType, Mat hierarchy, int maxLevel, Point offset)
-    {
-        List<Mat> contours_tmplm = new ArrayList<Mat>((contours != null) ? contours.size() : 0);
-        Mat contours_mat = Converters.vector_vector_Point_to_Mat(contours, contours_tmplm);
-        drawContours_0(image.nativeObj, contours_mat.nativeObj, contourIdx, color.val[0], color.val[1], color.val[2], color.val[3], thickness, lineType, hierarchy.nativeObj, maxLevel, offset.x, offset.y);
-        
-        return;
-    }
-
-    //javadoc: drawContours(image, contours, contourIdx, color, thickness)
-    public static void drawContours(Mat image, List<MatOfPoint> contours, int contourIdx, Scalar color, int thickness)
-    {
-        List<Mat> contours_tmplm = new ArrayList<Mat>((contours != null) ? contours.size() : 0);
-        Mat contours_mat = Converters.vector_vector_Point_to_Mat(contours, contours_tmplm);
-        drawContours_1(image.nativeObj, contours_mat.nativeObj, contourIdx, color.val[0], color.val[1], color.val[2], color.val[3], thickness);
-        
-        return;
-    }
-
-    //javadoc: drawContours(image, contours, contourIdx, color)
-    public static void drawContours(Mat image, List<MatOfPoint> contours, int contourIdx, Scalar color)
-    {
-        List<Mat> contours_tmplm = new ArrayList<Mat>((contours != null) ? contours.size() : 0);
-        Mat contours_mat = Converters.vector_vector_Point_to_Mat(contours, contours_tmplm);
-        drawContours_2(image.nativeObj, contours_mat.nativeObj, contourIdx, color.val[0], color.val[1], color.val[2], color.val[3]);
-        
-        return;
-    }
-
-
-    //
-    // C++:  bool clipLine(Rect imgRect, Point& pt1, Point& pt2)
-    //
-
-    //javadoc: clipLine(imgRect, pt1, pt2)
-    public static boolean clipLine(Rect imgRect, Point pt1, Point pt2)
-    {
-        double[] pt1_out = new double[2];
-        double[] pt2_out = new double[2];
-        boolean retVal = clipLine_0(imgRect.x, imgRect.y, imgRect.width, imgRect.height, pt1.x, pt1.y, pt1_out, pt2.x, pt2.y, pt2_out);
-        if(pt1!=null){ pt1.x = pt1_out[0]; pt1.y = pt1_out[1]; } 
-        if(pt2!=null){ pt2.x = pt2_out[0]; pt2.y = pt2_out[1]; } 
-        return retVal;
-    }
-
-
-    //
-    // C++:  Ptr_LineSegmentDetector createLineSegmentDetector(int _refine = LSD_REFINE_STD, double _scale = 0.8, double _sigma_scale = 0.6, double _quant = 2.0, double _ang_th = 22.5, double _log_eps = 0, double _density_th = 0.7, int _n_bins = 1024)
-    //
-
-    //javadoc: createLineSegmentDetector(_refine, _scale, _sigma_scale, _quant, _ang_th, _log_eps, _density_th, _n_bins)
-    public static LineSegmentDetector createLineSegmentDetector(int _refine, double _scale, double _sigma_scale, double _quant, double _ang_th, double _log_eps, double _density_th, int _n_bins)
-    {
-        
-        LineSegmentDetector retVal = new LineSegmentDetector(createLineSegmentDetector_0(_refine, _scale, _sigma_scale, _quant, _ang_th, _log_eps, _density_th, _n_bins));
-        
-        return retVal;
-    }
-
-    //javadoc: createLineSegmentDetector()
-    public static LineSegmentDetector createLineSegmentDetector()
-    {
-        
-        LineSegmentDetector retVal = new LineSegmentDetector(createLineSegmentDetector_1());
-        
-        return retVal;
-    }
-
-
-    //
-    // C++:  Mat getGaussianKernel(int ksize, double sigma, int ktype = CV_64F)
-    //
-
-    //javadoc: getGaussianKernel(ksize, sigma, ktype)
-    public static Mat getGaussianKernel(int ksize, double sigma, int ktype)
-    {
-        
-        Mat retVal = new Mat(getGaussianKernel_0(ksize, sigma, ktype));
-        
-        return retVal;
-    }
-
-    //javadoc: getGaussianKernel(ksize, sigma)
-    public static Mat getGaussianKernel(int ksize, double sigma)
-    {
-        
-        Mat retVal = new Mat(getGaussianKernel_1(ksize, sigma));
-        
-        return retVal;
-    }
-
-
-    //
-    // C++:  void getDerivKernels(Mat& kx, Mat& ky, int dx, int dy, int ksize, bool normalize = false, int ktype = CV_32F)
-    //
-
-    //javadoc: getDerivKernels(kx, ky, dx, dy, ksize, normalize, ktype)
-    public static void getDerivKernels(Mat kx, Mat ky, int dx, int dy, int ksize, boolean normalize, int ktype)
-    {
-        
-        getDerivKernels_0(kx.nativeObj, ky.nativeObj, dx, dy, ksize, normalize, ktype);
-        
-        return;
-    }
-
-    //javadoc: getDerivKernels(kx, ky, dx, dy, ksize)
-    public static void getDerivKernels(Mat kx, Mat ky, int dx, int dy, int ksize)
-    {
-        
-        getDerivKernels_1(kx.nativeObj, ky.nativeObj, dx, dy, ksize);
-        
-        return;
-    }
-
-
-    //
-    // C++:  Mat getGaborKernel(Size ksize, double sigma, double theta, double lambd, double gamma, double psi = CV_PI*0.5, int ktype = CV_64F)
-    //
-
-    //javadoc: getGaborKernel(ksize, sigma, theta, lambd, gamma, psi, ktype)
-    public static Mat getGaborKernel(Size ksize, double sigma, double theta, double lambd, double gamma, double psi, int ktype)
-    {
-        
-        Mat retVal = new Mat(getGaborKernel_0(ksize.width, ksize.height, sigma, theta, lambd, gamma, psi, ktype));
-        
-        return retVal;
-    }
-
-    //javadoc: getGaborKernel(ksize, sigma, theta, lambd, gamma)
-    public static Mat getGaborKernel(Size ksize, double sigma, double theta, double lambd, double gamma)
-    {
-        
-        Mat retVal = new Mat(getGaborKernel_1(ksize.width, ksize.height, sigma, theta, lambd, gamma));
-        
-        return retVal;
-    }
-
-
-    //
-    // C++:  Mat getStructuringElement(int shape, Size ksize, Point anchor = Point(-1,-1))
-    //
-
-    //javadoc: getStructuringElement(shape, ksize, anchor)
-    public static Mat getStructuringElement(int shape, Size ksize, Point anchor)
-    {
-        
-        Mat retVal = new Mat(getStructuringElement_0(shape, ksize.width, ksize.height, anchor.x, anchor.y));
-        
-        return retVal;
-    }
-
-    //javadoc: getStructuringElement(shape, ksize)
-    public static Mat getStructuringElement(int shape, Size ksize)
-    {
-        
-        Mat retVal = new Mat(getStructuringElement_1(shape, ksize.width, ksize.height));
-        
-        return retVal;
-    }
-
-
-    //
-    // C++:  void medianBlur(Mat src, Mat& dst, int ksize)
-    //
-
-    //javadoc: medianBlur(src, dst, ksize)
-    public static void medianBlur(Mat src, Mat dst, int ksize)
-    {
-        
-        medianBlur_0(src.nativeObj, dst.nativeObj, ksize);
-        
-        return;
-    }
-
-
-    //
-    // C++:  void GaussianBlur(Mat src, Mat& dst, Size ksize, double sigmaX, double sigmaY = 0, int borderType = BORDER_DEFAULT)
-    //
-
-    //javadoc: GaussianBlur(src, dst, ksize, sigmaX, sigmaY, borderType)
-    public static void GaussianBlur(Mat src, Mat dst, Size ksize, double sigmaX, double sigmaY, int borderType)
-    {
-        
-        GaussianBlur_0(src.nativeObj, dst.nativeObj, ksize.width, ksize.height, sigmaX, sigmaY, borderType);
-        
-        return;
-    }
-
-    //javadoc: GaussianBlur(src, dst, ksize, sigmaX, sigmaY)
-    public static void GaussianBlur(Mat src, Mat dst, Size ksize, double sigmaX, double sigmaY)
-    {
-        
-        GaussianBlur_1(src.nativeObj, dst.nativeObj, ksize.width, ksize.height, sigmaX, sigmaY);
-        
-        return;
-    }
-
-    //javadoc: GaussianBlur(src, dst, ksize, sigmaX)
-    public static void GaussianBlur(Mat src, Mat dst, Size ksize, double sigmaX)
-    {
-        
-        GaussianBlur_2(src.nativeObj, dst.nativeObj, ksize.width, ksize.height, sigmaX);
-        
-        return;
-    }
-
-
-    //
-    // C++:  void bilateralFilter(Mat src, Mat& dst, int d, double sigmaColor, double sigmaSpace, int borderType = BORDER_DEFAULT)
-    //
-
-    //javadoc: bilateralFilter(src, dst, d, sigmaColor, sigmaSpace, borderType)
-    public static void bilateralFilter(Mat src, Mat dst, int d, double sigmaColor, double sigmaSpace, int borderType)
-    {
-        
-        bilateralFilter_0(src.nativeObj, dst.nativeObj, d, sigmaColor, sigmaSpace, borderType);
-        
-        return;
-    }
-
-    //javadoc: bilateralFilter(src, dst, d, sigmaColor, sigmaSpace)
-    public static void bilateralFilter(Mat src, Mat dst, int d, double sigmaColor, double sigmaSpace)
-    {
-        
-        bilateralFilter_1(src.nativeObj, dst.nativeObj, d, sigmaColor, sigmaSpace);
-        
-        return;
-    }
-
-
-    //
-    // C++:  void boxFilter(Mat src, Mat& dst, int ddepth, Size ksize, Point anchor = Point(-1,-1), bool normalize = true, int borderType = BORDER_DEFAULT)
-    //
-
-    //javadoc: boxFilter(src, dst, ddepth, ksize, anchor, normalize, borderType)
-    public static void boxFilter(Mat src, Mat dst, int ddepth, Size ksize, Point anchor, boolean normalize, int borderType)
-    {
-        
-        boxFilter_0(src.nativeObj, dst.nativeObj, ddepth, ksize.width, ksize.height, anchor.x, anchor.y, normalize, borderType);
-        
-        return;
-    }
-
-    //javadoc: boxFilter(src, dst, ddepth, ksize, anchor, normalize)
-    public static void boxFilter(Mat src, Mat dst, int ddepth, Size ksize, Point anchor, boolean normalize)
-    {
-        
-        boxFilter_1(src.nativeObj, dst.nativeObj, ddepth, ksize.width, ksize.height, anchor.x, anchor.y, normalize);
-        
-        return;
-    }
-
-    //javadoc: boxFilter(src, dst, ddepth, ksize)
-    public static void boxFilter(Mat src, Mat dst, int ddepth, Size ksize)
-    {
-        
-        boxFilter_2(src.nativeObj, dst.nativeObj, ddepth, ksize.width, ksize.height);
-        
-        return;
-    }
-
-
-    //
-    // C++:  void sqrBoxFilter(Mat _src, Mat& _dst, int ddepth, Size ksize, Point anchor = Point(-1, -1), bool normalize = true, int borderType = BORDER_DEFAULT)
-    //
-
-    //javadoc: sqrBoxFilter(_src, _dst, ddepth, ksize, anchor, normalize, borderType)
-    public static void sqrBoxFilter(Mat _src, Mat _dst, int ddepth, Size ksize, Point anchor, boolean normalize, int borderType)
-    {
-        
-        sqrBoxFilter_0(_src.nativeObj, _dst.nativeObj, ddepth, ksize.width, ksize.height, anchor.x, anchor.y, normalize, borderType);
-        
-        return;
-    }
-
-    //javadoc: sqrBoxFilter(_src, _dst, ddepth, ksize, anchor, normalize)
-    public static void sqrBoxFilter(Mat _src, Mat _dst, int ddepth, Size ksize, Point anchor, boolean normalize)
-    {
-        
-        sqrBoxFilter_1(_src.nativeObj, _dst.nativeObj, ddepth, ksize.width, ksize.height, anchor.x, anchor.y, normalize);
-        
-        return;
-    }
-
-    //javadoc: sqrBoxFilter(_src, _dst, ddepth, ksize)
-    public static void sqrBoxFilter(Mat _src, Mat _dst, int ddepth, Size ksize)
-    {
-        
-        sqrBoxFilter_2(_src.nativeObj, _dst.nativeObj, ddepth, ksize.width, ksize.height);
-        
-        return;
-    }
-
-
-    //
-    // C++:  void cornerMinEigenVal(Mat src, Mat& dst, int blockSize, int ksize = 3, int borderType = BORDER_DEFAULT)
-    //
-
-    //javadoc: cornerMinEigenVal(src, dst, blockSize, ksize, borderType)
-    public static void cornerMinEigenVal(Mat src, Mat dst, int blockSize, int ksize, int borderType)
-    {
-        
-        cornerMinEigenVal_0(src.nativeObj, dst.nativeObj, blockSize, ksize, borderType);
-        
-        return;
-    }
-
-    //javadoc: cornerMinEigenVal(src, dst, blockSize, ksize)
-    public static void cornerMinEigenVal(Mat src, Mat dst, int blockSize, int ksize)
-    {
-        
-        cornerMinEigenVal_1(src.nativeObj, dst.nativeObj, blockSize, ksize);
-        
-        return;
-    }
-
-    //javadoc: cornerMinEigenVal(src, dst, blockSize)
-    public static void cornerMinEigenVal(Mat src, Mat dst, int blockSize)
-    {
-        
-        cornerMinEigenVal_2(src.nativeObj, dst.nativeObj, blockSize);
-        
-        return;
-    }
-
-
-    //
-    // C++:  void cornerHarris(Mat src, Mat& dst, int blockSize, int ksize, double k, int borderType = BORDER_DEFAULT)
-    //
-
-    //javadoc: cornerHarris(src, dst, blockSize, ksize, k, borderType)
-    public static void cornerHarris(Mat src, Mat dst, int blockSize, int ksize, double k, int borderType)
-    {
-        
-        cornerHarris_0(src.nativeObj, dst.nativeObj, blockSize, ksize, k, borderType);
-        
-        return;
-    }
-
-    //javadoc: cornerHarris(src, dst, blockSize, ksize, k)
-    public static void cornerHarris(Mat src, Mat dst, int blockSize, int ksize, double k)
-    {
-        
-        cornerHarris_1(src.nativeObj, dst.nativeObj, blockSize, ksize, k);
-        
-        return;
-    }
-
-
-    //
-    // C++:  void cornerEigenValsAndVecs(Mat src, Mat& dst, int blockSize, int ksize, int borderType = BORDER_DEFAULT)
-    //
-
-    //javadoc: cornerEigenValsAndVecs(src, dst, blockSize, ksize, borderType)
-    public static void cornerEigenValsAndVecs(Mat src, Mat dst, int blockSize, int ksize, int borderType)
-    {
-        
-        cornerEigenValsAndVecs_0(src.nativeObj, dst.nativeObj, blockSize, ksize, borderType);
-        
-        return;
-    }
-
-    //javadoc: cornerEigenValsAndVecs(src, dst, blockSize, ksize)
-    public static void cornerEigenValsAndVecs(Mat src, Mat dst, int blockSize, int ksize)
-    {
-        
-        cornerEigenValsAndVecs_1(src.nativeObj, dst.nativeObj, blockSize, ksize);
-        
-        return;
-    }
-
-
-    //
-    // C++:  void preCornerDetect(Mat src, Mat& dst, int ksize, int borderType = BORDER_DEFAULT)
-    //
-
-    //javadoc: preCornerDetect(src, dst, ksize, borderType)
-    public static void preCornerDetect(Mat src, Mat dst, int ksize, int borderType)
-    {
-        
-        preCornerDetect_0(src.nativeObj, dst.nativeObj, ksize, borderType);
-        
-        return;
-    }
-
-    //javadoc: preCornerDetect(src, dst, ksize)
-    public static void preCornerDetect(Mat src, Mat dst, int ksize)
-    {
-        
-        preCornerDetect_1(src.nativeObj, dst.nativeObj, ksize);
-        
-        return;
-    }
-
-
-    //
-    // C++:  void cornerSubPix(Mat image, vector_Point2f& corners, Size winSize, Size zeroZone, TermCriteria criteria)
-    //
-
-    //javadoc: cornerSubPix(image, corners, winSize, zeroZone, criteria)
-    public static void cornerSubPix(Mat image, MatOfPoint2f corners, Size winSize, Size zeroZone, TermCriteria criteria)
-    {
-        Mat corners_mat = corners;
-        cornerSubPix_0(image.nativeObj, corners_mat.nativeObj, winSize.width, winSize.height, zeroZone.width, zeroZone.height, criteria.type, criteria.maxCount, criteria.epsilon);
-        
-        return;
-    }
-
-
-    //
-    // C++:  void goodFeaturesToTrack(Mat image, vector_Point& corners, int maxCorners, double qualityLevel, double minDistance, Mat mask = Mat(), int blockSize = 3, bool useHarrisDetector = false, double k = 0.04)
-    //
-
-    //javadoc: goodFeaturesToTrack(image, corners, maxCorners, qualityLevel, minDistance, mask, blockSize, useHarrisDetector, k)
-    public static void goodFeaturesToTrack(Mat image, MatOfPoint corners, int maxCorners, double qualityLevel, double minDistance, Mat mask, int blockSize, boolean useHarrisDetector, double k)
-    {
-        Mat corners_mat = corners;
-        goodFeaturesToTrack_0(image.nativeObj, corners_mat.nativeObj, maxCorners, qualityLevel, minDistance, mask.nativeObj, blockSize, useHarrisDetector, k);
-        
-        return;
-    }
-
-    //javadoc: goodFeaturesToTrack(image, corners, maxCorners, qualityLevel, minDistance)
-    public static void goodFeaturesToTrack(Mat image, MatOfPoint corners, int maxCorners, double qualityLevel, double minDistance)
-    {
-        Mat corners_mat = corners;
-        goodFeaturesToTrack_1(image.nativeObj, corners_mat.nativeObj, maxCorners, qualityLevel, minDistance);
-        
-        return;
-    }
-
-
-    //
-    // C++:  void HoughLines(Mat image, Mat& lines, double rho, double theta, int threshold, double srn = 0, double stn = 0, double min_theta = 0, double max_theta = CV_PI)
-    //
-
-    //javadoc: HoughLines(image, lines, rho, theta, threshold, srn, stn, min_theta, max_theta)
-    public static void HoughLines(Mat image, Mat lines, double rho, double theta, int threshold, double srn, double stn, double min_theta, double max_theta)
-    {
-        
-        HoughLines_0(image.nativeObj, lines.nativeObj, rho, theta, threshold, srn, stn, min_theta, max_theta);
-        
-        return;
-    }
-
-    //javadoc: HoughLines(image, lines, rho, theta, threshold)
-    public static void HoughLines(Mat image, Mat lines, double rho, double theta, int threshold)
-    {
-        
-        HoughLines_1(image.nativeObj, lines.nativeObj, rho, theta, threshold);
-        
-        return;
-    }
-
-
-    //
-    // C++:  void HoughLinesP(Mat image, Mat& lines, double rho, double theta, int threshold, double minLineLength = 0, double maxLineGap = 0)
-    //
-
-    //javadoc: HoughLinesP(image, lines, rho, theta, threshold, minLineLength, maxLineGap)
-    public static void HoughLinesP(Mat image, Mat lines, double rho, double theta, int threshold, double minLineLength, double maxLineGap)
-    {
-        
-        HoughLinesP_0(image.nativeObj, lines.nativeObj, rho, theta, threshold, minLineLength, maxLineGap);
-        
-        return;
-    }
-
-    //javadoc: HoughLinesP(image, lines, rho, theta, threshold)
-    public static void HoughLinesP(Mat image, Mat lines, double rho, double theta, int threshold)
-    {
-        
-        HoughLinesP_1(image.nativeObj, lines.nativeObj, rho, theta, threshold);
-        
-        return;
-    }
-
-
-    //
-    // C++:  void HoughCircles(Mat image, Mat& circles, int method, double dp, double minDist, double param1 = 100, double param2 = 100, int minRadius = 0, int maxRadius = 0)
-    //
-
-    //javadoc: HoughCircles(image, circles, method, dp, minDist, param1, param2, minRadius, maxRadius)
-    public static void HoughCircles(Mat image, Mat circles, int method, double dp, double minDist, double param1, double param2, int minRadius, int maxRadius)
-    {
-        
-        HoughCircles_0(image.nativeObj, circles.nativeObj, method, dp, minDist, param1, param2, minRadius, maxRadius);
-        
-        return;
-    }
-
-    //javadoc: HoughCircles(image, circles, method, dp, minDist)
-    public static void HoughCircles(Mat image, Mat circles, int method, double dp, double minDist)
-    {
-        
-        HoughCircles_1(image.nativeObj, circles.nativeObj, method, dp, minDist);
-        
-        return;
-    }
-
-
-    //
-    // C++:  void erode(Mat src, Mat& dst, Mat kernel, Point anchor = Point(-1,-1), int iterations = 1, int borderType = BORDER_CONSTANT, Scalar borderValue = morphologyDefaultBorderValue())
-    //
-
-    //javadoc: erode(src, dst, kernel, anchor, iterations, borderType, borderValue)
-    public static void erode(Mat src, Mat dst, Mat kernel, Point anchor, int iterations, int borderType, Scalar borderValue)
-    {
-        
-        erode_0(src.nativeObj, dst.nativeObj, kernel.nativeObj, anchor.x, anchor.y, iterations, borderType, borderValue.val[0], borderValue.val[1], borderValue.val[2], borderValue.val[3]);
-        
-        return;
-    }
-
-    //javadoc: erode(src, dst, kernel, anchor, iterations)
-    public static void erode(Mat src, Mat dst, Mat kernel, Point anchor, int iterations)
-    {
-        
-        erode_1(src.nativeObj, dst.nativeObj, kernel.nativeObj, anchor.x, anchor.y, iterations);
-        
-        return;
-    }
-
-    //javadoc: erode(src, dst, kernel)
-    public static void erode(Mat src, Mat dst, Mat kernel)
-    {
-        
-        erode_2(src.nativeObj, dst.nativeObj, kernel.nativeObj);
-        
-        return;
-    }
-
-
-    //
-    // C++:  void dilate(Mat src, Mat& dst, Mat kernel, Point anchor = Point(-1,-1), int iterations = 1, int borderType = BORDER_CONSTANT, Scalar borderValue = morphologyDefaultBorderValue())
-    //
-
-    //javadoc: dilate(src, dst, kernel, anchor, iterations, borderType, borderValue)
-    public static void dilate(Mat src, Mat dst, Mat kernel, Point anchor, int iterations, int borderType, Scalar borderValue)
-    {
-        
-        dilate_0(src.nativeObj, dst.nativeObj, kernel.nativeObj, anchor.x, anchor.y, iterations, borderType, borderValue.val[0], borderValue.val[1], borderValue.val[2], borderValue.val[3]);
-        
-        return;
-    }
-
-    //javadoc: dilate(src, dst, kernel, anchor, iterations)
-    public static void dilate(Mat src, Mat dst, Mat kernel, Point anchor, int iterations)
-    {
-        
-        dilate_1(src.nativeObj, dst.nativeObj, kernel.nativeObj, anchor.x, anchor.y, iterations);
-        
-        return;
-    }
-
-    //javadoc: dilate(src, dst, kernel)
-    public static void dilate(Mat src, Mat dst, Mat kernel)
-    {
-        
-        dilate_2(src.nativeObj, dst.nativeObj, kernel.nativeObj);
-        
-        return;
-    }
-
-
-    //
-    // C++:  void morphologyEx(Mat src, Mat& dst, int op, Mat kernel, Point anchor = Point(-1,-1), int iterations = 1, int borderType = BORDER_CONSTANT, Scalar borderValue = morphologyDefaultBorderValue())
-    //
-
-    //javadoc: morphologyEx(src, dst, op, kernel, anchor, iterations, borderType, borderValue)
-    public static void morphologyEx(Mat src, Mat dst, int op, Mat kernel, Point anchor, int iterations, int borderType, Scalar borderValue)
-    {
-        
-        morphologyEx_0(src.nativeObj, dst.nativeObj, op, kernel.nativeObj, anchor.x, anchor.y, iterations, borderType, borderValue.val[0], borderValue.val[1], borderValue.val[2], borderValue.val[3]);
-        
-        return;
-    }
-
-    //javadoc: morphologyEx(src, dst, op, kernel, anchor, iterations)
-    public static void morphologyEx(Mat src, Mat dst, int op, Mat kernel, Point anchor, int iterations)
-    {
-        
-        morphologyEx_1(src.nativeObj, dst.nativeObj, op, kernel.nativeObj, anchor.x, anchor.y, iterations);
-        
-        return;
-    }
-
-    //javadoc: morphologyEx(src, dst, op, kernel)
-    public static void morphologyEx(Mat src, Mat dst, int op, Mat kernel)
-    {
-        
-        morphologyEx_2(src.nativeObj, dst.nativeObj, op, kernel.nativeObj);
-        
-        return;
-    }
-
-
-    //
-    // C++:  void resize(Mat src, Mat& dst, Size dsize, double fx = 0, double fy = 0, int interpolation = INTER_LINEAR)
-    //
-
-    //javadoc: resize(src, dst, dsize, fx, fy, interpolation)
-    public static void resize(Mat src, Mat dst, Size dsize, double fx, double fy, int interpolation)
-    {
-        
-        resize_0(src.nativeObj, dst.nativeObj, dsize.width, dsize.height, fx, fy, interpolation);
-        
-        return;
-    }
-
-    //javadoc: resize(src, dst, dsize)
-    public static void resize(Mat src, Mat dst, Size dsize)
-    {
-        
-        resize_1(src.nativeObj, dst.nativeObj, dsize.width, dsize.height);
-        
-        return;
-    }
-
-
-    //
-    // C++:  void warpAffine(Mat src, Mat& dst, Mat M, Size dsize, int flags = INTER_LINEAR, int borderMode = BORDER_CONSTANT, Scalar borderValue = Scalar())
-    //
-
-    //javadoc: warpAffine(src, dst, M, dsize, flags, borderMode, borderValue)
-    public static void warpAffine(Mat src, Mat dst, Mat M, Size dsize, int flags, int borderMode, Scalar borderValue)
-    {
-        
-        warpAffine_0(src.nativeObj, dst.nativeObj, M.nativeObj, dsize.width, dsize.height, flags, borderMode, borderValue.val[0], borderValue.val[1], borderValue.val[2], borderValue.val[3]);
-        
-        return;
-    }
-
-    //javadoc: warpAffine(src, dst, M, dsize, flags)
-    public static void warpAffine(Mat src, Mat dst, Mat M, Size dsize, int flags)
-    {
-        
-        warpAffine_1(src.nativeObj, dst.nativeObj, M.nativeObj, dsize.width, dsize.height, flags);
-        
-        return;
-    }
-
-    //javadoc: warpAffine(src, dst, M, dsize)
-    public static void warpAffine(Mat src, Mat dst, Mat M, Size dsize)
-    {
-        
-        warpAffine_2(src.nativeObj, dst.nativeObj, M.nativeObj, dsize.width, dsize.height);
-        
-        return;
-    }
-
-
-    //
-    // C++:  void warpPerspective(Mat src, Mat& dst, Mat M, Size dsize, int flags = INTER_LINEAR, int borderMode = BORDER_CONSTANT, Scalar borderValue = Scalar())
-    //
-
-    //javadoc: warpPerspective(src, dst, M, dsize, flags, borderMode, borderValue)
-    public static void warpPerspective(Mat src, Mat dst, Mat M, Size dsize, int flags, int borderMode, Scalar borderValue)
-    {
-        
-        warpPerspective_0(src.nativeObj, dst.nativeObj, M.nativeObj, dsize.width, dsize.height, flags, borderMode, borderValue.val[0], borderValue.val[1], borderValue.val[2], borderValue.val[3]);
-        
-        return;
-    }
-
-    //javadoc: warpPerspective(src, dst, M, dsize, flags)
-    public static void warpPerspective(Mat src, Mat dst, Mat M, Size dsize, int flags)
-    {
-        
-        warpPerspective_1(src.nativeObj, dst.nativeObj, M.nativeObj, dsize.width, dsize.height, flags);
-        
-        return;
-    }
-
-    //javadoc: warpPerspective(src, dst, M, dsize)
-    public static void warpPerspective(Mat src, Mat dst, Mat M, Size dsize)
-    {
-        
-        warpPerspective_2(src.nativeObj, dst.nativeObj, M.nativeObj, dsize.width, dsize.height);
-        
-        return;
-    }
-
-
-    //
-    // C++:  void remap(Mat src, Mat& dst, Mat map1, Mat map2, int interpolation, int borderMode = BORDER_CONSTANT, Scalar borderValue = Scalar())
-    //
-
-    //javadoc: remap(src, dst, map1, map2, interpolation, borderMode, borderValue)
-    public static void remap(Mat src, Mat dst, Mat map1, Mat map2, int interpolation, int borderMode, Scalar borderValue)
-    {
-        
-        remap_0(src.nativeObj, dst.nativeObj, map1.nativeObj, map2.nativeObj, interpolation, borderMode, borderValue.val[0], borderValue.val[1], borderValue.val[2], borderValue.val[3]);
-        
-        return;
-    }
-
-    //javadoc: remap(src, dst, map1, map2, interpolation)
-    public static void remap(Mat src, Mat dst, Mat map1, Mat map2, int interpolation)
-    {
-        
-        remap_1(src.nativeObj, dst.nativeObj, map1.nativeObj, map2.nativeObj, interpolation);
-        
-        return;
-    }
-
-
-    //
-    // C++:  void convertMaps(Mat map1, Mat map2, Mat& dstmap1, Mat& dstmap2, int dstmap1type, bool nninterpolation = false)
-    //
-
-    //javadoc: convertMaps(map1, map2, dstmap1, dstmap2, dstmap1type, nninterpolation)
-    public static void convertMaps(Mat map1, Mat map2, Mat dstmap1, Mat dstmap2, int dstmap1type, boolean nninterpolation)
-    {
-        
-        convertMaps_0(map1.nativeObj, map2.nativeObj, dstmap1.nativeObj, dstmap2.nativeObj, dstmap1type, nninterpolation);
-        
-        return;
-    }
-
-    //javadoc: convertMaps(map1, map2, dstmap1, dstmap2, dstmap1type)
-    public static void convertMaps(Mat map1, Mat map2, Mat dstmap1, Mat dstmap2, int dstmap1type)
-    {
-        
-        convertMaps_1(map1.nativeObj, map2.nativeObj, dstmap1.nativeObj, dstmap2.nativeObj, dstmap1type);
-        
-        return;
-    }
-
-
-    //
-    // C++:  Mat getRotationMatrix2D(Point2f center, double angle, double scale)
-    //
-
-    //javadoc: getRotationMatrix2D(center, angle, scale)
-    public static Mat getRotationMatrix2D(Point center, double angle, double scale)
-    {
-        
-        Mat retVal = new Mat(getRotationMatrix2D_0(center.x, center.y, angle, scale));
-        
-        return retVal;
-    }
-
-
-    //
-    // C++:  void invertAffineTransform(Mat M, Mat& iM)
-    //
-
-    //javadoc: invertAffineTransform(M, iM)
-    public static void invertAffineTransform(Mat M, Mat iM)
-    {
-        
-        invertAffineTransform_0(M.nativeObj, iM.nativeObj);
-        
-        return;
-    }
-
-
-    //
-    // C++:  Mat getPerspectiveTransform(Mat src, Mat dst)
-    //
-
-    //javadoc: getPerspectiveTransform(src, dst)
-    public static Mat getPerspectiveTransform(Mat src, Mat dst)
-    {
-        
-        Mat retVal = new Mat(getPerspectiveTransform_0(src.nativeObj, dst.nativeObj));
-        
-        return retVal;
-    }
-
-
-    //
-    // C++:  Mat getAffineTransform(vector_Point2f src, vector_Point2f dst)
-    //
-
-    //javadoc: getAffineTransform(src, dst)
-    public static Mat getAffineTransform(MatOfPoint2f src, MatOfPoint2f dst)
-    {
-        Mat src_mat = src;
-        Mat dst_mat = dst;
-        Mat retVal = new Mat(getAffineTransform_0(src_mat.nativeObj, dst_mat.nativeObj));
-        
-        return retVal;
-    }
-
-
-    //
-    // C++:  void getRectSubPix(Mat image, Size patchSize, Point2f center, Mat& patch, int patchType = -1)
-    //
-
-    //javadoc: getRectSubPix(image, patchSize, center, patch, patchType)
-    public static void getRectSubPix(Mat image, Size patchSize, Point center, Mat patch, int patchType)
-    {
-        
-        getRectSubPix_0(image.nativeObj, patchSize.width, patchSize.height, center.x, center.y, patch.nativeObj, patchType);
-        
-        return;
-    }
-
-    //javadoc: getRectSubPix(image, patchSize, center, patch)
-    public static void getRectSubPix(Mat image, Size patchSize, Point center, Mat patch)
-    {
-        
-        getRectSubPix_1(image.nativeObj, patchSize.width, patchSize.height, center.x, center.y, patch.nativeObj);
-        
-        return;
-    }
-
-
-    //
-    // C++:  void logPolar(Mat src, Mat& dst, Point2f center, double M, int flags)
-    //
-
-    //javadoc: logPolar(src, dst, center, M, flags)
-    public static void logPolar(Mat src, Mat dst, Point center, double M, int flags)
-    {
-        
-        logPolar_0(src.nativeObj, dst.nativeObj, center.x, center.y, M, flags);
-        
-        return;
-    }
-
-
-    //
-    // C++:  void linearPolar(Mat src, Mat& dst, Point2f center, double maxRadius, int flags)
-    //
-
-    //javadoc: linearPolar(src, dst, center, maxRadius, flags)
-    public static void linearPolar(Mat src, Mat dst, Point center, double maxRadius, int flags)
-    {
-        
-        linearPolar_0(src.nativeObj, dst.nativeObj, center.x, center.y, maxRadius, flags);
-        
-        return;
-    }
-
-
-    //
-    // C++:  void adaptiveThreshold(Mat src, Mat& dst, double maxValue, int adaptiveMethod, int thresholdType, int blockSize, double C)
-    //
-
-    //javadoc: adaptiveThreshold(src, dst, maxValue, adaptiveMethod, thresholdType, blockSize, C)
-    public static void adaptiveThreshold(Mat src, Mat dst, double maxValue, int adaptiveMethod, int thresholdType, int blockSize, double C)
-    {
-        
-        adaptiveThreshold_0(src.nativeObj, dst.nativeObj, maxValue, adaptiveMethod, thresholdType, blockSize, C);
-        
-        return;
-    }
-
-
-    //
-    // C++:  void pyrDown(Mat src, Mat& dst, Size dstsize = Size(), int borderType = BORDER_DEFAULT)
-    //
-
-    //javadoc: pyrDown(src, dst, dstsize, borderType)
-    public static void pyrDown(Mat src, Mat dst, Size dstsize, int borderType)
-    {
-        
-        pyrDown_0(src.nativeObj, dst.nativeObj, dstsize.width, dstsize.height, borderType);
-        
-        return;
-    }
-
-    //javadoc: pyrDown(src, dst, dstsize)
-    public static void pyrDown(Mat src, Mat dst, Size dstsize)
-    {
-        
-        pyrDown_1(src.nativeObj, dst.nativeObj, dstsize.width, dstsize.height);
-        
-        return;
-    }
-
-    //javadoc: pyrDown(src, dst)
-    public static void pyrDown(Mat src, Mat dst)
-    {
-        
-        pyrDown_2(src.nativeObj, dst.nativeObj);
-        
-        return;
-    }
-
-
-    //
-    // C++:  void pyrUp(Mat src, Mat& dst, Size dstsize = Size(), int borderType = BORDER_DEFAULT)
-    //
-
-    //javadoc: pyrUp(src, dst, dstsize, borderType)
-    public static void pyrUp(Mat src, Mat dst, Size dstsize, int borderType)
-    {
-        
-        pyrUp_0(src.nativeObj, dst.nativeObj, dstsize.width, dstsize.height, borderType);
-        
-        return;
-    }
-
-    //javadoc: pyrUp(src, dst, dstsize)
-    public static void pyrUp(Mat src, Mat dst, Size dstsize)
-    {
-        
-        pyrUp_1(src.nativeObj, dst.nativeObj, dstsize.width, dstsize.height);
-        
-        return;
-    }
-
-    //javadoc: pyrUp(src, dst)
-    public static void pyrUp(Mat src, Mat dst)
-    {
-        
-        pyrUp_2(src.nativeObj, dst.nativeObj);
-        
-        return;
-    }
-
-
-    //
-    // C++:  void undistort(Mat src, Mat& dst, Mat cameraMatrix, Mat distCoeffs, Mat newCameraMatrix = Mat())
-    //
-
-    //javadoc: undistort(src, dst, cameraMatrix, distCoeffs, newCameraMatrix)
-    public static void undistort(Mat src, Mat dst, Mat cameraMatrix, Mat distCoeffs, Mat newCameraMatrix)
-    {
-        
-        undistort_0(src.nativeObj, dst.nativeObj, cameraMatrix.nativeObj, distCoeffs.nativeObj, newCameraMatrix.nativeObj);
-        
-        return;
-    }
-
-    //javadoc: undistort(src, dst, cameraMatrix, distCoeffs)
-    public static void undistort(Mat src, Mat dst, Mat cameraMatrix, Mat distCoeffs)
-    {
-        
-        undistort_1(src.nativeObj, dst.nativeObj, cameraMatrix.nativeObj, distCoeffs.nativeObj);
-        
-        return;
-    }
-
-
-    //
-    // C++:  void initUndistortRectifyMap(Mat cameraMatrix, Mat distCoeffs, Mat R, Mat newCameraMatrix, Size size, int m1type, Mat& map1, Mat& map2)
-    //
-
-    //javadoc: initUndistortRectifyMap(cameraMatrix, distCoeffs, R, newCameraMatrix, size, m1type, map1, map2)
-    public static void initUndistortRectifyMap(Mat cameraMatrix, Mat distCoeffs, Mat R, Mat newCameraMatrix, Size size, int m1type, Mat map1, Mat map2)
-    {
-        
-        initUndistortRectifyMap_0(cameraMatrix.nativeObj, distCoeffs.nativeObj, R.nativeObj, newCameraMatrix.nativeObj, size.width, size.height, m1type, map1.nativeObj, map2.nativeObj);
-        
-        return;
-    }
-
-
-    //
-    // C++:  float initWideAngleProjMap(Mat cameraMatrix, Mat distCoeffs, Size imageSize, int destImageWidth, int m1type, Mat& map1, Mat& map2, int projType = PROJ_SPHERICAL_EQRECT, double alpha = 0)
-    //
-
-    //javadoc: initWideAngleProjMap(cameraMatrix, distCoeffs, imageSize, destImageWidth, m1type, map1, map2, projType, alpha)
-    public static float initWideAngleProjMap(Mat cameraMatrix, Mat distCoeffs, Size imageSize, int destImageWidth, int m1type, Mat map1, Mat map2, int projType, double alpha)
-    {
-        
-        float retVal = initWideAngleProjMap_0(cameraMatrix.nativeObj, distCoeffs.nativeObj, imageSize.width, imageSize.height, destImageWidth, m1type, map1.nativeObj, map2.nativeObj, projType, alpha);
-        
-        return retVal;
-    }
-
-    //javadoc: initWideAngleProjMap(cameraMatrix, distCoeffs, imageSize, destImageWidth, m1type, map1, map2)
-    public static float initWideAngleProjMap(Mat cameraMatrix, Mat distCoeffs, Size imageSize, int destImageWidth, int m1type, Mat map1, Mat map2)
-    {
-        
-        float retVal = initWideAngleProjMap_1(cameraMatrix.nativeObj, distCoeffs.nativeObj, imageSize.width, imageSize.height, destImageWidth, m1type, map1.nativeObj, map2.nativeObj);
-        
-        return retVal;
-    }
-
-
-    //
     // C++:  Mat getDefaultNewCameraMatrix(Mat cameraMatrix, Size imgsize = Size(), bool centerPrincipalPoint = false)
     //
 
@@ -1581,218 +439,6 @@ public class Imgproc {
     {
         
         Mat retVal = new Mat(getDefaultNewCameraMatrix_1(cameraMatrix.nativeObj));
-        
-        return retVal;
-    }
-
-
-    //
-    // C++:  void integral(Mat src, Mat& sum, int sdepth = -1)
-    //
-
-    //javadoc: integral(src, sum, sdepth)
-    public static void integral(Mat src, Mat sum, int sdepth)
-    {
-        
-        integral_0(src.nativeObj, sum.nativeObj, sdepth);
-        
-        return;
-    }
-
-    //javadoc: integral(src, sum)
-    public static void integral(Mat src, Mat sum)
-    {
-        
-        integral_1(src.nativeObj, sum.nativeObj);
-        
-        return;
-    }
-
-
-    //
-    // C++:  void integral(Mat src, Mat& sum, Mat& sqsum, int sdepth = -1, int sqdepth = -1)
-    //
-
-    //javadoc: integral(src, sum, sqsum, sdepth, sqdepth)
-    public static void integral2(Mat src, Mat sum, Mat sqsum, int sdepth, int sqdepth)
-    {
-        
-        integral2_0(src.nativeObj, sum.nativeObj, sqsum.nativeObj, sdepth, sqdepth);
-        
-        return;
-    }
-
-    //javadoc: integral(src, sum, sqsum)
-    public static void integral2(Mat src, Mat sum, Mat sqsum)
-    {
-        
-        integral2_1(src.nativeObj, sum.nativeObj, sqsum.nativeObj);
-        
-        return;
-    }
-
-
-    //
-    // C++:  void integral(Mat src, Mat& sum, Mat& sqsum, Mat& tilted, int sdepth = -1, int sqdepth = -1)
-    //
-
-    //javadoc: integral(src, sum, sqsum, tilted, sdepth, sqdepth)
-    public static void integral3(Mat src, Mat sum, Mat sqsum, Mat tilted, int sdepth, int sqdepth)
-    {
-        
-        integral3_0(src.nativeObj, sum.nativeObj, sqsum.nativeObj, tilted.nativeObj, sdepth, sqdepth);
-        
-        return;
-    }
-
-    //javadoc: integral(src, sum, sqsum, tilted)
-    public static void integral3(Mat src, Mat sum, Mat sqsum, Mat tilted)
-    {
-        
-        integral3_1(src.nativeObj, sum.nativeObj, sqsum.nativeObj, tilted.nativeObj);
-        
-        return;
-    }
-
-
-    //
-    // C++:  void accumulate(Mat src, Mat& dst, Mat mask = Mat())
-    //
-
-    //javadoc: accumulate(src, dst, mask)
-    public static void accumulate(Mat src, Mat dst, Mat mask)
-    {
-        
-        accumulate_0(src.nativeObj, dst.nativeObj, mask.nativeObj);
-        
-        return;
-    }
-
-    //javadoc: accumulate(src, dst)
-    public static void accumulate(Mat src, Mat dst)
-    {
-        
-        accumulate_1(src.nativeObj, dst.nativeObj);
-        
-        return;
-    }
-
-
-    //
-    // C++:  void accumulateSquare(Mat src, Mat& dst, Mat mask = Mat())
-    //
-
-    //javadoc: accumulateSquare(src, dst, mask)
-    public static void accumulateSquare(Mat src, Mat dst, Mat mask)
-    {
-        
-        accumulateSquare_0(src.nativeObj, dst.nativeObj, mask.nativeObj);
-        
-        return;
-    }
-
-    //javadoc: accumulateSquare(src, dst)
-    public static void accumulateSquare(Mat src, Mat dst)
-    {
-        
-        accumulateSquare_1(src.nativeObj, dst.nativeObj);
-        
-        return;
-    }
-
-
-    //
-    // C++:  void accumulateProduct(Mat src1, Mat src2, Mat& dst, Mat mask = Mat())
-    //
-
-    //javadoc: accumulateProduct(src1, src2, dst, mask)
-    public static void accumulateProduct(Mat src1, Mat src2, Mat dst, Mat mask)
-    {
-        
-        accumulateProduct_0(src1.nativeObj, src2.nativeObj, dst.nativeObj, mask.nativeObj);
-        
-        return;
-    }
-
-    //javadoc: accumulateProduct(src1, src2, dst)
-    public static void accumulateProduct(Mat src1, Mat src2, Mat dst)
-    {
-        
-        accumulateProduct_1(src1.nativeObj, src2.nativeObj, dst.nativeObj);
-        
-        return;
-    }
-
-
-    //
-    // C++:  void accumulateWeighted(Mat src, Mat& dst, double alpha, Mat mask = Mat())
-    //
-
-    //javadoc: accumulateWeighted(src, dst, alpha, mask)
-    public static void accumulateWeighted(Mat src, Mat dst, double alpha, Mat mask)
-    {
-        
-        accumulateWeighted_0(src.nativeObj, dst.nativeObj, alpha, mask.nativeObj);
-        
-        return;
-    }
-
-    //javadoc: accumulateWeighted(src, dst, alpha)
-    public static void accumulateWeighted(Mat src, Mat dst, double alpha)
-    {
-        
-        accumulateWeighted_1(src.nativeObj, dst.nativeObj, alpha);
-        
-        return;
-    }
-
-
-    //
-    // C++:  Point2d phaseCorrelate(Mat src1, Mat src2, Mat window = Mat(), double* response = 0)
-    //
-
-    //javadoc: phaseCorrelate(src1, src2, window, response)
-    public static Point phaseCorrelate(Mat src1, Mat src2, Mat window, double[] response)
-    {
-        double[] response_out = new double[1];
-        Point retVal = new Point(phaseCorrelate_0(src1.nativeObj, src2.nativeObj, window.nativeObj, response_out));
-        if(response!=null) response[0] = (double)response_out[0];
-        return retVal;
-    }
-
-    //javadoc: phaseCorrelate(src1, src2)
-    public static Point phaseCorrelate(Mat src1, Mat src2)
-    {
-        
-        Point retVal = new Point(phaseCorrelate_1(src1.nativeObj, src2.nativeObj));
-        
-        return retVal;
-    }
-
-
-    //
-    // C++:  void createHanningWindow(Mat& dst, Size winSize, int type)
-    //
-
-    //javadoc: createHanningWindow(dst, winSize, type)
-    public static void createHanningWindow(Mat dst, Size winSize, int type)
-    {
-        
-        createHanningWindow_0(dst.nativeObj, winSize.width, winSize.height, type);
-        
-        return;
-    }
-
-
-    //
-    // C++:  double threshold(Mat src, Mat& dst, double thresh, double maxval, int type)
-    //
-
-    //javadoc: threshold(src, dst, thresh, maxval, type)
-    public static double threshold(Mat src, Mat dst, double thresh, double maxval, int type)
-    {
-        
-        double retVal = threshold_0(src.nativeObj, dst.nativeObj, thresh, maxval, type);
         
         return retVal;
     }
@@ -2103,221 +749,6 @@ public class Imgproc {
     {
         
         matchTemplate_1(image.nativeObj, templ.nativeObj, result.nativeObj, method);
-        
-        return;
-    }
-
-
-    //
-    // C++:  void blur(Mat src, Mat& dst, Size ksize, Point anchor = Point(-1,-1), int borderType = BORDER_DEFAULT)
-    //
-
-    //javadoc: blur(src, dst, ksize, anchor, borderType)
-    public static void blur(Mat src, Mat dst, Size ksize, Point anchor, int borderType)
-    {
-        
-        blur_0(src.nativeObj, dst.nativeObj, ksize.width, ksize.height, anchor.x, anchor.y, borderType);
-        
-        return;
-    }
-
-    //javadoc: blur(src, dst, ksize, anchor)
-    public static void blur(Mat src, Mat dst, Size ksize, Point anchor)
-    {
-        
-        blur_1(src.nativeObj, dst.nativeObj, ksize.width, ksize.height, anchor.x, anchor.y);
-        
-        return;
-    }
-
-    //javadoc: blur(src, dst, ksize)
-    public static void blur(Mat src, Mat dst, Size ksize)
-    {
-        
-        blur_2(src.nativeObj, dst.nativeObj, ksize.width, ksize.height);
-        
-        return;
-    }
-
-
-    //
-    // C++:  void filter2D(Mat src, Mat& dst, int ddepth, Mat kernel, Point anchor = Point(-1,-1), double delta = 0, int borderType = BORDER_DEFAULT)
-    //
-
-    //javadoc: filter2D(src, dst, ddepth, kernel, anchor, delta, borderType)
-    public static void filter2D(Mat src, Mat dst, int ddepth, Mat kernel, Point anchor, double delta, int borderType)
-    {
-        
-        filter2D_0(src.nativeObj, dst.nativeObj, ddepth, kernel.nativeObj, anchor.x, anchor.y, delta, borderType);
-        
-        return;
-    }
-
-    //javadoc: filter2D(src, dst, ddepth, kernel, anchor, delta)
-    public static void filter2D(Mat src, Mat dst, int ddepth, Mat kernel, Point anchor, double delta)
-    {
-        
-        filter2D_1(src.nativeObj, dst.nativeObj, ddepth, kernel.nativeObj, anchor.x, anchor.y, delta);
-        
-        return;
-    }
-
-    //javadoc: filter2D(src, dst, ddepth, kernel)
-    public static void filter2D(Mat src, Mat dst, int ddepth, Mat kernel)
-    {
-        
-        filter2D_2(src.nativeObj, dst.nativeObj, ddepth, kernel.nativeObj);
-        
-        return;
-    }
-
-
-    //
-    // C++:  void sepFilter2D(Mat src, Mat& dst, int ddepth, Mat kernelX, Mat kernelY, Point anchor = Point(-1,-1), double delta = 0, int borderType = BORDER_DEFAULT)
-    //
-
-    //javadoc: sepFilter2D(src, dst, ddepth, kernelX, kernelY, anchor, delta, borderType)
-    public static void sepFilter2D(Mat src, Mat dst, int ddepth, Mat kernelX, Mat kernelY, Point anchor, double delta, int borderType)
-    {
-        
-        sepFilter2D_0(src.nativeObj, dst.nativeObj, ddepth, kernelX.nativeObj, kernelY.nativeObj, anchor.x, anchor.y, delta, borderType);
-        
-        return;
-    }
-
-    //javadoc: sepFilter2D(src, dst, ddepth, kernelX, kernelY, anchor, delta)
-    public static void sepFilter2D(Mat src, Mat dst, int ddepth, Mat kernelX, Mat kernelY, Point anchor, double delta)
-    {
-        
-        sepFilter2D_1(src.nativeObj, dst.nativeObj, ddepth, kernelX.nativeObj, kernelY.nativeObj, anchor.x, anchor.y, delta);
-        
-        return;
-    }
-
-    //javadoc: sepFilter2D(src, dst, ddepth, kernelX, kernelY)
-    public static void sepFilter2D(Mat src, Mat dst, int ddepth, Mat kernelX, Mat kernelY)
-    {
-        
-        sepFilter2D_2(src.nativeObj, dst.nativeObj, ddepth, kernelX.nativeObj, kernelY.nativeObj);
-        
-        return;
-    }
-
-
-    //
-    // C++:  void Sobel(Mat src, Mat& dst, int ddepth, int dx, int dy, int ksize = 3, double scale = 1, double delta = 0, int borderType = BORDER_DEFAULT)
-    //
-
-    //javadoc: Sobel(src, dst, ddepth, dx, dy, ksize, scale, delta, borderType)
-    public static void Sobel(Mat src, Mat dst, int ddepth, int dx, int dy, int ksize, double scale, double delta, int borderType)
-    {
-        
-        Sobel_0(src.nativeObj, dst.nativeObj, ddepth, dx, dy, ksize, scale, delta, borderType);
-        
-        return;
-    }
-
-    //javadoc: Sobel(src, dst, ddepth, dx, dy, ksize, scale, delta)
-    public static void Sobel(Mat src, Mat dst, int ddepth, int dx, int dy, int ksize, double scale, double delta)
-    {
-        
-        Sobel_1(src.nativeObj, dst.nativeObj, ddepth, dx, dy, ksize, scale, delta);
-        
-        return;
-    }
-
-    //javadoc: Sobel(src, dst, ddepth, dx, dy)
-    public static void Sobel(Mat src, Mat dst, int ddepth, int dx, int dy)
-    {
-        
-        Sobel_2(src.nativeObj, dst.nativeObj, ddepth, dx, dy);
-        
-        return;
-    }
-
-
-    //
-    // C++:  void Scharr(Mat src, Mat& dst, int ddepth, int dx, int dy, double scale = 1, double delta = 0, int borderType = BORDER_DEFAULT)
-    //
-
-    //javadoc: Scharr(src, dst, ddepth, dx, dy, scale, delta, borderType)
-    public static void Scharr(Mat src, Mat dst, int ddepth, int dx, int dy, double scale, double delta, int borderType)
-    {
-        
-        Scharr_0(src.nativeObj, dst.nativeObj, ddepth, dx, dy, scale, delta, borderType);
-        
-        return;
-    }
-
-    //javadoc: Scharr(src, dst, ddepth, dx, dy, scale, delta)
-    public static void Scharr(Mat src, Mat dst, int ddepth, int dx, int dy, double scale, double delta)
-    {
-        
-        Scharr_1(src.nativeObj, dst.nativeObj, ddepth, dx, dy, scale, delta);
-        
-        return;
-    }
-
-    //javadoc: Scharr(src, dst, ddepth, dx, dy)
-    public static void Scharr(Mat src, Mat dst, int ddepth, int dx, int dy)
-    {
-        
-        Scharr_2(src.nativeObj, dst.nativeObj, ddepth, dx, dy);
-        
-        return;
-    }
-
-
-    //
-    // C++:  void Laplacian(Mat src, Mat& dst, int ddepth, int ksize = 1, double scale = 1, double delta = 0, int borderType = BORDER_DEFAULT)
-    //
-
-    //javadoc: Laplacian(src, dst, ddepth, ksize, scale, delta, borderType)
-    public static void Laplacian(Mat src, Mat dst, int ddepth, int ksize, double scale, double delta, int borderType)
-    {
-        
-        Laplacian_0(src.nativeObj, dst.nativeObj, ddepth, ksize, scale, delta, borderType);
-        
-        return;
-    }
-
-    //javadoc: Laplacian(src, dst, ddepth, ksize, scale, delta)
-    public static void Laplacian(Mat src, Mat dst, int ddepth, int ksize, double scale, double delta)
-    {
-        
-        Laplacian_1(src.nativeObj, dst.nativeObj, ddepth, ksize, scale, delta);
-        
-        return;
-    }
-
-    //javadoc: Laplacian(src, dst, ddepth)
-    public static void Laplacian(Mat src, Mat dst, int ddepth)
-    {
-        
-        Laplacian_2(src.nativeObj, dst.nativeObj, ddepth);
-        
-        return;
-    }
-
-
-    //
-    // C++:  void Canny(Mat image, Mat& edges, double threshold1, double threshold2, int apertureSize = 3, bool L2gradient = false)
-    //
-
-    //javadoc: Canny(image, edges, threshold1, threshold2, apertureSize, L2gradient)
-    public static void Canny(Mat image, Mat edges, double threshold1, double threshold2, int apertureSize, boolean L2gradient)
-    {
-        
-        Canny_0(image.nativeObj, edges.nativeObj, threshold1, threshold2, apertureSize, L2gradient);
-        
-        return;
-    }
-
-    //javadoc: Canny(image, edges, threshold1, threshold2)
-    public static void Canny(Mat image, Mat edges, double threshold1, double threshold2)
-    {
-        
-        Canny_1(image.nativeObj, edges.nativeObj, threshold1, threshold2);
         
         return;
     }
@@ -2831,7 +1262,7 @@ public class Imgproc {
     public static void ellipse(Mat img, Point center, Size axes, double angle, double startAngle, double endAngle, Scalar color, int thickness, int lineType, int shift)
     {
         
-        ellipse_3(img.nativeObj, center.x, center.y, axes.width, axes.height, angle, startAngle, endAngle, color.val[0], color.val[1], color.val[2], color.val[3], thickness, lineType, shift);
+        ellipse_0(img.nativeObj, center.x, center.y, axes.width, axes.height, angle, startAngle, endAngle, color.val[0], color.val[1], color.val[2], color.val[3], thickness, lineType, shift);
         
         return;
     }
@@ -2840,7 +1271,7 @@ public class Imgproc {
     public static void ellipse(Mat img, Point center, Size axes, double angle, double startAngle, double endAngle, Scalar color, int thickness)
     {
         
-        ellipse_4(img.nativeObj, center.x, center.y, axes.width, axes.height, angle, startAngle, endAngle, color.val[0], color.val[1], color.val[2], color.val[3], thickness);
+        ellipse_1(img.nativeObj, center.x, center.y, axes.width, axes.height, angle, startAngle, endAngle, color.val[0], color.val[1], color.val[2], color.val[3], thickness);
         
         return;
     }
@@ -2849,9 +1280,1610 @@ public class Imgproc {
     public static void ellipse(Mat img, Point center, Size axes, double angle, double startAngle, double endAngle, Scalar color)
     {
         
-        ellipse_5(img.nativeObj, center.x, center.y, axes.width, axes.height, angle, startAngle, endAngle, color.val[0], color.val[1], color.val[2], color.val[3]);
+        ellipse_2(img.nativeObj, center.x, center.y, axes.width, axes.height, angle, startAngle, endAngle, color.val[0], color.val[1], color.val[2], color.val[3]);
         
         return;
+    }
+
+
+    //
+    // C++:  void ellipse(Mat& img, RotatedRect box, Scalar color, int thickness = 1, int lineType = LINE_8)
+    //
+
+    //javadoc: ellipse(img, box, color, thickness, lineType)
+    public static void ellipse(Mat img, RotatedRect box, Scalar color, int thickness, int lineType)
+    {
+        
+        ellipse_3(img.nativeObj, box.center.x, box.center.y, box.size.width, box.size.height, box.angle, color.val[0], color.val[1], color.val[2], color.val[3], thickness, lineType);
+        
+        return;
+    }
+
+    //javadoc: ellipse(img, box, color, thickness)
+    public static void ellipse(Mat img, RotatedRect box, Scalar color, int thickness)
+    {
+        
+        ellipse_4(img.nativeObj, box.center.x, box.center.y, box.size.width, box.size.height, box.angle, color.val[0], color.val[1], color.val[2], color.val[3], thickness);
+        
+        return;
+    }
+
+    //javadoc: ellipse(img, box, color)
+    public static void ellipse(Mat img, RotatedRect box, Scalar color)
+    {
+        
+        ellipse_5(img.nativeObj, box.center.x, box.center.y, box.size.width, box.size.height, box.angle, color.val[0], color.val[1], color.val[2], color.val[3]);
+        
+        return;
+    }
+
+
+    //
+    // C++:  void fillConvexPoly(Mat& img, vector_Point points, Scalar color, int lineType = LINE_8, int shift = 0)
+    //
+
+    //javadoc: fillConvexPoly(img, points, color, lineType, shift)
+    public static void fillConvexPoly(Mat img, MatOfPoint points, Scalar color, int lineType, int shift)
+    {
+        Mat points_mat = points;
+        fillConvexPoly_0(img.nativeObj, points_mat.nativeObj, color.val[0], color.val[1], color.val[2], color.val[3], lineType, shift);
+        
+        return;
+    }
+
+    //javadoc: fillConvexPoly(img, points, color)
+    public static void fillConvexPoly(Mat img, MatOfPoint points, Scalar color)
+    {
+        Mat points_mat = points;
+        fillConvexPoly_1(img.nativeObj, points_mat.nativeObj, color.val[0], color.val[1], color.val[2], color.val[3]);
+        
+        return;
+    }
+
+
+    //
+    // C++:  void fillPoly(Mat& img, vector_vector_Point pts, Scalar color, int lineType = LINE_8, int shift = 0, Point offset = Point())
+    //
+
+    //javadoc: fillPoly(img, pts, color, lineType, shift, offset)
+    public static void fillPoly(Mat img, List<MatOfPoint> pts, Scalar color, int lineType, int shift, Point offset)
+    {
+        List<Mat> pts_tmplm = new ArrayList<Mat>((pts != null) ? pts.size() : 0);
+        Mat pts_mat = Converters.vector_vector_Point_to_Mat(pts, pts_tmplm);
+        fillPoly_0(img.nativeObj, pts_mat.nativeObj, color.val[0], color.val[1], color.val[2], color.val[3], lineType, shift, offset.x, offset.y);
+        
+        return;
+    }
+
+    //javadoc: fillPoly(img, pts, color)
+    public static void fillPoly(Mat img, List<MatOfPoint> pts, Scalar color)
+    {
+        List<Mat> pts_tmplm = new ArrayList<Mat>((pts != null) ? pts.size() : 0);
+        Mat pts_mat = Converters.vector_vector_Point_to_Mat(pts, pts_tmplm);
+        fillPoly_1(img.nativeObj, pts_mat.nativeObj, color.val[0], color.val[1], color.val[2], color.val[3]);
+        
+        return;
+    }
+
+
+    //
+    // C++:  void polylines(Mat& img, vector_vector_Point pts, bool isClosed, Scalar color, int thickness = 1, int lineType = LINE_8, int shift = 0)
+    //
+
+    //javadoc: polylines(img, pts, isClosed, color, thickness, lineType, shift)
+    public static void polylines(Mat img, List<MatOfPoint> pts, boolean isClosed, Scalar color, int thickness, int lineType, int shift)
+    {
+        List<Mat> pts_tmplm = new ArrayList<Mat>((pts != null) ? pts.size() : 0);
+        Mat pts_mat = Converters.vector_vector_Point_to_Mat(pts, pts_tmplm);
+        polylines_0(img.nativeObj, pts_mat.nativeObj, isClosed, color.val[0], color.val[1], color.val[2], color.val[3], thickness, lineType, shift);
+        
+        return;
+    }
+
+    //javadoc: polylines(img, pts, isClosed, color, thickness)
+    public static void polylines(Mat img, List<MatOfPoint> pts, boolean isClosed, Scalar color, int thickness)
+    {
+        List<Mat> pts_tmplm = new ArrayList<Mat>((pts != null) ? pts.size() : 0);
+        Mat pts_mat = Converters.vector_vector_Point_to_Mat(pts, pts_tmplm);
+        polylines_1(img.nativeObj, pts_mat.nativeObj, isClosed, color.val[0], color.val[1], color.val[2], color.val[3], thickness);
+        
+        return;
+    }
+
+    //javadoc: polylines(img, pts, isClosed, color)
+    public static void polylines(Mat img, List<MatOfPoint> pts, boolean isClosed, Scalar color)
+    {
+        List<Mat> pts_tmplm = new ArrayList<Mat>((pts != null) ? pts.size() : 0);
+        Mat pts_mat = Converters.vector_vector_Point_to_Mat(pts, pts_tmplm);
+        polylines_2(img.nativeObj, pts_mat.nativeObj, isClosed, color.val[0], color.val[1], color.val[2], color.val[3]);
+        
+        return;
+    }
+
+
+    //
+    // C++:  void drawContours(Mat& image, vector_vector_Point contours, int contourIdx, Scalar color, int thickness = 1, int lineType = LINE_8, Mat hierarchy = Mat(), int maxLevel = INT_MAX, Point offset = Point())
+    //
+
+    //javadoc: drawContours(image, contours, contourIdx, color, thickness, lineType, hierarchy, maxLevel, offset)
+    public static void drawContours(Mat image, List<MatOfPoint> contours, int contourIdx, Scalar color, int thickness, int lineType, Mat hierarchy, int maxLevel, Point offset)
+    {
+        List<Mat> contours_tmplm = new ArrayList<Mat>((contours != null) ? contours.size() : 0);
+        Mat contours_mat = Converters.vector_vector_Point_to_Mat(contours, contours_tmplm);
+        drawContours_0(image.nativeObj, contours_mat.nativeObj, contourIdx, color.val[0], color.val[1], color.val[2], color.val[3], thickness, lineType, hierarchy.nativeObj, maxLevel, offset.x, offset.y);
+        
+        return;
+    }
+
+    //javadoc: drawContours(image, contours, contourIdx, color, thickness)
+    public static void drawContours(Mat image, List<MatOfPoint> contours, int contourIdx, Scalar color, int thickness)
+    {
+        List<Mat> contours_tmplm = new ArrayList<Mat>((contours != null) ? contours.size() : 0);
+        Mat contours_mat = Converters.vector_vector_Point_to_Mat(contours, contours_tmplm);
+        drawContours_1(image.nativeObj, contours_mat.nativeObj, contourIdx, color.val[0], color.val[1], color.val[2], color.val[3], thickness);
+        
+        return;
+    }
+
+    //javadoc: drawContours(image, contours, contourIdx, color)
+    public static void drawContours(Mat image, List<MatOfPoint> contours, int contourIdx, Scalar color)
+    {
+        List<Mat> contours_tmplm = new ArrayList<Mat>((contours != null) ? contours.size() : 0);
+        Mat contours_mat = Converters.vector_vector_Point_to_Mat(contours, contours_tmplm);
+        drawContours_2(image.nativeObj, contours_mat.nativeObj, contourIdx, color.val[0], color.val[1], color.val[2], color.val[3]);
+        
+        return;
+    }
+
+
+    //
+    // C++:  bool clipLine(Rect imgRect, Point& pt1, Point& pt2)
+    //
+
+    //javadoc: clipLine(imgRect, pt1, pt2)
+    public static boolean clipLine(Rect imgRect, Point pt1, Point pt2)
+    {
+        double[] pt1_out = new double[2];
+        double[] pt2_out = new double[2];
+        boolean retVal = clipLine_0(imgRect.x, imgRect.y, imgRect.width, imgRect.height, pt1.x, pt1.y, pt1_out, pt2.x, pt2.y, pt2_out);
+        if(pt1!=null){ pt1.x = pt1_out[0]; pt1.y = pt1_out[1]; } 
+        if(pt2!=null){ pt2.x = pt2_out[0]; pt2.y = pt2_out[1]; } 
+        return retVal;
+    }
+
+
+    //
+    // C++:  void ellipse2Poly(Point center, Size axes, int angle, int arcStart, int arcEnd, int delta, vector_Point& pts)
+    //
+
+    //javadoc: ellipse2Poly(center, axes, angle, arcStart, arcEnd, delta, pts)
+    public static void ellipse2Poly(Point center, Size axes, int angle, int arcStart, int arcEnd, int delta, MatOfPoint pts)
+    {
+        Mat pts_mat = pts;
+        ellipse2Poly_0(center.x, center.y, axes.width, axes.height, angle, arcStart, arcEnd, delta, pts_mat.nativeObj);
+        
+        return;
+    }
+
+
+    //
+    // C++:  void putText(Mat& img, String text, Point org, int fontFace, double fontScale, Scalar color, int thickness = 1, int lineType = LINE_8, bool bottomLeftOrigin = false)
+    //
+
+    //javadoc: putText(img, text, org, fontFace, fontScale, color, thickness, lineType, bottomLeftOrigin)
+    public static void putText(Mat img, String text, Point org, int fontFace, double fontScale, Scalar color, int thickness, int lineType, boolean bottomLeftOrigin)
+    {
+        
+        putText_0(img.nativeObj, text, org.x, org.y, fontFace, fontScale, color.val[0], color.val[1], color.val[2], color.val[3], thickness, lineType, bottomLeftOrigin);
+        
+        return;
+    }
+
+    //javadoc: putText(img, text, org, fontFace, fontScale, color, thickness)
+    public static void putText(Mat img, String text, Point org, int fontFace, double fontScale, Scalar color, int thickness)
+    {
+        
+        putText_1(img.nativeObj, text, org.x, org.y, fontFace, fontScale, color.val[0], color.val[1], color.val[2], color.val[3], thickness);
+        
+        return;
+    }
+
+    //javadoc: putText(img, text, org, fontFace, fontScale, color)
+    public static void putText(Mat img, String text, Point org, int fontFace, double fontScale, Scalar color)
+    {
+        
+        putText_2(img.nativeObj, text, org.x, org.y, fontFace, fontScale, color.val[0], color.val[1], color.val[2], color.val[3]);
+        
+        return;
+    }
+
+
+    //
+    // C++:  Ptr_LineSegmentDetector createLineSegmentDetector(int _refine = LSD_REFINE_STD, double _scale = 0.8, double _sigma_scale = 0.6, double _quant = 2.0, double _ang_th = 22.5, double _log_eps = 0, double _density_th = 0.7, int _n_bins = 1024)
+    //
+
+    //javadoc: createLineSegmentDetector(_refine, _scale, _sigma_scale, _quant, _ang_th, _log_eps, _density_th, _n_bins)
+    public static LineSegmentDetector createLineSegmentDetector(int _refine, double _scale, double _sigma_scale, double _quant, double _ang_th, double _log_eps, double _density_th, int _n_bins)
+    {
+        
+        LineSegmentDetector retVal = new LineSegmentDetector(createLineSegmentDetector_0(_refine, _scale, _sigma_scale, _quant, _ang_th, _log_eps, _density_th, _n_bins));
+        
+        return retVal;
+    }
+
+    //javadoc: createLineSegmentDetector()
+    public static LineSegmentDetector createLineSegmentDetector()
+    {
+        
+        LineSegmentDetector retVal = new LineSegmentDetector(createLineSegmentDetector_1());
+        
+        return retVal;
+    }
+
+
+    //
+    // C++:  Mat getGaussianKernel(int ksize, double sigma, int ktype = CV_64F)
+    //
+
+    //javadoc: getGaussianKernel(ksize, sigma, ktype)
+    public static Mat getGaussianKernel(int ksize, double sigma, int ktype)
+    {
+        
+        Mat retVal = new Mat(getGaussianKernel_0(ksize, sigma, ktype));
+        
+        return retVal;
+    }
+
+    //javadoc: getGaussianKernel(ksize, sigma)
+    public static Mat getGaussianKernel(int ksize, double sigma)
+    {
+        
+        Mat retVal = new Mat(getGaussianKernel_1(ksize, sigma));
+        
+        return retVal;
+    }
+
+
+    //
+    // C++:  void getDerivKernels(Mat& kx, Mat& ky, int dx, int dy, int ksize, bool normalize = false, int ktype = CV_32F)
+    //
+
+    //javadoc: getDerivKernels(kx, ky, dx, dy, ksize, normalize, ktype)
+    public static void getDerivKernels(Mat kx, Mat ky, int dx, int dy, int ksize, boolean normalize, int ktype)
+    {
+        
+        getDerivKernels_0(kx.nativeObj, ky.nativeObj, dx, dy, ksize, normalize, ktype);
+        
+        return;
+    }
+
+    //javadoc: getDerivKernels(kx, ky, dx, dy, ksize)
+    public static void getDerivKernels(Mat kx, Mat ky, int dx, int dy, int ksize)
+    {
+        
+        getDerivKernels_1(kx.nativeObj, ky.nativeObj, dx, dy, ksize);
+        
+        return;
+    }
+
+
+    //
+    // C++:  Mat getGaborKernel(Size ksize, double sigma, double theta, double lambd, double gamma, double psi = CV_PI*0.5, int ktype = CV_64F)
+    //
+
+    //javadoc: getGaborKernel(ksize, sigma, theta, lambd, gamma, psi, ktype)
+    public static Mat getGaborKernel(Size ksize, double sigma, double theta, double lambd, double gamma, double psi, int ktype)
+    {
+        
+        Mat retVal = new Mat(getGaborKernel_0(ksize.width, ksize.height, sigma, theta, lambd, gamma, psi, ktype));
+        
+        return retVal;
+    }
+
+    //javadoc: getGaborKernel(ksize, sigma, theta, lambd, gamma)
+    public static Mat getGaborKernel(Size ksize, double sigma, double theta, double lambd, double gamma)
+    {
+        
+        Mat retVal = new Mat(getGaborKernel_1(ksize.width, ksize.height, sigma, theta, lambd, gamma));
+        
+        return retVal;
+    }
+
+
+    //
+    // C++:  Mat getStructuringElement(int shape, Size ksize, Point anchor = Point(-1,-1))
+    //
+
+    //javadoc: getStructuringElement(shape, ksize, anchor)
+    public static Mat getStructuringElement(int shape, Size ksize, Point anchor)
+    {
+        
+        Mat retVal = new Mat(getStructuringElement_0(shape, ksize.width, ksize.height, anchor.x, anchor.y));
+        
+        return retVal;
+    }
+
+    //javadoc: getStructuringElement(shape, ksize)
+    public static Mat getStructuringElement(int shape, Size ksize)
+    {
+        
+        Mat retVal = new Mat(getStructuringElement_1(shape, ksize.width, ksize.height));
+        
+        return retVal;
+    }
+
+
+    //
+    // C++:  void medianBlur(Mat src, Mat& dst, int ksize)
+    //
+
+    //javadoc: medianBlur(src, dst, ksize)
+    public static void medianBlur(Mat src, Mat dst, int ksize)
+    {
+        
+        medianBlur_0(src.nativeObj, dst.nativeObj, ksize);
+        
+        return;
+    }
+
+
+    //
+    // C++:  void GaussianBlur(Mat src, Mat& dst, Size ksize, double sigmaX, double sigmaY = 0, int borderType = BORDER_DEFAULT)
+    //
+
+    //javadoc: GaussianBlur(src, dst, ksize, sigmaX, sigmaY, borderType)
+    public static void GaussianBlur(Mat src, Mat dst, Size ksize, double sigmaX, double sigmaY, int borderType)
+    {
+        
+        GaussianBlur_0(src.nativeObj, dst.nativeObj, ksize.width, ksize.height, sigmaX, sigmaY, borderType);
+        
+        return;
+    }
+
+    //javadoc: GaussianBlur(src, dst, ksize, sigmaX, sigmaY)
+    public static void GaussianBlur(Mat src, Mat dst, Size ksize, double sigmaX, double sigmaY)
+    {
+        
+        GaussianBlur_1(src.nativeObj, dst.nativeObj, ksize.width, ksize.height, sigmaX, sigmaY);
+        
+        return;
+    }
+
+    //javadoc: GaussianBlur(src, dst, ksize, sigmaX)
+    public static void GaussianBlur(Mat src, Mat dst, Size ksize, double sigmaX)
+    {
+        
+        GaussianBlur_2(src.nativeObj, dst.nativeObj, ksize.width, ksize.height, sigmaX);
+        
+        return;
+    }
+
+
+    //
+    // C++:  void warpPerspective(Mat src, Mat& dst, Mat M, Size dsize, int flags = INTER_LINEAR, int borderMode = BORDER_CONSTANT, Scalar borderValue = Scalar())
+    //
+
+    //javadoc: warpPerspective(src, dst, M, dsize, flags, borderMode, borderValue)
+    public static void warpPerspective(Mat src, Mat dst, Mat M, Size dsize, int flags, int borderMode, Scalar borderValue)
+    {
+        
+        warpPerspective_0(src.nativeObj, dst.nativeObj, M.nativeObj, dsize.width, dsize.height, flags, borderMode, borderValue.val[0], borderValue.val[1], borderValue.val[2], borderValue.val[3]);
+        
+        return;
+    }
+
+    //javadoc: warpPerspective(src, dst, M, dsize, flags)
+    public static void warpPerspective(Mat src, Mat dst, Mat M, Size dsize, int flags)
+    {
+        
+        warpPerspective_1(src.nativeObj, dst.nativeObj, M.nativeObj, dsize.width, dsize.height, flags);
+        
+        return;
+    }
+
+    //javadoc: warpPerspective(src, dst, M, dsize)
+    public static void warpPerspective(Mat src, Mat dst, Mat M, Size dsize)
+    {
+        
+        warpPerspective_2(src.nativeObj, dst.nativeObj, M.nativeObj, dsize.width, dsize.height);
+        
+        return;
+    }
+
+
+    //
+    // C++:  void remap(Mat src, Mat& dst, Mat map1, Mat map2, int interpolation, int borderMode = BORDER_CONSTANT, Scalar borderValue = Scalar())
+    //
+
+    //javadoc: remap(src, dst, map1, map2, interpolation, borderMode, borderValue)
+    public static void remap(Mat src, Mat dst, Mat map1, Mat map2, int interpolation, int borderMode, Scalar borderValue)
+    {
+        
+        remap_0(src.nativeObj, dst.nativeObj, map1.nativeObj, map2.nativeObj, interpolation, borderMode, borderValue.val[0], borderValue.val[1], borderValue.val[2], borderValue.val[3]);
+        
+        return;
+    }
+
+    //javadoc: remap(src, dst, map1, map2, interpolation)
+    public static void remap(Mat src, Mat dst, Mat map1, Mat map2, int interpolation)
+    {
+        
+        remap_1(src.nativeObj, dst.nativeObj, map1.nativeObj, map2.nativeObj, interpolation);
+        
+        return;
+    }
+
+
+    //
+    // C++:  void convertMaps(Mat map1, Mat map2, Mat& dstmap1, Mat& dstmap2, int dstmap1type, bool nninterpolation = false)
+    //
+
+    //javadoc: convertMaps(map1, map2, dstmap1, dstmap2, dstmap1type, nninterpolation)
+    public static void convertMaps(Mat map1, Mat map2, Mat dstmap1, Mat dstmap2, int dstmap1type, boolean nninterpolation)
+    {
+        
+        convertMaps_0(map1.nativeObj, map2.nativeObj, dstmap1.nativeObj, dstmap2.nativeObj, dstmap1type, nninterpolation);
+        
+        return;
+    }
+
+    //javadoc: convertMaps(map1, map2, dstmap1, dstmap2, dstmap1type)
+    public static void convertMaps(Mat map1, Mat map2, Mat dstmap1, Mat dstmap2, int dstmap1type)
+    {
+        
+        convertMaps_1(map1.nativeObj, map2.nativeObj, dstmap1.nativeObj, dstmap2.nativeObj, dstmap1type);
+        
+        return;
+    }
+
+
+    //
+    // C++:  Mat getRotationMatrix2D(Point2f center, double angle, double scale)
+    //
+
+    //javadoc: getRotationMatrix2D(center, angle, scale)
+    public static Mat getRotationMatrix2D(Point center, double angle, double scale)
+    {
+        
+        Mat retVal = new Mat(getRotationMatrix2D_0(center.x, center.y, angle, scale));
+        
+        return retVal;
+    }
+
+
+    //
+    // C++:  void invertAffineTransform(Mat M, Mat& iM)
+    //
+
+    //javadoc: invertAffineTransform(M, iM)
+    public static void invertAffineTransform(Mat M, Mat iM)
+    {
+        
+        invertAffineTransform_0(M.nativeObj, iM.nativeObj);
+        
+        return;
+    }
+
+
+    //
+    // C++:  Mat getPerspectiveTransform(Mat src, Mat dst)
+    //
+
+    //javadoc: getPerspectiveTransform(src, dst)
+    public static Mat getPerspectiveTransform(Mat src, Mat dst)
+    {
+        
+        Mat retVal = new Mat(getPerspectiveTransform_0(src.nativeObj, dst.nativeObj));
+        
+        return retVal;
+    }
+
+
+    //
+    // C++:  Mat getAffineTransform(vector_Point2f src, vector_Point2f dst)
+    //
+
+    //javadoc: getAffineTransform(src, dst)
+    public static Mat getAffineTransform(MatOfPoint2f src, MatOfPoint2f dst)
+    {
+        Mat src_mat = src;
+        Mat dst_mat = dst;
+        Mat retVal = new Mat(getAffineTransform_0(src_mat.nativeObj, dst_mat.nativeObj));
+        
+        return retVal;
+    }
+
+
+    //
+    // C++:  void getRectSubPix(Mat image, Size patchSize, Point2f center, Mat& patch, int patchType = -1)
+    //
+
+    //javadoc: getRectSubPix(image, patchSize, center, patch, patchType)
+    public static void getRectSubPix(Mat image, Size patchSize, Point center, Mat patch, int patchType)
+    {
+        
+        getRectSubPix_0(image.nativeObj, patchSize.width, patchSize.height, center.x, center.y, patch.nativeObj, patchType);
+        
+        return;
+    }
+
+    //javadoc: getRectSubPix(image, patchSize, center, patch)
+    public static void getRectSubPix(Mat image, Size patchSize, Point center, Mat patch)
+    {
+        
+        getRectSubPix_1(image.nativeObj, patchSize.width, patchSize.height, center.x, center.y, patch.nativeObj);
+        
+        return;
+    }
+
+
+    //
+    // C++:  void logPolar(Mat src, Mat& dst, Point2f center, double M, int flags)
+    //
+
+    //javadoc: logPolar(src, dst, center, M, flags)
+    public static void logPolar(Mat src, Mat dst, Point center, double M, int flags)
+    {
+        
+        logPolar_0(src.nativeObj, dst.nativeObj, center.x, center.y, M, flags);
+        
+        return;
+    }
+
+
+    //
+    // C++:  void bilateralFilter(Mat src, Mat& dst, int d, double sigmaColor, double sigmaSpace, int borderType = BORDER_DEFAULT)
+    //
+
+    //javadoc: bilateralFilter(src, dst, d, sigmaColor, sigmaSpace, borderType)
+    public static void bilateralFilter(Mat src, Mat dst, int d, double sigmaColor, double sigmaSpace, int borderType)
+    {
+        
+        bilateralFilter_0(src.nativeObj, dst.nativeObj, d, sigmaColor, sigmaSpace, borderType);
+        
+        return;
+    }
+
+    //javadoc: bilateralFilter(src, dst, d, sigmaColor, sigmaSpace)
+    public static void bilateralFilter(Mat src, Mat dst, int d, double sigmaColor, double sigmaSpace)
+    {
+        
+        bilateralFilter_1(src.nativeObj, dst.nativeObj, d, sigmaColor, sigmaSpace);
+        
+        return;
+    }
+
+
+    //
+    // C++:  void boxFilter(Mat src, Mat& dst, int ddepth, Size ksize, Point anchor = Point(-1,-1), bool normalize = true, int borderType = BORDER_DEFAULT)
+    //
+
+    //javadoc: boxFilter(src, dst, ddepth, ksize, anchor, normalize, borderType)
+    public static void boxFilter(Mat src, Mat dst, int ddepth, Size ksize, Point anchor, boolean normalize, int borderType)
+    {
+        
+        boxFilter_0(src.nativeObj, dst.nativeObj, ddepth, ksize.width, ksize.height, anchor.x, anchor.y, normalize, borderType);
+        
+        return;
+    }
+
+    //javadoc: boxFilter(src, dst, ddepth, ksize, anchor, normalize)
+    public static void boxFilter(Mat src, Mat dst, int ddepth, Size ksize, Point anchor, boolean normalize)
+    {
+        
+        boxFilter_1(src.nativeObj, dst.nativeObj, ddepth, ksize.width, ksize.height, anchor.x, anchor.y, normalize);
+        
+        return;
+    }
+
+    //javadoc: boxFilter(src, dst, ddepth, ksize)
+    public static void boxFilter(Mat src, Mat dst, int ddepth, Size ksize)
+    {
+        
+        boxFilter_2(src.nativeObj, dst.nativeObj, ddepth, ksize.width, ksize.height);
+        
+        return;
+    }
+
+
+    //
+    // C++:  void sqrBoxFilter(Mat _src, Mat& _dst, int ddepth, Size ksize, Point anchor = Point(-1, -1), bool normalize = true, int borderType = BORDER_DEFAULT)
+    //
+
+    //javadoc: sqrBoxFilter(_src, _dst, ddepth, ksize, anchor, normalize, borderType)
+    public static void sqrBoxFilter(Mat _src, Mat _dst, int ddepth, Size ksize, Point anchor, boolean normalize, int borderType)
+    {
+        
+        sqrBoxFilter_0(_src.nativeObj, _dst.nativeObj, ddepth, ksize.width, ksize.height, anchor.x, anchor.y, normalize, borderType);
+        
+        return;
+    }
+
+    //javadoc: sqrBoxFilter(_src, _dst, ddepth, ksize, anchor, normalize)
+    public static void sqrBoxFilter(Mat _src, Mat _dst, int ddepth, Size ksize, Point anchor, boolean normalize)
+    {
+        
+        sqrBoxFilter_1(_src.nativeObj, _dst.nativeObj, ddepth, ksize.width, ksize.height, anchor.x, anchor.y, normalize);
+        
+        return;
+    }
+
+    //javadoc: sqrBoxFilter(_src, _dst, ddepth, ksize)
+    public static void sqrBoxFilter(Mat _src, Mat _dst, int ddepth, Size ksize)
+    {
+        
+        sqrBoxFilter_2(_src.nativeObj, _dst.nativeObj, ddepth, ksize.width, ksize.height);
+        
+        return;
+    }
+
+
+    //
+    // C++:  void blur(Mat src, Mat& dst, Size ksize, Point anchor = Point(-1,-1), int borderType = BORDER_DEFAULT)
+    //
+
+    //javadoc: blur(src, dst, ksize, anchor, borderType)
+    public static void blur(Mat src, Mat dst, Size ksize, Point anchor, int borderType)
+    {
+        
+        blur_0(src.nativeObj, dst.nativeObj, ksize.width, ksize.height, anchor.x, anchor.y, borderType);
+        
+        return;
+    }
+
+    //javadoc: blur(src, dst, ksize, anchor)
+    public static void blur(Mat src, Mat dst, Size ksize, Point anchor)
+    {
+        
+        blur_1(src.nativeObj, dst.nativeObj, ksize.width, ksize.height, anchor.x, anchor.y);
+        
+        return;
+    }
+
+    //javadoc: blur(src, dst, ksize)
+    public static void blur(Mat src, Mat dst, Size ksize)
+    {
+        
+        blur_2(src.nativeObj, dst.nativeObj, ksize.width, ksize.height);
+        
+        return;
+    }
+
+
+    //
+    // C++:  void filter2D(Mat src, Mat& dst, int ddepth, Mat kernel, Point anchor = Point(-1,-1), double delta = 0, int borderType = BORDER_DEFAULT)
+    //
+
+    //javadoc: filter2D(src, dst, ddepth, kernel, anchor, delta, borderType)
+    public static void filter2D(Mat src, Mat dst, int ddepth, Mat kernel, Point anchor, double delta, int borderType)
+    {
+        
+        filter2D_0(src.nativeObj, dst.nativeObj, ddepth, kernel.nativeObj, anchor.x, anchor.y, delta, borderType);
+        
+        return;
+    }
+
+    //javadoc: filter2D(src, dst, ddepth, kernel, anchor, delta)
+    public static void filter2D(Mat src, Mat dst, int ddepth, Mat kernel, Point anchor, double delta)
+    {
+        
+        filter2D_1(src.nativeObj, dst.nativeObj, ddepth, kernel.nativeObj, anchor.x, anchor.y, delta);
+        
+        return;
+    }
+
+    //javadoc: filter2D(src, dst, ddepth, kernel)
+    public static void filter2D(Mat src, Mat dst, int ddepth, Mat kernel)
+    {
+        
+        filter2D_2(src.nativeObj, dst.nativeObj, ddepth, kernel.nativeObj);
+        
+        return;
+    }
+
+
+    //
+    // C++:  void sepFilter2D(Mat src, Mat& dst, int ddepth, Mat kernelX, Mat kernelY, Point anchor = Point(-1,-1), double delta = 0, int borderType = BORDER_DEFAULT)
+    //
+
+    //javadoc: sepFilter2D(src, dst, ddepth, kernelX, kernelY, anchor, delta, borderType)
+    public static void sepFilter2D(Mat src, Mat dst, int ddepth, Mat kernelX, Mat kernelY, Point anchor, double delta, int borderType)
+    {
+        
+        sepFilter2D_0(src.nativeObj, dst.nativeObj, ddepth, kernelX.nativeObj, kernelY.nativeObj, anchor.x, anchor.y, delta, borderType);
+        
+        return;
+    }
+
+    //javadoc: sepFilter2D(src, dst, ddepth, kernelX, kernelY, anchor, delta)
+    public static void sepFilter2D(Mat src, Mat dst, int ddepth, Mat kernelX, Mat kernelY, Point anchor, double delta)
+    {
+        
+        sepFilter2D_1(src.nativeObj, dst.nativeObj, ddepth, kernelX.nativeObj, kernelY.nativeObj, anchor.x, anchor.y, delta);
+        
+        return;
+    }
+
+    //javadoc: sepFilter2D(src, dst, ddepth, kernelX, kernelY)
+    public static void sepFilter2D(Mat src, Mat dst, int ddepth, Mat kernelX, Mat kernelY)
+    {
+        
+        sepFilter2D_2(src.nativeObj, dst.nativeObj, ddepth, kernelX.nativeObj, kernelY.nativeObj);
+        
+        return;
+    }
+
+
+    //
+    // C++:  void Sobel(Mat src, Mat& dst, int ddepth, int dx, int dy, int ksize = 3, double scale = 1, double delta = 0, int borderType = BORDER_DEFAULT)
+    //
+
+    //javadoc: Sobel(src, dst, ddepth, dx, dy, ksize, scale, delta, borderType)
+    public static void Sobel(Mat src, Mat dst, int ddepth, int dx, int dy, int ksize, double scale, double delta, int borderType)
+    {
+        
+        Sobel_0(src.nativeObj, dst.nativeObj, ddepth, dx, dy, ksize, scale, delta, borderType);
+        
+        return;
+    }
+
+    //javadoc: Sobel(src, dst, ddepth, dx, dy, ksize, scale, delta)
+    public static void Sobel(Mat src, Mat dst, int ddepth, int dx, int dy, int ksize, double scale, double delta)
+    {
+        
+        Sobel_1(src.nativeObj, dst.nativeObj, ddepth, dx, dy, ksize, scale, delta);
+        
+        return;
+    }
+
+    //javadoc: Sobel(src, dst, ddepth, dx, dy)
+    public static void Sobel(Mat src, Mat dst, int ddepth, int dx, int dy)
+    {
+        
+        Sobel_2(src.nativeObj, dst.nativeObj, ddepth, dx, dy);
+        
+        return;
+    }
+
+
+    //
+    // C++:  void spatialGradient(Mat src, Mat& dx, Mat& dy, int ksize = 3, int borderType = BORDER_DEFAULT)
+    //
+
+    //javadoc: spatialGradient(src, dx, dy, ksize, borderType)
+    public static void spatialGradient(Mat src, Mat dx, Mat dy, int ksize, int borderType)
+    {
+        
+        spatialGradient_0(src.nativeObj, dx.nativeObj, dy.nativeObj, ksize, borderType);
+        
+        return;
+    }
+
+    //javadoc: spatialGradient(src, dx, dy, ksize)
+    public static void spatialGradient(Mat src, Mat dx, Mat dy, int ksize)
+    {
+        
+        spatialGradient_1(src.nativeObj, dx.nativeObj, dy.nativeObj, ksize);
+        
+        return;
+    }
+
+    //javadoc: spatialGradient(src, dx, dy)
+    public static void spatialGradient(Mat src, Mat dx, Mat dy)
+    {
+        
+        spatialGradient_2(src.nativeObj, dx.nativeObj, dy.nativeObj);
+        
+        return;
+    }
+
+
+    //
+    // C++:  void Scharr(Mat src, Mat& dst, int ddepth, int dx, int dy, double scale = 1, double delta = 0, int borderType = BORDER_DEFAULT)
+    //
+
+    //javadoc: Scharr(src, dst, ddepth, dx, dy, scale, delta, borderType)
+    public static void Scharr(Mat src, Mat dst, int ddepth, int dx, int dy, double scale, double delta, int borderType)
+    {
+        
+        Scharr_0(src.nativeObj, dst.nativeObj, ddepth, dx, dy, scale, delta, borderType);
+        
+        return;
+    }
+
+    //javadoc: Scharr(src, dst, ddepth, dx, dy, scale, delta)
+    public static void Scharr(Mat src, Mat dst, int ddepth, int dx, int dy, double scale, double delta)
+    {
+        
+        Scharr_1(src.nativeObj, dst.nativeObj, ddepth, dx, dy, scale, delta);
+        
+        return;
+    }
+
+    //javadoc: Scharr(src, dst, ddepth, dx, dy)
+    public static void Scharr(Mat src, Mat dst, int ddepth, int dx, int dy)
+    {
+        
+        Scharr_2(src.nativeObj, dst.nativeObj, ddepth, dx, dy);
+        
+        return;
+    }
+
+
+    //
+    // C++:  void Laplacian(Mat src, Mat& dst, int ddepth, int ksize = 1, double scale = 1, double delta = 0, int borderType = BORDER_DEFAULT)
+    //
+
+    //javadoc: Laplacian(src, dst, ddepth, ksize, scale, delta, borderType)
+    public static void Laplacian(Mat src, Mat dst, int ddepth, int ksize, double scale, double delta, int borderType)
+    {
+        
+        Laplacian_0(src.nativeObj, dst.nativeObj, ddepth, ksize, scale, delta, borderType);
+        
+        return;
+    }
+
+    //javadoc: Laplacian(src, dst, ddepth, ksize, scale, delta)
+    public static void Laplacian(Mat src, Mat dst, int ddepth, int ksize, double scale, double delta)
+    {
+        
+        Laplacian_1(src.nativeObj, dst.nativeObj, ddepth, ksize, scale, delta);
+        
+        return;
+    }
+
+    //javadoc: Laplacian(src, dst, ddepth)
+    public static void Laplacian(Mat src, Mat dst, int ddepth)
+    {
+        
+        Laplacian_2(src.nativeObj, dst.nativeObj, ddepth);
+        
+        return;
+    }
+
+
+    //
+    // C++:  void Canny(Mat image, Mat& edges, double threshold1, double threshold2, int apertureSize = 3, bool L2gradient = false)
+    //
+
+    //javadoc: Canny(image, edges, threshold1, threshold2, apertureSize, L2gradient)
+    public static void Canny(Mat image, Mat edges, double threshold1, double threshold2, int apertureSize, boolean L2gradient)
+    {
+        
+        Canny_0(image.nativeObj, edges.nativeObj, threshold1, threshold2, apertureSize, L2gradient);
+        
+        return;
+    }
+
+    //javadoc: Canny(image, edges, threshold1, threshold2)
+    public static void Canny(Mat image, Mat edges, double threshold1, double threshold2)
+    {
+        
+        Canny_1(image.nativeObj, edges.nativeObj, threshold1, threshold2);
+        
+        return;
+    }
+
+
+    //
+    // C++:  void cornerMinEigenVal(Mat src, Mat& dst, int blockSize, int ksize = 3, int borderType = BORDER_DEFAULT)
+    //
+
+    //javadoc: cornerMinEigenVal(src, dst, blockSize, ksize, borderType)
+    public static void cornerMinEigenVal(Mat src, Mat dst, int blockSize, int ksize, int borderType)
+    {
+        
+        cornerMinEigenVal_0(src.nativeObj, dst.nativeObj, blockSize, ksize, borderType);
+        
+        return;
+    }
+
+    //javadoc: cornerMinEigenVal(src, dst, blockSize, ksize)
+    public static void cornerMinEigenVal(Mat src, Mat dst, int blockSize, int ksize)
+    {
+        
+        cornerMinEigenVal_1(src.nativeObj, dst.nativeObj, blockSize, ksize);
+        
+        return;
+    }
+
+    //javadoc: cornerMinEigenVal(src, dst, blockSize)
+    public static void cornerMinEigenVal(Mat src, Mat dst, int blockSize)
+    {
+        
+        cornerMinEigenVal_2(src.nativeObj, dst.nativeObj, blockSize);
+        
+        return;
+    }
+
+
+    //
+    // C++:  void cornerHarris(Mat src, Mat& dst, int blockSize, int ksize, double k, int borderType = BORDER_DEFAULT)
+    //
+
+    //javadoc: cornerHarris(src, dst, blockSize, ksize, k, borderType)
+    public static void cornerHarris(Mat src, Mat dst, int blockSize, int ksize, double k, int borderType)
+    {
+        
+        cornerHarris_0(src.nativeObj, dst.nativeObj, blockSize, ksize, k, borderType);
+        
+        return;
+    }
+
+    //javadoc: cornerHarris(src, dst, blockSize, ksize, k)
+    public static void cornerHarris(Mat src, Mat dst, int blockSize, int ksize, double k)
+    {
+        
+        cornerHarris_1(src.nativeObj, dst.nativeObj, blockSize, ksize, k);
+        
+        return;
+    }
+
+
+    //
+    // C++:  void cornerEigenValsAndVecs(Mat src, Mat& dst, int blockSize, int ksize, int borderType = BORDER_DEFAULT)
+    //
+
+    //javadoc: cornerEigenValsAndVecs(src, dst, blockSize, ksize, borderType)
+    public static void cornerEigenValsAndVecs(Mat src, Mat dst, int blockSize, int ksize, int borderType)
+    {
+        
+        cornerEigenValsAndVecs_0(src.nativeObj, dst.nativeObj, blockSize, ksize, borderType);
+        
+        return;
+    }
+
+    //javadoc: cornerEigenValsAndVecs(src, dst, blockSize, ksize)
+    public static void cornerEigenValsAndVecs(Mat src, Mat dst, int blockSize, int ksize)
+    {
+        
+        cornerEigenValsAndVecs_1(src.nativeObj, dst.nativeObj, blockSize, ksize);
+        
+        return;
+    }
+
+
+    //
+    // C++:  void preCornerDetect(Mat src, Mat& dst, int ksize, int borderType = BORDER_DEFAULT)
+    //
+
+    //javadoc: preCornerDetect(src, dst, ksize, borderType)
+    public static void preCornerDetect(Mat src, Mat dst, int ksize, int borderType)
+    {
+        
+        preCornerDetect_0(src.nativeObj, dst.nativeObj, ksize, borderType);
+        
+        return;
+    }
+
+    //javadoc: preCornerDetect(src, dst, ksize)
+    public static void preCornerDetect(Mat src, Mat dst, int ksize)
+    {
+        
+        preCornerDetect_1(src.nativeObj, dst.nativeObj, ksize);
+        
+        return;
+    }
+
+
+    //
+    // C++:  void cornerSubPix(Mat image, vector_Point2f& corners, Size winSize, Size zeroZone, TermCriteria criteria)
+    //
+
+    //javadoc: cornerSubPix(image, corners, winSize, zeroZone, criteria)
+    public static void cornerSubPix(Mat image, MatOfPoint2f corners, Size winSize, Size zeroZone, TermCriteria criteria)
+    {
+        Mat corners_mat = corners;
+        cornerSubPix_0(image.nativeObj, corners_mat.nativeObj, winSize.width, winSize.height, zeroZone.width, zeroZone.height, criteria.type, criteria.maxCount, criteria.epsilon);
+        
+        return;
+    }
+
+
+    //
+    // C++:  void goodFeaturesToTrack(Mat image, vector_Point& corners, int maxCorners, double qualityLevel, double minDistance, Mat mask = Mat(), int blockSize = 3, bool useHarrisDetector = false, double k = 0.04)
+    //
+
+    //javadoc: goodFeaturesToTrack(image, corners, maxCorners, qualityLevel, minDistance, mask, blockSize, useHarrisDetector, k)
+    public static void goodFeaturesToTrack(Mat image, MatOfPoint corners, int maxCorners, double qualityLevel, double minDistance, Mat mask, int blockSize, boolean useHarrisDetector, double k)
+    {
+        Mat corners_mat = corners;
+        goodFeaturesToTrack_0(image.nativeObj, corners_mat.nativeObj, maxCorners, qualityLevel, minDistance, mask.nativeObj, blockSize, useHarrisDetector, k);
+        
+        return;
+    }
+
+    //javadoc: goodFeaturesToTrack(image, corners, maxCorners, qualityLevel, minDistance)
+    public static void goodFeaturesToTrack(Mat image, MatOfPoint corners, int maxCorners, double qualityLevel, double minDistance)
+    {
+        Mat corners_mat = corners;
+        goodFeaturesToTrack_1(image.nativeObj, corners_mat.nativeObj, maxCorners, qualityLevel, minDistance);
+        
+        return;
+    }
+
+
+    //
+    // C++:  void HoughLines(Mat image, Mat& lines, double rho, double theta, int threshold, double srn = 0, double stn = 0, double min_theta = 0, double max_theta = CV_PI)
+    //
+
+    //javadoc: HoughLines(image, lines, rho, theta, threshold, srn, stn, min_theta, max_theta)
+    public static void HoughLines(Mat image, Mat lines, double rho, double theta, int threshold, double srn, double stn, double min_theta, double max_theta)
+    {
+        
+        HoughLines_0(image.nativeObj, lines.nativeObj, rho, theta, threshold, srn, stn, min_theta, max_theta);
+        
+        return;
+    }
+
+    //javadoc: HoughLines(image, lines, rho, theta, threshold)
+    public static void HoughLines(Mat image, Mat lines, double rho, double theta, int threshold)
+    {
+        
+        HoughLines_1(image.nativeObj, lines.nativeObj, rho, theta, threshold);
+        
+        return;
+    }
+
+
+    //
+    // C++:  void HoughLinesP(Mat image, Mat& lines, double rho, double theta, int threshold, double minLineLength = 0, double maxLineGap = 0)
+    //
+
+    //javadoc: HoughLinesP(image, lines, rho, theta, threshold, minLineLength, maxLineGap)
+    public static void HoughLinesP(Mat image, Mat lines, double rho, double theta, int threshold, double minLineLength, double maxLineGap)
+    {
+        
+        HoughLinesP_0(image.nativeObj, lines.nativeObj, rho, theta, threshold, minLineLength, maxLineGap);
+        
+        return;
+    }
+
+    //javadoc: HoughLinesP(image, lines, rho, theta, threshold)
+    public static void HoughLinesP(Mat image, Mat lines, double rho, double theta, int threshold)
+    {
+        
+        HoughLinesP_1(image.nativeObj, lines.nativeObj, rho, theta, threshold);
+        
+        return;
+    }
+
+
+    //
+    // C++:  void HoughCircles(Mat image, Mat& circles, int method, double dp, double minDist, double param1 = 100, double param2 = 100, int minRadius = 0, int maxRadius = 0)
+    //
+
+    //javadoc: HoughCircles(image, circles, method, dp, minDist, param1, param2, minRadius, maxRadius)
+    public static void HoughCircles(Mat image, Mat circles, int method, double dp, double minDist, double param1, double param2, int minRadius, int maxRadius)
+    {
+        
+        HoughCircles_0(image.nativeObj, circles.nativeObj, method, dp, minDist, param1, param2, minRadius, maxRadius);
+        
+        return;
+    }
+
+    //javadoc: HoughCircles(image, circles, method, dp, minDist)
+    public static void HoughCircles(Mat image, Mat circles, int method, double dp, double minDist)
+    {
+        
+        HoughCircles_1(image.nativeObj, circles.nativeObj, method, dp, minDist);
+        
+        return;
+    }
+
+
+    //
+    // C++:  void erode(Mat src, Mat& dst, Mat kernel, Point anchor = Point(-1,-1), int iterations = 1, int borderType = BORDER_CONSTANT, Scalar borderValue = morphologyDefaultBorderValue())
+    //
+
+    //javadoc: erode(src, dst, kernel, anchor, iterations, borderType, borderValue)
+    public static void erode(Mat src, Mat dst, Mat kernel, Point anchor, int iterations, int borderType, Scalar borderValue)
+    {
+        
+        erode_0(src.nativeObj, dst.nativeObj, kernel.nativeObj, anchor.x, anchor.y, iterations, borderType, borderValue.val[0], borderValue.val[1], borderValue.val[2], borderValue.val[3]);
+        
+        return;
+    }
+
+    //javadoc: erode(src, dst, kernel, anchor, iterations)
+    public static void erode(Mat src, Mat dst, Mat kernel, Point anchor, int iterations)
+    {
+        
+        erode_1(src.nativeObj, dst.nativeObj, kernel.nativeObj, anchor.x, anchor.y, iterations);
+        
+        return;
+    }
+
+    //javadoc: erode(src, dst, kernel)
+    public static void erode(Mat src, Mat dst, Mat kernel)
+    {
+        
+        erode_2(src.nativeObj, dst.nativeObj, kernel.nativeObj);
+        
+        return;
+    }
+
+
+    //
+    // C++:  void dilate(Mat src, Mat& dst, Mat kernel, Point anchor = Point(-1,-1), int iterations = 1, int borderType = BORDER_CONSTANT, Scalar borderValue = morphologyDefaultBorderValue())
+    //
+
+    //javadoc: dilate(src, dst, kernel, anchor, iterations, borderType, borderValue)
+    public static void dilate(Mat src, Mat dst, Mat kernel, Point anchor, int iterations, int borderType, Scalar borderValue)
+    {
+        
+        dilate_0(src.nativeObj, dst.nativeObj, kernel.nativeObj, anchor.x, anchor.y, iterations, borderType, borderValue.val[0], borderValue.val[1], borderValue.val[2], borderValue.val[3]);
+        
+        return;
+    }
+
+    //javadoc: dilate(src, dst, kernel, anchor, iterations)
+    public static void dilate(Mat src, Mat dst, Mat kernel, Point anchor, int iterations)
+    {
+        
+        dilate_1(src.nativeObj, dst.nativeObj, kernel.nativeObj, anchor.x, anchor.y, iterations);
+        
+        return;
+    }
+
+    //javadoc: dilate(src, dst, kernel)
+    public static void dilate(Mat src, Mat dst, Mat kernel)
+    {
+        
+        dilate_2(src.nativeObj, dst.nativeObj, kernel.nativeObj);
+        
+        return;
+    }
+
+
+    //
+    // C++:  void morphologyEx(Mat src, Mat& dst, int op, Mat kernel, Point anchor = Point(-1,-1), int iterations = 1, int borderType = BORDER_CONSTANT, Scalar borderValue = morphologyDefaultBorderValue())
+    //
+
+    //javadoc: morphologyEx(src, dst, op, kernel, anchor, iterations, borderType, borderValue)
+    public static void morphologyEx(Mat src, Mat dst, int op, Mat kernel, Point anchor, int iterations, int borderType, Scalar borderValue)
+    {
+        
+        morphologyEx_0(src.nativeObj, dst.nativeObj, op, kernel.nativeObj, anchor.x, anchor.y, iterations, borderType, borderValue.val[0], borderValue.val[1], borderValue.val[2], borderValue.val[3]);
+        
+        return;
+    }
+
+    //javadoc: morphologyEx(src, dst, op, kernel, anchor, iterations)
+    public static void morphologyEx(Mat src, Mat dst, int op, Mat kernel, Point anchor, int iterations)
+    {
+        
+        morphologyEx_1(src.nativeObj, dst.nativeObj, op, kernel.nativeObj, anchor.x, anchor.y, iterations);
+        
+        return;
+    }
+
+    //javadoc: morphologyEx(src, dst, op, kernel)
+    public static void morphologyEx(Mat src, Mat dst, int op, Mat kernel)
+    {
+        
+        morphologyEx_2(src.nativeObj, dst.nativeObj, op, kernel.nativeObj);
+        
+        return;
+    }
+
+
+    //
+    // C++:  void resize(Mat src, Mat& dst, Size dsize, double fx = 0, double fy = 0, int interpolation = INTER_LINEAR)
+    //
+
+    //javadoc: resize(src, dst, dsize, fx, fy, interpolation)
+    public static void resize(Mat src, Mat dst, Size dsize, double fx, double fy, int interpolation)
+    {
+        
+        resize_0(src.nativeObj, dst.nativeObj, dsize.width, dsize.height, fx, fy, interpolation);
+        
+        return;
+    }
+
+    //javadoc: resize(src, dst, dsize)
+    public static void resize(Mat src, Mat dst, Size dsize)
+    {
+        
+        resize_1(src.nativeObj, dst.nativeObj, dsize.width, dsize.height);
+        
+        return;
+    }
+
+
+    //
+    // C++:  void warpAffine(Mat src, Mat& dst, Mat M, Size dsize, int flags = INTER_LINEAR, int borderMode = BORDER_CONSTANT, Scalar borderValue = Scalar())
+    //
+
+    //javadoc: warpAffine(src, dst, M, dsize, flags, borderMode, borderValue)
+    public static void warpAffine(Mat src, Mat dst, Mat M, Size dsize, int flags, int borderMode, Scalar borderValue)
+    {
+        
+        warpAffine_0(src.nativeObj, dst.nativeObj, M.nativeObj, dsize.width, dsize.height, flags, borderMode, borderValue.val[0], borderValue.val[1], borderValue.val[2], borderValue.val[3]);
+        
+        return;
+    }
+
+    //javadoc: warpAffine(src, dst, M, dsize, flags)
+    public static void warpAffine(Mat src, Mat dst, Mat M, Size dsize, int flags)
+    {
+        
+        warpAffine_1(src.nativeObj, dst.nativeObj, M.nativeObj, dsize.width, dsize.height, flags);
+        
+        return;
+    }
+
+    //javadoc: warpAffine(src, dst, M, dsize)
+    public static void warpAffine(Mat src, Mat dst, Mat M, Size dsize)
+    {
+        
+        warpAffine_2(src.nativeObj, dst.nativeObj, M.nativeObj, dsize.width, dsize.height);
+        
+        return;
+    }
+
+
+    //
+    // C++:  void linearPolar(Mat src, Mat& dst, Point2f center, double maxRadius, int flags)
+    //
+
+    //javadoc: linearPolar(src, dst, center, maxRadius, flags)
+    public static void linearPolar(Mat src, Mat dst, Point center, double maxRadius, int flags)
+    {
+        
+        linearPolar_0(src.nativeObj, dst.nativeObj, center.x, center.y, maxRadius, flags);
+        
+        return;
+    }
+
+
+    //
+    // C++:  void integral(Mat src, Mat& sum, int sdepth = -1)
+    //
+
+    //javadoc: integral(src, sum, sdepth)
+    public static void integral(Mat src, Mat sum, int sdepth)
+    {
+        
+        integral_0(src.nativeObj, sum.nativeObj, sdepth);
+        
+        return;
+    }
+
+    //javadoc: integral(src, sum)
+    public static void integral(Mat src, Mat sum)
+    {
+        
+        integral_1(src.nativeObj, sum.nativeObj);
+        
+        return;
+    }
+
+
+    //
+    // C++:  void integral(Mat src, Mat& sum, Mat& sqsum, int sdepth = -1, int sqdepth = -1)
+    //
+
+    //javadoc: integral(src, sum, sqsum, sdepth, sqdepth)
+    public static void integral2(Mat src, Mat sum, Mat sqsum, int sdepth, int sqdepth)
+    {
+        
+        integral2_0(src.nativeObj, sum.nativeObj, sqsum.nativeObj, sdepth, sqdepth);
+        
+        return;
+    }
+
+    //javadoc: integral(src, sum, sqsum)
+    public static void integral2(Mat src, Mat sum, Mat sqsum)
+    {
+        
+        integral2_1(src.nativeObj, sum.nativeObj, sqsum.nativeObj);
+        
+        return;
+    }
+
+
+    //
+    // C++:  void integral(Mat src, Mat& sum, Mat& sqsum, Mat& tilted, int sdepth = -1, int sqdepth = -1)
+    //
+
+    //javadoc: integral(src, sum, sqsum, tilted, sdepth, sqdepth)
+    public static void integral3(Mat src, Mat sum, Mat sqsum, Mat tilted, int sdepth, int sqdepth)
+    {
+        
+        integral3_0(src.nativeObj, sum.nativeObj, sqsum.nativeObj, tilted.nativeObj, sdepth, sqdepth);
+        
+        return;
+    }
+
+    //javadoc: integral(src, sum, sqsum, tilted)
+    public static void integral3(Mat src, Mat sum, Mat sqsum, Mat tilted)
+    {
+        
+        integral3_1(src.nativeObj, sum.nativeObj, sqsum.nativeObj, tilted.nativeObj);
+        
+        return;
+    }
+
+
+    //
+    // C++:  void accumulate(Mat src, Mat& dst, Mat mask = Mat())
+    //
+
+    //javadoc: accumulate(src, dst, mask)
+    public static void accumulate(Mat src, Mat dst, Mat mask)
+    {
+        
+        accumulate_0(src.nativeObj, dst.nativeObj, mask.nativeObj);
+        
+        return;
+    }
+
+    //javadoc: accumulate(src, dst)
+    public static void accumulate(Mat src, Mat dst)
+    {
+        
+        accumulate_1(src.nativeObj, dst.nativeObj);
+        
+        return;
+    }
+
+
+    //
+    // C++:  void accumulateSquare(Mat src, Mat& dst, Mat mask = Mat())
+    //
+
+    //javadoc: accumulateSquare(src, dst, mask)
+    public static void accumulateSquare(Mat src, Mat dst, Mat mask)
+    {
+        
+        accumulateSquare_0(src.nativeObj, dst.nativeObj, mask.nativeObj);
+        
+        return;
+    }
+
+    //javadoc: accumulateSquare(src, dst)
+    public static void accumulateSquare(Mat src, Mat dst)
+    {
+        
+        accumulateSquare_1(src.nativeObj, dst.nativeObj);
+        
+        return;
+    }
+
+
+    //
+    // C++:  void accumulateProduct(Mat src1, Mat src2, Mat& dst, Mat mask = Mat())
+    //
+
+    //javadoc: accumulateProduct(src1, src2, dst, mask)
+    public static void accumulateProduct(Mat src1, Mat src2, Mat dst, Mat mask)
+    {
+        
+        accumulateProduct_0(src1.nativeObj, src2.nativeObj, dst.nativeObj, mask.nativeObj);
+        
+        return;
+    }
+
+    //javadoc: accumulateProduct(src1, src2, dst)
+    public static void accumulateProduct(Mat src1, Mat src2, Mat dst)
+    {
+        
+        accumulateProduct_1(src1.nativeObj, src2.nativeObj, dst.nativeObj);
+        
+        return;
+    }
+
+
+    //
+    // C++:  void accumulateWeighted(Mat src, Mat& dst, double alpha, Mat mask = Mat())
+    //
+
+    //javadoc: accumulateWeighted(src, dst, alpha, mask)
+    public static void accumulateWeighted(Mat src, Mat dst, double alpha, Mat mask)
+    {
+        
+        accumulateWeighted_0(src.nativeObj, dst.nativeObj, alpha, mask.nativeObj);
+        
+        return;
+    }
+
+    //javadoc: accumulateWeighted(src, dst, alpha)
+    public static void accumulateWeighted(Mat src, Mat dst, double alpha)
+    {
+        
+        accumulateWeighted_1(src.nativeObj, dst.nativeObj, alpha);
+        
+        return;
+    }
+
+
+    //
+    // C++:  Point2d phaseCorrelate(Mat src1, Mat src2, Mat window = Mat(), double* response = 0)
+    //
+
+    //javadoc: phaseCorrelate(src1, src2, window, response)
+    public static Point phaseCorrelate(Mat src1, Mat src2, Mat window, double[] response)
+    {
+        double[] response_out = new double[1];
+        Point retVal = new Point(phaseCorrelate_0(src1.nativeObj, src2.nativeObj, window.nativeObj, response_out));
+        if(response!=null) response[0] = (double)response_out[0];
+        return retVal;
+    }
+
+    //javadoc: phaseCorrelate(src1, src2)
+    public static Point phaseCorrelate(Mat src1, Mat src2)
+    {
+        
+        Point retVal = new Point(phaseCorrelate_1(src1.nativeObj, src2.nativeObj));
+        
+        return retVal;
+    }
+
+
+    //
+    // C++:  void createHanningWindow(Mat& dst, Size winSize, int type)
+    //
+
+    //javadoc: createHanningWindow(dst, winSize, type)
+    public static void createHanningWindow(Mat dst, Size winSize, int type)
+    {
+        
+        createHanningWindow_0(dst.nativeObj, winSize.width, winSize.height, type);
+        
+        return;
+    }
+
+
+    //
+    // C++:  double threshold(Mat src, Mat& dst, double thresh, double maxval, int type)
+    //
+
+    //javadoc: threshold(src, dst, thresh, maxval, type)
+    public static double threshold(Mat src, Mat dst, double thresh, double maxval, int type)
+    {
+        
+        double retVal = threshold_0(src.nativeObj, dst.nativeObj, thresh, maxval, type);
+        
+        return retVal;
+    }
+
+
+    //
+    // C++:  void adaptiveThreshold(Mat src, Mat& dst, double maxValue, int adaptiveMethod, int thresholdType, int blockSize, double C)
+    //
+
+    //javadoc: adaptiveThreshold(src, dst, maxValue, adaptiveMethod, thresholdType, blockSize, C)
+    public static void adaptiveThreshold(Mat src, Mat dst, double maxValue, int adaptiveMethod, int thresholdType, int blockSize, double C)
+    {
+        
+        adaptiveThreshold_0(src.nativeObj, dst.nativeObj, maxValue, adaptiveMethod, thresholdType, blockSize, C);
+        
+        return;
+    }
+
+
+    //
+    // C++:  void pyrDown(Mat src, Mat& dst, Size dstsize = Size(), int borderType = BORDER_DEFAULT)
+    //
+
+    //javadoc: pyrDown(src, dst, dstsize, borderType)
+    public static void pyrDown(Mat src, Mat dst, Size dstsize, int borderType)
+    {
+        
+        pyrDown_0(src.nativeObj, dst.nativeObj, dstsize.width, dstsize.height, borderType);
+        
+        return;
+    }
+
+    //javadoc: pyrDown(src, dst, dstsize)
+    public static void pyrDown(Mat src, Mat dst, Size dstsize)
+    {
+        
+        pyrDown_1(src.nativeObj, dst.nativeObj, dstsize.width, dstsize.height);
+        
+        return;
+    }
+
+    //javadoc: pyrDown(src, dst)
+    public static void pyrDown(Mat src, Mat dst)
+    {
+        
+        pyrDown_2(src.nativeObj, dst.nativeObj);
+        
+        return;
+    }
+
+
+    //
+    // C++:  void pyrUp(Mat src, Mat& dst, Size dstsize = Size(), int borderType = BORDER_DEFAULT)
+    //
+
+    //javadoc: pyrUp(src, dst, dstsize, borderType)
+    public static void pyrUp(Mat src, Mat dst, Size dstsize, int borderType)
+    {
+        
+        pyrUp_0(src.nativeObj, dst.nativeObj, dstsize.width, dstsize.height, borderType);
+        
+        return;
+    }
+
+    //javadoc: pyrUp(src, dst, dstsize)
+    public static void pyrUp(Mat src, Mat dst, Size dstsize)
+    {
+        
+        pyrUp_1(src.nativeObj, dst.nativeObj, dstsize.width, dstsize.height);
+        
+        return;
+    }
+
+    //javadoc: pyrUp(src, dst)
+    public static void pyrUp(Mat src, Mat dst)
+    {
+        
+        pyrUp_2(src.nativeObj, dst.nativeObj);
+        
+        return;
+    }
+
+
+    //
+    // C++:  void undistort(Mat src, Mat& dst, Mat cameraMatrix, Mat distCoeffs, Mat newCameraMatrix = Mat())
+    //
+
+    //javadoc: undistort(src, dst, cameraMatrix, distCoeffs, newCameraMatrix)
+    public static void undistort(Mat src, Mat dst, Mat cameraMatrix, Mat distCoeffs, Mat newCameraMatrix)
+    {
+        
+        undistort_0(src.nativeObj, dst.nativeObj, cameraMatrix.nativeObj, distCoeffs.nativeObj, newCameraMatrix.nativeObj);
+        
+        return;
+    }
+
+    //javadoc: undistort(src, dst, cameraMatrix, distCoeffs)
+    public static void undistort(Mat src, Mat dst, Mat cameraMatrix, Mat distCoeffs)
+    {
+        
+        undistort_1(src.nativeObj, dst.nativeObj, cameraMatrix.nativeObj, distCoeffs.nativeObj);
+        
+        return;
+    }
+
+
+    //
+    // C++:  void initUndistortRectifyMap(Mat cameraMatrix, Mat distCoeffs, Mat R, Mat newCameraMatrix, Size size, int m1type, Mat& map1, Mat& map2)
+    //
+
+    //javadoc: initUndistortRectifyMap(cameraMatrix, distCoeffs, R, newCameraMatrix, size, m1type, map1, map2)
+    public static void initUndistortRectifyMap(Mat cameraMatrix, Mat distCoeffs, Mat R, Mat newCameraMatrix, Size size, int m1type, Mat map1, Mat map2)
+    {
+        
+        initUndistortRectifyMap_0(cameraMatrix.nativeObj, distCoeffs.nativeObj, R.nativeObj, newCameraMatrix.nativeObj, size.width, size.height, m1type, map1.nativeObj, map2.nativeObj);
+        
+        return;
+    }
+
+
+    //
+    // C++:  float initWideAngleProjMap(Mat cameraMatrix, Mat distCoeffs, Size imageSize, int destImageWidth, int m1type, Mat& map1, Mat& map2, int projType = PROJ_SPHERICAL_EQRECT, double alpha = 0)
+    //
+
+    //javadoc: initWideAngleProjMap(cameraMatrix, distCoeffs, imageSize, destImageWidth, m1type, map1, map2, projType, alpha)
+    public static float initWideAngleProjMap(Mat cameraMatrix, Mat distCoeffs, Size imageSize, int destImageWidth, int m1type, Mat map1, Mat map2, int projType, double alpha)
+    {
+        
+        float retVal = initWideAngleProjMap_0(cameraMatrix.nativeObj, distCoeffs.nativeObj, imageSize.width, imageSize.height, destImageWidth, m1type, map1.nativeObj, map2.nativeObj, projType, alpha);
+        
+        return retVal;
+    }
+
+    //javadoc: initWideAngleProjMap(cameraMatrix, distCoeffs, imageSize, destImageWidth, m1type, map1, map2)
+    public static float initWideAngleProjMap(Mat cameraMatrix, Mat distCoeffs, Size imageSize, int destImageWidth, int m1type, Mat map1, Mat map2)
+    {
+        
+        float retVal = initWideAngleProjMap_1(cameraMatrix.nativeObj, distCoeffs.nativeObj, imageSize.width, imageSize.height, destImageWidth, m1type, map1.nativeObj, map2.nativeObj);
+        
+        return retVal;
     }
 
 
@@ -2866,242 +2898,9 @@ public class Imgproc {
     
 
 
-    // C++:  void ellipse2Poly(Point center, Size axes, int angle, int arcStart, int arcEnd, int delta, vector_Point& pts)
-    private static native void ellipse2Poly_0(double center_x, double center_y, double axes_width, double axes_height, int angle, int arcStart, int arcEnd, int delta, long pts_mat_nativeObj);
-
-    // C++:  void putText(Mat& img, String text, Point org, int fontFace, double fontScale, Scalar color, int thickness = 1, int lineType = LINE_8, bool bottomLeftOrigin = false)
-    private static native void putText_0(long img_nativeObj, String text, double org_x, double org_y, int fontFace, double fontScale, double color_val0, double color_val1, double color_val2, double color_val3, int thickness, int lineType, boolean bottomLeftOrigin);
-    private static native void putText_1(long img_nativeObj, String text, double org_x, double org_y, int fontFace, double fontScale, double color_val0, double color_val1, double color_val2, double color_val3, int thickness);
-    private static native void putText_2(long img_nativeObj, String text, double org_x, double org_y, int fontFace, double fontScale, double color_val0, double color_val1, double color_val2, double color_val3);
-
-    // C++:  void ellipse(Mat& img, RotatedRect box, Scalar color, int thickness = 1, int lineType = LINE_8)
-    private static native void ellipse_0(long img_nativeObj, double box_center_x, double box_center_y, double box_size_width, double box_size_height, double box_angle, double color_val0, double color_val1, double color_val2, double color_val3, int thickness, int lineType);
-    private static native void ellipse_1(long img_nativeObj, double box_center_x, double box_center_y, double box_size_width, double box_size_height, double box_angle, double color_val0, double color_val1, double color_val2, double color_val3, int thickness);
-    private static native void ellipse_2(long img_nativeObj, double box_center_x, double box_center_y, double box_size_width, double box_size_height, double box_angle, double color_val0, double color_val1, double color_val2, double color_val3);
-
-    // C++:  void fillConvexPoly(Mat& img, vector_Point points, Scalar color, int lineType = LINE_8, int shift = 0)
-    private static native void fillConvexPoly_0(long img_nativeObj, long points_mat_nativeObj, double color_val0, double color_val1, double color_val2, double color_val3, int lineType, int shift);
-    private static native void fillConvexPoly_1(long img_nativeObj, long points_mat_nativeObj, double color_val0, double color_val1, double color_val2, double color_val3);
-
-    // C++:  void fillPoly(Mat& img, vector_vector_Point pts, Scalar color, int lineType = LINE_8, int shift = 0, Point offset = Point())
-    private static native void fillPoly_0(long img_nativeObj, long pts_mat_nativeObj, double color_val0, double color_val1, double color_val2, double color_val3, int lineType, int shift, double offset_x, double offset_y);
-    private static native void fillPoly_1(long img_nativeObj, long pts_mat_nativeObj, double color_val0, double color_val1, double color_val2, double color_val3);
-
-    // C++:  void polylines(Mat& img, vector_vector_Point pts, bool isClosed, Scalar color, int thickness = 1, int lineType = LINE_8, int shift = 0)
-    private static native void polylines_0(long img_nativeObj, long pts_mat_nativeObj, boolean isClosed, double color_val0, double color_val1, double color_val2, double color_val3, int thickness, int lineType, int shift);
-    private static native void polylines_1(long img_nativeObj, long pts_mat_nativeObj, boolean isClosed, double color_val0, double color_val1, double color_val2, double color_val3, int thickness);
-    private static native void polylines_2(long img_nativeObj, long pts_mat_nativeObj, boolean isClosed, double color_val0, double color_val1, double color_val2, double color_val3);
-
-    // C++:  void drawContours(Mat& image, vector_vector_Point contours, int contourIdx, Scalar color, int thickness = 1, int lineType = LINE_8, Mat hierarchy = Mat(), int maxLevel = INT_MAX, Point offset = Point())
-    private static native void drawContours_0(long image_nativeObj, long contours_mat_nativeObj, int contourIdx, double color_val0, double color_val1, double color_val2, double color_val3, int thickness, int lineType, long hierarchy_nativeObj, int maxLevel, double offset_x, double offset_y);
-    private static native void drawContours_1(long image_nativeObj, long contours_mat_nativeObj, int contourIdx, double color_val0, double color_val1, double color_val2, double color_val3, int thickness);
-    private static native void drawContours_2(long image_nativeObj, long contours_mat_nativeObj, int contourIdx, double color_val0, double color_val1, double color_val2, double color_val3);
-
-    // C++:  bool clipLine(Rect imgRect, Point& pt1, Point& pt2)
-    private static native boolean clipLine_0(int imgRect_x, int imgRect_y, int imgRect_width, int imgRect_height, double pt1_x, double pt1_y, double[] pt1_out, double pt2_x, double pt2_y, double[] pt2_out);
-
-    // C++:  Ptr_LineSegmentDetector createLineSegmentDetector(int _refine = LSD_REFINE_STD, double _scale = 0.8, double _sigma_scale = 0.6, double _quant = 2.0, double _ang_th = 22.5, double _log_eps = 0, double _density_th = 0.7, int _n_bins = 1024)
-    private static native long createLineSegmentDetector_0(int _refine, double _scale, double _sigma_scale, double _quant, double _ang_th, double _log_eps, double _density_th, int _n_bins);
-    private static native long createLineSegmentDetector_1();
-
-    // C++:  Mat getGaussianKernel(int ksize, double sigma, int ktype = CV_64F)
-    private static native long getGaussianKernel_0(int ksize, double sigma, int ktype);
-    private static native long getGaussianKernel_1(int ksize, double sigma);
-
-    // C++:  void getDerivKernels(Mat& kx, Mat& ky, int dx, int dy, int ksize, bool normalize = false, int ktype = CV_32F)
-    private static native void getDerivKernels_0(long kx_nativeObj, long ky_nativeObj, int dx, int dy, int ksize, boolean normalize, int ktype);
-    private static native void getDerivKernels_1(long kx_nativeObj, long ky_nativeObj, int dx, int dy, int ksize);
-
-    // C++:  Mat getGaborKernel(Size ksize, double sigma, double theta, double lambd, double gamma, double psi = CV_PI*0.5, int ktype = CV_64F)
-    private static native long getGaborKernel_0(double ksize_width, double ksize_height, double sigma, double theta, double lambd, double gamma, double psi, int ktype);
-    private static native long getGaborKernel_1(double ksize_width, double ksize_height, double sigma, double theta, double lambd, double gamma);
-
-    // C++:  Mat getStructuringElement(int shape, Size ksize, Point anchor = Point(-1,-1))
-    private static native long getStructuringElement_0(int shape, double ksize_width, double ksize_height, double anchor_x, double anchor_y);
-    private static native long getStructuringElement_1(int shape, double ksize_width, double ksize_height);
-
-    // C++:  void medianBlur(Mat src, Mat& dst, int ksize)
-    private static native void medianBlur_0(long src_nativeObj, long dst_nativeObj, int ksize);
-
-    // C++:  void GaussianBlur(Mat src, Mat& dst, Size ksize, double sigmaX, double sigmaY = 0, int borderType = BORDER_DEFAULT)
-    private static native void GaussianBlur_0(long src_nativeObj, long dst_nativeObj, double ksize_width, double ksize_height, double sigmaX, double sigmaY, int borderType);
-    private static native void GaussianBlur_1(long src_nativeObj, long dst_nativeObj, double ksize_width, double ksize_height, double sigmaX, double sigmaY);
-    private static native void GaussianBlur_2(long src_nativeObj, long dst_nativeObj, double ksize_width, double ksize_height, double sigmaX);
-
-    // C++:  void bilateralFilter(Mat src, Mat& dst, int d, double sigmaColor, double sigmaSpace, int borderType = BORDER_DEFAULT)
-    private static native void bilateralFilter_0(long src_nativeObj, long dst_nativeObj, int d, double sigmaColor, double sigmaSpace, int borderType);
-    private static native void bilateralFilter_1(long src_nativeObj, long dst_nativeObj, int d, double sigmaColor, double sigmaSpace);
-
-    // C++:  void boxFilter(Mat src, Mat& dst, int ddepth, Size ksize, Point anchor = Point(-1,-1), bool normalize = true, int borderType = BORDER_DEFAULT)
-    private static native void boxFilter_0(long src_nativeObj, long dst_nativeObj, int ddepth, double ksize_width, double ksize_height, double anchor_x, double anchor_y, boolean normalize, int borderType);
-    private static native void boxFilter_1(long src_nativeObj, long dst_nativeObj, int ddepth, double ksize_width, double ksize_height, double anchor_x, double anchor_y, boolean normalize);
-    private static native void boxFilter_2(long src_nativeObj, long dst_nativeObj, int ddepth, double ksize_width, double ksize_height);
-
-    // C++:  void sqrBoxFilter(Mat _src, Mat& _dst, int ddepth, Size ksize, Point anchor = Point(-1, -1), bool normalize = true, int borderType = BORDER_DEFAULT)
-    private static native void sqrBoxFilter_0(long _src_nativeObj, long _dst_nativeObj, int ddepth, double ksize_width, double ksize_height, double anchor_x, double anchor_y, boolean normalize, int borderType);
-    private static native void sqrBoxFilter_1(long _src_nativeObj, long _dst_nativeObj, int ddepth, double ksize_width, double ksize_height, double anchor_x, double anchor_y, boolean normalize);
-    private static native void sqrBoxFilter_2(long _src_nativeObj, long _dst_nativeObj, int ddepth, double ksize_width, double ksize_height);
-
-    // C++:  void cornerMinEigenVal(Mat src, Mat& dst, int blockSize, int ksize = 3, int borderType = BORDER_DEFAULT)
-    private static native void cornerMinEigenVal_0(long src_nativeObj, long dst_nativeObj, int blockSize, int ksize, int borderType);
-    private static native void cornerMinEigenVal_1(long src_nativeObj, long dst_nativeObj, int blockSize, int ksize);
-    private static native void cornerMinEigenVal_2(long src_nativeObj, long dst_nativeObj, int blockSize);
-
-    // C++:  void cornerHarris(Mat src, Mat& dst, int blockSize, int ksize, double k, int borderType = BORDER_DEFAULT)
-    private static native void cornerHarris_0(long src_nativeObj, long dst_nativeObj, int blockSize, int ksize, double k, int borderType);
-    private static native void cornerHarris_1(long src_nativeObj, long dst_nativeObj, int blockSize, int ksize, double k);
-
-    // C++:  void cornerEigenValsAndVecs(Mat src, Mat& dst, int blockSize, int ksize, int borderType = BORDER_DEFAULT)
-    private static native void cornerEigenValsAndVecs_0(long src_nativeObj, long dst_nativeObj, int blockSize, int ksize, int borderType);
-    private static native void cornerEigenValsAndVecs_1(long src_nativeObj, long dst_nativeObj, int blockSize, int ksize);
-
-    // C++:  void preCornerDetect(Mat src, Mat& dst, int ksize, int borderType = BORDER_DEFAULT)
-    private static native void preCornerDetect_0(long src_nativeObj, long dst_nativeObj, int ksize, int borderType);
-    private static native void preCornerDetect_1(long src_nativeObj, long dst_nativeObj, int ksize);
-
-    // C++:  void cornerSubPix(Mat image, vector_Point2f& corners, Size winSize, Size zeroZone, TermCriteria criteria)
-    private static native void cornerSubPix_0(long image_nativeObj, long corners_mat_nativeObj, double winSize_width, double winSize_height, double zeroZone_width, double zeroZone_height, int criteria_type, int criteria_maxCount, double criteria_epsilon);
-
-    // C++:  void goodFeaturesToTrack(Mat image, vector_Point& corners, int maxCorners, double qualityLevel, double minDistance, Mat mask = Mat(), int blockSize = 3, bool useHarrisDetector = false, double k = 0.04)
-    private static native void goodFeaturesToTrack_0(long image_nativeObj, long corners_mat_nativeObj, int maxCorners, double qualityLevel, double minDistance, long mask_nativeObj, int blockSize, boolean useHarrisDetector, double k);
-    private static native void goodFeaturesToTrack_1(long image_nativeObj, long corners_mat_nativeObj, int maxCorners, double qualityLevel, double minDistance);
-
-    // C++:  void HoughLines(Mat image, Mat& lines, double rho, double theta, int threshold, double srn = 0, double stn = 0, double min_theta = 0, double max_theta = CV_PI)
-    private static native void HoughLines_0(long image_nativeObj, long lines_nativeObj, double rho, double theta, int threshold, double srn, double stn, double min_theta, double max_theta);
-    private static native void HoughLines_1(long image_nativeObj, long lines_nativeObj, double rho, double theta, int threshold);
-
-    // C++:  void HoughLinesP(Mat image, Mat& lines, double rho, double theta, int threshold, double minLineLength = 0, double maxLineGap = 0)
-    private static native void HoughLinesP_0(long image_nativeObj, long lines_nativeObj, double rho, double theta, int threshold, double minLineLength, double maxLineGap);
-    private static native void HoughLinesP_1(long image_nativeObj, long lines_nativeObj, double rho, double theta, int threshold);
-
-    // C++:  void HoughCircles(Mat image, Mat& circles, int method, double dp, double minDist, double param1 = 100, double param2 = 100, int minRadius = 0, int maxRadius = 0)
-    private static native void HoughCircles_0(long image_nativeObj, long circles_nativeObj, int method, double dp, double minDist, double param1, double param2, int minRadius, int maxRadius);
-    private static native void HoughCircles_1(long image_nativeObj, long circles_nativeObj, int method, double dp, double minDist);
-
-    // C++:  void erode(Mat src, Mat& dst, Mat kernel, Point anchor = Point(-1,-1), int iterations = 1, int borderType = BORDER_CONSTANT, Scalar borderValue = morphologyDefaultBorderValue())
-    private static native void erode_0(long src_nativeObj, long dst_nativeObj, long kernel_nativeObj, double anchor_x, double anchor_y, int iterations, int borderType, double borderValue_val0, double borderValue_val1, double borderValue_val2, double borderValue_val3);
-    private static native void erode_1(long src_nativeObj, long dst_nativeObj, long kernel_nativeObj, double anchor_x, double anchor_y, int iterations);
-    private static native void erode_2(long src_nativeObj, long dst_nativeObj, long kernel_nativeObj);
-
-    // C++:  void dilate(Mat src, Mat& dst, Mat kernel, Point anchor = Point(-1,-1), int iterations = 1, int borderType = BORDER_CONSTANT, Scalar borderValue = morphologyDefaultBorderValue())
-    private static native void dilate_0(long src_nativeObj, long dst_nativeObj, long kernel_nativeObj, double anchor_x, double anchor_y, int iterations, int borderType, double borderValue_val0, double borderValue_val1, double borderValue_val2, double borderValue_val3);
-    private static native void dilate_1(long src_nativeObj, long dst_nativeObj, long kernel_nativeObj, double anchor_x, double anchor_y, int iterations);
-    private static native void dilate_2(long src_nativeObj, long dst_nativeObj, long kernel_nativeObj);
-
-    // C++:  void morphologyEx(Mat src, Mat& dst, int op, Mat kernel, Point anchor = Point(-1,-1), int iterations = 1, int borderType = BORDER_CONSTANT, Scalar borderValue = morphologyDefaultBorderValue())
-    private static native void morphologyEx_0(long src_nativeObj, long dst_nativeObj, int op, long kernel_nativeObj, double anchor_x, double anchor_y, int iterations, int borderType, double borderValue_val0, double borderValue_val1, double borderValue_val2, double borderValue_val3);
-    private static native void morphologyEx_1(long src_nativeObj, long dst_nativeObj, int op, long kernel_nativeObj, double anchor_x, double anchor_y, int iterations);
-    private static native void morphologyEx_2(long src_nativeObj, long dst_nativeObj, int op, long kernel_nativeObj);
-
-    // C++:  void resize(Mat src, Mat& dst, Size dsize, double fx = 0, double fy = 0, int interpolation = INTER_LINEAR)
-    private static native void resize_0(long src_nativeObj, long dst_nativeObj, double dsize_width, double dsize_height, double fx, double fy, int interpolation);
-    private static native void resize_1(long src_nativeObj, long dst_nativeObj, double dsize_width, double dsize_height);
-
-    // C++:  void warpAffine(Mat src, Mat& dst, Mat M, Size dsize, int flags = INTER_LINEAR, int borderMode = BORDER_CONSTANT, Scalar borderValue = Scalar())
-    private static native void warpAffine_0(long src_nativeObj, long dst_nativeObj, long M_nativeObj, double dsize_width, double dsize_height, int flags, int borderMode, double borderValue_val0, double borderValue_val1, double borderValue_val2, double borderValue_val3);
-    private static native void warpAffine_1(long src_nativeObj, long dst_nativeObj, long M_nativeObj, double dsize_width, double dsize_height, int flags);
-    private static native void warpAffine_2(long src_nativeObj, long dst_nativeObj, long M_nativeObj, double dsize_width, double dsize_height);
-
-    // C++:  void warpPerspective(Mat src, Mat& dst, Mat M, Size dsize, int flags = INTER_LINEAR, int borderMode = BORDER_CONSTANT, Scalar borderValue = Scalar())
-    private static native void warpPerspective_0(long src_nativeObj, long dst_nativeObj, long M_nativeObj, double dsize_width, double dsize_height, int flags, int borderMode, double borderValue_val0, double borderValue_val1, double borderValue_val2, double borderValue_val3);
-    private static native void warpPerspective_1(long src_nativeObj, long dst_nativeObj, long M_nativeObj, double dsize_width, double dsize_height, int flags);
-    private static native void warpPerspective_2(long src_nativeObj, long dst_nativeObj, long M_nativeObj, double dsize_width, double dsize_height);
-
-    // C++:  void remap(Mat src, Mat& dst, Mat map1, Mat map2, int interpolation, int borderMode = BORDER_CONSTANT, Scalar borderValue = Scalar())
-    private static native void remap_0(long src_nativeObj, long dst_nativeObj, long map1_nativeObj, long map2_nativeObj, int interpolation, int borderMode, double borderValue_val0, double borderValue_val1, double borderValue_val2, double borderValue_val3);
-    private static native void remap_1(long src_nativeObj, long dst_nativeObj, long map1_nativeObj, long map2_nativeObj, int interpolation);
-
-    // C++:  void convertMaps(Mat map1, Mat map2, Mat& dstmap1, Mat& dstmap2, int dstmap1type, bool nninterpolation = false)
-    private static native void convertMaps_0(long map1_nativeObj, long map2_nativeObj, long dstmap1_nativeObj, long dstmap2_nativeObj, int dstmap1type, boolean nninterpolation);
-    private static native void convertMaps_1(long map1_nativeObj, long map2_nativeObj, long dstmap1_nativeObj, long dstmap2_nativeObj, int dstmap1type);
-
-    // C++:  Mat getRotationMatrix2D(Point2f center, double angle, double scale)
-    private static native long getRotationMatrix2D_0(double center_x, double center_y, double angle, double scale);
-
-    // C++:  void invertAffineTransform(Mat M, Mat& iM)
-    private static native void invertAffineTransform_0(long M_nativeObj, long iM_nativeObj);
-
-    // C++:  Mat getPerspectiveTransform(Mat src, Mat dst)
-    private static native long getPerspectiveTransform_0(long src_nativeObj, long dst_nativeObj);
-
-    // C++:  Mat getAffineTransform(vector_Point2f src, vector_Point2f dst)
-    private static native long getAffineTransform_0(long src_mat_nativeObj, long dst_mat_nativeObj);
-
-    // C++:  void getRectSubPix(Mat image, Size patchSize, Point2f center, Mat& patch, int patchType = -1)
-    private static native void getRectSubPix_0(long image_nativeObj, double patchSize_width, double patchSize_height, double center_x, double center_y, long patch_nativeObj, int patchType);
-    private static native void getRectSubPix_1(long image_nativeObj, double patchSize_width, double patchSize_height, double center_x, double center_y, long patch_nativeObj);
-
-    // C++:  void logPolar(Mat src, Mat& dst, Point2f center, double M, int flags)
-    private static native void logPolar_0(long src_nativeObj, long dst_nativeObj, double center_x, double center_y, double M, int flags);
-
-    // C++:  void linearPolar(Mat src, Mat& dst, Point2f center, double maxRadius, int flags)
-    private static native void linearPolar_0(long src_nativeObj, long dst_nativeObj, double center_x, double center_y, double maxRadius, int flags);
-
-    // C++:  void adaptiveThreshold(Mat src, Mat& dst, double maxValue, int adaptiveMethod, int thresholdType, int blockSize, double C)
-    private static native void adaptiveThreshold_0(long src_nativeObj, long dst_nativeObj, double maxValue, int adaptiveMethod, int thresholdType, int blockSize, double C);
-
-    // C++:  void pyrDown(Mat src, Mat& dst, Size dstsize = Size(), int borderType = BORDER_DEFAULT)
-    private static native void pyrDown_0(long src_nativeObj, long dst_nativeObj, double dstsize_width, double dstsize_height, int borderType);
-    private static native void pyrDown_1(long src_nativeObj, long dst_nativeObj, double dstsize_width, double dstsize_height);
-    private static native void pyrDown_2(long src_nativeObj, long dst_nativeObj);
-
-    // C++:  void pyrUp(Mat src, Mat& dst, Size dstsize = Size(), int borderType = BORDER_DEFAULT)
-    private static native void pyrUp_0(long src_nativeObj, long dst_nativeObj, double dstsize_width, double dstsize_height, int borderType);
-    private static native void pyrUp_1(long src_nativeObj, long dst_nativeObj, double dstsize_width, double dstsize_height);
-    private static native void pyrUp_2(long src_nativeObj, long dst_nativeObj);
-
-    // C++:  void undistort(Mat src, Mat& dst, Mat cameraMatrix, Mat distCoeffs, Mat newCameraMatrix = Mat())
-    private static native void undistort_0(long src_nativeObj, long dst_nativeObj, long cameraMatrix_nativeObj, long distCoeffs_nativeObj, long newCameraMatrix_nativeObj);
-    private static native void undistort_1(long src_nativeObj, long dst_nativeObj, long cameraMatrix_nativeObj, long distCoeffs_nativeObj);
-
-    // C++:  void initUndistortRectifyMap(Mat cameraMatrix, Mat distCoeffs, Mat R, Mat newCameraMatrix, Size size, int m1type, Mat& map1, Mat& map2)
-    private static native void initUndistortRectifyMap_0(long cameraMatrix_nativeObj, long distCoeffs_nativeObj, long R_nativeObj, long newCameraMatrix_nativeObj, double size_width, double size_height, int m1type, long map1_nativeObj, long map2_nativeObj);
-
-    // C++:  float initWideAngleProjMap(Mat cameraMatrix, Mat distCoeffs, Size imageSize, int destImageWidth, int m1type, Mat& map1, Mat& map2, int projType = PROJ_SPHERICAL_EQRECT, double alpha = 0)
-    private static native float initWideAngleProjMap_0(long cameraMatrix_nativeObj, long distCoeffs_nativeObj, double imageSize_width, double imageSize_height, int destImageWidth, int m1type, long map1_nativeObj, long map2_nativeObj, int projType, double alpha);
-    private static native float initWideAngleProjMap_1(long cameraMatrix_nativeObj, long distCoeffs_nativeObj, double imageSize_width, double imageSize_height, int destImageWidth, int m1type, long map1_nativeObj, long map2_nativeObj);
-
     // C++:  Mat getDefaultNewCameraMatrix(Mat cameraMatrix, Size imgsize = Size(), bool centerPrincipalPoint = false)
     private static native long getDefaultNewCameraMatrix_0(long cameraMatrix_nativeObj, double imgsize_width, double imgsize_height, boolean centerPrincipalPoint);
     private static native long getDefaultNewCameraMatrix_1(long cameraMatrix_nativeObj);
-
-    // C++:  void integral(Mat src, Mat& sum, int sdepth = -1)
-    private static native void integral_0(long src_nativeObj, long sum_nativeObj, int sdepth);
-    private static native void integral_1(long src_nativeObj, long sum_nativeObj);
-
-    // C++:  void integral(Mat src, Mat& sum, Mat& sqsum, int sdepth = -1, int sqdepth = -1)
-    private static native void integral2_0(long src_nativeObj, long sum_nativeObj, long sqsum_nativeObj, int sdepth, int sqdepth);
-    private static native void integral2_1(long src_nativeObj, long sum_nativeObj, long sqsum_nativeObj);
-
-    // C++:  void integral(Mat src, Mat& sum, Mat& sqsum, Mat& tilted, int sdepth = -1, int sqdepth = -1)
-    private static native void integral3_0(long src_nativeObj, long sum_nativeObj, long sqsum_nativeObj, long tilted_nativeObj, int sdepth, int sqdepth);
-    private static native void integral3_1(long src_nativeObj, long sum_nativeObj, long sqsum_nativeObj, long tilted_nativeObj);
-
-    // C++:  void accumulate(Mat src, Mat& dst, Mat mask = Mat())
-    private static native void accumulate_0(long src_nativeObj, long dst_nativeObj, long mask_nativeObj);
-    private static native void accumulate_1(long src_nativeObj, long dst_nativeObj);
-
-    // C++:  void accumulateSquare(Mat src, Mat& dst, Mat mask = Mat())
-    private static native void accumulateSquare_0(long src_nativeObj, long dst_nativeObj, long mask_nativeObj);
-    private static native void accumulateSquare_1(long src_nativeObj, long dst_nativeObj);
-
-    // C++:  void accumulateProduct(Mat src1, Mat src2, Mat& dst, Mat mask = Mat())
-    private static native void accumulateProduct_0(long src1_nativeObj, long src2_nativeObj, long dst_nativeObj, long mask_nativeObj);
-    private static native void accumulateProduct_1(long src1_nativeObj, long src2_nativeObj, long dst_nativeObj);
-
-    // C++:  void accumulateWeighted(Mat src, Mat& dst, double alpha, Mat mask = Mat())
-    private static native void accumulateWeighted_0(long src_nativeObj, long dst_nativeObj, double alpha, long mask_nativeObj);
-    private static native void accumulateWeighted_1(long src_nativeObj, long dst_nativeObj, double alpha);
-
-    // C++:  Point2d phaseCorrelate(Mat src1, Mat src2, Mat window = Mat(), double* response = 0)
-    private static native double[] phaseCorrelate_0(long src1_nativeObj, long src2_nativeObj, long window_nativeObj, double[] response_out);
-    private static native double[] phaseCorrelate_1(long src1_nativeObj, long src2_nativeObj);
-
-    // C++:  void createHanningWindow(Mat& dst, Size winSize, int type)
-    private static native void createHanningWindow_0(long dst_nativeObj, double winSize_width, double winSize_height, int type);
-
-    // C++:  double threshold(Mat src, Mat& dst, double thresh, double maxval, int type)
-    private static native double threshold_0(long src_nativeObj, long dst_nativeObj, double thresh, double maxval, int type);
 
     // C++:  void undistortPoints(vector_Point2f src, vector_Point2f& dst, Mat cameraMatrix, Mat distCoeffs, Mat R = Mat(), Mat P = Mat())
     private static native void undistortPoints_0(long src_mat_nativeObj, long dst_mat_nativeObj, long cameraMatrix_nativeObj, long distCoeffs_nativeObj, long R_nativeObj, long P_nativeObj);
@@ -3154,40 +2953,6 @@ public class Imgproc {
     // C++:  void matchTemplate(Mat image, Mat templ, Mat& result, int method, Mat mask = Mat())
     private static native void matchTemplate_0(long image_nativeObj, long templ_nativeObj, long result_nativeObj, int method, long mask_nativeObj);
     private static native void matchTemplate_1(long image_nativeObj, long templ_nativeObj, long result_nativeObj, int method);
-
-    // C++:  void blur(Mat src, Mat& dst, Size ksize, Point anchor = Point(-1,-1), int borderType = BORDER_DEFAULT)
-    private static native void blur_0(long src_nativeObj, long dst_nativeObj, double ksize_width, double ksize_height, double anchor_x, double anchor_y, int borderType);
-    private static native void blur_1(long src_nativeObj, long dst_nativeObj, double ksize_width, double ksize_height, double anchor_x, double anchor_y);
-    private static native void blur_2(long src_nativeObj, long dst_nativeObj, double ksize_width, double ksize_height);
-
-    // C++:  void filter2D(Mat src, Mat& dst, int ddepth, Mat kernel, Point anchor = Point(-1,-1), double delta = 0, int borderType = BORDER_DEFAULT)
-    private static native void filter2D_0(long src_nativeObj, long dst_nativeObj, int ddepth, long kernel_nativeObj, double anchor_x, double anchor_y, double delta, int borderType);
-    private static native void filter2D_1(long src_nativeObj, long dst_nativeObj, int ddepth, long kernel_nativeObj, double anchor_x, double anchor_y, double delta);
-    private static native void filter2D_2(long src_nativeObj, long dst_nativeObj, int ddepth, long kernel_nativeObj);
-
-    // C++:  void sepFilter2D(Mat src, Mat& dst, int ddepth, Mat kernelX, Mat kernelY, Point anchor = Point(-1,-1), double delta = 0, int borderType = BORDER_DEFAULT)
-    private static native void sepFilter2D_0(long src_nativeObj, long dst_nativeObj, int ddepth, long kernelX_nativeObj, long kernelY_nativeObj, double anchor_x, double anchor_y, double delta, int borderType);
-    private static native void sepFilter2D_1(long src_nativeObj, long dst_nativeObj, int ddepth, long kernelX_nativeObj, long kernelY_nativeObj, double anchor_x, double anchor_y, double delta);
-    private static native void sepFilter2D_2(long src_nativeObj, long dst_nativeObj, int ddepth, long kernelX_nativeObj, long kernelY_nativeObj);
-
-    // C++:  void Sobel(Mat src, Mat& dst, int ddepth, int dx, int dy, int ksize = 3, double scale = 1, double delta = 0, int borderType = BORDER_DEFAULT)
-    private static native void Sobel_0(long src_nativeObj, long dst_nativeObj, int ddepth, int dx, int dy, int ksize, double scale, double delta, int borderType);
-    private static native void Sobel_1(long src_nativeObj, long dst_nativeObj, int ddepth, int dx, int dy, int ksize, double scale, double delta);
-    private static native void Sobel_2(long src_nativeObj, long dst_nativeObj, int ddepth, int dx, int dy);
-
-    // C++:  void Scharr(Mat src, Mat& dst, int ddepth, int dx, int dy, double scale = 1, double delta = 0, int borderType = BORDER_DEFAULT)
-    private static native void Scharr_0(long src_nativeObj, long dst_nativeObj, int ddepth, int dx, int dy, double scale, double delta, int borderType);
-    private static native void Scharr_1(long src_nativeObj, long dst_nativeObj, int ddepth, int dx, int dy, double scale, double delta);
-    private static native void Scharr_2(long src_nativeObj, long dst_nativeObj, int ddepth, int dx, int dy);
-
-    // C++:  void Laplacian(Mat src, Mat& dst, int ddepth, int ksize = 1, double scale = 1, double delta = 0, int borderType = BORDER_DEFAULT)
-    private static native void Laplacian_0(long src_nativeObj, long dst_nativeObj, int ddepth, int ksize, double scale, double delta, int borderType);
-    private static native void Laplacian_1(long src_nativeObj, long dst_nativeObj, int ddepth, int ksize, double scale, double delta);
-    private static native void Laplacian_2(long src_nativeObj, long dst_nativeObj, int ddepth);
-
-    // C++:  void Canny(Mat image, Mat& edges, double threshold1, double threshold2, int apertureSize = 3, bool L2gradient = false)
-    private static native void Canny_0(long image_nativeObj, long edges_nativeObj, double threshold1, double threshold2, int apertureSize, boolean L2gradient);
-    private static native void Canny_1(long image_nativeObj, long edges_nativeObj, double threshold1, double threshold2);
 
     // C++:  int connectedComponents(Mat image, Mat& labels, int connectivity = 8, int ltype = CV_32S)
     private static native int connectedComponents_0(long image_nativeObj, long labels_nativeObj, int connectivity, int ltype);
@@ -3282,9 +3047,281 @@ public class Imgproc {
     private static native void circle_2(long img_nativeObj, double center_x, double center_y, int radius, double color_val0, double color_val1, double color_val2, double color_val3);
 
     // C++:  void ellipse(Mat& img, Point center, Size axes, double angle, double startAngle, double endAngle, Scalar color, int thickness = 1, int lineType = LINE_8, int shift = 0)
-    private static native void ellipse_3(long img_nativeObj, double center_x, double center_y, double axes_width, double axes_height, double angle, double startAngle, double endAngle, double color_val0, double color_val1, double color_val2, double color_val3, int thickness, int lineType, int shift);
-    private static native void ellipse_4(long img_nativeObj, double center_x, double center_y, double axes_width, double axes_height, double angle, double startAngle, double endAngle, double color_val0, double color_val1, double color_val2, double color_val3, int thickness);
-    private static native void ellipse_5(long img_nativeObj, double center_x, double center_y, double axes_width, double axes_height, double angle, double startAngle, double endAngle, double color_val0, double color_val1, double color_val2, double color_val3);
+    private static native void ellipse_0(long img_nativeObj, double center_x, double center_y, double axes_width, double axes_height, double angle, double startAngle, double endAngle, double color_val0, double color_val1, double color_val2, double color_val3, int thickness, int lineType, int shift);
+    private static native void ellipse_1(long img_nativeObj, double center_x, double center_y, double axes_width, double axes_height, double angle, double startAngle, double endAngle, double color_val0, double color_val1, double color_val2, double color_val3, int thickness);
+    private static native void ellipse_2(long img_nativeObj, double center_x, double center_y, double axes_width, double axes_height, double angle, double startAngle, double endAngle, double color_val0, double color_val1, double color_val2, double color_val3);
+
+    // C++:  void ellipse(Mat& img, RotatedRect box, Scalar color, int thickness = 1, int lineType = LINE_8)
+    private static native void ellipse_3(long img_nativeObj, double box_center_x, double box_center_y, double box_size_width, double box_size_height, double box_angle, double color_val0, double color_val1, double color_val2, double color_val3, int thickness, int lineType);
+    private static native void ellipse_4(long img_nativeObj, double box_center_x, double box_center_y, double box_size_width, double box_size_height, double box_angle, double color_val0, double color_val1, double color_val2, double color_val3, int thickness);
+    private static native void ellipse_5(long img_nativeObj, double box_center_x, double box_center_y, double box_size_width, double box_size_height, double box_angle, double color_val0, double color_val1, double color_val2, double color_val3);
+
+    // C++:  void fillConvexPoly(Mat& img, vector_Point points, Scalar color, int lineType = LINE_8, int shift = 0)
+    private static native void fillConvexPoly_0(long img_nativeObj, long points_mat_nativeObj, double color_val0, double color_val1, double color_val2, double color_val3, int lineType, int shift);
+    private static native void fillConvexPoly_1(long img_nativeObj, long points_mat_nativeObj, double color_val0, double color_val1, double color_val2, double color_val3);
+
+    // C++:  void fillPoly(Mat& img, vector_vector_Point pts, Scalar color, int lineType = LINE_8, int shift = 0, Point offset = Point())
+    private static native void fillPoly_0(long img_nativeObj, long pts_mat_nativeObj, double color_val0, double color_val1, double color_val2, double color_val3, int lineType, int shift, double offset_x, double offset_y);
+    private static native void fillPoly_1(long img_nativeObj, long pts_mat_nativeObj, double color_val0, double color_val1, double color_val2, double color_val3);
+
+    // C++:  void polylines(Mat& img, vector_vector_Point pts, bool isClosed, Scalar color, int thickness = 1, int lineType = LINE_8, int shift = 0)
+    private static native void polylines_0(long img_nativeObj, long pts_mat_nativeObj, boolean isClosed, double color_val0, double color_val1, double color_val2, double color_val3, int thickness, int lineType, int shift);
+    private static native void polylines_1(long img_nativeObj, long pts_mat_nativeObj, boolean isClosed, double color_val0, double color_val1, double color_val2, double color_val3, int thickness);
+    private static native void polylines_2(long img_nativeObj, long pts_mat_nativeObj, boolean isClosed, double color_val0, double color_val1, double color_val2, double color_val3);
+
+    // C++:  void drawContours(Mat& image, vector_vector_Point contours, int contourIdx, Scalar color, int thickness = 1, int lineType = LINE_8, Mat hierarchy = Mat(), int maxLevel = INT_MAX, Point offset = Point())
+    private static native void drawContours_0(long image_nativeObj, long contours_mat_nativeObj, int contourIdx, double color_val0, double color_val1, double color_val2, double color_val3, int thickness, int lineType, long hierarchy_nativeObj, int maxLevel, double offset_x, double offset_y);
+    private static native void drawContours_1(long image_nativeObj, long contours_mat_nativeObj, int contourIdx, double color_val0, double color_val1, double color_val2, double color_val3, int thickness);
+    private static native void drawContours_2(long image_nativeObj, long contours_mat_nativeObj, int contourIdx, double color_val0, double color_val1, double color_val2, double color_val3);
+
+    // C++:  bool clipLine(Rect imgRect, Point& pt1, Point& pt2)
+    private static native boolean clipLine_0(int imgRect_x, int imgRect_y, int imgRect_width, int imgRect_height, double pt1_x, double pt1_y, double[] pt1_out, double pt2_x, double pt2_y, double[] pt2_out);
+
+    // C++:  void ellipse2Poly(Point center, Size axes, int angle, int arcStart, int arcEnd, int delta, vector_Point& pts)
+    private static native void ellipse2Poly_0(double center_x, double center_y, double axes_width, double axes_height, int angle, int arcStart, int arcEnd, int delta, long pts_mat_nativeObj);
+
+    // C++:  void putText(Mat& img, String text, Point org, int fontFace, double fontScale, Scalar color, int thickness = 1, int lineType = LINE_8, bool bottomLeftOrigin = false)
+    private static native void putText_0(long img_nativeObj, String text, double org_x, double org_y, int fontFace, double fontScale, double color_val0, double color_val1, double color_val2, double color_val3, int thickness, int lineType, boolean bottomLeftOrigin);
+    private static native void putText_1(long img_nativeObj, String text, double org_x, double org_y, int fontFace, double fontScale, double color_val0, double color_val1, double color_val2, double color_val3, int thickness);
+    private static native void putText_2(long img_nativeObj, String text, double org_x, double org_y, int fontFace, double fontScale, double color_val0, double color_val1, double color_val2, double color_val3);
+
+    // C++:  Ptr_LineSegmentDetector createLineSegmentDetector(int _refine = LSD_REFINE_STD, double _scale = 0.8, double _sigma_scale = 0.6, double _quant = 2.0, double _ang_th = 22.5, double _log_eps = 0, double _density_th = 0.7, int _n_bins = 1024)
+    private static native long createLineSegmentDetector_0(int _refine, double _scale, double _sigma_scale, double _quant, double _ang_th, double _log_eps, double _density_th, int _n_bins);
+    private static native long createLineSegmentDetector_1();
+
+    // C++:  Mat getGaussianKernel(int ksize, double sigma, int ktype = CV_64F)
+    private static native long getGaussianKernel_0(int ksize, double sigma, int ktype);
+    private static native long getGaussianKernel_1(int ksize, double sigma);
+
+    // C++:  void getDerivKernels(Mat& kx, Mat& ky, int dx, int dy, int ksize, bool normalize = false, int ktype = CV_32F)
+    private static native void getDerivKernels_0(long kx_nativeObj, long ky_nativeObj, int dx, int dy, int ksize, boolean normalize, int ktype);
+    private static native void getDerivKernels_1(long kx_nativeObj, long ky_nativeObj, int dx, int dy, int ksize);
+
+    // C++:  Mat getGaborKernel(Size ksize, double sigma, double theta, double lambd, double gamma, double psi = CV_PI*0.5, int ktype = CV_64F)
+    private static native long getGaborKernel_0(double ksize_width, double ksize_height, double sigma, double theta, double lambd, double gamma, double psi, int ktype);
+    private static native long getGaborKernel_1(double ksize_width, double ksize_height, double sigma, double theta, double lambd, double gamma);
+
+    // C++:  Mat getStructuringElement(int shape, Size ksize, Point anchor = Point(-1,-1))
+    private static native long getStructuringElement_0(int shape, double ksize_width, double ksize_height, double anchor_x, double anchor_y);
+    private static native long getStructuringElement_1(int shape, double ksize_width, double ksize_height);
+
+    // C++:  void medianBlur(Mat src, Mat& dst, int ksize)
+    private static native void medianBlur_0(long src_nativeObj, long dst_nativeObj, int ksize);
+
+    // C++:  void GaussianBlur(Mat src, Mat& dst, Size ksize, double sigmaX, double sigmaY = 0, int borderType = BORDER_DEFAULT)
+    private static native void GaussianBlur_0(long src_nativeObj, long dst_nativeObj, double ksize_width, double ksize_height, double sigmaX, double sigmaY, int borderType);
+    private static native void GaussianBlur_1(long src_nativeObj, long dst_nativeObj, double ksize_width, double ksize_height, double sigmaX, double sigmaY);
+    private static native void GaussianBlur_2(long src_nativeObj, long dst_nativeObj, double ksize_width, double ksize_height, double sigmaX);
+
+    // C++:  void warpPerspective(Mat src, Mat& dst, Mat M, Size dsize, int flags = INTER_LINEAR, int borderMode = BORDER_CONSTANT, Scalar borderValue = Scalar())
+    private static native void warpPerspective_0(long src_nativeObj, long dst_nativeObj, long M_nativeObj, double dsize_width, double dsize_height, int flags, int borderMode, double borderValue_val0, double borderValue_val1, double borderValue_val2, double borderValue_val3);
+    private static native void warpPerspective_1(long src_nativeObj, long dst_nativeObj, long M_nativeObj, double dsize_width, double dsize_height, int flags);
+    private static native void warpPerspective_2(long src_nativeObj, long dst_nativeObj, long M_nativeObj, double dsize_width, double dsize_height);
+
+    // C++:  void remap(Mat src, Mat& dst, Mat map1, Mat map2, int interpolation, int borderMode = BORDER_CONSTANT, Scalar borderValue = Scalar())
+    private static native void remap_0(long src_nativeObj, long dst_nativeObj, long map1_nativeObj, long map2_nativeObj, int interpolation, int borderMode, double borderValue_val0, double borderValue_val1, double borderValue_val2, double borderValue_val3);
+    private static native void remap_1(long src_nativeObj, long dst_nativeObj, long map1_nativeObj, long map2_nativeObj, int interpolation);
+
+    // C++:  void convertMaps(Mat map1, Mat map2, Mat& dstmap1, Mat& dstmap2, int dstmap1type, bool nninterpolation = false)
+    private static native void convertMaps_0(long map1_nativeObj, long map2_nativeObj, long dstmap1_nativeObj, long dstmap2_nativeObj, int dstmap1type, boolean nninterpolation);
+    private static native void convertMaps_1(long map1_nativeObj, long map2_nativeObj, long dstmap1_nativeObj, long dstmap2_nativeObj, int dstmap1type);
+
+    // C++:  Mat getRotationMatrix2D(Point2f center, double angle, double scale)
+    private static native long getRotationMatrix2D_0(double center_x, double center_y, double angle, double scale);
+
+    // C++:  void invertAffineTransform(Mat M, Mat& iM)
+    private static native void invertAffineTransform_0(long M_nativeObj, long iM_nativeObj);
+
+    // C++:  Mat getPerspectiveTransform(Mat src, Mat dst)
+    private static native long getPerspectiveTransform_0(long src_nativeObj, long dst_nativeObj);
+
+    // C++:  Mat getAffineTransform(vector_Point2f src, vector_Point2f dst)
+    private static native long getAffineTransform_0(long src_mat_nativeObj, long dst_mat_nativeObj);
+
+    // C++:  void getRectSubPix(Mat image, Size patchSize, Point2f center, Mat& patch, int patchType = -1)
+    private static native void getRectSubPix_0(long image_nativeObj, double patchSize_width, double patchSize_height, double center_x, double center_y, long patch_nativeObj, int patchType);
+    private static native void getRectSubPix_1(long image_nativeObj, double patchSize_width, double patchSize_height, double center_x, double center_y, long patch_nativeObj);
+
+    // C++:  void logPolar(Mat src, Mat& dst, Point2f center, double M, int flags)
+    private static native void logPolar_0(long src_nativeObj, long dst_nativeObj, double center_x, double center_y, double M, int flags);
+
+    // C++:  void bilateralFilter(Mat src, Mat& dst, int d, double sigmaColor, double sigmaSpace, int borderType = BORDER_DEFAULT)
+    private static native void bilateralFilter_0(long src_nativeObj, long dst_nativeObj, int d, double sigmaColor, double sigmaSpace, int borderType);
+    private static native void bilateralFilter_1(long src_nativeObj, long dst_nativeObj, int d, double sigmaColor, double sigmaSpace);
+
+    // C++:  void boxFilter(Mat src, Mat& dst, int ddepth, Size ksize, Point anchor = Point(-1,-1), bool normalize = true, int borderType = BORDER_DEFAULT)
+    private static native void boxFilter_0(long src_nativeObj, long dst_nativeObj, int ddepth, double ksize_width, double ksize_height, double anchor_x, double anchor_y, boolean normalize, int borderType);
+    private static native void boxFilter_1(long src_nativeObj, long dst_nativeObj, int ddepth, double ksize_width, double ksize_height, double anchor_x, double anchor_y, boolean normalize);
+    private static native void boxFilter_2(long src_nativeObj, long dst_nativeObj, int ddepth, double ksize_width, double ksize_height);
+
+    // C++:  void sqrBoxFilter(Mat _src, Mat& _dst, int ddepth, Size ksize, Point anchor = Point(-1, -1), bool normalize = true, int borderType = BORDER_DEFAULT)
+    private static native void sqrBoxFilter_0(long _src_nativeObj, long _dst_nativeObj, int ddepth, double ksize_width, double ksize_height, double anchor_x, double anchor_y, boolean normalize, int borderType);
+    private static native void sqrBoxFilter_1(long _src_nativeObj, long _dst_nativeObj, int ddepth, double ksize_width, double ksize_height, double anchor_x, double anchor_y, boolean normalize);
+    private static native void sqrBoxFilter_2(long _src_nativeObj, long _dst_nativeObj, int ddepth, double ksize_width, double ksize_height);
+
+    // C++:  void blur(Mat src, Mat& dst, Size ksize, Point anchor = Point(-1,-1), int borderType = BORDER_DEFAULT)
+    private static native void blur_0(long src_nativeObj, long dst_nativeObj, double ksize_width, double ksize_height, double anchor_x, double anchor_y, int borderType);
+    private static native void blur_1(long src_nativeObj, long dst_nativeObj, double ksize_width, double ksize_height, double anchor_x, double anchor_y);
+    private static native void blur_2(long src_nativeObj, long dst_nativeObj, double ksize_width, double ksize_height);
+
+    // C++:  void filter2D(Mat src, Mat& dst, int ddepth, Mat kernel, Point anchor = Point(-1,-1), double delta = 0, int borderType = BORDER_DEFAULT)
+    private static native void filter2D_0(long src_nativeObj, long dst_nativeObj, int ddepth, long kernel_nativeObj, double anchor_x, double anchor_y, double delta, int borderType);
+    private static native void filter2D_1(long src_nativeObj, long dst_nativeObj, int ddepth, long kernel_nativeObj, double anchor_x, double anchor_y, double delta);
+    private static native void filter2D_2(long src_nativeObj, long dst_nativeObj, int ddepth, long kernel_nativeObj);
+
+    // C++:  void sepFilter2D(Mat src, Mat& dst, int ddepth, Mat kernelX, Mat kernelY, Point anchor = Point(-1,-1), double delta = 0, int borderType = BORDER_DEFAULT)
+    private static native void sepFilter2D_0(long src_nativeObj, long dst_nativeObj, int ddepth, long kernelX_nativeObj, long kernelY_nativeObj, double anchor_x, double anchor_y, double delta, int borderType);
+    private static native void sepFilter2D_1(long src_nativeObj, long dst_nativeObj, int ddepth, long kernelX_nativeObj, long kernelY_nativeObj, double anchor_x, double anchor_y, double delta);
+    private static native void sepFilter2D_2(long src_nativeObj, long dst_nativeObj, int ddepth, long kernelX_nativeObj, long kernelY_nativeObj);
+
+    // C++:  void Sobel(Mat src, Mat& dst, int ddepth, int dx, int dy, int ksize = 3, double scale = 1, double delta = 0, int borderType = BORDER_DEFAULT)
+    private static native void Sobel_0(long src_nativeObj, long dst_nativeObj, int ddepth, int dx, int dy, int ksize, double scale, double delta, int borderType);
+    private static native void Sobel_1(long src_nativeObj, long dst_nativeObj, int ddepth, int dx, int dy, int ksize, double scale, double delta);
+    private static native void Sobel_2(long src_nativeObj, long dst_nativeObj, int ddepth, int dx, int dy);
+
+    // C++:  void spatialGradient(Mat src, Mat& dx, Mat& dy, int ksize = 3, int borderType = BORDER_DEFAULT)
+    private static native void spatialGradient_0(long src_nativeObj, long dx_nativeObj, long dy_nativeObj, int ksize, int borderType);
+    private static native void spatialGradient_1(long src_nativeObj, long dx_nativeObj, long dy_nativeObj, int ksize);
+    private static native void spatialGradient_2(long src_nativeObj, long dx_nativeObj, long dy_nativeObj);
+
+    // C++:  void Scharr(Mat src, Mat& dst, int ddepth, int dx, int dy, double scale = 1, double delta = 0, int borderType = BORDER_DEFAULT)
+    private static native void Scharr_0(long src_nativeObj, long dst_nativeObj, int ddepth, int dx, int dy, double scale, double delta, int borderType);
+    private static native void Scharr_1(long src_nativeObj, long dst_nativeObj, int ddepth, int dx, int dy, double scale, double delta);
+    private static native void Scharr_2(long src_nativeObj, long dst_nativeObj, int ddepth, int dx, int dy);
+
+    // C++:  void Laplacian(Mat src, Mat& dst, int ddepth, int ksize = 1, double scale = 1, double delta = 0, int borderType = BORDER_DEFAULT)
+    private static native void Laplacian_0(long src_nativeObj, long dst_nativeObj, int ddepth, int ksize, double scale, double delta, int borderType);
+    private static native void Laplacian_1(long src_nativeObj, long dst_nativeObj, int ddepth, int ksize, double scale, double delta);
+    private static native void Laplacian_2(long src_nativeObj, long dst_nativeObj, int ddepth);
+
+    // C++:  void Canny(Mat image, Mat& edges, double threshold1, double threshold2, int apertureSize = 3, bool L2gradient = false)
+    private static native void Canny_0(long image_nativeObj, long edges_nativeObj, double threshold1, double threshold2, int apertureSize, boolean L2gradient);
+    private static native void Canny_1(long image_nativeObj, long edges_nativeObj, double threshold1, double threshold2);
+
+    // C++:  void cornerMinEigenVal(Mat src, Mat& dst, int blockSize, int ksize = 3, int borderType = BORDER_DEFAULT)
+    private static native void cornerMinEigenVal_0(long src_nativeObj, long dst_nativeObj, int blockSize, int ksize, int borderType);
+    private static native void cornerMinEigenVal_1(long src_nativeObj, long dst_nativeObj, int blockSize, int ksize);
+    private static native void cornerMinEigenVal_2(long src_nativeObj, long dst_nativeObj, int blockSize);
+
+    // C++:  void cornerHarris(Mat src, Mat& dst, int blockSize, int ksize, double k, int borderType = BORDER_DEFAULT)
+    private static native void cornerHarris_0(long src_nativeObj, long dst_nativeObj, int blockSize, int ksize, double k, int borderType);
+    private static native void cornerHarris_1(long src_nativeObj, long dst_nativeObj, int blockSize, int ksize, double k);
+
+    // C++:  void cornerEigenValsAndVecs(Mat src, Mat& dst, int blockSize, int ksize, int borderType = BORDER_DEFAULT)
+    private static native void cornerEigenValsAndVecs_0(long src_nativeObj, long dst_nativeObj, int blockSize, int ksize, int borderType);
+    private static native void cornerEigenValsAndVecs_1(long src_nativeObj, long dst_nativeObj, int blockSize, int ksize);
+
+    // C++:  void preCornerDetect(Mat src, Mat& dst, int ksize, int borderType = BORDER_DEFAULT)
+    private static native void preCornerDetect_0(long src_nativeObj, long dst_nativeObj, int ksize, int borderType);
+    private static native void preCornerDetect_1(long src_nativeObj, long dst_nativeObj, int ksize);
+
+    // C++:  void cornerSubPix(Mat image, vector_Point2f& corners, Size winSize, Size zeroZone, TermCriteria criteria)
+    private static native void cornerSubPix_0(long image_nativeObj, long corners_mat_nativeObj, double winSize_width, double winSize_height, double zeroZone_width, double zeroZone_height, int criteria_type, int criteria_maxCount, double criteria_epsilon);
+
+    // C++:  void goodFeaturesToTrack(Mat image, vector_Point& corners, int maxCorners, double qualityLevel, double minDistance, Mat mask = Mat(), int blockSize = 3, bool useHarrisDetector = false, double k = 0.04)
+    private static native void goodFeaturesToTrack_0(long image_nativeObj, long corners_mat_nativeObj, int maxCorners, double qualityLevel, double minDistance, long mask_nativeObj, int blockSize, boolean useHarrisDetector, double k);
+    private static native void goodFeaturesToTrack_1(long image_nativeObj, long corners_mat_nativeObj, int maxCorners, double qualityLevel, double minDistance);
+
+    // C++:  void HoughLines(Mat image, Mat& lines, double rho, double theta, int threshold, double srn = 0, double stn = 0, double min_theta = 0, double max_theta = CV_PI)
+    private static native void HoughLines_0(long image_nativeObj, long lines_nativeObj, double rho, double theta, int threshold, double srn, double stn, double min_theta, double max_theta);
+    private static native void HoughLines_1(long image_nativeObj, long lines_nativeObj, double rho, double theta, int threshold);
+
+    // C++:  void HoughLinesP(Mat image, Mat& lines, double rho, double theta, int threshold, double minLineLength = 0, double maxLineGap = 0)
+    private static native void HoughLinesP_0(long image_nativeObj, long lines_nativeObj, double rho, double theta, int threshold, double minLineLength, double maxLineGap);
+    private static native void HoughLinesP_1(long image_nativeObj, long lines_nativeObj, double rho, double theta, int threshold);
+
+    // C++:  void HoughCircles(Mat image, Mat& circles, int method, double dp, double minDist, double param1 = 100, double param2 = 100, int minRadius = 0, int maxRadius = 0)
+    private static native void HoughCircles_0(long image_nativeObj, long circles_nativeObj, int method, double dp, double minDist, double param1, double param2, int minRadius, int maxRadius);
+    private static native void HoughCircles_1(long image_nativeObj, long circles_nativeObj, int method, double dp, double minDist);
+
+    // C++:  void erode(Mat src, Mat& dst, Mat kernel, Point anchor = Point(-1,-1), int iterations = 1, int borderType = BORDER_CONSTANT, Scalar borderValue = morphologyDefaultBorderValue())
+    private static native void erode_0(long src_nativeObj, long dst_nativeObj, long kernel_nativeObj, double anchor_x, double anchor_y, int iterations, int borderType, double borderValue_val0, double borderValue_val1, double borderValue_val2, double borderValue_val3);
+    private static native void erode_1(long src_nativeObj, long dst_nativeObj, long kernel_nativeObj, double anchor_x, double anchor_y, int iterations);
+    private static native void erode_2(long src_nativeObj, long dst_nativeObj, long kernel_nativeObj);
+
+    // C++:  void dilate(Mat src, Mat& dst, Mat kernel, Point anchor = Point(-1,-1), int iterations = 1, int borderType = BORDER_CONSTANT, Scalar borderValue = morphologyDefaultBorderValue())
+    private static native void dilate_0(long src_nativeObj, long dst_nativeObj, long kernel_nativeObj, double anchor_x, double anchor_y, int iterations, int borderType, double borderValue_val0, double borderValue_val1, double borderValue_val2, double borderValue_val3);
+    private static native void dilate_1(long src_nativeObj, long dst_nativeObj, long kernel_nativeObj, double anchor_x, double anchor_y, int iterations);
+    private static native void dilate_2(long src_nativeObj, long dst_nativeObj, long kernel_nativeObj);
+
+    // C++:  void morphologyEx(Mat src, Mat& dst, int op, Mat kernel, Point anchor = Point(-1,-1), int iterations = 1, int borderType = BORDER_CONSTANT, Scalar borderValue = morphologyDefaultBorderValue())
+    private static native void morphologyEx_0(long src_nativeObj, long dst_nativeObj, int op, long kernel_nativeObj, double anchor_x, double anchor_y, int iterations, int borderType, double borderValue_val0, double borderValue_val1, double borderValue_val2, double borderValue_val3);
+    private static native void morphologyEx_1(long src_nativeObj, long dst_nativeObj, int op, long kernel_nativeObj, double anchor_x, double anchor_y, int iterations);
+    private static native void morphologyEx_2(long src_nativeObj, long dst_nativeObj, int op, long kernel_nativeObj);
+
+    // C++:  void resize(Mat src, Mat& dst, Size dsize, double fx = 0, double fy = 0, int interpolation = INTER_LINEAR)
+    private static native void resize_0(long src_nativeObj, long dst_nativeObj, double dsize_width, double dsize_height, double fx, double fy, int interpolation);
+    private static native void resize_1(long src_nativeObj, long dst_nativeObj, double dsize_width, double dsize_height);
+
+    // C++:  void warpAffine(Mat src, Mat& dst, Mat M, Size dsize, int flags = INTER_LINEAR, int borderMode = BORDER_CONSTANT, Scalar borderValue = Scalar())
+    private static native void warpAffine_0(long src_nativeObj, long dst_nativeObj, long M_nativeObj, double dsize_width, double dsize_height, int flags, int borderMode, double borderValue_val0, double borderValue_val1, double borderValue_val2, double borderValue_val3);
+    private static native void warpAffine_1(long src_nativeObj, long dst_nativeObj, long M_nativeObj, double dsize_width, double dsize_height, int flags);
+    private static native void warpAffine_2(long src_nativeObj, long dst_nativeObj, long M_nativeObj, double dsize_width, double dsize_height);
+
+    // C++:  void linearPolar(Mat src, Mat& dst, Point2f center, double maxRadius, int flags)
+    private static native void linearPolar_0(long src_nativeObj, long dst_nativeObj, double center_x, double center_y, double maxRadius, int flags);
+
+    // C++:  void integral(Mat src, Mat& sum, int sdepth = -1)
+    private static native void integral_0(long src_nativeObj, long sum_nativeObj, int sdepth);
+    private static native void integral_1(long src_nativeObj, long sum_nativeObj);
+
+    // C++:  void integral(Mat src, Mat& sum, Mat& sqsum, int sdepth = -1, int sqdepth = -1)
+    private static native void integral2_0(long src_nativeObj, long sum_nativeObj, long sqsum_nativeObj, int sdepth, int sqdepth);
+    private static native void integral2_1(long src_nativeObj, long sum_nativeObj, long sqsum_nativeObj);
+
+    // C++:  void integral(Mat src, Mat& sum, Mat& sqsum, Mat& tilted, int sdepth = -1, int sqdepth = -1)
+    private static native void integral3_0(long src_nativeObj, long sum_nativeObj, long sqsum_nativeObj, long tilted_nativeObj, int sdepth, int sqdepth);
+    private static native void integral3_1(long src_nativeObj, long sum_nativeObj, long sqsum_nativeObj, long tilted_nativeObj);
+
+    // C++:  void accumulate(Mat src, Mat& dst, Mat mask = Mat())
+    private static native void accumulate_0(long src_nativeObj, long dst_nativeObj, long mask_nativeObj);
+    private static native void accumulate_1(long src_nativeObj, long dst_nativeObj);
+
+    // C++:  void accumulateSquare(Mat src, Mat& dst, Mat mask = Mat())
+    private static native void accumulateSquare_0(long src_nativeObj, long dst_nativeObj, long mask_nativeObj);
+    private static native void accumulateSquare_1(long src_nativeObj, long dst_nativeObj);
+
+    // C++:  void accumulateProduct(Mat src1, Mat src2, Mat& dst, Mat mask = Mat())
+    private static native void accumulateProduct_0(long src1_nativeObj, long src2_nativeObj, long dst_nativeObj, long mask_nativeObj);
+    private static native void accumulateProduct_1(long src1_nativeObj, long src2_nativeObj, long dst_nativeObj);
+
+    // C++:  void accumulateWeighted(Mat src, Mat& dst, double alpha, Mat mask = Mat())
+    private static native void accumulateWeighted_0(long src_nativeObj, long dst_nativeObj, double alpha, long mask_nativeObj);
+    private static native void accumulateWeighted_1(long src_nativeObj, long dst_nativeObj, double alpha);
+
+    // C++:  Point2d phaseCorrelate(Mat src1, Mat src2, Mat window = Mat(), double* response = 0)
+    private static native double[] phaseCorrelate_0(long src1_nativeObj, long src2_nativeObj, long window_nativeObj, double[] response_out);
+    private static native double[] phaseCorrelate_1(long src1_nativeObj, long src2_nativeObj);
+
+    // C++:  void createHanningWindow(Mat& dst, Size winSize, int type)
+    private static native void createHanningWindow_0(long dst_nativeObj, double winSize_width, double winSize_height, int type);
+
+    // C++:  double threshold(Mat src, Mat& dst, double thresh, double maxval, int type)
+    private static native double threshold_0(long src_nativeObj, long dst_nativeObj, double thresh, double maxval, int type);
+
+    // C++:  void adaptiveThreshold(Mat src, Mat& dst, double maxValue, int adaptiveMethod, int thresholdType, int blockSize, double C)
+    private static native void adaptiveThreshold_0(long src_nativeObj, long dst_nativeObj, double maxValue, int adaptiveMethod, int thresholdType, int blockSize, double C);
+
+    // C++:  void pyrDown(Mat src, Mat& dst, Size dstsize = Size(), int borderType = BORDER_DEFAULT)
+    private static native void pyrDown_0(long src_nativeObj, long dst_nativeObj, double dstsize_width, double dstsize_height, int borderType);
+    private static native void pyrDown_1(long src_nativeObj, long dst_nativeObj, double dstsize_width, double dstsize_height);
+    private static native void pyrDown_2(long src_nativeObj, long dst_nativeObj);
+
+    // C++:  void pyrUp(Mat src, Mat& dst, Size dstsize = Size(), int borderType = BORDER_DEFAULT)
+    private static native void pyrUp_0(long src_nativeObj, long dst_nativeObj, double dstsize_width, double dstsize_height, int borderType);
+    private static native void pyrUp_1(long src_nativeObj, long dst_nativeObj, double dstsize_width, double dstsize_height);
+    private static native void pyrUp_2(long src_nativeObj, long dst_nativeObj);
+
+    // C++:  void undistort(Mat src, Mat& dst, Mat cameraMatrix, Mat distCoeffs, Mat newCameraMatrix = Mat())
+    private static native void undistort_0(long src_nativeObj, long dst_nativeObj, long cameraMatrix_nativeObj, long distCoeffs_nativeObj, long newCameraMatrix_nativeObj);
+    private static native void undistort_1(long src_nativeObj, long dst_nativeObj, long cameraMatrix_nativeObj, long distCoeffs_nativeObj);
+
+    // C++:  void initUndistortRectifyMap(Mat cameraMatrix, Mat distCoeffs, Mat R, Mat newCameraMatrix, Size size, int m1type, Mat& map1, Mat& map2)
+    private static native void initUndistortRectifyMap_0(long cameraMatrix_nativeObj, long distCoeffs_nativeObj, long R_nativeObj, long newCameraMatrix_nativeObj, double size_width, double size_height, int m1type, long map1_nativeObj, long map2_nativeObj);
+
+    // C++:  float initWideAngleProjMap(Mat cameraMatrix, Mat distCoeffs, Size imageSize, int destImageWidth, int m1type, Mat& map1, Mat& map2, int projType = PROJ_SPHERICAL_EQRECT, double alpha = 0)
+    private static native float initWideAngleProjMap_0(long cameraMatrix_nativeObj, long distCoeffs_nativeObj, double imageSize_width, double imageSize_height, int destImageWidth, int m1type, long map1_nativeObj, long map2_nativeObj, int projType, double alpha);
+    private static native float initWideAngleProjMap_1(long cameraMatrix_nativeObj, long distCoeffs_nativeObj, double imageSize_width, double imageSize_height, int destImageWidth, int m1type, long map1_nativeObj, long map2_nativeObj);
     private static native double[] n_getTextSize(String text, int fontFace, double fontScale, int thickness, int[] baseLine);
 
 }

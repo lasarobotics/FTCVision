@@ -4,8 +4,11 @@
 //
 package org.opencv.ml;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.opencv.core.Mat;
 import org.opencv.core.TermCriteria;
+import org.opencv.utils.Converters;
 
 // C++: class EM
 //javadoc: EM
@@ -139,6 +142,21 @@ public class EM extends StatModel {
 
 
     //
+    // C++:  void getCovs(vector_Mat& covs)
+    //
+
+    //javadoc: EM::getCovs(covs)
+    public  void getCovs(List<Mat> covs)
+    {
+        Mat covs_mat = new Mat();
+        getCovs_0(nativeObj, covs_mat.nativeObj);
+        Converters.Mat_to_vector_Mat(covs_mat, covs);
+        covs_mat.release();
+        return;
+    }
+
+
+    //
     // C++:  Vec2d predict2(Mat sample, Mat& probs)
     //
 
@@ -265,6 +283,9 @@ public class EM extends StatModel {
 
     // C++:  Mat getMeans()
     private static native long getMeans_0(long nativeObj);
+
+    // C++:  void getCovs(vector_Mat& covs)
+    private static native void getCovs_0(long nativeObj, long covs_mat_nativeObj);
 
     // C++:  Vec2d predict2(Mat sample, Mat& probs)
     private static native double[] predict2_0(long nativeObj, long sample_nativeObj, long probs_nativeObj);

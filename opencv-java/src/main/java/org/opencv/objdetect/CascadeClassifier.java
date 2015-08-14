@@ -21,20 +21,6 @@ public class CascadeClassifier {
 
 
     //
-    // C++:   CascadeClassifier()
-    //
-
-    //javadoc: CascadeClassifier::CascadeClassifier()
-    public   CascadeClassifier()
-    {
-        
-        nativeObj = CascadeClassifier_0();
-        
-        return;
-    }
-
-
-    //
     // C++:   CascadeClassifier(String filename)
     //
 
@@ -42,23 +28,23 @@ public class CascadeClassifier {
     public   CascadeClassifier(String filename)
     {
         
-        nativeObj = CascadeClassifier_1(filename);
+        nativeObj = CascadeClassifier_0(filename);
         
         return;
     }
 
 
     //
-    // C++:  bool load(String filename)
+    // C++:   CascadeClassifier()
     //
 
-    //javadoc: CascadeClassifier::load(filename)
-    public  boolean load(String filename)
+    //javadoc: CascadeClassifier::CascadeClassifier()
+    public   CascadeClassifier()
     {
         
-        boolean retVal = load_0(nativeObj, filename);
+        nativeObj = CascadeClassifier_1();
         
-        return retVal;
+        return;
     }
 
 
@@ -77,33 +63,24 @@ public class CascadeClassifier {
 
 
     //
+    // C++:  bool load(String filename)
+    //
+
+    //javadoc: CascadeClassifier::load(filename)
+    public  boolean load(String filename)
+    {
+        
+        boolean retVal = load_0(nativeObj, filename);
+        
+        return retVal;
+    }
+
+
+    //
     // C++:  bool read(FileNode node)
     //
 
     // Unknown type 'FileNode' (I), skipping the function
-
-
-    //
-    // C++:  void detectMultiScale(Mat image, vector_Rect& objects, double scaleFactor = 1.1, int minNeighbors = 3, int flags = 0, Size minSize = Size(), Size maxSize = Size())
-    //
-
-    //javadoc: CascadeClassifier::detectMultiScale(image, objects, scaleFactor, minNeighbors, flags, minSize, maxSize)
-    public  void detectMultiScale(Mat image, MatOfRect objects, double scaleFactor, int minNeighbors, int flags, Size minSize, Size maxSize)
-    {
-        Mat objects_mat = objects;
-        detectMultiScale_0(nativeObj, image.nativeObj, objects_mat.nativeObj, scaleFactor, minNeighbors, flags, minSize.width, minSize.height, maxSize.width, maxSize.height);
-        
-        return;
-    }
-
-    //javadoc: CascadeClassifier::detectMultiScale(image, objects)
-    public  void detectMultiScale(Mat image, MatOfRect objects)
-    {
-        Mat objects_mat = objects;
-        detectMultiScale_1(nativeObj, image.nativeObj, objects_mat.nativeObj);
-        
-        return;
-    }
 
 
     //
@@ -126,6 +103,29 @@ public class CascadeClassifier {
         Mat objects_mat = objects;
         Mat numDetections_mat = numDetections;
         detectMultiScale2_1(nativeObj, image.nativeObj, objects_mat.nativeObj, numDetections_mat.nativeObj);
+        
+        return;
+    }
+
+
+    //
+    // C++:  void detectMultiScale(Mat image, vector_Rect& objects, double scaleFactor = 1.1, int minNeighbors = 3, int flags = 0, Size minSize = Size(), Size maxSize = Size())
+    //
+
+    //javadoc: CascadeClassifier::detectMultiScale(image, objects, scaleFactor, minNeighbors, flags, minSize, maxSize)
+    public  void detectMultiScale(Mat image, MatOfRect objects, double scaleFactor, int minNeighbors, int flags, Size minSize, Size maxSize)
+    {
+        Mat objects_mat = objects;
+        detectMultiScale_0(nativeObj, image.nativeObj, objects_mat.nativeObj, scaleFactor, minNeighbors, flags, minSize.width, minSize.height, maxSize.width, maxSize.height);
+        
+        return;
+    }
+
+    //javadoc: CascadeClassifier::detectMultiScale(image, objects)
+    public  void detectMultiScale(Mat image, MatOfRect objects)
+    {
+        Mat objects_mat = objects;
+        detectMultiScale_1(nativeObj, image.nativeObj, objects_mat.nativeObj);
         
         return;
     }
@@ -221,25 +221,25 @@ public class CascadeClassifier {
 
 
 
-    // C++:   CascadeClassifier()
-    private static native long CascadeClassifier_0();
-
     // C++:   CascadeClassifier(String filename)
-    private static native long CascadeClassifier_1(String filename);
+    private static native long CascadeClassifier_0(String filename);
 
-    // C++:  bool load(String filename)
-    private static native boolean load_0(long nativeObj, String filename);
+    // C++:   CascadeClassifier()
+    private static native long CascadeClassifier_1();
 
     // C++:  bool empty()
     private static native boolean empty_0(long nativeObj);
 
-    // C++:  void detectMultiScale(Mat image, vector_Rect& objects, double scaleFactor = 1.1, int minNeighbors = 3, int flags = 0, Size minSize = Size(), Size maxSize = Size())
-    private static native void detectMultiScale_0(long nativeObj, long image_nativeObj, long objects_mat_nativeObj, double scaleFactor, int minNeighbors, int flags, double minSize_width, double minSize_height, double maxSize_width, double maxSize_height);
-    private static native void detectMultiScale_1(long nativeObj, long image_nativeObj, long objects_mat_nativeObj);
+    // C++:  bool load(String filename)
+    private static native boolean load_0(long nativeObj, String filename);
 
     // C++:  void detectMultiScale(Mat image, vector_Rect& objects, vector_int& numDetections, double scaleFactor = 1.1, int minNeighbors = 3, int flags = 0, Size minSize = Size(), Size maxSize = Size())
     private static native void detectMultiScale2_0(long nativeObj, long image_nativeObj, long objects_mat_nativeObj, long numDetections_mat_nativeObj, double scaleFactor, int minNeighbors, int flags, double minSize_width, double minSize_height, double maxSize_width, double maxSize_height);
     private static native void detectMultiScale2_1(long nativeObj, long image_nativeObj, long objects_mat_nativeObj, long numDetections_mat_nativeObj);
+
+    // C++:  void detectMultiScale(Mat image, vector_Rect& objects, double scaleFactor = 1.1, int minNeighbors = 3, int flags = 0, Size minSize = Size(), Size maxSize = Size())
+    private static native void detectMultiScale_0(long nativeObj, long image_nativeObj, long objects_mat_nativeObj, double scaleFactor, int minNeighbors, int flags, double minSize_width, double minSize_height, double maxSize_width, double maxSize_height);
+    private static native void detectMultiScale_1(long nativeObj, long image_nativeObj, long objects_mat_nativeObj);
 
     // C++:  void detectMultiScale(Mat image, vector_Rect& objects, vector_int& rejectLevels, vector_double& levelWeights, double scaleFactor = 1.1, int minNeighbors = 3, int flags = 0, Size minSize = Size(), Size maxSize = Size(), bool outputRejectLevels = false)
     private static native void detectMultiScale3_0(long nativeObj, long image_nativeObj, long objects_mat_nativeObj, long rejectLevels_mat_nativeObj, long levelWeights_mat_nativeObj, double scaleFactor, int minNeighbors, int flags, double minSize_width, double minSize_height, double maxSize_width, double maxSize_height, boolean outputRejectLevels);

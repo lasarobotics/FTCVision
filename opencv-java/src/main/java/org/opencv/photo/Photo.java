@@ -30,6 +30,89 @@ public class Photo {
 
 
     //
+    // C++:  void pencilSketch(Mat src, Mat& dst1, Mat& dst2, float sigma_s = 60, float sigma_r = 0.07f, float shade_factor = 0.02f)
+    //
+
+    //javadoc: pencilSketch(src, dst1, dst2, sigma_s, sigma_r, shade_factor)
+    public static void pencilSketch(Mat src, Mat dst1, Mat dst2, float sigma_s, float sigma_r, float shade_factor)
+    {
+        
+        pencilSketch_0(src.nativeObj, dst1.nativeObj, dst2.nativeObj, sigma_s, sigma_r, shade_factor);
+        
+        return;
+    }
+
+    //javadoc: pencilSketch(src, dst1, dst2)
+    public static void pencilSketch(Mat src, Mat dst1, Mat dst2)
+    {
+        
+        pencilSketch_1(src.nativeObj, dst1.nativeObj, dst2.nativeObj);
+        
+        return;
+    }
+
+
+    //
+    // C++:  void stylization(Mat src, Mat& dst, float sigma_s = 60, float sigma_r = 0.45f)
+    //
+
+    //javadoc: stylization(src, dst, sigma_s, sigma_r)
+    public static void stylization(Mat src, Mat dst, float sigma_s, float sigma_r)
+    {
+        
+        stylization_0(src.nativeObj, dst.nativeObj, sigma_s, sigma_r);
+        
+        return;
+    }
+
+    //javadoc: stylization(src, dst)
+    public static void stylization(Mat src, Mat dst)
+    {
+        
+        stylization_1(src.nativeObj, dst.nativeObj);
+        
+        return;
+    }
+
+
+    //
+    // C++:  void inpaint(Mat src, Mat inpaintMask, Mat& dst, double inpaintRadius, int flags)
+    //
+
+    //javadoc: inpaint(src, inpaintMask, dst, inpaintRadius, flags)
+    public static void inpaint(Mat src, Mat inpaintMask, Mat dst, double inpaintRadius, int flags)
+    {
+        
+        inpaint_0(src.nativeObj, inpaintMask.nativeObj, dst.nativeObj, inpaintRadius, flags);
+        
+        return;
+    }
+
+
+    //
+    // C++:  void fastNlMeansDenoising(Mat src, Mat& dst, float h = 3, int templateWindowSize = 7, int searchWindowSize = 21)
+    //
+
+    //javadoc: fastNlMeansDenoising(src, dst, h, templateWindowSize, searchWindowSize)
+    public static void fastNlMeansDenoising(Mat src, Mat dst, float h, int templateWindowSize, int searchWindowSize)
+    {
+        
+        fastNlMeansDenoising_0(src.nativeObj, dst.nativeObj, h, templateWindowSize, searchWindowSize);
+        
+        return;
+    }
+
+    //javadoc: fastNlMeansDenoising(src, dst)
+    public static void fastNlMeansDenoising(Mat src, Mat dst)
+    {
+        
+        fastNlMeansDenoising_1(src.nativeObj, dst.nativeObj);
+        
+        return;
+    }
+
+
+    //
     // C++:  void fastNlMeansDenoising(Mat src, Mat& dst, vector_float h, int templateWindowSize = 7, int searchWindowSize = 21, int normType = NORM_L2)
     //
 
@@ -37,7 +120,7 @@ public class Photo {
     public static void fastNlMeansDenoising(Mat src, Mat dst, MatOfFloat h, int templateWindowSize, int searchWindowSize, int normType)
     {
         Mat h_mat = h;
-        fastNlMeansDenoising_0(src.nativeObj, dst.nativeObj, h_mat.nativeObj, templateWindowSize, searchWindowSize, normType);
+        fastNlMeansDenoising_2(src.nativeObj, dst.nativeObj, h_mat.nativeObj, templateWindowSize, searchWindowSize, normType);
         
         return;
     }
@@ -46,7 +129,7 @@ public class Photo {
     public static void fastNlMeansDenoising(Mat src, Mat dst, MatOfFloat h)
     {
         Mat h_mat = h;
-        fastNlMeansDenoising_1(src.nativeObj, dst.nativeObj, h_mat.nativeObj);
+        fastNlMeansDenoising_3(src.nativeObj, dst.nativeObj, h_mat.nativeObj);
         
         return;
     }
@@ -93,43 +176,6 @@ public class Photo {
     {
         Mat srcImgs_mat = Converters.vector_Mat_to_Mat(srcImgs);
         fastNlMeansDenoisingMulti_1(srcImgs_mat.nativeObj, dst.nativeObj, imgToDenoiseIndex, temporalWindowSize);
-        
-        return;
-    }
-
-
-    //
-    // C++:  void fastNlMeansDenoising(Mat src, Mat& dst, float h = 3, int templateWindowSize = 7, int searchWindowSize = 21)
-    //
-
-    //javadoc: fastNlMeansDenoising(src, dst, h, templateWindowSize, searchWindowSize)
-    public static void fastNlMeansDenoising(Mat src, Mat dst, float h, int templateWindowSize, int searchWindowSize)
-    {
-        
-        fastNlMeansDenoising_2(src.nativeObj, dst.nativeObj, h, templateWindowSize, searchWindowSize);
-        
-        return;
-    }
-
-    //javadoc: fastNlMeansDenoising(src, dst)
-    public static void fastNlMeansDenoising(Mat src, Mat dst)
-    {
-        
-        fastNlMeansDenoising_3(src.nativeObj, dst.nativeObj);
-        
-        return;
-    }
-
-
-    //
-    // C++:  void inpaint(Mat src, Mat inpaintMask, Mat& dst, double inpaintRadius, int flags)
-    //
-
-    //javadoc: inpaint(src, inpaintMask, dst, inpaintRadius, flags)
-    public static void inpaint(Mat src, Mat inpaintMask, Mat dst, double inpaintRadius, int flags)
-    {
-        
-        inpaint_0(src.nativeObj, inpaintMask.nativeObj, dst.nativeObj, inpaintRadius, flags);
         
         return;
     }
@@ -584,57 +630,26 @@ public class Photo {
     }
 
 
-    //
+
+
     // C++:  void pencilSketch(Mat src, Mat& dst1, Mat& dst2, float sigma_s = 60, float sigma_r = 0.07f, float shade_factor = 0.02f)
-    //
+    private static native void pencilSketch_0(long src_nativeObj, long dst1_nativeObj, long dst2_nativeObj, float sigma_s, float sigma_r, float shade_factor);
+    private static native void pencilSketch_1(long src_nativeObj, long dst1_nativeObj, long dst2_nativeObj);
 
-    //javadoc: pencilSketch(src, dst1, dst2, sigma_s, sigma_r, shade_factor)
-    public static void pencilSketch(Mat src, Mat dst1, Mat dst2, float sigma_s, float sigma_r, float shade_factor)
-    {
-        
-        pencilSketch_0(src.nativeObj, dst1.nativeObj, dst2.nativeObj, sigma_s, sigma_r, shade_factor);
-        
-        return;
-    }
-
-    //javadoc: pencilSketch(src, dst1, dst2)
-    public static void pencilSketch(Mat src, Mat dst1, Mat dst2)
-    {
-        
-        pencilSketch_1(src.nativeObj, dst1.nativeObj, dst2.nativeObj);
-        
-        return;
-    }
-
-
-    //
     // C++:  void stylization(Mat src, Mat& dst, float sigma_s = 60, float sigma_r = 0.45f)
-    //
+    private static native void stylization_0(long src_nativeObj, long dst_nativeObj, float sigma_s, float sigma_r);
+    private static native void stylization_1(long src_nativeObj, long dst_nativeObj);
 
-    //javadoc: stylization(src, dst, sigma_s, sigma_r)
-    public static void stylization(Mat src, Mat dst, float sigma_s, float sigma_r)
-    {
-        
-        stylization_0(src.nativeObj, dst.nativeObj, sigma_s, sigma_r);
-        
-        return;
-    }
+    // C++:  void inpaint(Mat src, Mat inpaintMask, Mat& dst, double inpaintRadius, int flags)
+    private static native void inpaint_0(long src_nativeObj, long inpaintMask_nativeObj, long dst_nativeObj, double inpaintRadius, int flags);
 
-    //javadoc: stylization(src, dst)
-    public static void stylization(Mat src, Mat dst)
-    {
-        
-        stylization_1(src.nativeObj, dst.nativeObj);
-        
-        return;
-    }
-
-
-
+    // C++:  void fastNlMeansDenoising(Mat src, Mat& dst, float h = 3, int templateWindowSize = 7, int searchWindowSize = 21)
+    private static native void fastNlMeansDenoising_0(long src_nativeObj, long dst_nativeObj, float h, int templateWindowSize, int searchWindowSize);
+    private static native void fastNlMeansDenoising_1(long src_nativeObj, long dst_nativeObj);
 
     // C++:  void fastNlMeansDenoising(Mat src, Mat& dst, vector_float h, int templateWindowSize = 7, int searchWindowSize = 21, int normType = NORM_L2)
-    private static native void fastNlMeansDenoising_0(long src_nativeObj, long dst_nativeObj, long h_mat_nativeObj, int templateWindowSize, int searchWindowSize, int normType);
-    private static native void fastNlMeansDenoising_1(long src_nativeObj, long dst_nativeObj, long h_mat_nativeObj);
+    private static native void fastNlMeansDenoising_2(long src_nativeObj, long dst_nativeObj, long h_mat_nativeObj, int templateWindowSize, int searchWindowSize, int normType);
+    private static native void fastNlMeansDenoising_3(long src_nativeObj, long dst_nativeObj, long h_mat_nativeObj);
 
     // C++:  void fastNlMeansDenoisingColored(Mat src, Mat& dst, float h = 3, float hColor = 3, int templateWindowSize = 7, int searchWindowSize = 21)
     private static native void fastNlMeansDenoisingColored_0(long src_nativeObj, long dst_nativeObj, float h, float hColor, int templateWindowSize, int searchWindowSize);
@@ -643,13 +658,6 @@ public class Photo {
     // C++:  void fastNlMeansDenoisingMulti(vector_Mat srcImgs, Mat& dst, int imgToDenoiseIndex, int temporalWindowSize, float h = 3, int templateWindowSize = 7, int searchWindowSize = 21)
     private static native void fastNlMeansDenoisingMulti_0(long srcImgs_mat_nativeObj, long dst_nativeObj, int imgToDenoiseIndex, int temporalWindowSize, float h, int templateWindowSize, int searchWindowSize);
     private static native void fastNlMeansDenoisingMulti_1(long srcImgs_mat_nativeObj, long dst_nativeObj, int imgToDenoiseIndex, int temporalWindowSize);
-
-    // C++:  void fastNlMeansDenoising(Mat src, Mat& dst, float h = 3, int templateWindowSize = 7, int searchWindowSize = 21)
-    private static native void fastNlMeansDenoising_2(long src_nativeObj, long dst_nativeObj, float h, int templateWindowSize, int searchWindowSize);
-    private static native void fastNlMeansDenoising_3(long src_nativeObj, long dst_nativeObj);
-
-    // C++:  void inpaint(Mat src, Mat inpaintMask, Mat& dst, double inpaintRadius, int flags)
-    private static native void inpaint_0(long src_nativeObj, long inpaintMask_nativeObj, long dst_nativeObj, double inpaintRadius, int flags);
 
     // C++:  void fastNlMeansDenoisingMulti(vector_Mat srcImgs, Mat& dst, int imgToDenoiseIndex, int temporalWindowSize, vector_float h, int templateWindowSize = 7, int searchWindowSize = 21, int normType = NORM_L2)
     private static native void fastNlMeansDenoisingMulti_2(long srcImgs_mat_nativeObj, long dst_nativeObj, int imgToDenoiseIndex, int temporalWindowSize, long h_mat_nativeObj, int templateWindowSize, int searchWindowSize, int normType);
@@ -730,13 +738,5 @@ public class Photo {
     // C++:  void detailEnhance(Mat src, Mat& dst, float sigma_s = 10, float sigma_r = 0.15f)
     private static native void detailEnhance_0(long src_nativeObj, long dst_nativeObj, float sigma_s, float sigma_r);
     private static native void detailEnhance_1(long src_nativeObj, long dst_nativeObj);
-
-    // C++:  void pencilSketch(Mat src, Mat& dst1, Mat& dst2, float sigma_s = 60, float sigma_r = 0.07f, float shade_factor = 0.02f)
-    private static native void pencilSketch_0(long src_nativeObj, long dst1_nativeObj, long dst2_nativeObj, float sigma_s, float sigma_r, float shade_factor);
-    private static native void pencilSketch_1(long src_nativeObj, long dst1_nativeObj, long dst2_nativeObj);
-
-    // C++:  void stylization(Mat src, Mat& dst, float sigma_s = 60, float sigma_r = 0.45f)
-    private static native void stylization_0(long src_nativeObj, long dst_nativeObj, float sigma_s, float sigma_r);
-    private static native void stylization_1(long src_nativeObj, long dst_nativeObj);
 
 }

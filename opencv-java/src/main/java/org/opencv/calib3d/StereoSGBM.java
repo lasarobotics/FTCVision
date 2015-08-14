@@ -15,7 +15,8 @@ public class StereoSGBM extends StereoMatcher {
 
     public static final int
             MODE_SGBM = 0,
-            MODE_HH = 1;
+            MODE_HH = 1,
+            MODE_SGBM_3WAY = 2;
 
 
     //
