@@ -1115,6 +1115,29 @@ public class Core {
 
 
     //
+    // C++:  void copyMakeBorder(Mat src, Mat& dst, int top, int bottom, int left, int right, int borderType, Scalar value = Scalar())
+    //
+
+    //javadoc: copyMakeBorder(src, dst, top, bottom, left, right, borderType, value)
+    public static void copyMakeBorder(Mat src, Mat dst, int top, int bottom, int left, int right, int borderType, Scalar value)
+    {
+        
+        copyMakeBorder_0(src.nativeObj, dst.nativeObj, top, bottom, left, right, borderType, value.val[0], value.val[1], value.val[2], value.val[3]);
+        
+        return;
+    }
+
+    //javadoc: copyMakeBorder(src, dst, top, bottom, left, right, borderType)
+    public static void copyMakeBorder(Mat src, Mat dst, int top, int bottom, int left, int right, int borderType)
+    {
+        
+        copyMakeBorder_1(src.nativeObj, dst.nativeObj, top, bottom, left, right, borderType);
+        
+        return;
+    }
+
+
+    //
     // C++:  void normalize(Mat src, Mat& dst, double alpha = 1, double beta = 0, int norm_type = NORM_L2, int dtype = -1, Mat mask = Mat())
     //
 
@@ -1590,29 +1613,6 @@ public class Core {
     {
         
         mulSpectrums_1(a.nativeObj, b.nativeObj, c.nativeObj, flags);
-        
-        return;
-    }
-
-
-    //
-    // C++:  void copyMakeBorder(Mat src, Mat& dst, int top, int bottom, int left, int right, int borderType, Scalar value = Scalar())
-    //
-
-    //javadoc: copyMakeBorder(src, dst, top, bottom, left, right, borderType, value)
-    public static void copyMakeBorder(Mat src, Mat dst, int top, int bottom, int left, int right, int borderType, Scalar value)
-    {
-        
-        copyMakeBorder_0(src.nativeObj, dst.nativeObj, top, bottom, left, right, borderType, value.val[0], value.val[1], value.val[2], value.val[3]);
-        
-        return;
-    }
-
-    //javadoc: copyMakeBorder(src, dst, top, bottom, left, right, borderType)
-    public static void copyMakeBorder(Mat src, Mat dst, int top, int bottom, int left, int right, int borderType)
-    {
-        
-        copyMakeBorder_1(src.nativeObj, dst.nativeObj, top, bottom, left, right, borderType);
         
         return;
     }
@@ -2395,6 +2395,10 @@ public class Core {
     // C++:  int borderInterpolate(int p, int len, int borderType)
     private static native int borderInterpolate_0(int p, int len, int borderType);
 
+    // C++:  void copyMakeBorder(Mat src, Mat& dst, int top, int bottom, int left, int right, int borderType, Scalar value = Scalar())
+    private static native void copyMakeBorder_0(long src_nativeObj, long dst_nativeObj, int top, int bottom, int left, int right, int borderType, double value_val0, double value_val1, double value_val2, double value_val3);
+    private static native void copyMakeBorder_1(long src_nativeObj, long dst_nativeObj, int top, int bottom, int left, int right, int borderType);
+
     // C++:  void normalize(Mat src, Mat& dst, double alpha = 1, double beta = 0, int norm_type = NORM_L2, int dtype = -1, Mat mask = Mat())
     private static native void normalize_0(long src_nativeObj, long dst_nativeObj, double alpha, double beta, int norm_type, int dtype, long mask_nativeObj);
     private static native void normalize_1(long src_nativeObj, long dst_nativeObj, double alpha, double beta, int norm_type, int dtype);
@@ -2485,10 +2489,6 @@ public class Core {
     // C++:  void mulSpectrums(Mat a, Mat b, Mat& c, int flags, bool conjB = false)
     private static native void mulSpectrums_0(long a_nativeObj, long b_nativeObj, long c_nativeObj, int flags, boolean conjB);
     private static native void mulSpectrums_1(long a_nativeObj, long b_nativeObj, long c_nativeObj, int flags);
-
-    // C++:  void copyMakeBorder(Mat src, Mat& dst, int top, int bottom, int left, int right, int borderType, Scalar value = Scalar())
-    private static native void copyMakeBorder_0(long src_nativeObj, long dst_nativeObj, int top, int bottom, int left, int right, int borderType, double value_val0, double value_val1, double value_val2, double value_val3);
-    private static native void copyMakeBorder_1(long src_nativeObj, long dst_nativeObj, int top, int bottom, int left, int right, int borderType);
 
     // C++:  void add(Mat src1, Mat src2, Mat& dst, Mat mask = Mat(), int dtype = -1)
     private static native void add_3(long src1_nativeObj, long src2_nativeObj, long dst_nativeObj, long mask_nativeObj, int dtype);

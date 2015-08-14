@@ -105,7 +105,7 @@ JNIEXPORT void JNICALL Java_com_lasarobotics_ftc_camera_detection_Detection_find
          scene_corners[0] + Point2f(img_object.cols, 0), Scalar(0, 255, 0), 4);
 
     //-- Show detected matches
-    imshow("Good Matches & Object detection", img_matches);
+    //imshow("Good Matches & Object detection", img_matches);
 
     return;
 }
