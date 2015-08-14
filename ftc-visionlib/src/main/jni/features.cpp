@@ -8,15 +8,15 @@ using namespace cv;
 
 extern "C"
 {
-    JNIEXPORT jstring JNICALL Java_com_lasarobotics_ftc_camera_detection_Features_stringFromJNI(
+    JNIEXPORT jstring JNICALL Java_com_lasarobotics_vision_detection_Features_stringFromJNI(
             JNIEnv *env, jobject type);
 
-    JNIEXPORT jstring JNICALL Java_com_lasarobotics_ftc_camera_detection_Features_stringFromJNI
+    JNIEXPORT jstring JNICALL Java_com_lasarobotics_vision_detection_Features_stringFromJNI
             (JNIEnv *env, jobject type) {
         return env->NewStringUTF("Hello from JNI");
     }
 
-    JNIEXPORT void JNICALL Java_com_lasarobotics_ftc_camera_detection_Features_highlightFeatures(JNIEnv* jobject, jlong addrGray, jlong addrRgba)
+    JNIEXPORT void JNICALL Java_com_lasarobotics_vision_detection_Features_highlightFeatures(JNIEnv* jobject, jlong addrGray, jlong addrRgba)
     {
         Mat& mGr  = *(Mat*)addrGray;
         Mat& mRgb = *(Mat*)addrRgba;

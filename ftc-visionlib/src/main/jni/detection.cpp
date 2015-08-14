@@ -19,7 +19,7 @@ using namespace cv::xfeatures2d;
 extern "C"
 {
 
-JNIEXPORT void JNICALL Java_com_lasarobotics_ftc_camera_detection_Detection_findObject(JNIEnv* jobject, jlong addrGrayObject, jlong addrGrayScene) {
+JNIEXPORT void JNICALL Java_com_lasarobotics_vision_detection_Detection_findObject(JNIEnv* jobject, jlong addrGrayObject, jlong addrGrayScene) {
 
     Mat img_object = *(Mat*)addrGrayObject;
     Mat img_scene = *(Mat*)addrGrayScene;

@@ -35,7 +35,7 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
     private CameraBridgeViewBase mOpenCvCameraView;
 
     static {
-        System.loadLibrary("ftc");
+        System.loadLibrary("ftcvision");
         System.loadLibrary("opencv_java3");
     }
 
