@@ -77,11 +77,10 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
         focalLength = pam.getFocalLength();
         cam.getCamera().release();
 
+        //TEST JNI
         String s = Features.stringFromJNI();
 
         //GET TARGET IMAGE
-
-
         //Read the target image file
         String dir = Util.getDCIMDirectory();
         File file = new File(dir + "/Object-Book.jpg");
