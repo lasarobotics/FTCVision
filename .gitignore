@@ -8,7 +8,7 @@
 # generated files
 bin/
 gen/
-jinLibs/
+jniLibs/
 
 # Local configuration file (sdk path, etc)
 local.properties

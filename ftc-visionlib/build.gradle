@@ -23,6 +23,12 @@ android {
     tasks.withType(JavaCompile) {
         compileTask -> compileTask.dependsOn ndkBuild
     }
+
+    buildTypes {
+        debug {
+            jniDebuggable true
+        }
+    }
 }
 
 repositories {
