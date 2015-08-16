@@ -83,7 +83,7 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
         //GET TARGET IMAGE
         //Read the target image file
         String dir = Util.getDCIMDirectory();
-        File file = new File(dir + "/Object-Book-Small.png");
+        File file = new File(dir + "/Object-FTCLogo.png");
 
         if (!file.exists())
         {

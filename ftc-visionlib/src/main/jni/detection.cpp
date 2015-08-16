@@ -11,20 +11,34 @@
 #include "opencv2/calib3d.hpp"
 #include "opencv2/xfeatures2d.hpp"
 #include "opencv2/imgproc.hpp"
+#include "opencv2/flann.hpp"
 
 using namespace std;
 using namespace cv;
 using namespace cv::xfeatures2d;
+using namespace cvflann;
 
 extern "C"
 {
 
-int minHessian = 400;
-
 Mat img_object;
+
+// DETECTOR
+// Standard SURF detector
 Ptr<SURF> detector;
 
+// DESCRIPTOR
+// Our proposed FREAK descriptor
+// (rotation invariance, scale invariance, pattern radius corresponding to SMALLEST_KP_SIZE,
+// number of octaves, optional vector containing the selected pairs)
+// FREAK extractor(true, true, 22, 4, std::vector<int>());
+Ptr<FREAK> extractor;
+
+std::vector<KeyPoint> keypoints_object;
+Mat descriptors_object;
+
 JNIEXPORT void JNICALL Java_com_lasarobotics_vision_detection_Detection_analyzeObject(JNIEnv* jobject, jlong addrGrayObject) {
+
     img_object = *(Mat*)addrGrayObject;
 
     if( !img_object.data )
@@ -32,14 +46,13 @@ JNIEXPORT void JNICALL Java_com_lasarobotics_vision_detection_Detection_analyzeO
 
     //-- Step 1: Detect the keypoints using SURF Detector
 
-    detector = SURF::create(minHessian);
-
-    std::vector<KeyPoint> keypoints_object;
+    //detect
+    detector = SURF::create(2000,4);
     detector->detect( img_object, keypoints_object );
 
-    //-- Step 2: Calculate descriptors (feature vectors)
-    Mat descriptors_object;
-    detector->compute( img_object, keypoints_object, descriptors_object );
+    //extract
+    extractor = FREAK::create();
+    extractor->compute( img_object, keypoints_object, descriptors_object);
 }
 
 JNIEXPORT void JNICALL Java_com_lasarobotics_vision_detection_Detection_findObject(JNIEnv* jobject, jlong addrGrayObject, jlong addrGrayScene, jlong addrOutput) {
@@ -50,24 +63,25 @@ JNIEXPORT void JNICALL Java_com_lasarobotics_vision_detection_Detection_findObje
     if( !img_object.data || !img_scene.data )
     { printf(" --(!) Error reading images "); return; }
 
-    //-- Step 1: Detect the keypoints using SURF Detector
-    Ptr<SURF> detector = SURF::create(minHessian);
+    // MATCHER
+    // The standard Hamming distance can be used such as
+    // BruteForceMatcher<Hamming> matcher;
+    // or the proposed cascade of hamming distance using SSSE3
+    Ptr<BinaryDescriptorMatcher> matcher = BinaryDescriptorMatcher::createBinaryDescriptorMatcher();
 
+    // detect
     std::vector<KeyPoint> keypoints_scene;
     detector->detect( img_scene, keypoints_scene );
 
-    //-- Step 2: Calculate descriptors (feature vectors)
-    //Ptr<SURF> extractor = SURF::create();
-
+    // extract
     Mat descriptors_scene;
-    detector->compute( img_scene, keypoints_scene, descriptors_scene );
+    extractor->compute( img_scene, keypoints_scene, descriptors_scene );
 
-    //-- Step 3: Matching descriptor vectors using FLANN matcher
-    FlannBasedMatcher matcher;
-    std::vector< DMatch > matches;
-    matcher.match( descriptors_object, descriptors_scene, matches );
+    // match
+    std::vector<DMatch> matches;
+    matcher->match(descriptors_object, descriptors_scene, matches);
 
-    double max_dist = 0; double min_dist = 100;
+    /*double max_dist = 0; double min_dist = 100;
 
     //-- Quick calculation of max and min distances between keypoints
     for( int i = 0; i < descriptors_object.rows; i++ )
@@ -85,21 +99,21 @@ JNIEXPORT void JNICALL Java_com_lasarobotics_vision_detection_Detection_findObje
     for( int i = 0; i < descriptors_object.rows; i++ )
     { if( matches[i].distance < 3*min_dist )
         { good_matches.push_back( matches[i]); }
-    }
+    }*/
 
     //drawMatches( img_object, keypoints_object, img_scene, keypoints_scene,
     //             good_matches, img_matches, Scalar::all(-1), Scalar::all(-1),
     //             vector<char>(), DrawMatchesFlags::DRAW_OVER_OUTIMG);
 
     //-- Localize the object
-    std::vector<Point2f> obj;
+    /*std::vector<Point2f> obj;
     std::vector<Point2f> scene;
 
-    for( int i = 0; i < good_matches.size(); i++ )
+    for( int i = 0; i < matches.size(); i++ )
     {
         //-- Get the keypoints from the good matches
-        obj.push_back( keypoints_object[ good_matches[i].queryIdx ].pt );
-        scene.push_back( keypoints_scene[ good_matches[i].trainIdx ].pt );
+        obj.push_back( keypoints_object[ matches[i].queryIdx ].pt );
+        scene.push_back( keypoints_scene[ matches[i].trainIdx ].pt );
     }
 
     Mat H = findHomography( obj, scene, RANSAC );
@@ -121,7 +135,7 @@ JNIEXPORT void JNICALL Java_com_lasarobotics_vision_detection_Detection_findObje
     //-- Show detected matches
     //imshow( "Good Matches & Object detection", img_matches );
 
-    return;
+    return;*/
 }
 
 } //extern "C"
