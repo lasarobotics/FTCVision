@@ -140,10 +140,14 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
         mGray.release();
     }
 
+    int j = 0;
+
     public Mat onCameraFrame(CvCameraViewFrame inputFrame) {
         // input frame has RBGA format
         mRgba = inputFrame.rgba();
         mGray = inputFrame.gray();
+
+        if (j < 20) { j++; return mRgba; }
 
         Detection.findObject(mTarget.getNativeObjAddr(), mGray.getNativeObjAddr(), mRgba.getNativeObjAddr());
 

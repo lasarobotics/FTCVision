@@ -12,11 +12,13 @@
 #include "opencv2/xfeatures2d.hpp"
 #include "opencv2/imgproc.hpp"
 #include "opencv2/flann.hpp"
+#include "opencv2/line_descriptor/descriptor.hpp"
 
 using namespace std;
 using namespace cv;
 using namespace cv::xfeatures2d;
 using namespace cvflann;
+using namespace cv::line_descriptor;
 
 extern "C"
 {
@@ -47,7 +49,7 @@ JNIEXPORT void JNICALL Java_com_lasarobotics_vision_detection_Detection_analyzeO
     //-- Step 1: Detect the keypoints using SURF Detector
 
     //detect
-    detector = SURF::create(2000,4);
+    detector = SURF::create(600);
     detector->detect( img_object, keypoints_object );
 
     //extract
@@ -67,7 +69,7 @@ JNIEXPORT void JNICALL Java_com_lasarobotics_vision_detection_Detection_findObje
     // The standard Hamming distance can be used such as
     // BruteForceMatcher<Hamming> matcher;
     // or the proposed cascade of hamming distance using SSSE3
-    Ptr<BinaryDescriptorMatcher> matcher = BinaryDescriptorMatcher::createBinaryDescriptorMatcher();
+    BFMatcher matcher(NORM_HAMMING2);
 
     // detect
     std::vector<KeyPoint> keypoints_scene;
@@ -77,11 +79,15 @@ JNIEXPORT void JNICALL Java_com_lasarobotics_vision_detection_Detection_findObje
     Mat descriptors_scene;
     extractor->compute( img_scene, keypoints_scene, descriptors_scene );
 
+    if ((descriptors_object.cols != descriptors_scene.cols) ||
+        (descriptors_object.type() != descriptors_scene.type()))
+    { return; }
+
     // match
     std::vector<DMatch> matches;
-    matcher->match(descriptors_object, descriptors_scene, matches);
+    matcher.match(descriptors_object, descriptors_scene, matches);
 
-    /*double max_dist = 0; double min_dist = 100;
+    double max_dist = 0; double min_dist = 100;
 
     //-- Quick calculation of max and min distances between keypoints
     for( int i = 0; i < descriptors_object.rows; i++ )
@@ -99,30 +105,43 @@ JNIEXPORT void JNICALL Java_com_lasarobotics_vision_detection_Detection_findObje
     for( int i = 0; i < descriptors_object.rows; i++ )
     { if( matches[i].distance < 3*min_dist )
         { good_matches.push_back( matches[i]); }
-    }*/
+    }
 
     //drawMatches( img_object, keypoints_object, img_scene, keypoints_scene,
     //             good_matches, img_matches, Scalar::all(-1), Scalar::all(-1),
     //             vector<char>(), DrawMatchesFlags::DRAW_OVER_OUTIMG);
 
     //-- Localize the object
-    /*std::vector<Point2f> obj;
+    std::vector<Point2f> obj;
     std::vector<Point2f> scene;
 
-    for( int i = 0; i < matches.size(); i++ )
+    for( int i = 0; i < good_matches.size(); i++ )
     {
         //-- Get the keypoints from the good matches
-        obj.push_back( keypoints_object[ matches[i].queryIdx ].pt );
-        scene.push_back( keypoints_scene[ matches[i].trainIdx ].pt );
+        obj.push_back( keypoints_object[ good_matches[i].queryIdx ].pt );
+        scene.push_back( keypoints_scene[ good_matches[i].trainIdx ].pt );
+    }
+
+    if ((obj.size() < 4) || (scene.size() < 4))
+    {
+        return;
     }
 
     Mat H = findHomography( obj, scene, RANSAC );
 
     //-- Get the corners from the image_1 ( the object to be "detected" )
     std::vector<Point2f> obj_corners(4);
-    obj_corners[0] = cvPoint(0,0); obj_corners[1] = cvPoint( img_object.cols, 0 );
-    obj_corners[2] = cvPoint( img_object.cols, img_object.rows ); obj_corners[3] = cvPoint( 0, img_object.rows );
+    obj_corners[0] = cvPoint(0,0);
+    obj_corners[1] = cvPoint( img_object.cols, 0 );
+    obj_corners[2] = cvPoint( img_object.cols, img_object.rows );
+    obj_corners[3] = cvPoint( 0, img_object.rows );
     std::vector<Point2f> scene_corners(4);
+
+    if(obj_corners.size() != scene_corners.size())
+    {
+        return;
+    }
+    //if (H.cols() != 3 || H.rows)
 
     perspectiveTransform( obj_corners, scene_corners, H);
 
@@ -135,7 +154,7 @@ JNIEXPORT void JNICALL Java_com_lasarobotics_vision_detection_Detection_findObje
     //-- Show detected matches
     //imshow( "Good Matches & Object detection", img_matches );
 
-    return;*/
+    //return;*/
 }
 
 } //extern "C"
