@@ -19,40 +19,48 @@ using namespace cv::xfeatures2d;
 extern "C"
 {
 
-JNIEXPORT void JNICALL Java_com_lasarobotics_vision_detection_Detection_findObject(JNIEnv* jobject, jlong addrGrayObject, jlong addrGrayScene) {
+int minHessian = 400;
 
-    /*Mat img_object;
+Mat img_object;
+Ptr<SURF> detector;
+
+JNIEXPORT void JNICALL Java_com_lasarobotics_vision_detection_Detection_analyzeObject(JNIEnv* jobject, jlong addrGrayObject) {
     img_object = *(Mat*)addrGrayObject;
-    Mat img_scene;
-    img_scene = *(Mat*)addrGrayScene;*/
 
-    Mat* img_object = (Mat*)addrGrayObject;
-    Mat* img_scene = (Mat*)addrGrayScene;
-
-    //Mat img_object = imread( argv[1], IMREAD_GRAYSCALE );
-    //Mat img_scene = imread( argv[2], IMREAD_GRAYSCALE );
-
-    if( !img_object->data || !img_scene->data )
+    if( !img_object.data )
     { printf(" --(!) Error reading images "); return; }
 
     //-- Step 1: Detect the keypoints using SURF Detector
-    int minHessian = 400;
 
-    SurfFeatureDetector* detector = SURF::create(minHessian);
+    detector = SURF::create(minHessian);
 
-    std::vector<KeyPoint> keypoints_object, keypoints_scene;
-    keypoints_object = vector<KeyPoint>();
-
-    /*detector->detect( *img_object, keypoints_object );
-    detector->detect( *img_scene, keypoints_scene );
+    std::vector<KeyPoint> keypoints_object;
+    detector->detect( img_object, keypoints_object );
 
     //-- Step 2: Calculate descriptors (feature vectors)
-    SurfDescriptorExtractor* extractor;
+    Mat descriptors_object;
+    detector->compute( img_object, keypoints_object, descriptors_object );
+}
 
-    Mat descriptors_object, descriptors_scene;
+JNIEXPORT void JNICALL Java_com_lasarobotics_vision_detection_Detection_findObject(JNIEnv* jobject, jlong addrGrayObject, jlong addrGrayScene, jlong addrOutput) {
 
-    extractor->compute( img_object, keypoints_object, descriptors_object );
-    extractor->compute( img_scene, keypoints_scene, descriptors_scene );
+    Mat img_scene = *(Mat*)addrGrayScene;
+    Mat img_matches = *(Mat*)addrOutput;
+
+    if( !img_object.data || !img_scene.data )
+    { printf(" --(!) Error reading images "); return; }
+
+    //-- Step 1: Detect the keypoints using SURF Detector
+    Ptr<SURF> detector = SURF::create(minHessian);
+
+    std::vector<KeyPoint> keypoints_scene;
+    detector->detect( img_scene, keypoints_scene );
+
+    //-- Step 2: Calculate descriptors (feature vectors)
+    //Ptr<SURF> extractor = SURF::create();
+
+    Mat descriptors_scene;
+    detector->compute( img_scene, keypoints_scene, descriptors_scene );
 
     //-- Step 3: Matching descriptor vectors using FLANN matcher
     FlannBasedMatcher matcher;
@@ -79,10 +87,9 @@ JNIEXPORT void JNICALL Java_com_lasarobotics_vision_detection_Detection_findObje
         { good_matches.push_back( matches[i]); }
     }
 
-    Mat img_matches;
-    drawMatches( img_object, keypoints_object, img_scene, keypoints_scene,
-                 good_matches, img_matches, Scalar::all(-1), Scalar::all(-1),
-                 vector<char>(), DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS );
+    //drawMatches( img_object, keypoints_object, img_scene, keypoints_scene,
+    //             good_matches, img_matches, Scalar::all(-1), Scalar::all(-1),
+    //             vector<char>(), DrawMatchesFlags::DRAW_OVER_OUTIMG);
 
     //-- Localize the object
     std::vector<Point2f> obj;
@@ -112,7 +119,7 @@ JNIEXPORT void JNICALL Java_com_lasarobotics_vision_detection_Detection_findObje
     line( img_matches, scene_corners[3] + Point2f( img_object.cols, 0), scene_corners[0] + Point2f( img_object.cols, 0), Scalar( 0, 255, 0), 4 );
 
     //-- Show detected matches
-    //imshow( "Good Matches & Object detection", img_matches );*/
+    //imshow( "Good Matches & Object detection", img_matches );
 
     return;
 }

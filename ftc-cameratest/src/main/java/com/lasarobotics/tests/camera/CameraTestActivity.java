@@ -83,7 +83,7 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
         //GET TARGET IMAGE
         //Read the target image file
         String dir = Util.getDCIMDirectory();
-        File file = new File(dir + "/Object-Book.jpg");
+        File file = new File(dir + "/Object-Book-Small.png");
 
         if (!file.exists())
         {
@@ -91,13 +91,16 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
             Log.e("CameraTester", "FAILED TO FIND IMAGE FILE!");
             System.exit(1);
         }
-        mTarget = Imgcodecs.imread(file.getAbsolutePath());
+        mTarget = Imgcodecs.imread(file.getAbsolutePath(), Imgcodecs.IMREAD_GRAYSCALE);
         if (mTarget.empty())
         {
             // print error and abort execution
             Log.e("CameraTester", "FAILED TO LOAD IMAGE FILE!");
             System.exit(1);
         }
+
+        //ANALYZE OBJECT
+        Detection.analyzeObject(mTarget.getNativeObjAddr());
     }
 
     @Override
@@ -142,7 +145,7 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
         mRgba = inputFrame.rgba();
         mGray = inputFrame.gray();
 
-        Detection.findObject(mTarget.getNativeObjAddr(), mGray.getNativeObjAddr());
+        Detection.findObject(mTarget.getNativeObjAddr(), mGray.getNativeObjAddr(), mRgba.getNativeObjAddr());
 
         //Features.highlightFeatures(mGray.getNativeObjAddr(), mRgba.getNativeObjAddr());
 
