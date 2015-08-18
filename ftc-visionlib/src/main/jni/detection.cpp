@@ -141,7 +141,7 @@ JNIEXPORT void JNICALL Java_com_lasarobotics_vision_detection_Detection_findObje
     {
         return;
     }
-    //if (H.cols() != 3 || H.rows)
+    if (H.cols!= 3 || H.rows != 3) { return; }
 
     perspectiveTransform( obj_corners, scene_corners, H);
 
