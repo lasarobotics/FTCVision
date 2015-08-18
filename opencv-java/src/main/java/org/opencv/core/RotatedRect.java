@@ -1,6 +1,5 @@
 package org.opencv.core;
 
-//javadoc:RotatedRect_
 public class RotatedRect {
 
     public Point center;

@@ -6,21 +6,18 @@
 #include <vector>
 #include <stdio.h>
 #include <android/log.h>
-#include "opencv2/core.hpp"
-#include "opencv2/features2d.hpp"
-#include "opencv2/highgui.hpp"
-#include "opencv2/calib3d.hpp"
-#include "opencv2/xfeatures2d.hpp"
+
+#include "opencv2/core/core.hpp"
+#include "opencv2/features2d/features2d.hpp"
+#include "opencv2/highgui/highgui.hpp"
+#include "opencv2/calib3d/calib3d.hpp"
 #include "opencv2/nonfree/nonfree.hpp"
-#include "opencv2/imgproc.hpp"
-#include "opencv2/flann.hpp"
-#include "opencv2/line_descriptor/descriptor.hpp"
+#include "opencv2/imgproc/imgproc.hpp"
+#include "opencv2/flann/flann.hpp"
 
 using namespace std;
 using namespace cv;
-using namespace cv::xfeatures2d;
 using namespace cvflann;
-using namespace cv::line_descriptor;
 
 extern "C"
 {
@@ -29,21 +26,22 @@ Mat img_object;
 
 // DETECTOR
 // Standard SURF detector
-Ptr<SURF> detector;
+//Ptr<DynamicAdaptedFeatureDetector> detector;
+ORB detectorExtractor;
 
 // DESCRIPTOR
 // Our proposed FREAK descriptor
 // (rotation invariance, scale invariance, pattern radius corresponding to SMALLEST_KP_SIZE,
 // number of octaves, optional vector containing the selected pairs)
 // FREAK extractor(true, true, 22, 4, std::vector<int>());
-Ptr<FREAK> extractor;
+//FREAK extractor;
 
 std::vector<KeyPoint> keypoints_object;
 Mat descriptors_object;
 
 JNIEXPORT void JNICALL Java_com_lasarobotics_vision_detection_Detection_analyzeObject(JNIEnv* jobject, jlong addrGrayObject) {
 
-    initModules_nonfree();
+    //initModules_nonfree();
 
     img_object = *(Mat*)addrGrayObject;
 
@@ -53,12 +51,13 @@ JNIEXPORT void JNICALL Java_com_lasarobotics_vision_detection_Detection_analyzeO
     //-- Step 1: Detect the keypoints using SURF Detector
 
     //detect
-    detector = FAST::create();
-    detector->detect( img_object, keypoints_object );
+    //detector = makePtr<DynamicAdaptedFeatureDetector>(DynamicAdaptedFeatureDetector(new FastAdjuster(20, true)));
+    detectorExtractor = ORB();
+    detectorExtractor.detect( img_object, keypoints_object );
 
     //extract
-    extractor = FREAK::create();
-    extractor->compute( img_object, keypoints_object, descriptors_object);
+    //extractor = FREAK::create();
+    detectorExtractor.compute( img_object, keypoints_object, descriptors_object);
 
     __android_log_print(ANDROID_LOG_ERROR, "ftcvision", "Object ananlyzed!");
 }
@@ -79,11 +78,11 @@ JNIEXPORT void JNICALL Java_com_lasarobotics_vision_detection_Detection_findObje
 
     // detect
     std::vector<KeyPoint> keypoints_scene;
-    detector->detect( img_scene, keypoints_scene );
+    detectorExtractor.detect( img_scene, keypoints_scene );
 
     // extract
     Mat descriptors_scene;
-    extractor->compute( img_scene, keypoints_scene, descriptors_scene );
+    detectorExtractor.compute( img_scene, keypoints_scene, descriptors_scene );
 
     if ((descriptors_object.cols != descriptors_scene.cols) ||
         (descriptors_object.type() != descriptors_scene.type()))

@@ -22,8 +22,8 @@ extern "C"
         Mat& mRgb = *(Mat*)addrRgba;
         vector<KeyPoint> v;
 
-        Ptr<FeatureDetector> detector = FastFeatureDetector::create(50);
-        detector->detect(mGr, v);
+        FastFeatureDetector detector = FastFeatureDetector(50);
+        detector.detect(mGr, v);
         for( unsigned int i = 0; i < v.size(); i++ )
         {
             const KeyPoint& kp = v[i];

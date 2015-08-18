@@ -116,8 +116,7 @@ public class Build {
                 k = k + (char)e.read();
             }
             log.fine("[NDK-BUILD] " + s);
-            log.severe("[NDK-BUILD] " + k);
-            log.fine("[NDK-BUILD] " + ((pr.exitValue() == 0) ? "SUCCESS!" : "FAILURE!"));
+            log.fine("[NDK-BUILD] " + k); //TODO handler/log is duplicating this call when set to SEVERE
             return pr.exitValue();
         }
         catch (Exception e)

@@ -8,7 +8,7 @@ import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.CameraBridgeViewBase.CvCameraViewListener2;
-import org.opencv.imgcodecs.Imgcodecs;
+import org.opencv.highgui.Highgui;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -36,7 +36,7 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
 
     static {
         System.loadLibrary("ftcvision");
-        System.loadLibrary("opencv_java3");
+        System.loadLibrary("opencv_java");
     }
 
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
@@ -91,7 +91,7 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
             Log.e("CameraTester", "FAILED TO FIND IMAGE FILE!");
             System.exit(1);
         }
-        mTarget = Imgcodecs.imread(file.getAbsolutePath(), Imgcodecs.IMREAD_GRAYSCALE);
+        mTarget = Highgui.imread(file.getAbsolutePath(), Highgui.IMREAD_GRAYSCALE);
         if (mTarget.empty())
         {
             // print error and abort execution
@@ -117,7 +117,7 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
         super.onResume();
         if (!OpenCVLoader.initDebug()) {
             // Internal OpenCV library not found. Using OpenCV Manager for initialization
-            OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_0_0, this, mLoaderCallback);
+            OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_2_4_12, this, mLoaderCallback);
         } else {
             // OpenCV library found inside package. Using it!
             mLoaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
