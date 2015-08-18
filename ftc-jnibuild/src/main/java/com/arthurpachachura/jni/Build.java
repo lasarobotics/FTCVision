@@ -37,15 +37,20 @@ public class Build {
             m.appendTail(tail);
             ndkpath_win = ndkpath.substring(0, 1) + ":" + tail.toString();
 
-            if (!exec(ndkpath_win + "\\ndk-build.cmd", log, handler))
+            if (!doesExist(ndkpath_win + "\\ndk-build.cmd"))
             {
+                log.fine("Found linux!");
                 throw new Exception("Found Linux!  :D");
+            }
+            else {
+                System.exit(exec(ndkpath_win + "\\ndk-build.cmd", log, handler));
             }
         }
         catch (Exception e) {
             //good job, you're running Linux! (or another Unix....)
-            if (exec(ndkpath + "/ndk-build", log, handler)) {
-                System.exit(0);
+            if (doesExist(ndkpath)) {
+                //ran command successfully, return exit status
+                System.exit(exec(ndkpath + "/ndk-build", log, handler));
                 return;
             }
             //and now we have no idea what to do with you, so we're exiting with a negative report
@@ -54,6 +59,11 @@ public class Build {
             log.fine("[NDK-BUILD] FAILURE: Could not find 'ndk-build'");
             System.exit(1);
         }
+    }
+
+    private static boolean doesExist(String filepath)
+    {
+        return new File(filepath).exists();
     }
 
     private static String getNDKLocation(String propertiesFile, Logger log, ConsoleHandler handler)
@@ -78,13 +88,11 @@ public class Build {
                 return line;
             }
         }
-        log.setLevel(Level.ALL);
-        handler.setLevel(Level.ALL);
-        log.fine("[NDK-BUILD] FAILURE: Could not find " + search + " in local.properties");
+        log.severe("[NDK-BUILD] FAILURE: Could not find " + search + " in local.properties");
         return null;
     }
 
-    private static boolean exec(String path, Logger log, ConsoleHandler handler)
+    private static int exec(String path, Logger log, ConsoleHandler handler)
     {
         try {
             Runtime rt = Runtime.getRuntime();
@@ -109,12 +117,13 @@ public class Build {
             }
             log.fine("[NDK-BUILD] " + s);
             log.severe("[NDK-BUILD] " + k);
-            log.fine("[NDK-BUILD] SUCCESS!");
-            return true;
+            log.fine("[NDK-BUILD] " + ((pr.exitValue() == 0) ? "SUCCESS!" : "FAILURE!"));
+            return pr.exitValue();
         }
         catch (Exception e)
         {
-            return false;
+            log.severe("[NDK-BUILD] " + e.getMessage());
+            return 1;
         }
     }
 }
