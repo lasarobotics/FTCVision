@@ -21,7 +21,7 @@ using namespace cv;
 extern "C"
 {
 
-static const int DESIRED_FTRS = 500;
+static const int DESIRED_FTRS = 200;
 
 static Mat img_object;
 

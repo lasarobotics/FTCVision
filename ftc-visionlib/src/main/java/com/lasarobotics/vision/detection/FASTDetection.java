@@ -1,7 +1,7 @@
 package com.lasarobotics.vision.detection;
 
 /**
- * FAST object detection
+ * Advanced object detection methods
  */
 public class FASTDetection {
     /**
