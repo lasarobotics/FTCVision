@@ -17,6 +17,7 @@ import android.view.WindowManager;
 
 import com.lasarobotics.vision.Cameras;
 import com.lasarobotics.vision.Util;
+import com.lasarobotics.vision.detection.FASTDetection;
 import com.lasarobotics.vision.detection.Features;
 import com.lasarobotics.vision.Camera;
 import com.lasarobotics.vision.detection.Features;
@@ -149,7 +150,7 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
 
         if (j < 20) { j++; return mRgba; }
 
-        Detection.findObject(mTarget.getNativeObjAddr(), mGray.getNativeObjAddr(), mRgba.getNativeObjAddr());
+        FASTDetection.findObject(mTarget.getNativeObjAddr(), mRgba.getNativeObjAddr(), mRgba.getNativeObjAddr());
 
         //Features.highlightFeatures(mGray.getNativeObjAddr(), mRgba.getNativeObjAddr());
 

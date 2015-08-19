@@ -16,7 +16,7 @@ extern "C"
     JNIEXPORT void JNICALL Java_com_lasarobotics_vision_Image_rotate(JNIEnv* jobject, jlong addrImage, jdouble angle) {
         Mat img = *(Mat*)addrImage;
 
-        int len = std::max(src.cols, src.rows);
+        int len = std::max(img.cols, img.rows);
         Point2f pt(len/2., len/2.);
         Mat r = cv::getRotationMatrix2D(pt, angle, 1.0);
 
