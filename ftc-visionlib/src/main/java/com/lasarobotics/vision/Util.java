@@ -3,7 +3,7 @@ package com.lasarobotics.vision;
 import android.os.Environment;
 
 /**
- * Created by Ehsan on 8/14/2015.
+ * Vision utilities
  */
 public class Util {
     public static String getDCIMDirectory()
