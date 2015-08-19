@@ -150,7 +150,7 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
 
         if (j < 20) { j++; return mRgba; }
 
-        FASTDetection.findObject(mTarget.getNativeObjAddr(), mRgba.getNativeObjAddr(), mRgba.getNativeObjAddr());
+        Detection.findObject(mTarget.getNativeObjAddr(), mRgba.getNativeObjAddr(), mRgba.getNativeObjAddr());
 
         //Features.highlightFeatures(mGray.getNativeObjAddr(), mRgba.getNativeObjAddr());
 

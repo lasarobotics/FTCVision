@@ -8,7 +8,7 @@ public class FASTDetection {
      * Analyze and store an object instance
      * @param matGrayObject Grayscale target object image in grayscale
      */
-    //public native static void analyzeObject(long matGrayObject);
+    public native static void analyzeObject(long matGrayObject);
 
     /**
      * Find an object within a specific scene

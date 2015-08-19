@@ -17,27 +17,20 @@
 
 using namespace std;
 using namespace cv;
-using namespace cvflann;
 
 extern "C"
 {
 
-Mat img_object;
+static const int DESIRED_FTRS = 500;
 
-// DETECTOR
-// Standard SURF detector
-//Ptr<DynamicAdaptedFeatureDetector> detector;
-ORB detectorExtractor;
+static Mat img_object;
 
-// DESCRIPTOR
-// Our proposed FREAK descriptor
-// (rotation invariance, scale invariance, pattern radius corresponding to SMALLEST_KP_SIZE,
-// number of octaves, optional vector containing the selected pairs)
-// FREAK extractor(true, true, 22, 4, std::vector<int>());
-//FREAK extractor;
+static GridAdaptedFeatureDetector detector(new FastFeatureDetector(10, true), DESIRED_FTRS, 4, 4);
+static BriefDescriptorExtractor extractor(32);
+static BFMatcher matcher(NORM_HAMMING);
 
-std::vector<KeyPoint> keypoints_object;
-Mat descriptors_object;
+static std::vector<KeyPoint> keypoints_object;
+static Mat descriptors_object;
 
 JNIEXPORT void JNICALL Java_com_lasarobotics_vision_detection_Detection_analyzeObject(JNIEnv* jobject, jlong addrGrayObject) {
 
@@ -52,12 +45,11 @@ JNIEXPORT void JNICALL Java_com_lasarobotics_vision_detection_Detection_analyzeO
 
     //detect
     //detector = makePtr<DynamicAdaptedFeatureDetector>(DynamicAdaptedFeatureDetector(new FastAdjuster(20, true)));
-    detectorExtractor = ORB();
-    detectorExtractor.detect( img_object, keypoints_object );
+    detector.detect( img_object, keypoints_object );
 
     //extract
     //extractor = FREAK::create();
-    detectorExtractor.compute( img_object, keypoints_object, descriptors_object);
+    extractor.compute( img_object, keypoints_object, descriptors_object);
 
     __android_log_print(ANDROID_LOG_ERROR, "ftcvision", "Object ananlyzed!");
 }
@@ -70,19 +62,13 @@ JNIEXPORT void JNICALL Java_com_lasarobotics_vision_detection_Detection_findObje
     if( !img_object.data || !img_scene.data )
     { printf(" --(!) Error reading images "); return; }
 
-    // MATCHER
-    // The standard Hamming distance can be used such as
-    // BruteForceMatcher<Hamming> matcher;
-    // or the proposed cascade of hamming distance using SSSE3
-    BFMatcher matcher(NORM_L2);
-
     // detect
     std::vector<KeyPoint> keypoints_scene;
-    detectorExtractor.detect( img_scene, keypoints_scene );
+    detector.detect( img_scene, keypoints_scene );
 
     // extract
     Mat descriptors_scene;
-    detectorExtractor.compute( img_scene, keypoints_scene, descriptors_scene );
+    extractor.compute( img_scene, keypoints_scene, descriptors_scene );
 
     if ((descriptors_object.cols != descriptors_scene.cols) ||
         (descriptors_object.type() != descriptors_scene.type()))
@@ -151,10 +137,14 @@ JNIEXPORT void JNICALL Java_com_lasarobotics_vision_detection_Detection_findObje
     perspectiveTransform( obj_corners, scene_corners, H); //TODO this function throws libc fatal signal 11 (SIGSEGV)
 
     //-- Draw lines between the corners (the mapped object in the scene - image_2 )
-    line( img_matches, scene_corners[0] + Point2f( img_object.cols, 0), scene_corners[1] + Point2f( img_object.cols, 0), Scalar(0, 255, 0), 4 );
-    line( img_matches, scene_corners[1] + Point2f( img_object.cols, 0), scene_corners[2] + Point2f( img_object.cols, 0), Scalar( 0, 255, 0), 4 );
-    line( img_matches, scene_corners[2] + Point2f( img_object.cols, 0), scene_corners[3] + Point2f( img_object.cols, 0), Scalar( 0, 255, 0), 4 );
-    line( img_matches, scene_corners[3] + Point2f( img_object.cols, 0), scene_corners[0] + Point2f( img_object.cols, 0), Scalar( 0, 255, 0), 4 );
+    line( img_matches, scene_corners[0] + Point2f( img_object.cols, 0),
+          scene_corners[1] + Point2f( img_object.cols, 0), Scalar(0, 255, 0), 4 );
+    line( img_matches, scene_corners[1] + Point2f( img_object.cols, 0),
+          scene_corners[2] + Point2f( img_object.cols, 0), Scalar( 0, 255, 0), 4 );
+    line( img_matches, scene_corners[2] + Point2f( img_object.cols, 0),
+          scene_corners[3] + Point2f( img_object.cols, 0), Scalar( 0, 255, 0), 4 );
+    line( img_matches, scene_corners[3] + Point2f( img_object.cols, 0),
+          scene_corners[0] + Point2f( img_object.cols, 0), Scalar( 0, 255, 0), 4 );
 
     //-- Show detected matches
     //imshow( "Good Matches & Object detection", img_matches );

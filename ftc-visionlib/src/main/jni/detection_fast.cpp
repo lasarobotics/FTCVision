@@ -21,7 +21,52 @@ using namespace cv;
 extern "C"
 {
 
-    void drawMatchesRelative(const vector<KeyPoint>& train, const vector<KeyPoint>& query,
+    static std::vector<KeyPoint> keypoints_object;
+    static Mat descriptors_object;
+
+    static void drawObjectLocation(Mat img, Mat& imgout, vector<DMatch> matchlist, vector<KeyPoint> keypoints_scene)
+    {
+        //-- Localize the object
+        std::vector<Point2f> obj;
+        std::vector<Point2f> scene;
+
+        for( int i = 0; i < matchlist.size(); i++ )
+        {
+            //-- Get the keypoints from the good matches
+            obj.push_back( keypoints_object[ matchlist[i].queryIdx ].pt );
+            scene.push_back( keypoints_scene[ matchlist[i].trainIdx ].pt );
+        }
+
+        if ((obj.size() < 4) || (scene.size() < 4))
+        {
+            return;
+        }
+
+        Mat H = findHomography( obj, scene, RANSAC );
+
+        std::vector<Point2f> obj_corners(4);
+        obj_corners[0] = cvPoint(0,0);
+        obj_corners[1] = cvPoint(img.cols, 0);
+        obj_corners[2] = cvPoint(img.cols, img.rows);
+        obj_corners[3] = cvPoint(0, img.rows);
+        std::vector<Point2f> scene_corners(4);
+
+        //if (H.cols != 3 || H.rows != 3) { return; }
+
+        perspectiveTransform( obj_corners, scene_corners, H); //TODO this function throws libc fatal signal 11 (SIGSEGV)
+
+        //-- Draw lines between the corners (the mapped object in the scene - image_2 )
+        line( imgout, scene_corners[0] + Point2f( img.cols, 0),
+              scene_corners[1] + Point2f( img.cols, 0), Scalar(0, 255, 0), 4 );
+        line( imgout, scene_corners[1] + Point2f( img.cols, 0),
+              scene_corners[2] + Point2f( img.cols, 0), Scalar( 0, 255, 0), 4 );
+        line( imgout, scene_corners[2] + Point2f( img.cols, 0),
+              scene_corners[3] + Point2f( img.cols, 0), Scalar( 0, 255, 0), 4 );
+        line( imgout, scene_corners[3] + Point2f( img.cols, 0),
+              scene_corners[0] + Point2f( img.cols, 0), Scalar( 0, 255, 0), 4 );
+    }
+
+    static void drawMatchesRelative(const vector<KeyPoint>& train, const vector<KeyPoint>& query,
                              std::vector<cv::DMatch>& matches, Mat& img, const vector<unsigned char>& mask = vector<unsigned char>())
     {
         for (int i = 0; i < (int)matches.size(); i++)
@@ -31,14 +76,14 @@ extern "C"
                 Point2f pt_new = query[matches[i].queryIdx].pt;
                 Point2f pt_old = train[matches[i].trainIdx].pt;
 
-                cv::line(img, pt_new, pt_old, Scalar(0, 0, 255), 1);
-                cv::circle(img, pt_new, 2, Scalar(0, 255, 0), 1);
+                cv::line(img, pt_new, pt_old, Scalar(0, 0, 255), 1); //blue line from onld to new pointS
+                cv::circle(img, pt_new, 2, Scalar(0, 255, 0), 1);    //green circle at current matches
             }
         }
     }
 
     //Takes a descriptor and turns it into an xy point
-    void keypoints2points(const vector <KeyPoint> &in, vector <Point2f> &out) {
+    static void keypoints2points(const vector <KeyPoint> &in, vector <Point2f> &out) {
         out.clear();
         out.reserve(in.size());
         for (size_t i = 0; i < in.size(); ++i) {
@@ -47,7 +92,7 @@ extern "C"
     }
 
     //Takes an xy point and appends that to a keypoint structure
-    void points2keypoints(const vector <Point2f> &in, vector <KeyPoint> &out) {
+    static void points2keypoints(const vector <Point2f> &in, vector <KeyPoint> &out) {
         out.clear();
         out.reserve(in.size());
         for (size_t i = 0; i < in.size(); ++i) {
@@ -56,7 +101,7 @@ extern "C"
     }
 
     //Uses computed homography H to warp original input points to new planar position
-    void warpKeypoints(const Mat &H, const vector <KeyPoint> &in, vector <KeyPoint> &out) {
+    static void warpKeypoints(const Mat &H, const vector <KeyPoint> &in, vector <KeyPoint> &out) {
         vector <Point2f> pts;
         keypoints2points(in, pts);
         vector <Point2f> pts_w(pts.size());
@@ -66,7 +111,7 @@ extern "C"
     }
 
     //Converts matching indices to xy points
-    void matches2points(const vector <KeyPoint> &train, const vector <KeyPoint> &query,
+    static void matches2points(const vector <KeyPoint> &train, const vector <KeyPoint> &query,
                         const std::vector <cv::DMatch> &matches, std::vector <cv::Point2f> &pts_train,
                         std::vector <Point2f> &pts_query) {
 
@@ -88,35 +133,52 @@ extern "C"
 
     }
 
-    void resetH(Mat & H) {
+    static void resetH(Mat & H) {
         H = Mat::eye(3, 3, CV_32FC1);
     }
 
-    vector<DMatch> matches;
+    static vector<DMatch> matches;
 
-    vector<Point2f> train_pts, query_pts;
-    vector<KeyPoint> train_kpts, query_kpts;
-    vector<unsigned char> match_mask;
+    static vector<Point2f> train_pts, query_pts;
+    static vector<KeyPoint> train_kpts, query_kpts;
+    static vector<unsigned char> match_mask;
 
-    Mat gray;
+    static Mat gray;
 
-    bool ref_live = true;
+    static bool ref_live = true;
 
-    Mat train_desc, query_desc;
-    const int DESIRED_FTRS = 500;
+    static Mat train_desc, query_desc;
+    static const int DESIRED_FTRS = 500;
 
-    GridAdaptedFeatureDetector detector(new FastFeatureDetector(10, true), DESIRED_FTRS, 4, 4);
-    BriefDescriptorExtractor brief(32);
-    BFMatcher desc_matcher(NORM_HAMMING);
+    static GridAdaptedFeatureDetector detector(new FastFeatureDetector(10, true), DESIRED_FTRS, 4, 4);
+    static BriefDescriptorExtractor brief(32);
+    static BFMatcher desc_matcher(NORM_HAMMING);
 
-    Mat H_prev = Mat::eye(3, 3, CV_32FC1);
+    static Mat H_prev = Mat::eye(3, 3, CV_32FC1);
 
     /*** PUBLIC ***/
+
+    JNIEXPORT void JNICALL Java_com_lasarobotics_vision_detection_FASTDetection_analyzeObject(JNIEnv* jobject, jlong addrGrayObject) {
+
+        Mat img_object = *(Mat*)addrGrayObject;
+
+        if( !img_object.data )
+        { printf(" --(!) Error reading images "); return; }
+
+        //detect
+        detector.detect( img_object, keypoints_object );
+
+        //extract
+        //extractor = FREAK::create();
+        brief.compute( img_object, keypoints_object, descriptors_object);
+
+        __android_log_print(ANDROID_LOG_ERROR, "ftcvision", "Object ananlyzed!");
+    }
 
     JNIEXPORT void JNICALL Java_com_lasarobotics_vision_detection_FASTDetection_findObject(JNIEnv* jobject, jlong addrGrayObject, jlong addrGrayScene, jlong addrOutput) {
 
         Mat frame = *(Mat*)addrGrayScene;
-        Mat object = *(Mat*)addrGrayObject;
+        Mat object = *(Mat*)addrGrayObject; //TODO currently unused!
         Mat img_matches = *(Mat*)addrOutput;
 
         if (frame.empty())
@@ -149,6 +211,7 @@ extern "C"
                 else
                     resetH(H_prev);
                 drawMatchesRelative(train_kpts, query_kpts, matches, frame, match_mask);
+                drawObjectLocation(frame, img_matches, matches, query_kpts);
             }
             else
                 resetH(H_prev);
