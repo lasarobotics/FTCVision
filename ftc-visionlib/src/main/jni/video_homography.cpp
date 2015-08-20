@@ -140,7 +140,7 @@ extern "C"
 
     /*** PUBLIC ***/
 
-    JNIEXPORT void JNICALL Java_com_lasarobotics_vision_detection_FASTDetection_analyzeObject(JNIEnv* jobject, jlong addrGrayObject) {
+    JNIEXPORT void JNICALL Java_com_lasarobotics_vision_detection_Homography_analyzeObject(JNIEnv* jobject, jlong addrGrayObject) {
 
         Mat img_object = *(Mat*)addrGrayObject;
 
@@ -157,7 +157,7 @@ extern "C"
         __android_log_print(ANDROID_LOG_ERROR, "ftcvision", "Object ananlyzed!");
     }
 
-    JNIEXPORT void JNICALL Java_com_lasarobotics_vision_detection_FASTDetection_findObject(JNIEnv* jobject, jlong addrGrayObject, jlong addrGrayScene, jlong addrOutput) {
+    JNIEXPORT void JNICALL Java_com_lasarobotics_vision_detection_Homography_findObject(JNIEnv* jobject, jlong addrGrayObject, jlong addrGrayScene, jlong addrOutput) {
 
         Mat frame = *(Mat*)addrGrayScene;
         Mat object = *(Mat*)addrGrayObject; //TODO currently unused!

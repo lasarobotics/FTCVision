@@ -3,7 +3,7 @@ package com.lasarobotics.vision.detection;
 /**
  * Advanced object detection methods
  */
-public class FASTDetection {
+public class Homography {
     /**
      * Analyze and store an object instance
      * @param matGrayObject Grayscale target object image in grayscale
