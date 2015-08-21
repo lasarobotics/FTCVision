@@ -153,17 +153,9 @@ JNIEXPORT void JNICALL Java_com_lasarobotics_vision_detection_FeatureDetection_d
 JNIEXPORT void JNICALL Java_com_lasarobotics_vision_detection_FeatureDetection_analyzeObject
                        (JNIEnv* jobject, jlong detectorAddr, jlong extractorAddr, jlong objMat, jlong descriptorMat, jlong keypointsVector)
 {
-    __android_log_print(ANDROID_LOG_ERROR, "ftcvision", "ANALYSIS - Getting mats");
-
     Mat object = *(Mat*)objMat;
-    Mat descriptors = *(Mat*)descriptorMat;
-
-    __android_log_print(ANDROID_LOG_ERROR, "ftcvision", "ANALYSIS - Getting detector/extractor");
-
     FeatureDetector* detector = (FeatureDetector*)detectorAddr;
     DescriptorExtractor* extractor = (DescriptorExtractor*)extractorAddr;
-
-    __android_log_print(ANDROID_LOG_ERROR, "ftcvision", "ANALYSIS - Getting keypoints");
 
     vector<KeyPoint> keypoints;
     Mat keypointsMat = *(Mat*)keypointsVector;
@@ -181,7 +173,9 @@ JNIEXPORT void JNICALL Java_com_lasarobotics_vision_detection_FeatureDetection_a
     detector->detect(object, keypoints);
 
     //extract
-    extractor->compute( object, keypoints, descriptors); //we want the descriptors
+    extractor->compute( object, keypoints, *(Mat*)descriptorMat); //we want the descriptors
+
+    vector_KeyPoint_to_Mat(keypoints, *(Mat*)keypointsVector);
 
     __android_log_print(ANDROID_LOG_ERROR, "ftcvision", "Object ananlyzed!");
 }
@@ -192,7 +186,10 @@ JNIEXPORT void JNICALL Java_com_lasarobotics_vision_detection_FeatureDetection_l
     Mat output = *(Mat*)outMat;
     Mat img_scene = *(Mat*)sceneMat;
     Mat descriptors_object = *(Mat*)descriptorMat;
-    std::vector<KeyPoint> keypoints_object = *(std::vector<KeyPoint>*)keypointsObject;
+
+    vector<KeyPoint> keypoints_object; //input only
+    Mat keypointsMat = *(Mat*)keypointsObject;
+    Mat_to_vector_KeyPoint(keypointsMat, keypoints_object);
 
     FeatureDetector* detector = (FeatureDetector*)detectorAddr;
     DescriptorExtractor* extractor = (DescriptorExtractor*)extractorAddr;
@@ -222,9 +219,6 @@ JNIEXPORT void JNICALL Java_com_lasarobotics_vision_detection_FeatureDetection_l
         if( dist > max_dist ) max_dist = dist;
     }
 
-    printf("-- Max dist : %f \n", max_dist );
-    printf("-- Min dist : %f \n", min_dist );
-
     //-- Draw only "good" matches (i.e. whose distance is less than 3*min_dist )
     std::vector< DMatch > good_matches;
 
@@ -232,6 +226,8 @@ JNIEXPORT void JNICALL Java_com_lasarobotics_vision_detection_FeatureDetection_l
     { if( matches[i].distance < 3*min_dist )
         { good_matches.push_back( matches[i]); }
     }
+
+    matches = good_matches;
 
     //drawMatches( img_object, keypoints_object, img_scene, keypoints_scene,
     //             good_matches, img_matches, Scalar::all(-1), Scalar::all(-1),
@@ -241,45 +237,29 @@ JNIEXPORT void JNICALL Java_com_lasarobotics_vision_detection_FeatureDetection_l
     std::vector<Point2f> obj;
     std::vector<Point2f> scene;
 
-    for( int i = 0; i < good_matches.size(); i++ )
+    for( int i = 0; i < matches.size(); i++ )
     {
         //-- Get the keypoints from the good matches
-        obj.push_back( keypoints_object[ good_matches[i].queryIdx ].pt );
-        scene.push_back( keypoints_scene[ good_matches[i].trainIdx ].pt );
+        obj.push_back( keypoints_object[ matches[i].queryIdx ].pt );
+        scene.push_back( keypoints_scene[ matches[i].trainIdx ].pt );
     }
+
+    __android_log_print(ANDROID_LOG_ERROR, "ftcvision", "Preparing to draw: %i %i", obj.size(), scene.size());
 
     if ((obj.size() < 4) || (scene.size() < 4))
     {
         return;
     }
 
+    __android_log_print(ANDROID_LOG_ERROR, "ftcvision", "Drawing keypoints...");
+
+    drawKeypoints(*(Mat*)outMat, keypoints_scene, *(Mat*)outMat, Scalar(255, 0, 0), DrawMatchesFlags::DRAW_OVER_OUTIMG);
+
     Mat H = findHomography( obj, scene, RANSAC );
 
-    //-- Get the corners from the image_1 ( the object to be "detected" )
-    std::vector<Point2f> obj_corners(4);
-    obj_corners[0] = cvPoint(0,0);
-    obj_corners[1] = cvPoint( output.cols, 0 );
-    obj_corners[2] = cvPoint( output.cols, output.rows );
-    obj_corners[3] = cvPoint( 0, output.rows );
-    std::vector<Point2f> scene_corners(4);
+    __android_log_print(ANDROID_LOG_ERROR, "ftcvision", "Preparing to transform...");
 
-    if(obj_corners.size() != scene_corners.size())
-    {
-        return;
-    }
-    if (H.cols != 3 || H.rows != 3) { return; }
-
-    perspectiveTransform( obj_corners, scene_corners, H); //TODO this function throws libc fatal signal 11 (SIGSEGV)
-
-    //-- Draw lines between the corners (the mapped object in the scene - image_2 )
-    line( output, scene_corners[0] + Point2f( output.cols, 0),
-          scene_corners[1] + Point2f( output.cols, 0), Scalar(0, 255, 0), 4 );
-    line( output, scene_corners[1] + Point2f( output.cols, 0),
-          scene_corners[2] + Point2f( output.cols, 0), Scalar( 0, 255, 0), 4 );
-    line( output, scene_corners[2] + Point2f( output.cols, 0),
-          scene_corners[3] + Point2f( output.cols, 0), Scalar( 0, 255, 0), 4 );
-    line( output, scene_corners[3] + Point2f( output.cols, 0),
-          scene_corners[0] + Point2f( output.cols, 0), Scalar( 0, 255, 0), 4 );
+    drawObjectLocation(H, img_scene, *(Mat*)outMat);
 }
 
 }

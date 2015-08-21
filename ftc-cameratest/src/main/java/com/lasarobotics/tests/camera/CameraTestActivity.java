@@ -36,6 +36,8 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
 
     private CameraBridgeViewBase mOpenCvCameraView;
 
+    private FeatureDetection.ObjectAnalysis analysis;
+
     static {
         System.loadLibrary("ftcvision");
         System.loadLibrary("opencv_java");
@@ -103,9 +105,9 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
 
         //ANALYZE OBJECT
         FeatureDetection detection = new FeatureDetection(FeatureDetection.FeatureDetectorType.GFTT,
-                                                          FeatureDetection.DescriptorExtractorType.ORB,
+                                                          FeatureDetection.DescriptorExtractorType.BRIEF,
                                                           FeatureDetection.DescriptorMatcherType.BRUTEFORCE);
-        FeatureDetection.ObjectAnalysis analysis = detection.analyzeObject(mTarget);
+        analysis = detection.analyzeObject(mTarget);
     }
 
     @Override
@@ -154,7 +156,10 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
 
         if (j < 20) { j++; return mRgba; }
 
-        //Detection.findObject(mTarget.getNativeObjAddr(), mRgba.getNativeObjAddr(), mRgba.getNativeObjAddr());
+        FeatureDetection detection = new FeatureDetection(FeatureDetection.FeatureDetectorType.FAST,
+                FeatureDetection.DescriptorExtractorType.BRIEF,
+                FeatureDetection.DescriptorMatcherType.BRUTEFORCE_HAMMING);
+        detection.locateObject(mGray, mTarget, analysis, mRgba);
 
         //Features.highlightFeatures(mGray.getNativeObjAddr(), mRgba.getNativeObjAddr());
 
