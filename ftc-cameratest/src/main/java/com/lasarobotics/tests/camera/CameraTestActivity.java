@@ -8,6 +8,7 @@ import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.CameraBridgeViewBase.CvCameraViewListener2;
+import org.opencv.features2d.FeatureDetector;
 import org.opencv.highgui.Highgui;
 
 import android.app.Activity;
@@ -18,6 +19,7 @@ import android.view.WindowManager;
 import com.lasarobotics.vision.Cameras;
 import com.lasarobotics.vision.Util;
 import com.lasarobotics.vision.detection.Detection;
+import com.lasarobotics.vision.detection.FeatureDetection;
 import com.lasarobotics.vision.detection.Homography;
 import com.lasarobotics.vision.detection.Features;
 import com.lasarobotics.vision.Camera;
@@ -100,7 +102,10 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
         }
 
         //ANALYZE OBJECT
-        Detection.analyzeObject(mTarget.getNativeObjAddr());
+        FeatureDetection detection = new FeatureDetection(FeatureDetection.FeatureDetectorType.GFTT,
+                                                          FeatureDetection.DescriptorExtractorType.ORB,
+                                                          FeatureDetection.DescriptorMatcherType.BRUTEFORCE);
+        FeatureDetection.ObjectAnalysis analysis = detection.analyzeObject(mTarget);
     }
 
     @Override
@@ -149,7 +154,7 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
 
         if (j < 20) { j++; return mRgba; }
 
-        Detection.findObject(mTarget.getNativeObjAddr(), mRgba.getNativeObjAddr(), mRgba.getNativeObjAddr());
+        //Detection.findObject(mTarget.getNativeObjAddr(), mRgba.getNativeObjAddr(), mRgba.getNativeObjAddr());
 
         //Features.highlightFeatures(mGray.getNativeObjAddr(), mRgba.getNativeObjAddr());
 

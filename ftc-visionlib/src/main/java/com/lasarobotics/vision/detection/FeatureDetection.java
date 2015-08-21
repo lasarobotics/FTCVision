@@ -105,6 +105,18 @@ public class FeatureDetection {
         drawKeypoints(output.getNativeObjAddr(), keys.getNativeObjAddr());
     }
 
+    public final class ObjectAnalysis
+    {
+        MatOfKeyPoint keypoints;
+        Mat descriptors;
+
+        ObjectAnalysis(MatOfKeyPoint keypoints, Mat descriptors)
+        {
+            this.keypoints = keypoints;
+            this.descriptors = descriptors;
+        }
+    }
+
     /**
      * Analyzes an object in preparation to search for the object in a frame.
      *
@@ -112,28 +124,31 @@ public class FeatureDetection {
      * @param object Object image
      * @return The object descriptor matrix to be piped into locateObject() later
      */
-    Mat analyzeObject(Mat object)
+    public ObjectAnalysis analyzeObject(Mat object)
     {
         Mat descriptors = new Mat();
-        analyzeObject(detector.getNativeObj(), extractor.getNativeObj(), object.getNativeObjAddr(), descriptors.getNativeObjAddr());
-        return descriptors;
+        MatOfKeyPoint keys = new MatOfKeyPoint();
+        analyzeObject(detector.getNativeObj(), extractor.getNativeObj(), object.getNativeObjAddr(), descriptors.getNativeObjAddr(), keys.getNativeObjAddr());
+        return new ObjectAnalysis(keys, descriptors);
     }
 
     /**
      *
      * @param scene
      * @param object
-     * @param object_descriptors
+     * @param analysis
      * @param output
      */
-    void locateObject(Mat scene, Mat object, Mat object_descriptors, Mat output) //TODO return object - for now, draw
+    public void locateObject(Mat scene, Mat object, ObjectAnalysis analysis, Mat output) //TODO return object - for now, draw
     {
-        locateObject(detector.getNativeObj(), extractor.getNativeObj(), matcher.getNativeObj(), object_descriptors.getNativeObjAddr(), output.getNativeObjAddr());
+        locateObject(detector.getNativeObj(), extractor.getNativeObj(), matcher.getNativeObj(),
+                     analysis.descriptors.getNativeObjAddr(), analysis.keypoints.getNativeObjAddr(),
+                     scene.getNativeObjAddr(), output.getNativeObjAddr());
     }
 
     //void drawObject(Size size, Point point);
 
     private static native void drawKeypoints(long outMat, long keypointMat);
-    private static native void analyzeObject(long detector, long extractor, long objMat, long descriptorMat);
-    private static native void locateObject(long detector, long extractor, long matcher, long descriptorMat, long outMat); //TODO long for returning points or an object instance
+    private static native void analyzeObject(long detector, long extractor, long objMat, long descriptorMat, long keypointsMat);
+    private static native void locateObject(long detector, long extractor, long matcher, long descriptorMat, long keypointsObject, long sceneMat, long outMat); //TODO long for returning points or an object instance
 }
