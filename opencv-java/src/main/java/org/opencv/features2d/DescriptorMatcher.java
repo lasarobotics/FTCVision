@@ -104,6 +104,7 @@ public class DescriptorMatcher {
     protected final long nativeObj;
     protected DescriptorMatcher(long addr) { nativeObj = addr; }
 
+    public long getNativeObj() { return nativeObj; }
 
     public static final int
             FLANNBASED = 1,
