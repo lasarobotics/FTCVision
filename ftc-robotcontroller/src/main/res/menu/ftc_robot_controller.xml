@@ -1,0 +1,14 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+  <item
+    android:id="@+id/action_about"
+    android:orderInCategory="999"
+    android:icon="@android:drawable/ic_menu_info_details"
+    android:title="@string/about_menu_item"/>
+
+  <item
+    android:id="@+id/action_exit_app"
+    android:orderInCategory="1000"
+    android:icon="@android:drawable/ic_menu_info_details"
+    android:title="@string/action_exit_app"/>
+
+</menu>

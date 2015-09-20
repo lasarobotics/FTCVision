@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:id="@+id/imageRobot"
+        android:src="@mipmap/icon_updating"
+        android:tint="@color/button"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:scaleType="fitCenter" />
+
+    <TextView
+        android:id="@+id/textRobot"
+        android:layout_width="254dp"
+        android:layout_height="40dp"
+        android:text="Robot Status\nNot ready"
+        android:paddingTop="4dp"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/imageRobot"
+        android:paddingLeft="6dp"
+        android:layout_toStartOf="@+id/buttonViewLog"
+        android:layout_toLeftOf="@+id/buttonViewLog" />
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/buttonRobotRestart"
+        android:src="@mipmap/icon_restart"
+        android:background="@color/transparent_color"
+        android:tint="#555555"
+        android:scaleType="fitCenter"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        android:paddingLeft="-3dp"
+        android:clickable="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignBottom="@+id/textRobot" />
+
+    <TextView
+        android:id="@+id/textRobotError"
+        android:layout_width="254dp"
+        android:layout_height="wrap_content"
+        android:text="Error status"
+        android:paddingTop="4dp"
+        android:paddingLeft="6dp"
+        android:textColor="@color/error_orange"
+        android:visibility="visible"
+        android:layout_below="@+id/textRobot"
+        android:layout_toRightOf="@+id/imageRobot"
+        android:layout_toLeftOf="@+id/buttonRobotRestart"
+        android:layout_toStartOf="@+id/buttonRobotRestart" />
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/buttonViewLog"
+        android:background="@color/transparent_color"
+        android:tint="#555555"
+        android:clickable="true"
+        android:layout_alignBottom="@+id/textRobot"
+        android:layout_toLeftOf="@+id/buttonRobotRestart"
+        android:paddingBottom="8dp"
+        android:paddingTop="6dp"
+        android:paddingLeft="8dp"
+        android:paddingRight="10dp"
+        android:src="@mipmap/ic_view_headline_white_24dp" />
+
+</RelativeLayout>

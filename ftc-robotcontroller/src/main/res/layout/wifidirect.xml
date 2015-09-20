@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:id="@+id/imageWifi"
+        android:src="@mipmap/icon_wifioff"
+        android:tint="@color/black"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <TextView
+        android:id="@+id/textWifi"
+        android:layout_width="254dp"
+        android:layout_height="40dp"
+        android:text="WiFi Direct\nNot connected"
+        android:paddingTop="4dp"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/imageWifi"
+        android:paddingLeft="6dp"
+        android:layout_toLeftOf="@+id/switchWifi"
+        android:layout_toStartOf="@+id/switchWifi" />
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:id="@+id/buttonWifiSettings"
+        android:src="@mipmap/icon_settings"
+        android:background="@color/transparent_color"
+        android:tint="#555555"
+        android:scaleType="fitCenter"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        android:paddingLeft="-3dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <Switch
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:id="@+id/switchWifi"
+        android:longClickable="false"
+        android:checked="true"
+        android:enabled="true"
+        android:singleLine="false"
+        android:layout_toLeftOf="@+id/buttonWifiSettings"
+        android:layout_toStartOf="@+id/buttonWifiSettings"
+        android:layout_marginBottom="3dp"
+        android:visibility="invisible" />
+
+</RelativeLayout>
