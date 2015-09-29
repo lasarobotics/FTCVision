@@ -1,7 +1,9 @@
 //Libraries
 include ':opencv-java'
-include ':ftc-jnibuild'
-include ':ftc-visionlib'
+include ':ftc-visionlib-java'
+//include ':ftc-jnibuild'
+//include ':ftc-visionlib'
 //Demos and Tests
-include ':ftc-cameratest'
-include ':ftc-robotcontroller'
+//include ':ftc-cameratest'
+include ':ftc-cameratest-java'
+//include ':ftc-robotcontroller'
