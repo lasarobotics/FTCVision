@@ -1,28 +1,22 @@
 package com.lasarobotics.tests.camera;
 
-import org.opencv.android.BaseLoaderCallback;
-import org.opencv.android.CameraBridgeViewBase.CvCameraViewFrame;
-import org.opencv.android.LoaderCallbackInterface;
-import org.opencv.android.OpenCVLoader;
-import org.opencv.core.CvType;
-import org.opencv.core.Mat;
-import org.opencv.android.CameraBridgeViewBase;
-import org.opencv.android.CameraBridgeViewBase.CvCameraViewListener2;
-import org.opencv.features2d.FeatureDetector;
-import org.opencv.highgui.Highgui;
-
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.WindowManager;
 
-import com.lasarobotics.vision.Cameras;
-import com.lasarobotics.vision.Util;
-import com.lasarobotics.vision.detection.Detection;
-import com.lasarobotics.vision.detection.FeatureDetection;
-import com.lasarobotics.vision.detection.Homography;
-import com.lasarobotics.vision.detection.Features;
-import com.lasarobotics.vision.Camera;
+import org.lasarobotics.vision.Camera;
+import org.lasarobotics.vision.Cameras;
+import org.lasarobotics.vision.Util;
+import org.opencv.android.BaseLoaderCallback;
+import org.opencv.android.CameraBridgeViewBase;
+import org.opencv.android.CameraBridgeViewBase.CvCameraViewFrame;
+import org.opencv.android.CameraBridgeViewBase.CvCameraViewListener2;
+import org.opencv.android.LoaderCallbackInterface;
+import org.opencv.android.OpenCVLoader;
+import org.opencv.core.CvType;
+import org.opencv.core.Mat;
+import org.opencv.highgui.Highgui;
 
 import java.io.File;
 
@@ -36,12 +30,7 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
 
     private CameraBridgeViewBase mOpenCvCameraView;
 
-    private FeatureDetection.ObjectAnalysis analysis;
-
-    static {
-        System.loadLibrary("ftcvision");
-        System.loadLibrary("opencv_java");
-    }
+    //private FeatureDetection.ObjectAnalysis analysis;
 
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
         @Override
@@ -81,9 +70,6 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
         focalLength = pam.getFocalLength();
         cam.getCamera().release();
 
-        //TEST JNI
-        String s = Features.stringFromJNI();
-
         //GET TARGET IMAGE
         //Read the target image file
         String dir = Util.getDCIMDirectory();
@@ -104,10 +90,10 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
         }
 
         //ANALYZE OBJECT
-        FeatureDetection detection = new FeatureDetection(FeatureDetection.FeatureDetectorType.GFTT,
+        /*FeatureDetection detection = new FeatureDetection(FeatureDetection.FeatureDetectorType.GFTT,
                                                           FeatureDetection.DescriptorExtractorType.BRIEF,
                                                           FeatureDetection.DescriptorMatcherType.BRUTEFORCE);
-        analysis = detection.analyzeObject(mTarget);
+        analysis = detection.analyzeObject(mTarget);*/
     }
 
     @Override
@@ -147,19 +133,15 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
         mGray.release();
     }
 
-    int j = 0;
-
     public Mat onCameraFrame(CvCameraViewFrame inputFrame) {
         // input frame has RBGA format
         mRgba = inputFrame.rgba();
         mGray = inputFrame.gray();
 
-        if (j < 20) { j++; return mRgba; }
-
-        FeatureDetection detection = new FeatureDetection(FeatureDetection.FeatureDetectorType.FAST,
+        /*FeatureDetection detection = new FeatureDetection(FeatureDetection.FeatureDetectorType.FAST,
                 FeatureDetection.DescriptorExtractorType.BRIEF,
                 FeatureDetection.DescriptorMatcherType.BRUTEFORCE_HAMMING);
-        detection.locateObject(mGray, mTarget, analysis, mRgba);
+        detection.locateObject(mGray, mTarget, analysis, mRgba);*/
 
         //Features.highlightFeatures(mGray.getNativeObjAddr(), mRgba.getNativeObjAddr());
 
