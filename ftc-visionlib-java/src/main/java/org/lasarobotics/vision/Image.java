@@ -9,6 +9,11 @@ import org.opencv.imgproc.Imgproc;
  * Image manipulation and correction
  */
 public class Image {
+    /**
+     * Rotate an image by an angle (counterclockwise)
+     * @param image Image matrix
+     * @param angle Angle to rotate by (counterclockwise) from -360 to 360
+     */
     static void rotate(Mat image, double angle)
     {
         //Find the center of the image
