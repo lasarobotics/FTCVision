@@ -32,37 +32,13 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
 
     //private FeatureDetection.ObjectAnalysis analysis;
 
-    private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
-        @Override
-        public void onManagerConnected(int status) {
-            switch (status) {
-                case LoaderCallbackInterface.SUCCESS:
-                {
-                    // OpenCV loaded successfully!
-                    // Load native library AFTER OpenCV initialization
+    static
+    {
+        System.loadLibrary("opencv_java");
+    }
 
-
-                    mOpenCvCameraView.enableView();
-                } break;
-                default:
-                {
-                    super.onManagerConnected(status);
-                } break;
-            }
-        }
-    };
-
-    /** Called when the activity is first created. */
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-
-        setContentView(R.layout.activity_cameratest);
-
-        mOpenCvCameraView = (CameraBridgeViewBase) findViewById(R.id.surfaceView);
-        mOpenCvCameraView.setCvCameraViewListener(this);
-
+    private void initialize()
+    {
         //CAMERA PROPERTIES TEST
         Camera cam = Cameras.getPrimaryCamera();
         assert cam != null;
@@ -88,6 +64,39 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
             Log.e("CameraTester", "FAILED TO LOAD IMAGE FILE!");
             System.exit(1);
         }
+    }
+
+    private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
+        @Override
+        public void onManagerConnected(int status) {
+            switch (status) {
+                case LoaderCallbackInterface.SUCCESS:
+                {
+                    // OpenCV loaded successfully!
+                    // Load native library AFTER OpenCV initialization
+                    
+                    initialize();
+
+                    mOpenCvCameraView.enableView();
+                } break;
+                default:
+                {
+                    super.onManagerConnected(status);
+                } break;
+            }
+        }
+    };
+
+    /** Called when the activity is first created. */
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
+        setContentView(R.layout.activity_cameratest);
+
+        mOpenCvCameraView = (CameraBridgeViewBase) findViewById(R.id.surfaceView);
+        mOpenCvCameraView.setCvCameraViewListener(this);
 
         //ANALYZE OBJECT
         /*FeatureDetection detection = new FeatureDetection(FeatureDetection.FeatureDetectorType.GFTT,
