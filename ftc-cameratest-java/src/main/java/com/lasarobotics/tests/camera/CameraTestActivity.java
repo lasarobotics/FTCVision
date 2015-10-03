@@ -32,11 +32,6 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
 
     //private FeatureDetection.ObjectAnalysis analysis;
 
-    static
-    {
-        System.loadLibrary("opencv_java");
-    }
-
     private void initialize()
     {
         //CAMERA PROPERTIES TEST
