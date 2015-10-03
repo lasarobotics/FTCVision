@@ -16,6 +16,11 @@ import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.core.MatOfDMatch;
+import org.opencv.core.MatOfKeyPoint;
+import org.opencv.features2d.DescriptorExtractor;
+import org.opencv.features2d.DescriptorMatcher;
+import org.opencv.features2d.FeatureDetector;
 import org.opencv.highgui.Highgui;
 
 import java.io.File;
@@ -32,37 +37,8 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
 
     //private FeatureDetection.ObjectAnalysis analysis;
 
-    private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
-        @Override
-        public void onManagerConnected(int status) {
-            switch (status) {
-                case LoaderCallbackInterface.SUCCESS:
-                {
-                    // OpenCV loaded successfully!
-                    // Load native library AFTER OpenCV initialization
-
-
-                    mOpenCvCameraView.enableView();
-                } break;
-                default:
-                {
-                    super.onManagerConnected(status);
-                } break;
-            }
-        }
-    };
-
-    /** Called when the activity is first created. */
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-
-        setContentView(R.layout.activity_cameratest);
-
-        mOpenCvCameraView = (CameraBridgeViewBase) findViewById(R.id.surfaceView);
-        mOpenCvCameraView.setCvCameraViewListener(this);
-
+    private void initialize()
+    {
         //CAMERA PROPERTIES TEST
         Camera cam = Cameras.getPrimaryCamera();
         assert cam != null;
@@ -88,6 +64,50 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
             Log.e("CameraTester", "FAILED TO LOAD IMAGE FILE!");
             System.exit(1);
         }
+
+        detector = FeatureDetector.create(FeatureDetector.FAST);
+        extractor = DescriptorExtractor.create(DescriptorExtractor.BRIEF);
+        matcher = DescriptorMatcher.create(DescriptorMatcher.BRUTEFORCE_HAMMING);
+
+        MatOfKeyPoint keypoints = new MatOfKeyPoint();
+
+        detector.detect(mTarget, keypoints);
+
+        descriptors_object = new Mat();
+        extractor.compute(mTarget, keypoints, descriptors_object);
+    }
+
+    private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
+        @Override
+        public void onManagerConnected(int status) {
+            switch (status) {
+                case LoaderCallbackInterface.SUCCESS:
+                {
+                    // OpenCV loaded successfully!
+                    // Load native library AFTER OpenCV initialization
+                    
+                    initialize();
+
+                    mOpenCvCameraView.enableView();
+                } break;
+                default:
+                {
+                    super.onManagerConnected(status);
+                } break;
+            }
+        }
+    };
+
+    /** Called when the activity is first created. */
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
+        setContentView(R.layout.activity_cameratest);
+
+        mOpenCvCameraView = (CameraBridgeViewBase) findViewById(R.id.surfaceView);
+        mOpenCvCameraView.setCvCameraViewListener(this);
 
         //ANALYZE OBJECT
         /*FeatureDetection detection = new FeatureDetection(FeatureDetection.FeatureDetectorType.GFTT,
@@ -133,10 +153,30 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
         mGray.release();
     }
 
+    FeatureDetector detector;
+    DescriptorExtractor extractor;
+    DescriptorMatcher matcher;
+
+    private Mat descriptors_object;
+
     public Mat onCameraFrame(CvCameraViewFrame inputFrame) {
         // input frame has RBGA format
         mRgba = inputFrame.rgba();
         mGray = inputFrame.gray();
+
+        MatOfKeyPoint keypoints = new MatOfKeyPoint();
+
+        detector.detect(mGray, keypoints);
+
+        Mat descriptors = new Mat();
+        extractor.compute(mGray, keypoints, descriptors);
+
+        MatOfDMatch matches = new MatOfDMatch();
+        matcher.match(descriptors, descriptors_object, matches);
+
+        Log.d("Camera Test", "Keypoint count: " + keypoints.rows());
+        Log.d("Camera Test", "Descriptor count: " + descriptors.rows());
+        Log.d("Camera Test", "Match count: " + matches.rows());
 
         /*FeatureDetection detection = new FeatureDetection(FeatureDetection.FeatureDetectorType.FAST,
                 FeatureDetection.DescriptorExtractorType.BRIEF,

@@ -17,7 +17,7 @@ android {
     }
     task (ndkBuild, type: JavaExec) {
         classpath files('../ftc-jnibuild/build/libs/ftc-jnibuild.jar')
-        args = ["../../local.properties"]
+        args = ["../local.properties"]
         main 'com.arthurpachachura.jni.Build'
     }
     tasks.withType(JavaCompile) {
