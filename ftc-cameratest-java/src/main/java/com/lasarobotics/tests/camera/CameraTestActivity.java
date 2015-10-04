@@ -7,7 +7,11 @@ import android.view.WindowManager;
 
 import org.lasarobotics.vision.Camera;
 import org.lasarobotics.vision.Cameras;
+import org.lasarobotics.vision.Drawing;
+import org.lasarobotics.vision.FPS;
 import org.lasarobotics.vision.Util;
+import org.lasarobotics.vision.detection.ObjectDetection;
+import org.lasarobotics.vision.util.Color;
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.CameraBridgeViewBase.CvCameraViewFrame;
@@ -16,37 +20,33 @@ import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
-import org.opencv.core.MatOfDMatch;
-import org.opencv.core.MatOfKeyPoint;
-import org.opencv.features2d.DescriptorExtractor;
-import org.opencv.features2d.DescriptorMatcher;
-import org.opencv.features2d.FeatureDetector;
+import org.opencv.core.Point;
 import org.opencv.highgui.Highgui;
 
 import java.io.File;
 
 public class CameraTestActivity extends Activity implements CvCameraViewListener2 {
 
-    private Mat mRgba; //RGBA image matrix
-    private Mat mGray; //Grayscale image matrix
-    private Mat mTarget; //Target image grayscale
+    private Mat mRgba; //RGBA scene image
+    private Mat mGray; //Grayscale scene image
 
     private float focalLength; //Camera lens focal length
 
     private CameraBridgeViewBase mOpenCvCameraView;
 
-    //private FeatureDetection.ObjectAnalysis analysis;
+    private ObjectDetection.ObjectAnalysis objectAnalysis;
+    private FPS fpsCounter;
 
     private void initialize()
     {
-        //CAMERA PROPERTIES TEST
+        //GET CAMERA PROPERTIES
         Camera cam = Cameras.getPrimaryCamera();
         assert cam != null;
         android.hardware.Camera.Parameters pam = cam.getCamera().getParameters();
         focalLength = pam.getFocalLength();
         cam.getCamera().release();
 
-        //GET TARGET IMAGE
+        //GET OBJECT IMAGE
         //Read the target image file
         String dir = Util.getDCIMDirectory();
         File file = new File(dir + "/Object-FTCLogo.png");
@@ -57,7 +57,7 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
             Log.e("CameraTester", "FAILED TO FIND IMAGE FILE!");
             System.exit(1);
         }
-        mTarget = Highgui.imread(file.getAbsolutePath(), Highgui.IMREAD_GRAYSCALE);
+        Mat mTarget = Highgui.imread(file.getAbsolutePath(), Highgui.IMREAD_GRAYSCALE);
         if (mTarget.empty())
         {
             // print error and abort execution
@@ -65,16 +65,14 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
             System.exit(1);
         }
 
-        detector = FeatureDetector.create(FeatureDetector.FAST);
-        extractor = DescriptorExtractor.create(DescriptorExtractor.BRIEF);
-        matcher = DescriptorMatcher.create(DescriptorMatcher.BRUTEFORCE_HAMMING);
+        //ANALYZE OBJECT
+        ObjectDetection detection = new ObjectDetection(ObjectDetection.FeatureDetectorType.GFTT,
+                ObjectDetection.DescriptorExtractorType.BRIEF,
+                ObjectDetection.DescriptorMatcherType.BRUTEFORCE_HAMMING);
+        objectAnalysis = detection.analyzeObject(mTarget);
 
-        MatOfKeyPoint keypoints = new MatOfKeyPoint();
-
-        detector.detect(mTarget, keypoints);
-
-        descriptors_object = new Mat();
-        extractor.compute(mTarget, keypoints, descriptors_object);
+        //UPDATE COUNTER
+        fpsCounter = new FPS();
     }
 
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
@@ -108,12 +106,6 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
 
         mOpenCvCameraView = (CameraBridgeViewBase) findViewById(R.id.surfaceView);
         mOpenCvCameraView.setCvCameraViewListener(this);
-
-        //ANALYZE OBJECT
-        /*FeatureDetection detection = new FeatureDetection(FeatureDetection.FeatureDetectorType.GFTT,
-                                                          FeatureDetection.DescriptorExtractorType.BRIEF,
-                                                          FeatureDetection.DescriptorMatcherType.BRUTEFORCE);
-        analysis = detection.analyzeObject(mTarget);*/
     }
 
     @Override
@@ -153,35 +145,22 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
         mGray.release();
     }
 
-    FeatureDetector detector;
-    DescriptorExtractor extractor;
-    DescriptorMatcher matcher;
-
-    private Mat descriptors_object;
-
     public Mat onCameraFrame(CvCameraViewFrame inputFrame) {
         // input frame has RBGA format
         mRgba = inputFrame.rgba();
         mGray = inputFrame.gray();
 
-        MatOfKeyPoint keypoints = new MatOfKeyPoint();
+        fpsCounter.update();
 
-        detector.detect(mGray, keypoints);
+        ObjectDetection detection = new ObjectDetection(ObjectDetection.FeatureDetectorType.FAST,
+                ObjectDetection.DescriptorExtractorType.BRIEF,
+                ObjectDetection.DescriptorMatcherType.BRUTEFORCE_HAMMING);
 
-        Mat descriptors = new Mat();
-        extractor.compute(mGray, keypoints, descriptors);
+        ObjectDetection.SceneAnalysis sceneAnalysis = detection.analyzeScene(mGray, objectAnalysis, mRgba);
+        ObjectDetection.drawKeypoints(mRgba, sceneAnalysis);
+        ObjectDetection.drawDebugInfo(mRgba, sceneAnalysis);
 
-        MatOfDMatch matches = new MatOfDMatch();
-        matcher.match(descriptors, descriptors_object, matches);
-
-        Log.d("Camera Test", "Keypoint count: " + keypoints.rows());
-        Log.d("Camera Test", "Descriptor count: " + descriptors.rows());
-        Log.d("Camera Test", "Match count: " + matches.rows());
-
-        /*FeatureDetection detection = new FeatureDetection(FeatureDetection.FeatureDetectorType.FAST,
-                FeatureDetection.DescriptorExtractorType.BRIEF,
-                FeatureDetection.DescriptorMatcherType.BRUTEFORCE_HAMMING);
-        detection.locateObject(mGray, mTarget, analysis, mRgba);*/
+        Drawing.drawText(mRgba, "FPS: " + fpsCounter.getFPSString(), new Point(0, 24), 1.0f, new Color("#2196F3"));
 
         //Features.highlightFeatures(mGray.getNativeObjAddr(), mRgba.getNativeObjAddr());
 

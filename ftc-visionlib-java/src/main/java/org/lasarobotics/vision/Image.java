@@ -1,5 +1,6 @@
 package org.lasarobotics.vision;
 
+import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Size;
@@ -25,5 +26,23 @@ public class Image {
 
         //Warp the image by the rotation matrix
         Imgproc.warpAffine(image, image, rotationMatrix, new Size(len, len));
+    }
+
+    public enum FlipType
+    {
+        FLIP_ACROSS_Y(0),
+        FLIP_ACROSS_X(1),
+        FLIP_BOTH(-1);
+
+        int val;
+        FlipType(int a)
+        {
+            this.val = a;
+        }
+    }
+
+    public static void flip(Mat img, FlipType flipType)
+    {
+        Core.flip(img, img, flipType.val);
     }
 }
