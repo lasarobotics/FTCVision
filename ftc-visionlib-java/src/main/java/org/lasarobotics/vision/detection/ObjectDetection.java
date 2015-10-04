@@ -123,7 +123,7 @@ public class ObjectDetection {
      * @param object Object image
      * @return The object descriptor matrix to be piped into locateObject() later
      */
-    public ObjectAnalysis analyzeObject(Mat object)
+    public ObjectAnalysis analyzeObject(Mat object) throws IllegalArgumentException
     {
         Mat descriptors = new Mat();
         MatOfKeyPoint keypoints = new MatOfKeyPoint();
@@ -151,7 +151,7 @@ public class ObjectDetection {
      * @param output The output matrix, typically the rgba form of the scene matrix
      * @return A complete scene analysis
      */
-    public SceneAnalysis analyzeScene(Mat scene, ObjectAnalysis analysis, Mat output) //TODO return object - for now, draw
+    public SceneAnalysis analyzeScene(Mat scene, ObjectAnalysis analysis, Mat output) throws IllegalArgumentException
     {
         MatOfKeyPoint keypointsScene = new MatOfKeyPoint();
 

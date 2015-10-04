@@ -156,9 +156,16 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
                 ObjectDetection.DescriptorExtractorType.BRIEF,
                 ObjectDetection.DescriptorMatcherType.BRUTEFORCE_HAMMING);
 
-        ObjectDetection.SceneAnalysis sceneAnalysis = detection.analyzeScene(mGray, objectAnalysis, mRgba);
-        ObjectDetection.drawKeypoints(mRgba, sceneAnalysis);
-        ObjectDetection.drawDebugInfo(mRgba, sceneAnalysis);
+        try {
+            ObjectDetection.SceneAnalysis sceneAnalysis = detection.analyzeScene(mGray, objectAnalysis, mRgba);
+            ObjectDetection.drawKeypoints(mRgba, sceneAnalysis);
+            ObjectDetection.drawDebugInfo(mRgba, sceneAnalysis);
+        }
+        catch (Exception e)
+        {
+            Drawing.drawText(mRgba, "Analysis Error", new Point(0, 8), 1.0f, new Color("#F44336"), Drawing.Anchor.BOTTOMLEFT);
+            e.printStackTrace();
+        }
 
         Drawing.drawText(mRgba, "FPS: " + fpsCounter.getFPSString(), new Point(0, 24), 1.0f, new Color("#2196F3"));
 
