@@ -5,11 +5,11 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.WindowManager;
 
-import org.lasarobotics.vision.Camera;
-import org.lasarobotics.vision.Cameras;
-import org.lasarobotics.vision.Drawing;
-import org.lasarobotics.vision.FPS;
-import org.lasarobotics.vision.Util;
+import org.lasarobotics.vision.android.Camera;
+import org.lasarobotics.vision.android.Cameras;
+import org.lasarobotics.vision.image.Drawing;
+import org.lasarobotics.vision.util.FPS;
+import org.lasarobotics.vision.android.Util;
 import org.lasarobotics.vision.detection.ObjectDetection;
 import org.lasarobotics.vision.util.Color;
 import org.opencv.android.BaseLoaderCallback;

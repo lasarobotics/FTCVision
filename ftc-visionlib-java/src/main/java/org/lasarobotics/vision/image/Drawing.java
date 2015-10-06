@@ -1,5 +1,6 @@
-package org.lasarobotics.vision;
+package org.lasarobotics.vision.image;
 
+import org.lasarobotics.vision.image.Image;
 import org.lasarobotics.vision.util.Color;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;

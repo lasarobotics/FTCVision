@@ -1,4 +1,4 @@
-package org.lasarobotics.vision;
+package org.lasarobotics.vision.util;
 
 /**
  * Image reading and writing

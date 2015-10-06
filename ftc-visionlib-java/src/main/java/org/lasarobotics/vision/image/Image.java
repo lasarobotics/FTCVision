@@ -1,4 +1,4 @@
-package org.lasarobotics.vision;
+package org.lasarobotics.vision.image;
 
 import org.opencv.core.Core;
 import org.opencv.core.Mat;

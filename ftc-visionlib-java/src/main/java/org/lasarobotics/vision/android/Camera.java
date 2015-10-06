@@ -1,4 +1,4 @@
-package org.lasarobotics.vision;
+package org.lasarobotics.vision.android;
 
 /**
  * Implements a single Android camera

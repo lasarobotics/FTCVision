@@ -2,8 +2,8 @@ package org.lasarobotics.vision.detection;
 
 import android.util.Log;
 
-import org.lasarobotics.vision.Drawing;
-import org.lasarobotics.vision.Image;
+import org.lasarobotics.vision.image.Drawing;
+import org.lasarobotics.vision.image.Image;
 import org.lasarobotics.vision.util.Color;
 import org.opencv.calib3d.Calib3d;
 import org.opencv.core.Core;
