@@ -160,6 +160,7 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
             ObjectDetection.SceneAnalysis sceneAnalysis = detection.analyzeScene(mGray, objectAnalysis, mRgba);
             ObjectDetection.drawKeypoints(mRgba, sceneAnalysis);
             ObjectDetection.drawDebugInfo(mRgba, sceneAnalysis);
+            ObjectDetection.drawObjectLocation(mRgba, objectAnalysis, sceneAnalysis);
         }
         catch (Exception e)
         {

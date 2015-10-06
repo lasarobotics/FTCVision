@@ -5,14 +5,21 @@ import android.util.Log;
 import org.lasarobotics.vision.Drawing;
 import org.lasarobotics.vision.Image;
 import org.lasarobotics.vision.util.Color;
+import org.opencv.calib3d.Calib3d;
+import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfDMatch;
 import org.opencv.core.MatOfKeyPoint;
+import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Point;
+import org.opencv.features2d.DMatch;
 import org.opencv.features2d.DescriptorExtractor;
 import org.opencv.features2d.DescriptorMatcher;
 import org.opencv.features2d.FeatureDetector;
 import org.opencv.features2d.KeyPoint;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Designed to detect a single object at a time in an image
@@ -91,11 +98,13 @@ public class ObjectDetection {
     {
         MatOfKeyPoint keypoints;
         Mat descriptors;
+        Mat object;
 
-        ObjectAnalysis(MatOfKeyPoint keypoints, Mat descriptors)
+        ObjectAnalysis(MatOfKeyPoint keypoints, Mat descriptors, Mat object)
         {
             this.keypoints = keypoints;
             this.descriptors = descriptors;
+            this.object = object;
         }
     }
 
@@ -104,12 +113,14 @@ public class ObjectDetection {
         MatOfKeyPoint keypoints;
         Mat descriptors;
         MatOfDMatch matches;
+        Mat scene;
 
-        SceneAnalysis(MatOfKeyPoint keypoints, Mat descriptors, MatOfDMatch matches)
+        SceneAnalysis(MatOfKeyPoint keypoints, Mat descriptors, MatOfDMatch matches, Mat scene)
         {
             this.keypoints = keypoints;
             this.descriptors = descriptors;
             this.matches = matches;
+            this.scene = scene;
         }
     }
 
@@ -141,7 +152,7 @@ public class ObjectDetection {
         //Extract object keypoints
         extractor.compute(object, keypoints, descriptors);
 
-        return new ObjectAnalysis(keypoints, descriptors);
+        return new ObjectAnalysis(keypoints, descriptors, object);
     }
 
     /**
@@ -182,7 +193,7 @@ public class ObjectDetection {
         }*/
 
         //STORE SCENE ANALYSIS
-        return new SceneAnalysis(keypointsScene, descriptorsScene, matches);
+        return new SceneAnalysis(keypointsScene, descriptorsScene, matches, scene);
     }
 
     /**
@@ -196,6 +207,62 @@ public class ObjectDetection {
         for (KeyPoint kp : keypoints) {
             Drawing.drawCircle(output, new Point(kp.pt.x, kp.pt.y), 4, new Color(255, 0, 0));
         }
+    }
+
+    public static void drawObjectLocation(Mat output, ObjectAnalysis objectAnalysis, SceneAnalysis sceneAnalysis)
+    {
+        List<Point> ptsObject = new ArrayList<>();
+        List<Point> ptsScene = new ArrayList<>();
+
+        KeyPoint[] keypointsObject = objectAnalysis.keypoints.toArray();
+        KeyPoint[] keypointsScene = sceneAnalysis.keypoints.toArray();
+
+        DMatch[] matches = sceneAnalysis.matches.toArray();
+
+        for( int i = 0; i < matches.length; i++ )
+        {
+            //Get the keypoints from thes matches
+            ptsObject.add(keypointsObject[ matches[i].queryIdx ].pt);
+            ptsScene.add(keypointsScene[ matches[i].trainIdx ].pt);
+        }
+
+        MatOfPoint2f matObject = new MatOfPoint2f();
+        matObject.fromList(ptsObject);
+
+        MatOfPoint2f matScene = new MatOfPoint2f();
+        matScene.fromList(ptsScene);
+
+        //Calculate homography of object in scene
+        Mat homography = Calib3d.findHomography(matObject, matScene, Calib3d.RANSAC, 5.0f);
+
+        //Create the unscaled array of corners, representing the object size
+        Point cornersObject[] = new Point[4];
+        cornersObject[0] = new Point(0, 0);
+        cornersObject[1] = new Point(objectAnalysis.object.cols(), 0);
+        cornersObject[2] = new Point(objectAnalysis.object.cols(), objectAnalysis.object.rows());
+        cornersObject[3] = new Point(0, objectAnalysis.object.rows());
+
+        Point[] cornersSceneTemp = new Point[0];
+
+        MatOfPoint2f cornersSceneMatrix = new MatOfPoint2f(cornersSceneTemp);
+        MatOfPoint2f cornersObjectMatrix = new MatOfPoint2f(cornersObject);
+
+        //Transform the object coordinates to the scene coordinates by the homography matrix
+        Core.perspectiveTransform(cornersObjectMatrix, cornersSceneMatrix, homography);
+
+        //Mat transform = Imgproc.getAffineTransform(cornersObjectMatrix, cornersSceneMatrix);
+
+        //Draw the lines of the object on the scene
+        Point[] cornersScene = cornersSceneMatrix.toArray();
+        final Color lineColor = new Color("#00ff00");
+        Drawing.drawLine(output, new Point(cornersScene[0].x + objectAnalysis.object.cols(), cornersScene[0].y),
+                                 new Point(cornersScene[1].x + objectAnalysis.object.cols(), cornersScene[1].y), lineColor, 5);
+        Drawing.drawLine(output, new Point(cornersScene[1].x + objectAnalysis.object.cols(), cornersScene[1].y),
+                                 new Point(cornersScene[2].x + objectAnalysis.object.cols(), cornersScene[2].y), lineColor, 5);
+        Drawing.drawLine(output, new Point(cornersScene[2].x + objectAnalysis.object.cols(), cornersScene[2].y),
+                                 new Point(cornersScene[3].x + objectAnalysis.object.cols(), cornersScene[3].y), lineColor, 5);
+        Drawing.drawLine(output, new Point(cornersScene[3].x + objectAnalysis.object.cols(), cornersScene[3].y),
+                                 new Point(cornersScene[0].x + objectAnalysis.object.cols(), cornersScene[0].y), lineColor, 5);
     }
 
     public static void drawDebugInfo(Mat output, SceneAnalysis sceneAnalysis)

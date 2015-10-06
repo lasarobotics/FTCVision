@@ -33,4 +33,13 @@ public class Drawing {
         if (locationOnImage == Anchor.BOTTOMLEFT)
             Image.flip(img, Image.FlipType.FLIP_ACROSS_Y);
     }
+
+    public static void drawLine(Mat img, Point point1, Point point2, Color color)
+    {
+        drawLine(img, point1, point2, color, 2);
+    }
+    public static void drawLine(Mat img, Point point1, Point point2, Color color, int thickness)
+    {
+        Core.line(img, point1, point2, color.getScalar(), thickness);
+    }
 }
