@@ -37,7 +37,18 @@ public class ObjectDetection {
         HARRIS(8),
         SIMPLEBLOB(9),
         DENSE(10),
-        BRISK(11);
+        BRISK(11),
+        FAST_DYNAMIC(1, true),
+        STAR_DYNAMIC(2, true),
+        SIFT_DYNAMIC(3, true),
+        SURF_DYNAMIC(4, true),
+        ORB_DYNAMIC(5, true),
+        MSER_DYNAMIC(6, true),
+        GFTT_DYNAMIC(7, true),
+        HARRIS_DYNAMIC(8, true),
+        SIMPLEBLOB_DYNAMIC(9, true),
+        DENSE_DYNAMIC(10, true),
+        BRISK_DYNAMIC(11, true);
 
         private int m;
         FeatureDetectorType(int type) { m = type; }
@@ -53,7 +64,13 @@ public class ObjectDetection {
         ORB(3),
         BRIEF(4),
         BRISK(5),
-        FREAK(6);
+        FREAK(6),
+        SIFT_OPPONENT(1, true),
+        SURF_OPPONENT(2, true),
+        ORB_OPPONENT(3, true),
+        BRIEF_OPPONENT(4, true),
+        BRISK_OPPONENT(5, true),
+        FREAK_OPPONENT(6, true);
 
         private int m;
         DescriptorExtractorType(int type) { m = type; }

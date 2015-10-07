@@ -49,7 +49,7 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
         //GET OBJECT IMAGE
         //Read the target image file
         String dir = Util.getDCIMDirectory();
-        File file = new File(dir + "/Object-FTCLogo.png");
+        File file = new File(dir + "/beacon.png");
 
         if (!file.exists())
         {
@@ -152,7 +152,7 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
 
         fpsCounter.update();
 
-        ObjectDetection detection = new ObjectDetection(ObjectDetection.FeatureDetectorType.FAST,
+        ObjectDetection detection = new ObjectDetection(ObjectDetection.FeatureDetectorType.FAST_DYNAMIC,
                 ObjectDetection.DescriptorExtractorType.BRIEF,
                 ObjectDetection.DescriptorMatcherType.BRUTEFORCE_HAMMING);
 
