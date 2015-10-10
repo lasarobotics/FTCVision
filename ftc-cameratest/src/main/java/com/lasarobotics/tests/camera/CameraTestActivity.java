@@ -1,46 +1,78 @@
 package com.lasarobotics.tests.camera;
 
-import org.opencv.android.BaseLoaderCallback;
-import org.opencv.android.CameraBridgeViewBase.CvCameraViewFrame;
-import org.opencv.android.LoaderCallbackInterface;
-import org.opencv.android.OpenCVLoader;
-import org.opencv.core.CvType;
-import org.opencv.core.Mat;
-import org.opencv.android.CameraBridgeViewBase;
-import org.opencv.android.CameraBridgeViewBase.CvCameraViewListener2;
-import org.opencv.features2d.FeatureDetector;
-import org.opencv.highgui.Highgui;
-
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.WindowManager;
 
-import com.lasarobotics.vision.Cameras;
-import com.lasarobotics.vision.Util;
-import com.lasarobotics.vision.detection.Detection;
-import com.lasarobotics.vision.detection.FeatureDetection;
-import com.lasarobotics.vision.detection.Homography;
-import com.lasarobotics.vision.detection.Features;
-import com.lasarobotics.vision.Camera;
+import org.lasarobotics.vision.android.Camera;
+import org.lasarobotics.vision.android.Cameras;
+import org.lasarobotics.vision.image.Drawing;
+import org.lasarobotics.vision.util.FPS;
+import org.lasarobotics.vision.android.Util;
+import org.lasarobotics.vision.detection.ObjectDetection;
+import org.lasarobotics.vision.util.Color;
+import org.opencv.android.BaseLoaderCallback;
+import org.opencv.android.CameraBridgeViewBase;
+import org.opencv.android.CameraBridgeViewBase.CvCameraViewFrame;
+import org.opencv.android.CameraBridgeViewBase.CvCameraViewListener2;
+import org.opencv.android.LoaderCallbackInterface;
+import org.opencv.android.OpenCVLoader;
+import org.opencv.core.CvType;
+import org.opencv.core.Mat;
+import org.opencv.core.Point;
+import org.opencv.highgui.Highgui;
 
 import java.io.File;
 
 public class CameraTestActivity extends Activity implements CvCameraViewListener2 {
 
-    private Mat mRgba; //RGBA image matrix
-    private Mat mGray; //Grayscale image matrix
-    private Mat mTarget; //Target image grayscale
+    private Mat mRgba; //RGBA scene image
+    private Mat mGray; //Grayscale scene image
 
     private float focalLength; //Camera lens focal length
 
     private CameraBridgeViewBase mOpenCvCameraView;
 
-    private FeatureDetection.ObjectAnalysis analysis;
+    private ObjectDetection.ObjectAnalysis objectAnalysis;
+    private FPS fpsCounter;
 
-    static {
-        System.loadLibrary("ftcvision");
-        System.loadLibrary("opencv_java");
+    private void initialize()
+    {
+        //GET CAMERA PROPERTIES
+        Camera cam = Cameras.getPrimaryCamera();
+        assert cam != null;
+        android.hardware.Camera.Parameters pam = cam.getCamera().getParameters();
+        focalLength = pam.getFocalLength();
+        cam.getCamera().release();
+
+        //GET OBJECT IMAGE
+        //Read the target image file
+        String dir = Util.getDCIMDirectory();
+        File file = new File(dir + "/beacon.png");
+
+        if (!file.exists())
+        {
+            // print error and abort execution
+            Log.e("CameraTester", "FAILED TO FIND IMAGE FILE!");
+            System.exit(1);
+        }
+        Mat mTarget = Highgui.imread(file.getAbsolutePath(), Highgui.IMREAD_GRAYSCALE);
+        if (mTarget.empty())
+        {
+            // print error and abort execution
+            Log.e("CameraTester", "FAILED TO LOAD IMAGE FILE!");
+            System.exit(1);
+        }
+
+        //ANALYZE OBJECT
+        ObjectDetection detection = new ObjectDetection(ObjectDetection.FeatureDetectorType.GFTT,
+                ObjectDetection.DescriptorExtractorType.BRIEF,
+                ObjectDetection.DescriptorMatcherType.BRUTEFORCE_HAMMING);
+        objectAnalysis = detection.analyzeObject(mTarget);
+
+        //UPDATE COUNTER
+        fpsCounter = new FPS();
     }
 
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
@@ -51,7 +83,8 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
                 {
                     // OpenCV loaded successfully!
                     // Load native library AFTER OpenCV initialization
-
+                    
+                    initialize();
 
                     mOpenCvCameraView.enableView();
                 } break;
@@ -73,41 +106,6 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
 
         mOpenCvCameraView = (CameraBridgeViewBase) findViewById(R.id.surfaceView);
         mOpenCvCameraView.setCvCameraViewListener(this);
-
-        //CAMERA PROPERTIES TEST
-        Camera cam = Cameras.getPrimaryCamera();
-        assert cam != null;
-        android.hardware.Camera.Parameters pam = cam.getCamera().getParameters();
-        focalLength = pam.getFocalLength();
-        cam.getCamera().release();
-
-        //TEST JNI
-        String s = Features.stringFromJNI();
-
-        //GET TARGET IMAGE
-        //Read the target image file
-        String dir = Util.getDCIMDirectory();
-        File file = new File(dir + "/Object-FTCLogo.png");
-
-        if (!file.exists())
-        {
-            // print error and abort execution
-            Log.e("CameraTester", "FAILED TO FIND IMAGE FILE!");
-            System.exit(1);
-        }
-        mTarget = Highgui.imread(file.getAbsolutePath(), Highgui.IMREAD_GRAYSCALE);
-        if (mTarget.empty())
-        {
-            // print error and abort execution
-            Log.e("CameraTester", "FAILED TO LOAD IMAGE FILE!");
-            System.exit(1);
-        }
-
-        //ANALYZE OBJECT
-        FeatureDetection detection = new FeatureDetection(FeatureDetection.FeatureDetectorType.GFTT,
-                                                          FeatureDetection.DescriptorExtractorType.BRIEF,
-                                                          FeatureDetection.DescriptorMatcherType.BRUTEFORCE);
-        analysis = detection.analyzeObject(mTarget);
     }
 
     @Override
@@ -147,19 +145,30 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
         mGray.release();
     }
 
-    int j = 0;
-
     public Mat onCameraFrame(CvCameraViewFrame inputFrame) {
         // input frame has RBGA format
         mRgba = inputFrame.rgba();
         mGray = inputFrame.gray();
 
-        if (j < 20) { j++; return mRgba; }
+        fpsCounter.update();
 
-        FeatureDetection detection = new FeatureDetection(FeatureDetection.FeatureDetectorType.FAST,
-                FeatureDetection.DescriptorExtractorType.BRIEF,
-                FeatureDetection.DescriptorMatcherType.BRUTEFORCE_HAMMING);
-        detection.locateObject(mGray, mTarget, analysis, mRgba);
+        ObjectDetection detection = new ObjectDetection(ObjectDetection.FeatureDetectorType.FAST_DYNAMIC,
+                ObjectDetection.DescriptorExtractorType.BRIEF,
+                ObjectDetection.DescriptorMatcherType.BRUTEFORCE_HAMMING);
+
+        try {
+            ObjectDetection.SceneAnalysis sceneAnalysis = detection.analyzeScene(mGray, objectAnalysis, mRgba);
+            ObjectDetection.drawKeypoints(mRgba, sceneAnalysis);
+            ObjectDetection.drawDebugInfo(mRgba, sceneAnalysis);
+            ObjectDetection.drawObjectLocation(mRgba, objectAnalysis, sceneAnalysis);
+        }
+        catch (Exception e)
+        {
+            Drawing.drawText(mRgba, "Analysis Error", new Point(0, 8), 1.0f, new Color("#F44336"), Drawing.Anchor.BOTTOMLEFT);
+            e.printStackTrace();
+        }
+
+        Drawing.drawText(mRgba, "FPS: " + fpsCounter.getFPSString(), new Point(0, 24), 1.0f, new Color("#2196F3"));
 
         //Features.highlightFeatures(mGray.getNativeObjAddr(), mRgba.getNativeObjAddr());
 
