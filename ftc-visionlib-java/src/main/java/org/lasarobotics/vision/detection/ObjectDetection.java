@@ -4,7 +4,7 @@ import android.util.Log;
 
 import org.lasarobotics.vision.image.Drawing;
 import org.lasarobotics.vision.image.Image;
-import org.lasarobotics.vision.util.Color;
+import org.lasarobotics.vision.util.color.ColorRGBA;
 import org.opencv.calib3d.Calib3d;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -222,7 +222,7 @@ public class ObjectDetection {
     {
         KeyPoint[] keypoints = sceneAnalysis.keypoints.toArray();
         for (KeyPoint kp : keypoints) {
-            Drawing.drawCircle(output, new Point(kp.pt.x, kp.pt.y), 4, new Color(255, 0, 0));
+            Drawing.drawCircle(output, new Point(kp.pt.x, kp.pt.y), 4, new ColorRGBA(255, 0, 0));
         }
     }
 
@@ -271,7 +271,7 @@ public class ObjectDetection {
 
         //Draw the lines of the object on the scene
         Point[] cornersScene = cornersSceneMatrix.toArray();
-        final Color lineColor = new Color("#00ff00");
+        final ColorRGBA lineColor = new ColorRGBA("#00ff00");
         Drawing.drawLine(output, new Point(cornersScene[0].x + objectAnalysis.object.cols(), cornersScene[0].y),
                                  new Point(cornersScene[1].x + objectAnalysis.object.cols(), cornersScene[1].y), lineColor, 5);
         Drawing.drawLine(output, new Point(cornersScene[1].x + objectAnalysis.object.cols(), cornersScene[1].y),
@@ -285,7 +285,7 @@ public class ObjectDetection {
     public static void drawDebugInfo(Mat output, SceneAnalysis sceneAnalysis)
     {
         Image.flip(output, Image.FlipType.FLIP_ACROSS_Y);
-        Drawing.drawText(output, "Keypoints: " + sceneAnalysis.keypoints.rows(), new Point(0, 8), 1.0f, new Color(255, 255, 255), Drawing.Anchor.BOTTOMLEFT_UNFLIPPED_Y);
+        Drawing.drawText(output, "Keypoints: " + sceneAnalysis.keypoints.rows(), new Point(0, 8), 1.0f, new ColorRGBA(255, 255, 255), Drawing.Anchor.BOTTOMLEFT_UNFLIPPED_Y);
         Image.flip(output, Image.FlipType.FLIP_ACROSS_Y);
     }
 
