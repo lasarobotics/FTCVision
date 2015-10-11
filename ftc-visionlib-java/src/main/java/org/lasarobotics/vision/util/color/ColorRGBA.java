@@ -17,14 +17,15 @@ public class ColorRGBA extends Color {
     }
     public ColorRGBA(Scalar scalar)
     {
-        super(parseScalar(scalar));
+        super(scalar);
     }
     public ColorRGBA(String hexCode)
     {
         super(parseHexCode(hexCode));
     }
 
-    private static Scalar parseScalar(Scalar s)
+    @Override
+    protected Scalar parseScalar(Scalar s)
     {
         if (s.val.length < 3)
         throw new IllegalArgumentException("Scalar must have 3 or 4 dimensions.");

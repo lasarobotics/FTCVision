@@ -14,9 +14,13 @@ public abstract class Color {
 
     Color(Scalar s)
     {
-        this.scalar = s;
+        setScalar(s);
     }
 
+    public void setScalar(Scalar s)
+    {
+        this.scalar = parseScalar(s);
+    }
     public Scalar getScalar()
     {
         return scalar;
@@ -27,6 +31,7 @@ public abstract class Color {
     }
 
     public abstract ColorSpace getColorSpace();
+    protected abstract Scalar parseScalar(Scalar s);
 
     public Color convertColor(ColorSpace to)
     {
@@ -51,7 +56,6 @@ public abstract class Color {
         Scalar output = this.getScalar();
 
         try {
-
             for (int i = 0; i < getColorSpace().getConversionsTo(to).length; i += 3) {
                 int conversion = getColorSpace().getConversionsTo(to)[i];
                 int inputDim = getColorSpace().getConversionsTo(to)[i + 1];
@@ -59,8 +63,35 @@ public abstract class Color {
 
                 Mat pointMatTo = new Mat();
                 Mat pointMatFrom = new Mat(1, 1, CvType.CV_8UC(inputDim), output);
-                Imgproc.cvtColor(pointMatFrom, pointMatTo, conversion, 0);
+                Imgproc.cvtColor(pointMatFrom, pointMatTo, conversion, outputDim);
                 output = new Scalar(pointMatTo.get(0, 0));
+                pointMatTo.release();
+                pointMatFrom.release();
+            }
+        } catch (Exception ignored)
+        {
+            throw new IllegalArgumentException("Cannot convert color to the desired color space.");
+        }
+
+        return output;
+    }
+
+    public static Mat convertColorMat(Mat in, ColorSpace spaceIn, ColorSpace spaceOut)
+    {
+        if (spaceIn == spaceOut)
+            return in;
+        if (!spaceIn.canConvertTo(spaceOut))
+            throw new IllegalArgumentException("Cannot convert color to the desired color space.");
+
+        Mat output = in.clone();
+
+        try {
+            for (int i = 0; i < spaceIn.getConversionsTo(spaceOut).length; i += 3) {
+                int conversion = spaceIn.getConversionsTo(spaceOut)[i];
+                int inputDim = spaceIn.getConversionsTo(spaceOut)[i + 1];
+                int outputDim = spaceIn.getConversionsTo(spaceOut)[i + 2];
+
+                Imgproc.cvtColor(output, output, conversion, outputDim);
             }
         } catch (Exception ignored)
         {

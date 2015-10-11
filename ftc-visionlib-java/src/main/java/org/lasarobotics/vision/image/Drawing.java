@@ -3,7 +3,11 @@ package org.lasarobotics.vision.image;
 import org.lasarobotics.vision.util.color.Color;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
+import org.opencv.core.MatOfPoint;
 import org.opencv.core.Point;
+import org.opencv.imgproc.Imgproc;
+
+import java.util.List;
 
 /**
  * Methods for drawing shapes onto images
@@ -41,5 +45,14 @@ public class Drawing {
     public static void drawLine(Mat img, Point point1, Point point2, Color color, int thickness)
     {
         Core.line(img, point1, point2, color.getScalarRGBA(), thickness);
+    }
+
+    public static void drawContours(Mat img, List<MatOfPoint> contours, Color color)
+    {
+        Imgproc.drawContours(img, contours, -1, color.getScalarRGBA(), 2);
+    }
+    public static void drawContours(Mat img, List<MatOfPoint> contours, Color color, int thickness)
+    {
+        Imgproc.drawContours(img, contours, -1, color.getScalarRGBA(), thickness);
     }
 }

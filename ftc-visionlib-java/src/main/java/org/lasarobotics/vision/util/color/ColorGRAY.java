@@ -9,7 +9,7 @@ public class ColorGRAY extends Color {
 
     public ColorGRAY(Scalar s)
     {
-        super(parseScalar(s));
+        super(s);
     }
 
     public ColorGRAY(int v)
@@ -21,7 +21,8 @@ public class ColorGRAY extends Color {
         return ColorSpace.GRAY;
     }
 
-    private static Scalar parseScalar(Scalar s)
+    @Override
+    protected Scalar parseScalar(Scalar s)
     {
         if (s.val.length < 1)
             throw new IllegalArgumentException("Scalar must have 1 dimension.");

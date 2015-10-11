@@ -3,8 +3,6 @@ package com.lasarobotics.tests.camera;
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.MotionEvent;
-import android.view.View;
 import android.view.WindowManager;
 
 import org.lasarobotics.vision.android.Camera;
@@ -23,21 +21,14 @@ import org.opencv.android.CameraBridgeViewBase.CvCameraViewFrame;
 import org.opencv.android.CameraBridgeViewBase.CvCameraViewListener2;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
-import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
-import org.opencv.core.MatOfPoint;
 import org.opencv.core.Point;
-import org.opencv.core.Rect;
-import org.opencv.core.Scalar;
-import org.opencv.core.Size;
 import org.opencv.highgui.Highgui;
-import org.opencv.imgproc.Imgproc;
 
 import java.io.File;
-import java.util.List;
 
-public class CameraTestActivity extends Activity implements CvCameraViewListener2, View.OnTouchListener {
+public class CameraTestActivity extends Activity implements CvCameraViewListener2 {
 
     private Mat mRgba; //RGBA scene image
     private Mat mGray; //Grayscale scene image
@@ -99,7 +90,6 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
                     initialize();
 
                     mOpenCvCameraView.enableView();
-                    mOpenCvCameraView.setOnTouchListener(CameraTestActivity.this);
                 } break;
                 default:
                 {
@@ -148,24 +138,17 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
             mOpenCvCameraView.disableView();
     }
 
-    private boolean              mIsColorSelected = false;
-    private ColorRGBA            mBlobColorRgba;
-    private ColorHSV             mBlobColorHsv;
-    private ColorBlobDetector    mDetector;
-    private Mat                  mSpectrum;
-    private Size                 SPECTRUM_SIZE;
-    private ColorRGBA            CONTOUR_COLOR;
+    private ColorBlobDetector detectorRed;
+    private ColorBlobDetector detectorBlue;
 
     public void onCameraViewStarted(int width, int height) {
         mRgba = new Mat(height, width, CvType.CV_8UC4);
         mGray = new Mat(height, width, CvType.CV_8UC1);
 
-        mDetector = new ColorBlobDetector();
-        mSpectrum = new Mat();
-        mBlobColorRgba = new ColorRGBA(255, 255, 255, 255);
-        mBlobColorHsv = new ColorHSV(255, 255, 255);
-        SPECTRUM_SIZE = new Size(200, 64);
-        CONTOUR_COLOR = new ColorRGBA(255,0,0,255);
+        detectorRed  = new ColorBlobDetector();
+        detectorBlue = new ColorBlobDetector();
+        detectorRed.setHsvColor((ColorHSV)new ColorRGBA(251, 122, 164).convertColor(ColorSpace.HSV));
+        detectorBlue.setHsvColor((ColorHSV)new ColorRGBA(75, 142, 255).convertColor(ColorSpace.HSV));
     }
 
     public void onCameraViewStopped() {
@@ -174,7 +157,7 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
     }
 
     public Mat onCameraFrame(CvCameraViewFrame inputFrame) {
-        // input frame has RBGA format
+        // input frame has RGBA format
         mRgba = inputFrame.rgba();
         mGray = inputFrame.gray();
 
@@ -192,18 +175,11 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
 
             mRgba = inputFrame.rgba();
 
-            if (mIsColorSelected) {
-                mDetector.process(mRgba);
-                List<MatOfPoint> contours = mDetector.getContours();
-                Log.e("CameraTester", "Contours count: " + contours.size());
-                Imgproc.drawContours(mRgba, contours, -1, CONTOUR_COLOR.getScalarRGBA());
+            detectorRed.process(mRgba);
+            detectorBlue.process(mRgba);
 
-                Mat colorLabel = mRgba.submat(4, 68, 4, 68);
-                colorLabel.setTo(mBlobColorRgba.getScalar());
-
-                Mat spectrumLabel = mRgba.submat(4, 4 + mSpectrum.rows(), 70, 70 + mSpectrum.cols());
-                mSpectrum.copyTo(spectrumLabel);
-            }
+            Drawing.drawContours(mRgba, detectorRed.getContours(), new ColorRGBA(255, 0, 0), 3);
+            Drawing.drawContours(mRgba, detectorBlue.getContours(), new ColorRGBA(0, 0, 255), 3);
         }
         catch (Exception e)
         {
@@ -213,67 +189,6 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
 
         Drawing.drawText(mRgba, "FPS: " + fpsCounter.getFPSString(), new Point(0, 24), 1.0f, new ColorRGBA("#2196F3"));
 
-        //Features.highlightFeatures(mGray.getNativeObjAddr(), mRgba.getNativeObjAddr());
-
         return mRgba;
-    }
-
-    public boolean onTouch(View v, MotionEvent event) {
-        int cols = mRgba.cols();
-        int rows = mRgba.rows();
-
-        int xOffset = (mOpenCvCameraView.getWidth() - cols) / 2;
-        int yOffset = (mOpenCvCameraView.getHeight() - rows) / 2;
-
-        int x = (int)event.getX() - xOffset;
-        int y = (int)event.getY() - yOffset;
-
-        Log.i("CameraTester", "Touch image coordinates: (" + x + ", " + y + ")");
-
-        if ((x < 0) || (y < 0) || (x > cols) || (y > rows)) return false;
-
-        Rect touchedRect = new Rect();
-
-        touchedRect.x = (x>4) ? x-4 : 0;
-        touchedRect.y = (y>4) ? y-4 : 0;
-
-        touchedRect.width = (x+4 < cols) ? x + 4 - touchedRect.x : cols - touchedRect.x;
-        touchedRect.height = (y+4 < rows) ? y + 4 - touchedRect.y : rows - touchedRect.y;
-
-        Mat touchedRegionRgba = mRgba.submat(touchedRect);
-        Mat touchedRegionHsv = new Mat();
-        Imgproc.cvtColor(touchedRegionRgba, touchedRegionHsv, Imgproc.COLOR_RGB2HSV_FULL);
-
-        // Calculate average color of touched region
-        mBlobColorHsv = new ColorHSV(Core.sumElems(touchedRegionHsv));
-        int pointCount = touchedRect.width*touchedRect.height;
-        Scalar mBlobColorHsvScalar = mBlobColorHsv.getScalar();
-        for (int i = 0; i < mBlobColorHsv.getScalar().val.length; i++)
-            mBlobColorHsv.getScalar().val[i] /= pointCount;
-        mBlobColorHsv = new ColorHSV(mBlobColorHsvScalar);
-
-        mBlobColorRgba = (ColorRGBA)mBlobColorHsv.convertColor(ColorSpace.RGBA);
-
-        Log.i("CameraTester", "Touched RGBA color: (" + mBlobColorRgba.red() + ", " + mBlobColorRgba.green() +
-                ", " + mBlobColorRgba.blue() + ", " + mBlobColorRgba.alpha()+ ")");
-
-        mDetector.setHsvColor(mBlobColorHsv);
-
-        Imgproc.resize(mDetector.getSpectrum(), mSpectrum, SPECTRUM_SIZE);
-
-        mIsColorSelected = true;
-
-        touchedRegionRgba.release();
-        touchedRegionHsv.release();
-
-        return false; // don't need subsequent touch events
-    }
-
-    private Scalar converScalarHsv2Rgba(Scalar hsvColor) {
-        Mat pointMatRgba = new Mat();
-        Mat pointMatHsv = new Mat(1, 1, CvType.CV_8UC3, hsvColor);
-        Imgproc.cvtColor(pointMatHsv, pointMatRgba, Imgproc.COLOR_HSV2RGB_FULL, 4);
-
-        return new Scalar(pointMatRgba.get(0, 0));
     }
 }

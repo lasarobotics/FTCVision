@@ -9,7 +9,7 @@ public class ColorHSV extends Color {
 
     public ColorHSV(Scalar s)
     {
-        super(parseScalar(s));
+        super(s);
     }
 
     public ColorHSV(int h, int s, int v)
@@ -21,7 +21,8 @@ public class ColorHSV extends Color {
         return ColorSpace.HSV;
     }
 
-    private static Scalar parseScalar(Scalar s)
+    @Override
+    protected Scalar parseScalar(Scalar s)
     {
         if (s.val.length < 3)
             throw new IllegalArgumentException("Scalar must have 3 dimensions.");
