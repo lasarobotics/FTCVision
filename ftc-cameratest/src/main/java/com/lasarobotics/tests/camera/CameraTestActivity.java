@@ -14,7 +14,6 @@ import org.lasarobotics.vision.image.Drawing;
 import org.lasarobotics.vision.util.FPS;
 import org.lasarobotics.vision.util.color.ColorHSV;
 import org.lasarobotics.vision.util.color.ColorRGBA;
-import org.lasarobotics.vision.util.color.ColorSpace;
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.CameraBridgeViewBase.CvCameraViewFrame;
@@ -145,10 +144,8 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
         mRgba = new Mat(height, width, CvType.CV_8UC4);
         mGray = new Mat(height, width, CvType.CV_8UC1);
 
-        detectorRed  = new ColorBlobDetector();
-        detectorBlue = new ColorBlobDetector();
-        detectorRed.setHsvColor((ColorHSV)new ColorRGBA(251, 122, 164).convertColor(ColorSpace.HSV));
-        detectorBlue.setHsvColor((ColorHSV)new ColorRGBA(75, 142, 255).convertColor(ColorSpace.HSV));
+        detectorRed  = new ColorBlobDetector(new ColorRGBA(251, 122, 164), new ColorHSV(75, 75, 75));
+        detectorBlue = new ColorBlobDetector(new ColorRGBA(75, 142, 255) , new ColorHSV(75, 75, 75));
     }
 
     public void onCameraViewStopped() {
