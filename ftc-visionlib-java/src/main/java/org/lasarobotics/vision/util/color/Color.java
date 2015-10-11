@@ -59,8 +59,8 @@ public abstract class Color {
 
                 Mat pointMatTo = new Mat();
                 Mat pointMatFrom = new Mat(1, 1, CvType.CV_8UC(inputDim), output);
-                Imgproc.cvtColor(pointMatFrom, pointMatTo, conversion, outputDim);
-                output = new Scalar(pointMatFrom.get(0, 0));
+                Imgproc.cvtColor(pointMatFrom, pointMatTo, conversion, 0);
+                output = new Scalar(pointMatTo.get(0, 0));
             }
         } catch (Exception ignored)
         {

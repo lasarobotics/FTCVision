@@ -29,7 +29,7 @@ public enum ColorSpace
             new int[] { Imgproc.COLOR_GRAY2RGB, 1, 3 },
             new int[] { Imgproc.COLOR_GRAY2RGB, 1, 3, Imgproc.COLOR_RGB2HSV_FULL, 3, 3 },
             null },
-            null);
+            ColorGRAY.class);
 
     /**
      * Each conversions array contains a list of int[], one for each other ColorSpace to convert to.
@@ -37,6 +37,9 @@ public enum ColorSpace
      * { operation, input scalar dimension, output scalar dimension, ... }
      */
     private int[][] conversions;
+    /**
+     * The class associated with a color - allows for dynamic casting to the class type
+     */
     private Class<? extends Color> colorClass;
 
     ColorSpace(int[][] conversions, Class<? extends Color> colorClass)
@@ -55,8 +58,13 @@ public enum ColorSpace
         return colorClass;
     }
 
+    /**
+     * Tests whether the current color space can be converted to another
+     * @param to The color space to convert to
+     * @return True if convertable, false otherwise
+     */
     public boolean canConvertTo(ColorSpace to)
     {
-        return getConversionsTo(to) != null;
+        return (to == this) || (getConversionsTo(to) != null);
     }
 }

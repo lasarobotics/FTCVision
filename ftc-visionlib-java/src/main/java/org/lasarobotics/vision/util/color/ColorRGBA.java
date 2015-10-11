@@ -3,7 +3,7 @@ package org.lasarobotics.vision.util.color;
 import org.opencv.core.Scalar;
 
 /**
- * Implements a single color (default in the RGB/RGBA space)
+ * Implements a single color in the RGB/RGBA space
  */
 public class ColorRGBA extends Color {
 
@@ -11,7 +11,6 @@ public class ColorRGBA extends Color {
     {
         super(new Scalar(r,g,b,255));
     }
-
     public ColorRGBA(int r, int g, int b, int a)
     {
         super(new Scalar(r,g,b,a));
@@ -28,7 +27,7 @@ public class ColorRGBA extends Color {
     private static Scalar parseScalar(Scalar s)
     {
         if (s.val.length < 3)
-        throw new IllegalArgumentException("Scalar must have a length of 3 or 4.");
+        throw new IllegalArgumentException("Scalar must have 3 or 4 dimensions.");
 
         return new Scalar(s.val[0], s.val[1], s.val[2], (s.val.length >= 4) ? (int)s.val[3] : 255);
     }

@@ -29,6 +29,7 @@ import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
+import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.highgui.Highgui;
 import org.opencv.imgproc.Imgproc;
@@ -198,7 +199,7 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
                 Imgproc.drawContours(mRgba, contours, -1, CONTOUR_COLOR.getScalarRGBA());
 
                 Mat colorLabel = mRgba.submat(4, 68, 4, 68);
-                colorLabel.setTo(mBlobColorRgba.getScalarRGBA());
+                colorLabel.setTo(mBlobColorRgba.getScalar());
 
                 Mat spectrumLabel = mRgba.submat(4, 4 + mSpectrum.rows(), 70, 70 + mSpectrum.cols());
                 mSpectrum.copyTo(spectrumLabel);
@@ -246,12 +247,14 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
         // Calculate average color of touched region
         mBlobColorHsv = new ColorHSV(Core.sumElems(touchedRegionHsv));
         int pointCount = touchedRect.width*touchedRect.height;
+        Scalar mBlobColorHsvScalar = mBlobColorHsv.getScalar();
         for (int i = 0; i < mBlobColorHsv.getScalar().val.length; i++)
             mBlobColorHsv.getScalar().val[i] /= pointCount;
+        mBlobColorHsv = new ColorHSV(mBlobColorHsvScalar);
 
         mBlobColorRgba = (ColorRGBA)mBlobColorHsv.convertColor(ColorSpace.RGBA);
 
-        Log.i("CameraTester", "Touched rgba color: (" + mBlobColorRgba.red() + ", " + mBlobColorRgba.green() +
+        Log.i("CameraTester", "Touched RGBA color: (" + mBlobColorRgba.red() + ", " + mBlobColorRgba.green() +
                 ", " + mBlobColorRgba.blue() + ", " + mBlobColorRgba.alpha()+ ")");
 
         mDetector.setHsvColor(mBlobColorHsv);
@@ -264,5 +267,13 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
         touchedRegionHsv.release();
 
         return false; // don't need subsequent touch events
+    }
+
+    private Scalar converScalarHsv2Rgba(Scalar hsvColor) {
+        Mat pointMatRgba = new Mat();
+        Mat pointMatHsv = new Mat(1, 1, CvType.CV_8UC3, hsvColor);
+        Imgproc.cvtColor(pointMatHsv, pointMatRgba, Imgproc.COLOR_HSV2RGB_FULL, 4);
+
+        return new Scalar(pointMatRgba.get(0, 0));
     }
 }
