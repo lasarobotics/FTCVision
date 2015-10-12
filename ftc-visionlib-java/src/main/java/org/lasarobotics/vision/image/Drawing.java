@@ -69,4 +69,13 @@ public class Drawing {
         contoursOut.addAll(contours);
         Imgproc.drawContours(img, contoursOut, -1, color.getScalarRGBA(), thickness);
     }
+
+    public static void drawRectangle(Mat img, Point topLeft, Point bottomRight, Color color)
+    {
+        drawRectangle(img, topLeft, bottomRight, color, 2);
+    }
+    public static void drawRectangle(Mat img, Point topLeft, Point bottomRight, Color color, int thickness)
+    {
+        Core.rectangle(img, topLeft, bottomRight, color.getScalarRGBA(), thickness);
+    }
 }
