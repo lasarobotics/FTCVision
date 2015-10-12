@@ -7,11 +7,16 @@ import android.view.WindowManager;
 
 import org.lasarobotics.vision.android.Camera;
 import org.lasarobotics.vision.android.Cameras;
+import org.lasarobotics.vision.android.Util;
+import org.lasarobotics.vision.detection.ColorBlobDetector;
+import org.lasarobotics.vision.detection.Contour;
+import org.lasarobotics.vision.detection.ObjectDetection;
+import org.lasarobotics.vision.ftc.resq.Beacon;
 import org.lasarobotics.vision.image.Drawing;
 import org.lasarobotics.vision.util.FPS;
-import org.lasarobotics.vision.android.Util;
-import org.lasarobotics.vision.detection.ObjectDetection;
-import org.lasarobotics.vision.util.Color;
+import org.lasarobotics.vision.util.color.ColorGRAY;
+import org.lasarobotics.vision.util.color.ColorHSV;
+import org.lasarobotics.vision.util.color.ColorRGBA;
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.CameraBridgeViewBase.CvCameraViewFrame;
@@ -24,17 +29,17 @@ import org.opencv.core.Point;
 import org.opencv.highgui.Highgui;
 
 import java.io.File;
+import java.util.List;
 
 public class CameraTestActivity extends Activity implements CvCameraViewListener2 {
 
     private Mat mRgba; //RGBA scene image
     private Mat mGray; //Grayscale scene image
+    private CameraBridgeViewBase mOpenCvCameraView;
 
     private float focalLength; //Camera lens focal length
 
-    private CameraBridgeViewBase mOpenCvCameraView;
-
-    private ObjectDetection.ObjectAnalysis objectAnalysis;
+    //private ObjectDetection.ObjectAnalysis objectAnalysis;
     private FPS fpsCounter;
 
     private void initialize()
@@ -48,7 +53,7 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
 
         //GET OBJECT IMAGE
         //Read the target image file
-        String dir = Util.getDCIMDirectory();
+        /*String dir = Util.getDCIMDirectory();
         File file = new File(dir + "/beacon.png");
 
         if (!file.exists())
@@ -63,13 +68,13 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
             // print error and abort execution
             Log.e("CameraTester", "FAILED TO LOAD IMAGE FILE!");
             System.exit(1);
-        }
+        }*/
 
         //ANALYZE OBJECT
-        ObjectDetection detection = new ObjectDetection(ObjectDetection.FeatureDetectorType.GFTT,
-                ObjectDetection.DescriptorExtractorType.BRIEF,
-                ObjectDetection.DescriptorMatcherType.BRUTEFORCE_HAMMING);
-        objectAnalysis = detection.analyzeObject(mTarget);
+        //ObjectDetection detection = new ObjectDetection(ObjectDetection.FeatureDetectorType.GFTT,
+        //        ObjectDetection.DescriptorExtractorType.ORB,
+        //        ObjectDetection.DescriptorMatcherType.BRUTEFORCE_HAMMING);
+        //objectAnalysis = detection.analyzeObject(mTarget);
 
         //UPDATE COUNTER
         fpsCounter = new FPS();
@@ -83,7 +88,7 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
                 {
                     // OpenCV loaded successfully!
                     // Load native library AFTER OpenCV initialization
-                    
+
                     initialize();
 
                     mOpenCvCameraView.enableView();
@@ -135,9 +140,22 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
             mOpenCvCameraView.disableView();
     }
 
+    private ColorBlobDetector detectorRed;
+    private ColorBlobDetector detectorBlue;
+    private static final ColorHSV colorRadius = new ColorHSV(50, 75, 127);
+
+    private static final ColorHSV lowerBoundRed = new ColorHSV( (int)(305         / 360.0 * 255.0), (int)(0.200 * 255.0), (int)(0.300 * 255.0));
+    private static final ColorHSV upperBoundRed = new ColorHSV( (int)((360.0+5.0) / 360.0 * 255.0), 255                 , 255);
+
+    private static final ColorHSV lowerBoundBlue = new ColorHSV((int)(187.0       / 360.0 * 255.0), (int)(0.750 * 255.0), (int)(0.750 * 255.0));
+    private static final ColorHSV upperBoundBlue = new ColorHSV((int)(227.0       / 360.0 * 255.0), 255                 , 255);
+
     public void onCameraViewStarted(int width, int height) {
         mRgba = new Mat(height, width, CvType.CV_8UC4);
         mGray = new Mat(height, width, CvType.CV_8UC1);
+
+        detectorRed  = new ColorBlobDetector(lowerBoundRed, upperBoundRed);
+        detectorBlue = new ColorBlobDetector(lowerBoundBlue, upperBoundBlue);
     }
 
     public void onCameraViewStopped() {
@@ -146,31 +164,46 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
     }
 
     public Mat onCameraFrame(CvCameraViewFrame inputFrame) {
-        // input frame has RBGA format
+        // input frame has RGBA format
         mRgba = inputFrame.rgba();
         mGray = inputFrame.gray();
 
         fpsCounter.update();
 
-        ObjectDetection detection = new ObjectDetection(ObjectDetection.FeatureDetectorType.FAST_DYNAMIC,
-                ObjectDetection.DescriptorExtractorType.BRIEF,
-                ObjectDetection.DescriptorMatcherType.BRUTEFORCE_HAMMING);
+        //ObjectDetection detection = new ObjectDetection(ObjectDetection.FeatureDetectorType.ORB,
+        //        ObjectDetection.DescriptorExtractorType.ORB,
+        //        ObjectDetection.DescriptorMatcherType.BRUTEFORCE_HAMMING);
 
         try {
-            ObjectDetection.SceneAnalysis sceneAnalysis = detection.analyzeScene(mGray, objectAnalysis, mRgba);
-            ObjectDetection.drawKeypoints(mRgba, sceneAnalysis);
-            ObjectDetection.drawDebugInfo(mRgba, sceneAnalysis);
-            ObjectDetection.drawObjectLocation(mRgba, objectAnalysis, sceneAnalysis);
+            //ObjectDetection.SceneAnalysis sceneAnalysis = detection.analyzeScene(mGray, objectAnalysis, mRgba);
+            //ObjectDetection.drawKeypoints(mRgba, sceneAnalysis);
+            //ObjectDetection.drawDebugInfo(mRgba, sceneAnalysis);
+            //ObjectDetection.drawObjectLocation(mRgba, objectAnalysis, sceneAnalysis);
+
+            mRgba = inputFrame.rgba();
+
+            //Process the frame for the color blobs
+            detectorRed.process(mRgba);
+            detectorBlue.process(mRgba);
+
+            //Get the list of contours
+            List<Contour> contoursRed = detectorRed.getContours();
+            List<Contour> contoursBlue = detectorBlue.getContours();
+
+            Beacon.BeaconColorAnalysis colorAnalysis = Beacon.analyzeColor(contoursRed, contoursBlue, mRgba);
+
+            Drawing.drawContours(mRgba, contoursRed, new ColorRGBA(255, 0, 0), 3);
+            Drawing.drawContours(mRgba, contoursBlue, new ColorRGBA(0, 0, 255), 3);
+            Drawing.drawText(mRgba, colorAnalysis.getStateLeft().toString() + ", " + colorAnalysis.getStateRight().toString(),
+                    new Point(0, 8), 1.0f, new ColorGRAY(255), Drawing.Anchor.BOTTOMLEFT);
         }
         catch (Exception e)
         {
-            Drawing.drawText(mRgba, "Analysis Error", new Point(0, 8), 1.0f, new Color("#F44336"), Drawing.Anchor.BOTTOMLEFT);
+            Drawing.drawText(mRgba, "Analysis Error", new Point(0, 8), 1.0f, new ColorRGBA("#F44336"), Drawing.Anchor.BOTTOMLEFT);
             e.printStackTrace();
         }
 
-        Drawing.drawText(mRgba, "FPS: " + fpsCounter.getFPSString(), new Point(0, 24), 1.0f, new Color("#2196F3"));
-
-        //Features.highlightFeatures(mGray.getNativeObjAddr(), mRgba.getNativeObjAddr());
+        Drawing.drawText(mRgba, "FPS: " + fpsCounter.getFPSString(), new Point(0, 24), 1.0f, new ColorRGBA("#2196F3"));
 
         return mRgba;
     }

@@ -4,7 +4,7 @@ import android.util.Log;
 
 import org.lasarobotics.vision.image.Drawing;
 import org.lasarobotics.vision.image.Image;
-import org.lasarobotics.vision.util.Color;
+import org.lasarobotics.vision.util.color.ColorRGBA;
 import org.opencv.calib3d.Calib3d;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -29,8 +29,8 @@ public class ObjectDetection {
     {
         FAST(1),
         STAR(2),
-        SIFT(3),
-        SURF(4),
+        //SIFT(3),
+        //SURF(4),
         ORB(5),
         MSER(6),
         GFTT(7),
@@ -40,8 +40,8 @@ public class ObjectDetection {
         BRISK(11),
         FAST_DYNAMIC(1, true),
         STAR_DYNAMIC(2, true),
-        SIFT_DYNAMIC(3, true),
-        SURF_DYNAMIC(4, true),
+        //SIFT_DYNAMIC(3, true),
+        //SURF_DYNAMIC(4, true),
         ORB_DYNAMIC(5, true),
         MSER_DYNAMIC(6, true),
         GFTT_DYNAMIC(7, true),
@@ -59,14 +59,14 @@ public class ObjectDetection {
 
     public enum DescriptorExtractorType
     {
-        SIFT(1),
-        SURF(2),
+        //SIFT(1),
+        //SURF(2),
         ORB(3),
         BRIEF(4),
         BRISK(5),
         FREAK(6),
-        SIFT_OPPONENT(1, true),
-        SURF_OPPONENT(2, true),
+        //SIFT_OPPONENT(1, true),
+        //SURF_OPPONENT(2, true),
         ORB_OPPONENT(3, true),
         BRIEF_OPPONENT(4, true),
         BRISK_OPPONENT(5, true),
@@ -222,7 +222,7 @@ public class ObjectDetection {
     {
         KeyPoint[] keypoints = sceneAnalysis.keypoints.toArray();
         for (KeyPoint kp : keypoints) {
-            Drawing.drawCircle(output, new Point(kp.pt.x, kp.pt.y), 4, new Color(255, 0, 0));
+            Drawing.drawCircle(output, new Point(kp.pt.x, kp.pt.y), 4, new ColorRGBA(255, 0, 0));
         }
     }
 
@@ -236,11 +236,10 @@ public class ObjectDetection {
 
         DMatch[] matches = sceneAnalysis.matches.toArray();
 
-        for( int i = 0; i < matches.length; i++ )
-        {
+        for (DMatch matche : matches) {
             //Get the keypoints from thes matches
-            ptsObject.add(keypointsObject[ matches[i].queryIdx ].pt);
-            ptsScene.add(keypointsScene[ matches[i].trainIdx ].pt);
+            ptsObject.add(keypointsObject[matche.queryIdx].pt);
+            ptsScene.add(keypointsScene[matche.trainIdx].pt);
         }
 
         MatOfPoint2f matObject = new MatOfPoint2f();
@@ -271,7 +270,7 @@ public class ObjectDetection {
 
         //Draw the lines of the object on the scene
         Point[] cornersScene = cornersSceneMatrix.toArray();
-        final Color lineColor = new Color("#00ff00");
+        final ColorRGBA lineColor = new ColorRGBA("#00ff00");
         Drawing.drawLine(output, new Point(cornersScene[0].x + objectAnalysis.object.cols(), cornersScene[0].y),
                                  new Point(cornersScene[1].x + objectAnalysis.object.cols(), cornersScene[1].y), lineColor, 5);
         Drawing.drawLine(output, new Point(cornersScene[1].x + objectAnalysis.object.cols(), cornersScene[1].y),
@@ -285,7 +284,7 @@ public class ObjectDetection {
     public static void drawDebugInfo(Mat output, SceneAnalysis sceneAnalysis)
     {
         Image.flip(output, Image.FlipType.FLIP_ACROSS_Y);
-        Drawing.drawText(output, "Keypoints: " + sceneAnalysis.keypoints.rows(), new Point(0, 8), 1.0f, new Color(255, 255, 255), Drawing.Anchor.BOTTOMLEFT_UNFLIPPED_Y);
+        Drawing.drawText(output, "Keypoints: " + sceneAnalysis.keypoints.rows(), new Point(0, 8), 1.0f, new ColorRGBA(255, 255, 255), Drawing.Anchor.BOTTOMLEFT_UNFLIPPED_Y);
         Image.flip(output, Image.FlipType.FLIP_ACROSS_Y);
     }
 
