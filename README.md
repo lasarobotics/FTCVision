@@ -1,6 +1,9 @@
 # FTC Vision Library [![Build Status](https://travis-ci.org/lasarobotics/FTCVision.svg?branch=feature-java)](https://travis-ci.org/lasarobotics/FTCVision)
 Computer Vision library for FTC based on OpenCV.
 
+![A test from 8 feet away!](https://github.com/lasarobotics/FTCVision/blob/staging/results/test3.png)
+
+
 ## Hi there!
 This library is currently under insanely active development. We're in mid-Alpha phase right now. If you have any questions or would like to help,
 send a note to smo-key (contact info on profile). Thank you!
