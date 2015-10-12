@@ -22,7 +22,26 @@ public final class Beacon {
         BLUE,
         RED_BRIGHT,
         BLUE_BRIGHT,
-        UNKNOWN
+        UNKNOWN;
+
+        @Override
+        public String toString() {
+            switch (this)
+            {
+                case RED:
+                    return "red";
+                case BLUE:
+                    return "blue";
+                case RED_BRIGHT:
+                    return "RED!";
+                case BLUE_BRIGHT:
+                    return "BLUE!";
+                case UNKNOWN:
+                default:
+                    return "???";
+
+            }
+        }
     }
 
     public static class BeaconColorAnalysis
@@ -35,6 +54,8 @@ public final class Beacon {
         //TODO add Size size, Point locationTopLeft, Distance distanceApprox
         BeaconColorAnalysis(BeaconColor left, BeaconColor right)
         {
+            assert left != null;
+            assert right != null;
             this.left = left;
             this.right = right;
         }
@@ -108,7 +129,7 @@ public final class Beacon {
         assert largestHeight != null;
         double beaconHeight = largestHeight.size().height;
         //Get beacon width on screen by extrapolating from height
-        final double beaconActualHeight = 14.5; //cm, only the lit up portion
+        final double beaconActualHeight = 12.5; //cm, only the lit up portion - 14.0 for entire
         final double beaconActualWidth =  21.0; //cm
         final double beaconWidthHeightRatio = beaconActualWidth / beaconActualHeight;
         double beaconWidth = beaconHeight * beaconWidthHeightRatio;
@@ -146,22 +167,20 @@ public final class Beacon {
         Drawing.drawText(img, "B", largestBlueCenter, 1.0f, new ColorRGBA(0, 0, 255));
 
         final int xMinDistance = (int)(0.05 * beaconSize.width); //percent of beacon width
-        boolean leftIsRed = false;
+        boolean leftIsRed;
         if (largestRedCenter.x + xMinDistance < largestBlueCenter.x) {
             leftIsRed = true;
-            Drawing.drawText(img, "RED, BLUE", new Point(0, 8), 1.0f, new ColorGRAY(255), Drawing.Anchor.BOTTOMLEFT);
         }
         else if (largestBlueCenter.y + xMinDistance < largestRedCenter.x) {
             leftIsRed = false;
-            Drawing.drawText(img, "BLUE, RED", new Point(0, 8), 1.0f, new ColorGRAY(255), Drawing.Anchor.BOTTOMLEFT);
         }
         else
         {
             return new BeaconColorAnalysis(BeaconColor.UNKNOWN, BeaconColor.UNKNOWN);
         }
 
-        //Remove the largest index and look for the next largest - this will identify the center
-        //If it's above a certain size, we have a center! -> so neither light is on BRIGHT mode
+        //Remove the largest index and look for the next largest
+        //If the next largest is (mostly) within the area of the box, then merge it in with the largest
 
         contoursRed.remove(largestIndexRed);
         contoursBlue.remove(largestIndexBlue);
@@ -170,10 +189,14 @@ public final class Beacon {
         Contour secondLargestRed = (secondLargestIndexRed != -1) ? contoursRed.get(secondLargestIndexRed) : null;
         Contour secondLargestBlue = (secondLargestIndexBlue != -1) ? contoursBlue.get(secondLargestIndexBlue) : null;
 
-        //If we couldn't find the center that way, check if the size of one of the largest contours extends
-        //To the other, so that one is larger than the other
+        //Check if the size of the largest contour(s) is about twice the size of the other
+        //This would indicate one is brightly lit and the other is not
 
-        return null;
+        //If this is not true, then neither part of the beacon is highly lit
+        if (leftIsRed)
+            return new BeaconColorAnalysis(BeaconColor.RED, BeaconColor.BLUE);
+        else
+            return new BeaconColorAnalysis(BeaconColor.BLUE, BeaconColor.RED);
     }
 
     private static int findLargestIndex(List<Contour> contours)

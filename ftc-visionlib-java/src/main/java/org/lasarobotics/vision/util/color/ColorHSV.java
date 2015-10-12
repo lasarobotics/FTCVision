@@ -12,6 +12,13 @@ public class ColorHSV extends Color {
         super(s);
     }
 
+    /**
+     * An HSV (hue, saturation, value) color
+     * This is NOT an HSL color - they live in different spaces.
+     * @param h Hue, from 0 to 255
+     * @param s Saturation, from 0 to 255
+     * @param v Value, from 0 to 255
+     */
     public ColorHSV(int h, int s, int v)
     {
         super(new Scalar(h, s, v));

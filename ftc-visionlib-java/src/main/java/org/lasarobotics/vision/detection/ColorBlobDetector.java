@@ -39,10 +39,14 @@ public class ColorBlobDetector {
     {
         setColor(color);
     }
-    public ColorBlobDetector(Color color, ColorHSV colorRadius)
+    public ColorBlobDetector(Color color, Color colorRadius)
     {
-        this.colorRadius = colorRadius.getScalar();
+        this.colorRadius = colorRadius.convertColorScalar(ColorSpace.HSV);
         setColor(color);
+    }
+    public ColorBlobDetector(ColorHSV colorMinimum, ColorHSV colorMaximum)
+    {
+        setColorRadius(colorMinimum, colorMaximum);
     }
 
     public void setColor(Color color)
@@ -50,32 +54,33 @@ public class ColorBlobDetector {
         if (color == null)
             throw new IllegalArgumentException("Color must not be null!");
 
+        if (isRadiusSet)
+            return;
+
         this.color = color;
         Scalar hsvColor = color.convertColorScalar(ColorSpace.HSV);
 
-        if (isRadiusSet) {
-            //calculate min and max hues
-            double minH = (hsvColor.val[0] >= colorRadius.val[0]) ? hsvColor.val[0] - colorRadius.val[0] : 0;
-            double maxH = (hsvColor.val[0] + colorRadius.val[0] <= 255) ? hsvColor.val[0] + colorRadius.val[0] : 255;
+        //calculate min and max hues
+        double minH = (hsvColor.val[0] >= colorRadius.val[0]) ? hsvColor.val[0] - colorRadius.val[0] : 0;
+        double maxH = (hsvColor.val[0] + colorRadius.val[0] <= 255) ? hsvColor.val[0] + colorRadius.val[0] : 255;
 
-            Scalar lowerBoundScalar = lowerBound.getScalar();
-            Scalar upperBoundScalar = upperBound.getScalar();
+        Scalar lowerBoundScalar = lowerBound.getScalar();
+        Scalar upperBoundScalar = upperBound.getScalar();
 
-            lowerBoundScalar.val[0] = minH;
-            upperBoundScalar.val[0] = maxH;
+        lowerBoundScalar.val[0] = minH;
+        upperBoundScalar.val[0] = maxH;
 
-            lowerBoundScalar.val[1] = hsvColor.val[1] - colorRadius.val[1];
-            upperBoundScalar.val[1] = hsvColor.val[1] + colorRadius.val[1];
+        lowerBoundScalar.val[1] = hsvColor.val[1] - colorRadius.val[1];
+        upperBoundScalar.val[1] = hsvColor.val[1] + colorRadius.val[1];
 
-            lowerBoundScalar.val[2] = hsvColor.val[2] - colorRadius.val[2];
-            upperBoundScalar.val[2] = hsvColor.val[2] + colorRadius.val[2];
+        lowerBoundScalar.val[2] = hsvColor.val[2] - colorRadius.val[2];
+        upperBoundScalar.val[2] = hsvColor.val[2] + colorRadius.val[2];
 
-            lowerBoundScalar.val[3] = 0;
-            upperBoundScalar.val[3] = 255;
+        lowerBoundScalar.val[3] = 0;
+        upperBoundScalar.val[3] = 255;
 
-            lowerBound = new ColorHSV(lowerBoundScalar);
-            upperBound = new ColorHSV(upperBoundScalar);
-        }
+        lowerBound = new ColorHSV(lowerBoundScalar);
+        upperBound = new ColorHSV(upperBoundScalar);
     }
 
     //TODO test this method - set a color radius in the contructor and solve for the true min and max bound
@@ -108,7 +113,29 @@ public class ColorBlobDetector {
 
         Imgproc.cvtColor(mPyrDownMat, mHsvMat, Imgproc.COLOR_RGB2HSV_FULL);
 
-        Core.inRange(mHsvMat, lowerBound.getScalar(), upperBound.getScalar(), mMask);
+        //Test whether we need two inRange operations (only if the hue crosses over 255)
+        if (upperBound.getScalar().val[0] <= 255) {
+            Core.inRange(mHsvMat, lowerBound.getScalar(), upperBound.getScalar(), mMask);
+        } else
+        {
+            //We need two operations - we're going to OR the masks together
+            Scalar lower = lowerBound.getScalar().clone();
+            Scalar upper = upperBound.getScalar().clone();
+            while (upper.val[0] > 255)
+                upper.val[0] -= 255;
+            double tmp = lower.val[0];
+            lower.val[0] = 0;
+            //Mask 1 - from 0 to n
+            Core.inRange(mHsvMat, lower, upper, mMaskOne);
+            //Mask 2 - from 255-n to 255
+            lower.val[0] = tmp;
+            upper.val[0] = 255;
+            Core.inRange(mHsvMat, lower, upper, mMask);
+            //OR the two masks
+            Core.bitwise_or(mMaskOne, mMask, mMask);
+        }
+
+        //Dilate (blur) the mask to decrease processing power
         Imgproc.dilate(mMask, mDilatedMask, new Mat());
 
         List<MatOfPoint> contourListTemp = new ArrayList<>();
@@ -158,6 +185,7 @@ public class ColorBlobDetector {
     // Cache
     private Mat mPyrDownMat = new Mat();
     private Mat mHsvMat = new Mat();
+    private Mat mMaskOne = new Mat();
     private Mat mMask = new Mat();
     private Mat mDilatedMask = new Mat();
     private Mat mHierarchy = new Mat();

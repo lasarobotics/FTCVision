@@ -29,8 +29,8 @@ public class ObjectDetection {
     {
         FAST(1),
         STAR(2),
-        SIFT(3),
-        SURF(4),
+        //SIFT(3),
+        //SURF(4),
         ORB(5),
         MSER(6),
         GFTT(7),
@@ -40,8 +40,8 @@ public class ObjectDetection {
         BRISK(11),
         FAST_DYNAMIC(1, true),
         STAR_DYNAMIC(2, true),
-        SIFT_DYNAMIC(3, true),
-        SURF_DYNAMIC(4, true),
+        //SIFT_DYNAMIC(3, true),
+        //SURF_DYNAMIC(4, true),
         ORB_DYNAMIC(5, true),
         MSER_DYNAMIC(6, true),
         GFTT_DYNAMIC(7, true),
@@ -59,14 +59,14 @@ public class ObjectDetection {
 
     public enum DescriptorExtractorType
     {
-        SIFT(1),
-        SURF(2),
+        //SIFT(1),
+        //SURF(2),
         ORB(3),
         BRIEF(4),
         BRISK(5),
         FREAK(6),
-        SIFT_OPPONENT(1, true),
-        SURF_OPPONENT(2, true),
+        //SIFT_OPPONENT(1, true),
+        //SURF_OPPONENT(2, true),
         ORB_OPPONENT(3, true),
         BRIEF_OPPONENT(4, true),
         BRISK_OPPONENT(5, true),
@@ -236,11 +236,10 @@ public class ObjectDetection {
 
         DMatch[] matches = sceneAnalysis.matches.toArray();
 
-        for( int i = 0; i < matches.length; i++ )
-        {
+        for (DMatch matche : matches) {
             //Get the keypoints from thes matches
-            ptsObject.add(keypointsObject[ matches[i].queryIdx ].pt);
-            ptsScene.add(keypointsScene[ matches[i].trainIdx ].pt);
+            ptsObject.add(keypointsObject[matche.queryIdx].pt);
+            ptsScene.add(keypointsScene[matche.trainIdx].pt);
         }
 
         MatOfPoint2f matObject = new MatOfPoint2f();
