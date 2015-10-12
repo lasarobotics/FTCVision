@@ -1,5 +1,6 @@
 package org.lasarobotics.vision.image;
 
+import org.lasarobotics.vision.detection.Contour;
 import org.lasarobotics.vision.util.color.Color;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -7,6 +8,7 @@ import org.opencv.core.MatOfPoint;
 import org.opencv.core.Point;
 import org.opencv.imgproc.Imgproc;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -47,12 +49,24 @@ public class Drawing {
         Core.line(img, point1, point2, color.getScalarRGBA(), thickness);
     }
 
-    public static void drawContours(Mat img, List<MatOfPoint> contours, Color color)
+    public static void drawContour(Mat img, Contour contour, Color color)
     {
-        Imgproc.drawContours(img, contours, -1, color.getScalarRGBA(), 2);
+        drawContour(img, contour, color, 2);
     }
-    public static void drawContours(Mat img, List<MatOfPoint> contours, Color color, int thickness)
+    public static void drawContour(Mat img, Contour contour, Color color, int thickness)
     {
-        Imgproc.drawContours(img, contours, -1, color.getScalarRGBA(), thickness);
+        List<MatOfPoint> contoursOut = new ArrayList<>();
+        contoursOut.add(contour);
+        Imgproc.drawContours(img, contoursOut, -1, color.getScalarRGBA(), thickness);
+    }
+    public static void drawContours(Mat img, List<Contour> contours, Color color)
+    {
+        drawContours(img, contours, color, 2);
+    }
+    public static void drawContours(Mat img, List<Contour> contours, Color color, int thickness)
+    {
+        List<MatOfPoint> contoursOut = new ArrayList<>();
+        contoursOut.addAll(contours);
+        Imgproc.drawContours(img, contoursOut, -1, color.getScalarRGBA(), thickness);
     }
 }

@@ -9,7 +9,9 @@ import org.lasarobotics.vision.android.Camera;
 import org.lasarobotics.vision.android.Cameras;
 import org.lasarobotics.vision.android.Util;
 import org.lasarobotics.vision.detection.ColorBlobDetector;
+import org.lasarobotics.vision.detection.Contour;
 import org.lasarobotics.vision.detection.ObjectDetection;
+import org.lasarobotics.vision.ftc.resq.Beacon;
 import org.lasarobotics.vision.image.Drawing;
 import org.lasarobotics.vision.util.FPS;
 import org.lasarobotics.vision.util.color.ColorHSV;
@@ -26,6 +28,7 @@ import org.opencv.core.Point;
 import org.opencv.highgui.Highgui;
 
 import java.io.File;
+import java.util.List;
 
 public class CameraTestActivity extends Activity implements CvCameraViewListener2 {
 
@@ -139,13 +142,14 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
 
     private ColorBlobDetector detectorRed;
     private ColorBlobDetector detectorBlue;
+    private static final ColorHSV colorRadius = new ColorHSV(50, 75, 127);
 
     public void onCameraViewStarted(int width, int height) {
         mRgba = new Mat(height, width, CvType.CV_8UC4);
         mGray = new Mat(height, width, CvType.CV_8UC1);
 
-        detectorRed  = new ColorBlobDetector(new ColorRGBA(251, 122, 164), new ColorHSV(75, 75, 75));
-        detectorBlue = new ColorBlobDetector(new ColorRGBA(75, 142, 255) , new ColorHSV(75, 75, 75));
+        detectorRed  = new ColorBlobDetector(new ColorRGBA(251, 122, 164), colorRadius);
+        detectorBlue = new ColorBlobDetector(new ColorRGBA(75, 142, 255) , colorRadius);
     }
 
     public void onCameraViewStopped() {
@@ -172,11 +176,18 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
 
             mRgba = inputFrame.rgba();
 
+            //Process the frame for the color blobs
             detectorRed.process(mRgba);
             detectorBlue.process(mRgba);
 
-            Drawing.drawContours(mRgba, detectorRed.getContours(), new ColorRGBA(255, 0, 0), 3);
-            Drawing.drawContours(mRgba, detectorBlue.getContours(), new ColorRGBA(0, 0, 255), 3);
+            //Get the list of contours
+            List<Contour> contoursRed = detectorRed.getContours();
+            List<Contour> contoursBlue = detectorBlue.getContours();
+
+            Beacon.BeaconColorAnalysis colorAnalysis = Beacon.analyzeColor(contoursRed, contoursBlue, mRgba);
+
+            Drawing.drawContours(mRgba, contoursRed, new ColorRGBA(255, 0, 0), 3);
+            Drawing.drawContours(mRgba, contoursBlue, new ColorRGBA(0, 0, 255), 3);
         }
         catch (Exception e)
         {

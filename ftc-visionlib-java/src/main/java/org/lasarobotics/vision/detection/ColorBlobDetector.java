@@ -29,8 +29,11 @@ public class ColorBlobDetector {
     private Scalar colorRadius = new Scalar(75, 75, 75, 0);
     //Currently selected color
     private Color color;
+    //True if radius is set, false if lower and upper bound is set
+    private boolean isRadiusSet = true;
 
-    private List<MatOfPoint> contours = new ArrayList<>();
+    private List<Contour> contours = new ArrayList<>();
+    private double maxArea;
 
     public ColorBlobDetector(Color color)
     {
@@ -50,30 +53,44 @@ public class ColorBlobDetector {
         this.color = color;
         Scalar hsvColor = color.convertColorScalar(ColorSpace.HSV);
 
-        //calculate min and max hues
-        double minH = (hsvColor.val[0] >= colorRadius.val[0]) ? hsvColor.val[0]-colorRadius.val[0] : 0;
-        double maxH = (hsvColor.val[0]+colorRadius.val[0] <= 255) ? hsvColor.val[0]+colorRadius.val[0] : 255;
+        if (isRadiusSet) {
+            //calculate min and max hues
+            double minH = (hsvColor.val[0] >= colorRadius.val[0]) ? hsvColor.val[0] - colorRadius.val[0] : 0;
+            double maxH = (hsvColor.val[0] + colorRadius.val[0] <= 255) ? hsvColor.val[0] + colorRadius.val[0] : 255;
 
-        Scalar lowerBoundScalar = lowerBound.getScalar();
-        Scalar upperBoundScalar = upperBound.getScalar();
+            Scalar lowerBoundScalar = lowerBound.getScalar();
+            Scalar upperBoundScalar = upperBound.getScalar();
 
-        lowerBoundScalar.val[0] = minH;
-        upperBoundScalar.val[0] = maxH;
+            lowerBoundScalar.val[0] = minH;
+            upperBoundScalar.val[0] = maxH;
 
-        lowerBoundScalar.val[1] = hsvColor.val[1] - colorRadius.val[1];
-        upperBoundScalar.val[1] = hsvColor.val[1] + colorRadius.val[1];
+            lowerBoundScalar.val[1] = hsvColor.val[1] - colorRadius.val[1];
+            upperBoundScalar.val[1] = hsvColor.val[1] + colorRadius.val[1];
 
-        lowerBoundScalar.val[2] = hsvColor.val[2] - colorRadius.val[2];
-        upperBoundScalar.val[2] = hsvColor.val[2] + colorRadius.val[2];
+            lowerBoundScalar.val[2] = hsvColor.val[2] - colorRadius.val[2];
+            upperBoundScalar.val[2] = hsvColor.val[2] + colorRadius.val[2];
 
-        lowerBoundScalar.val[3] = 0;
-        upperBoundScalar.val[3] = 255;
+            lowerBoundScalar.val[3] = 0;
+            upperBoundScalar.val[3] = 255;
 
-        lowerBound = new ColorHSV(lowerBoundScalar);
-        upperBound = new ColorHSV(upperBoundScalar);
+            lowerBound = new ColorHSV(lowerBoundScalar);
+            upperBound = new ColorHSV(upperBoundScalar);
+        }
+    }
+
+    //TODO test this method - set a color radius in the contructor and solve for the true min and max bound
+    public void setColorRadius(Color lowerBound, Color upperBound)
+    {
+        isRadiusSet = false;
+        Scalar lower = lowerBound.convertColorScalar(ColorSpace.HSV);
+        Scalar upper = upperBound.convertColorScalar(ColorSpace.HSV);
+
+        this.lowerBound = new ColorHSV(lower);
+        this.upperBound = new ColorHSV(upper);
     }
 
     public void setColorRadius(ColorHSV radius) {
+        isRadiusSet = true;
         this.colorRadius = radius.getScalar();
         //Update the bounds again
         setColor(color);
@@ -94,30 +111,35 @@ public class ColorBlobDetector {
         Core.inRange(mHsvMat, lowerBound.getScalar(), upperBound.getScalar(), mMask);
         Imgproc.dilate(mMask, mDilatedMask, new Mat());
 
-        List<MatOfPoint> contourList = new ArrayList<>();
+        List<MatOfPoint> contourListTemp = new ArrayList<>();
 
-        Imgproc.findContours(mDilatedMask, contourList, mHierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
+        Imgproc.findContours(mDilatedMask, contourListTemp, mHierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
 
         // Find max contour area
         double maxArea = 0;
-        Iterator<MatOfPoint> each = contourList.iterator();
-        while (each.hasNext()) {
-            MatOfPoint wrapper = each.next();
-            double area = Imgproc.contourArea(wrapper);
+        List<Contour> contourList = new ArrayList<>();
+        for (MatOfPoint c : contourListTemp) {
+            Contour con = new Contour(c);
+            contourList.add(con);
+            double area = con.area();
             if (area > maxArea)
                 maxArea = area;
         }
+        this.maxArea = maxArea;
 
         // Filter contours by area and resize to fit the original image size
         contours.clear();
-        each = contourList.iterator();
-        while (each.hasNext()) {
-            MatOfPoint contour = each.next();
-            if (Imgproc.contourArea(contour) > minContourArea*maxArea) {
-                Core.multiply(contour, new Scalar(4,4), contour);
-                contours.add(contour);
+        for (Contour c : contourList ) {
+            if (Imgproc.contourArea(c) > minContourArea*maxArea) {
+                Core.multiply(c, new Scalar(4,4), c);
+                contours.add(new Contour(c));
             }
         }
+    }
+
+    public double getContourMaxArea()
+    {
+        return maxArea;
     }
 
     public void drawContours(Mat img, Color color)
@@ -129,7 +151,7 @@ public class ColorBlobDetector {
         Drawing.drawContours(img, contours, color, thickness);
     }
 
-    public List<MatOfPoint> getContours() {
+    public List<Contour> getContours() {
         return contours;
     }
 
