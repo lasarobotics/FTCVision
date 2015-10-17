@@ -1,4 +1,4 @@
-package org.lasarobotics.vision.detection;
+package org.lasarobotics.vision.detection.objects;
 
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.Point;
@@ -10,7 +10,7 @@ import org.opencv.imgproc.Imgproc;
  */
 public class Contour extends MatOfPoint {
 
-    Contour(MatOfPoint data)
+    public Contour(MatOfPoint data)
     {
         super(data);
     }

@@ -3,7 +3,7 @@ package org.lasarobotics.vision.detection;
 import android.util.Log;
 
 import org.lasarobotics.vision.image.Drawing;
-import org.lasarobotics.vision.image.Image;
+import org.lasarobotics.vision.image.Transform;
 import org.lasarobotics.vision.util.color.ColorRGBA;
 import org.opencv.calib3d.Calib3d;
 import org.opencv.core.Core;
@@ -283,9 +283,9 @@ public class ObjectDetection {
 
     public static void drawDebugInfo(Mat output, SceneAnalysis sceneAnalysis)
     {
-        Image.flip(output, Image.FlipType.FLIP_ACROSS_Y);
+        Transform.flip(output, Transform.FlipType.FLIP_ACROSS_Y);
         Drawing.drawText(output, "Keypoints: " + sceneAnalysis.keypoints.rows(), new Point(0, 8), 1.0f, new ColorRGBA(255, 255, 255), Drawing.Anchor.BOTTOMLEFT_UNFLIPPED_Y);
-        Image.flip(output, Image.FlipType.FLIP_ACROSS_Y);
+        Transform.flip(output, Transform.FlipType.FLIP_ACROSS_Y);
     }
 
 

@@ -2,19 +2,14 @@ package com.lasarobotics.tests.camera;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.WindowManager;
 
 import org.lasarobotics.vision.android.Camera;
 import org.lasarobotics.vision.android.Cameras;
-import org.lasarobotics.vision.android.Util;
 import org.lasarobotics.vision.detection.ColorBlobDetector;
-import org.lasarobotics.vision.detection.Contour;
-import org.lasarobotics.vision.detection.ObjectDetection;
-import org.lasarobotics.vision.ftc.resq.Beacon;
+import org.lasarobotics.vision.detection.EllipseDetection;
 import org.lasarobotics.vision.image.Drawing;
 import org.lasarobotics.vision.util.FPS;
-import org.lasarobotics.vision.util.color.ColorGRAY;
 import org.lasarobotics.vision.util.color.ColorHSV;
 import org.lasarobotics.vision.util.color.ColorRGBA;
 import org.opencv.android.BaseLoaderCallback;
@@ -26,10 +21,6 @@ import org.opencv.android.OpenCVLoader;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
-import org.opencv.highgui.Highgui;
-
-import java.io.File;
-import java.util.List;
 
 public class CameraTestActivity extends Activity implements CvCameraViewListener2 {
 
@@ -150,6 +141,9 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
     private static final ColorHSV lowerBoundBlue = new ColorHSV((int)(187.0       / 360.0 * 255.0), (int)(0.750 * 255.0), (int)(0.750 * 255.0));
     private static final ColorHSV upperBoundBlue = new ColorHSV((int)(227.0       / 360.0 * 255.0), 255                 , 255);
 
+
+    private EllipseDetection detectorEllipse = new EllipseDetection();
+
     public void onCameraViewStarted(int width, int height) {
         mRgba = new Mat(height, width, CvType.CV_8UC4);
         mGray = new Mat(height, width, CvType.CV_8UC1);
@@ -170,20 +164,24 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
 
         fpsCounter.update();
 
+        //OBJECT DETECTION INIT
+
         //ObjectDetection detection = new ObjectDetection(ObjectDetection.FeatureDetectorType.ORB,
         //        ObjectDetection.DescriptorExtractorType.ORB,
         //        ObjectDetection.DescriptorMatcherType.BRUTEFORCE_HAMMING);
 
         try {
+            // OBJECT DETECTION
+
             //ObjectDetection.SceneAnalysis sceneAnalysis = detection.analyzeScene(mGray, objectAnalysis, mRgba);
             //ObjectDetection.drawKeypoints(mRgba, sceneAnalysis);
             //ObjectDetection.drawDebugInfo(mRgba, sceneAnalysis);
             //ObjectDetection.drawObjectLocation(mRgba, objectAnalysis, sceneAnalysis);
 
-            mRgba = inputFrame.rgba();
+            // BLOB DETECTION
 
             //Process the frame for the color blobs
-            detectorRed.process(mRgba);
+            /*detectorRed.process(mRgba);
             detectorBlue.process(mRgba);
 
             //Get the list of contours
@@ -195,7 +193,12 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
             Drawing.drawContours(mRgba, contoursRed, new ColorRGBA(255, 0, 0), 3);
             Drawing.drawContours(mRgba, contoursBlue, new ColorRGBA(0, 0, 255), 3);
             Drawing.drawText(mRgba, colorAnalysis.getStateLeft().toString() + ", " + colorAnalysis.getStateRight().toString(),
-                    new Point(0, 8), 1.0f, new ColorGRAY(255), Drawing.Anchor.BOTTOMLEFT);
+                    new Point(0, 8), 1.0f, new ColorGRAY(255), Drawing.Anchor.BOTTOMLEFT);*/
+
+            // CIRCLE DETECTION
+
+            detectorEllipse.computeEllipses(mGray, mRgba);
+            mRgba = mGray;
         }
         catch (Exception e)
         {
@@ -203,7 +206,7 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
             e.printStackTrace();
         }
 
-        Drawing.drawText(mRgba, "FPS: " + fpsCounter.getFPSString(), new Point(0, 24), 1.0f, new ColorRGBA("#2196F3"));
+        Drawing.drawText(mRgba, "FPS: " + fpsCounter.getFPSString(), new Point(0, 24), 1.0f, new ColorRGBA("#ffffff")); //"#2196F3"
 
         return mRgba;
     }

@@ -1,6 +1,6 @@
 package org.lasarobotics.vision.ftc.resq;
 
-import org.lasarobotics.vision.detection.Contour;
+import org.lasarobotics.vision.detection.objects.Contour;
 import org.lasarobotics.vision.image.Drawing;
 import org.lasarobotics.vision.util.color.ColorGRAY;
 import org.lasarobotics.vision.util.color.ColorRGBA;

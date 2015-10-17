@@ -1,6 +1,7 @@
 package org.lasarobotics.vision.image;
 
-import org.lasarobotics.vision.detection.Contour;
+import org.lasarobotics.vision.detection.objects.Contour;
+import org.lasarobotics.vision.detection.objects.Ellipse;
 import org.lasarobotics.vision.util.color.Color;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -17,7 +18,19 @@ import java.util.List;
 public class Drawing {
     public static void drawCircle(Mat img, Point center, int diameter, Color color)
     {
-        Core.circle(img, center, diameter, color.getScalarRGBA());
+        drawCircle(img, center, diameter, color, 2);
+    }
+    public static void drawCircle(Mat img, Point center, int diameter, Color color, int thickness)
+    {
+        Core.circle(img, center, diameter, color.getScalarRGBA(), thickness);
+    }
+    public static void drawEllipse(Mat img, Ellipse ellipse, Color color)
+    {
+        drawEllipse(img, ellipse, color, 2);
+    }
+    public static void drawEllipse(Mat img, Ellipse ellipse, Color color, int thickness)
+    {
+        Core.ellipse(img, ellipse.getRect(), color.getScalarRGBA(), thickness);
     }
 
     public enum Anchor
@@ -33,11 +46,11 @@ public class Drawing {
     public static void drawText(Mat img, String text, Point origin, float scale, Color color, Anchor locationOnImage)
     {
         if (locationOnImage == Anchor.BOTTOMLEFT)
-            Image.flip(img, Image.FlipType.FLIP_ACROSS_Y);
+            Transform.flip(img, Transform.FlipType.FLIP_ACROSS_Y);
         Core.putText(img, text, origin, Core.FONT_HERSHEY_SIMPLEX, scale, color.getScalarRGBA(), 2, Core.LINE_8,
                 (locationOnImage == Anchor.BOTTOMLEFT || locationOnImage == Anchor.BOTTOMLEFT_UNFLIPPED_Y));
         if (locationOnImage == Anchor.BOTTOMLEFT)
-            Image.flip(img, Image.FlipType.FLIP_ACROSS_Y);
+            Transform.flip(img, Transform.FlipType.FLIP_ACROSS_Y);
     }
 
     public static void drawLine(Mat img, Point point1, Point point2, Color color)
