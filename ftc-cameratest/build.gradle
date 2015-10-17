@@ -29,5 +29,5 @@ repositories {
 
 dependencies {
     compile project(':opencv-java')
-    compile project(':ftc-visionlib-java')
+    compile project(':ftc-visionlib')
 }
