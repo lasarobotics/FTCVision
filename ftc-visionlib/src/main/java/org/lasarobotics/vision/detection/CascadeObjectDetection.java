@@ -1,7 +1,7 @@
 package org.lasarobotics.vision.detection;
 
 /**
- * Created by arthur on 10/9/15.
+ * Implements cascade object detection, a rapid way of locating features such as human faces
  */
 public class CascadeObjectDetection {
     public CascadeObjectDetection() {

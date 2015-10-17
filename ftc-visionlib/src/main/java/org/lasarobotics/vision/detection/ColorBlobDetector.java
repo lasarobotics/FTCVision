@@ -11,7 +11,6 @@ import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -83,7 +82,6 @@ public class ColorBlobDetector {
         upperBound = new ColorHSV(upperBoundScalar);
     }
 
-    //TODO test this method - set a color radius in the contructor and solve for the true min and max bound
     public void setColorRadius(Color lowerBound, Color upperBound)
     {
         isRadiusSet = false;

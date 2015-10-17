@@ -135,10 +135,10 @@ public final class Beacon {
         double beaconWidth = beaconHeight * beaconWidthHeightRatio;
         Size beaconSize = new Size(beaconWidth, beaconHeight);
         //Get the left-most largest contour
-        Contour leftMostContour = ((largestRed != null ? largestRed.origin().x : Integer.MAX_VALUE) <
-                (largestBlue != null ? largestBlue.origin().x : Integer.MAX_VALUE)) ? largestRed : largestBlue;
+        Contour leftMostContour = ((largestRed != null ? largestRed.topLeft().x : Integer.MAX_VALUE) <
+                (largestBlue != null ? largestBlue.topLeft().x : Integer.MAX_VALUE)) ? largestRed : largestBlue;
         assert leftMostContour != null;
-        Point beaconOrigin = leftMostContour.origin();
+        Point beaconOrigin = leftMostContour.topLeft();
 
         //Draw the rectangle containing the beacon
         Point beaconBottomRight = new Point(beaconOrigin.x + beaconSize.width, beaconOrigin.y + beaconSize.height);
