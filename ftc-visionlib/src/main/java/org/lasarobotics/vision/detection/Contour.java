@@ -36,11 +36,44 @@ public class Contour extends MatOfPoint {
         return new Point(sum.x / points.length, sum.y / points.length);
     }
 
+    @Override
+    public int height()
+    {
+        return (int)size().height;
+    }
+    @Override
+    public int width()
+    {
+        return (int)size().width;
+    }
+
+    public double top()
+    {
+        return topLeft().y;
+    }
+    public double bottom()
+    {
+        return topLeft().y + size().height;
+    }
+    public double left()
+    {
+        return topLeft().x;
+    }
+    public double right()
+    {
+        return topLeft().x + size().width;
+    }
+
+    public Point bottomRight()
+    {
+        return new Point(right(), bottom());
+    }
+
     /**
      * Gets the top-left corner of the contour
      * @return The top left corner of the contour
      */
-    public Point origin()
+    public Point topLeft()
     {
         double minX = Double.MAX_VALUE;
         double minY = Double.MAX_VALUE;
