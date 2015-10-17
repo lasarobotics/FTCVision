@@ -25,16 +25,16 @@ public class EllipseDetection {
     public void computeEllipses(Mat gray, Mat rgba)
     {
         Filter.blur(gray, 1);
-        Filter.erode(gray, 2);
-        Filter.dilate(gray, 2);
+        Filter.erode(gray, 1);
+        Filter.dilate(gray, 1);
 
-        Imgproc.Canny(gray, gray, 5, 100, 3, true);
-        //Filter.blur(gray, 3);
+        Imgproc.Canny(gray, gray, 5, 75, 3, true);
+        Filter.blur(gray, 0);
 
         Mat cacheHierarchy = new Mat();
 
         List<MatOfPoint> contoursTemp = new ArrayList<>();
-        Imgproc.findContours(gray, contoursTemp, cacheHierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_TC89_KCOS);
+        Imgproc.findContours(gray, contoursTemp, cacheHierarchy, Imgproc.CV_RETR_CCOMP, Imgproc.CHAIN_APPROX_TC89_KCOS);
         List<Contour> contours = new ArrayList<>();
         for (MatOfPoint co : contoursTemp ) {
             contours.add(new Contour(co));

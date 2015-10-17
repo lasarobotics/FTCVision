@@ -22,7 +22,7 @@ import org.opencv.utils.Converters;
 
 public class Imgproc {
 
-    private static final int
+    public static final int
             IPL_BORDER_CONSTANT = 0,
             IPL_BORDER_REPLICATE = 1,
             IPL_BORDER_REFLECT = 2,
