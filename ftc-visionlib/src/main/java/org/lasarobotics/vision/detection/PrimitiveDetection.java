@@ -6,6 +6,9 @@ import org.lasarobotics.vision.image.Filter;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.MatOfPoint2f;
+import org.opencv.core.Point;
+import org.opencv.core.RotatedRect;
+import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
 import java.util.ArrayList;
@@ -47,12 +50,26 @@ public class PrimitiveDetection {
         }
     }
 
-    public void locateEllipses_hough(Mat grayImage, Mat output)
+    public List<Ellipse> locateEllipses_houghCircles(Mat grayImage, Mat output)
     {
+        Filter.blur(grayImage, 2);
 
+        Mat circles = new Mat();
+        Imgproc.HoughCircles(grayImage, circles, Imgproc.CV_HOUGH_GRADIENT, 2, 10, 100, 30, 1, 100);
+        List<Ellipse> ellipses = new ArrayList<>();
+        for(int i=0; i<circles.rows(); i++)
+        {
+            double x = circles.get(i, 0)[0];
+            double y = circles.get(i, 0)[1];
+            double radius = circles.get(i, 0)[2];
+
+            RotatedRect r = new RotatedRect(new Point(x, y), new Size(radius, radius), 0);
+            ellipses.add(new Ellipse(r));
+        }
+        return ellipses;
     }
 
-    public EllipseLocationResult locateEllipses_fit(Mat grayImage, Mat output)
+    public EllipseLocationResult locateEllipses_fit(Mat grayImage)
     {
         Mat gray = grayImage.clone();
 
