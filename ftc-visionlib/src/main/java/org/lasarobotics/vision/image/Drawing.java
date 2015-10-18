@@ -32,6 +32,15 @@ public class Drawing {
     {
         Core.ellipse(img, ellipse.getRect(), color.getScalarRGBA(), thickness);
     }
+    public static void drawEllipses(Mat img, List<Ellipse> ellipses, Color color)
+    {
+        drawEllipses(img, ellipses, color, 2);
+    }
+    public static void drawEllipses(Mat img, List<Ellipse> ellipses, Color color, int thickness)
+    {
+        for (Ellipse ellipse : ellipses)
+            Core.ellipse(img, ellipse.getRect(), color.getScalarRGBA(), thickness);
+    }
 
     public enum Anchor
     {

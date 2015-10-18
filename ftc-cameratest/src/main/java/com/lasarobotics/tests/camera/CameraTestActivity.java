@@ -7,9 +7,12 @@ import android.view.WindowManager;
 import org.lasarobotics.vision.android.Camera;
 import org.lasarobotics.vision.android.Cameras;
 import org.lasarobotics.vision.detection.ColorBlobDetector;
-import org.lasarobotics.vision.detection.EllipseDetection;
+import org.lasarobotics.vision.detection.PrimitiveDetection;
+import org.lasarobotics.vision.detection.objects.Contour;
+import org.lasarobotics.vision.ftc.resq.Beacon;
 import org.lasarobotics.vision.image.Drawing;
 import org.lasarobotics.vision.util.FPS;
+import org.lasarobotics.vision.util.color.ColorGRAY;
 import org.lasarobotics.vision.util.color.ColorHSV;
 import org.lasarobotics.vision.util.color.ColorRGBA;
 import org.opencv.android.BaseLoaderCallback;
@@ -22,6 +25,8 @@ import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 
+import java.util.List;
+
 public class CameraTestActivity extends Activity implements CvCameraViewListener2 {
 
     private Mat mRgba; //RGBA scene image
@@ -32,6 +37,10 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
 
     //private ObjectDetection.ObjectAnalysis objectAnalysis;
     private FPS fpsCounter;
+
+    public CameraTestActivity() {
+
+    }
 
     private void initialize()
     {
@@ -141,15 +150,16 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
     private static final ColorHSV lowerBoundBlue = new ColorHSV((int)(187.0       / 360.0 * 255.0), (int)(0.750 * 255.0), (int)(0.750 * 255.0));
     private static final ColorHSV upperBoundBlue = new ColorHSV((int)(227.0       / 360.0 * 255.0), 255                 , 255);
 
-
-    private EllipseDetection detectorEllipse = new EllipseDetection();
+    private PrimitiveDetection detectorEllipse;
 
     public void onCameraViewStarted(int width, int height) {
         mRgba = new Mat(height, width, CvType.CV_8UC4);
         mGray = new Mat(height, width, CvType.CV_8UC1);
 
+        //Initialize all detectors here
         detectorRed  = new ColorBlobDetector(lowerBoundRed, upperBoundRed);
         detectorBlue = new ColorBlobDetector(lowerBoundBlue, upperBoundBlue);
+        detectorEllipse = new PrimitiveDetection();
     }
 
     public void onCameraViewStopped() {
@@ -164,41 +174,28 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
 
         fpsCounter.update();
 
-        //OBJECT DETECTION INIT
-
-        //ObjectDetection detection = new ObjectDetection(ObjectDetection.FeatureDetectorType.ORB,
-        //        ObjectDetection.DescriptorExtractorType.ORB,
-        //        ObjectDetection.DescriptorMatcherType.BRUTEFORCE_HAMMING);
-
         try {
-            // OBJECT DETECTION
-
-            //ObjectDetection.SceneAnalysis sceneAnalysis = detection.analyzeScene(mGray, objectAnalysis, mRgba);
-            //ObjectDetection.drawKeypoints(mRgba, sceneAnalysis);
-            //ObjectDetection.drawDebugInfo(mRgba, sceneAnalysis);
-            //ObjectDetection.drawObjectLocation(mRgba, objectAnalysis, sceneAnalysis);
-
-            // BLOB DETECTION
-
             //Process the frame for the color blobs
-            /*detectorRed.process(mRgba);
+            detectorRed.process(mRgba);
             detectorBlue.process(mRgba);
 
             //Get the list of contours
             List<Contour> contoursRed = detectorRed.getContours();
             List<Contour> contoursBlue = detectorBlue.getContours();
 
+            //Get color analysis
             Beacon.BeaconColorAnalysis colorAnalysis = Beacon.analyzeColor(contoursRed, contoursBlue, mRgba);
 
+            //Draw red and blue contours
             Drawing.drawContours(mRgba, contoursRed, new ColorRGBA(255, 0, 0), 3);
             Drawing.drawContours(mRgba, contoursBlue, new ColorRGBA(0, 0, 255), 3);
             Drawing.drawText(mRgba, colorAnalysis.getStateLeft().toString() + ", " + colorAnalysis.getStateRight().toString(),
-                    new Point(0, 8), 1.0f, new ColorGRAY(255), Drawing.Anchor.BOTTOMLEFT);*/
+                    new Point(0, 8), 1.0f, new ColorGRAY(255), Drawing.Anchor.BOTTOMLEFT);
 
-            // CIRCLE DETECTION
-
-            detectorEllipse.computeEllipses(mGray, mRgba);
-            mRgba = mGray;
+            //Detect circles
+            PrimitiveDetection.EllipseLocationResult ellipseLocationResult = detectorEllipse.locateEllipses_fit(mGray, mRgba);
+            Drawing.drawContours(mRgba, ellipseLocationResult.getContours(), new ColorRGBA(127, 127, 127), 1);
+            Drawing.drawEllipses(mRgba, ellipseLocationResult.getEllipses(), new ColorRGBA("#FFEB3B"), 2);
         }
         catch (Exception e)
         {
