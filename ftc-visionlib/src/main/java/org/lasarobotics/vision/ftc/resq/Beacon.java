@@ -4,6 +4,7 @@ import org.lasarobotics.vision.detection.PrimitiveDetection;
 import org.lasarobotics.vision.detection.objects.Contour;
 import org.lasarobotics.vision.detection.objects.Ellipse;
 import org.lasarobotics.vision.image.Drawing;
+import org.lasarobotics.vision.util.MathUtil;
 import org.lasarobotics.vision.util.color.ColorGRAY;
 import org.lasarobotics.vision.util.color.ColorRGBA;
 import org.opencv.core.Mat;
@@ -18,6 +19,13 @@ import java.util.List;
  * Beacon location and analysis
  */
 public final class Beacon {
+
+    private Size screenSize;
+
+    public Beacon(Size screenSize)
+    {
+        this.screenSize = screenSize;
+    }
 
     public enum BeaconColor
     {
@@ -108,52 +116,78 @@ public final class Beacon {
         }
     }
 
-    private static Ellipse findBestEllipse(Contour contour, List<Ellipse> ellipses)
+    private List<Ellipse> filterEllipses(List<Ellipse> ellipses)
+    {
+        for (int i=ellipses.size() - 1; i>=0; i--)
+        {
+            Ellipse ellipse = ellipses.get(i);
+            //Remove the ellipse if it's larger than a portion of the screen
+            if (Math.max(ellipse.width(), ellipse.height()) > 0.1 * Math.max(screenSize.width, screenSize.height))
+            {
+                ellipses.remove(i);
+            }
+        }
+        return ellipses;
+    }
+
+    private Ellipse findBestEllipse(Contour contour, List<Ellipse> ellipses)
     {
         Ellipse best = null;
-        double bestArea = Double.MAX_VALUE;
+        double bestArea = Double.MIN_VALUE;
         Rect boundingRect = contour.getBoundingRect();
         for (Ellipse ellipse : ellipses)
         {
-            //Point diff = new Point(Math.abs(contour.center().x - e.center().x),
-            //        Math.abs(contour.center().y - e.center().y));
-            //double distance = diff.inside(contour)
-
+            //TODO compare area of contour and area of ellipse
+            //If the ellipse is NOT approximately a fraction of the area of the contour, scrap it
 
             //Check whether ellipse is within the contour
-            if (ellipse.isInside(contour))
+            if (!ellipse.isInside(contour))
             {
-                //If this is the SMALLEST ellipse, make it the best!
-                if (ellipse.area() < bestArea)
-                {
-                    bestArea = ellipse.area();
-                    best = ellipse;
-                }
+                //Check distance between centers if not within contour
+                Point diff = new Point(Math.abs(contour.center().x - ellipse.center().x),
+                        Math.abs(contour.center().y - ellipse.center().y));
+                double distance = MathUtil.distance(diff.x, diff.y);
+
+                continue;
+                //Scrap the ellipse if the distances are greater than a value
+                //if (distance > 0.1 * Math.min(screenSize.width, screenSize.height))
+                //    continue;
+            }
+
+            //TODO maybe not always the largest... check the ratio
+            //If this is the LARGEST ellipse, make it the best!
+            if (ellipse.area() > bestArea)
+            {
+                bestArea = ellipse.area();
+                best = ellipse;
             }
         }
 
         return best;
     }
 
-    private static Contour getBestContour(List<Contour> contours, List<Ellipse> ellipses)
+    //DEBUG image
+    private Contour getBestContour(List<Contour> contours, List<Ellipse> ellipses, Mat img)
     {
         if (contours.size() == 0 || ellipses.size() == 0)
             return null;
 
         //Start with the largest contour
         //Contour best = contours.get(findLargestIndex(contours));
-        //Contour first = new Contour((MatOfPoint)best.clone());
+        Contour first = contours.get(findLargestIndex(contours));
 
         while (contours.size() > 0){
             int testIndex = findLargestIndex(contours);
             Contour test = contours.get(testIndex);
 
-            //Find the best ellipse
+            //Find the best ellipse within the current contour
             Ellipse bestEllipse = findBestEllipse(test, ellipses);
 
             //If this ellipse exists, then return it because it is the largest!
             if (bestEllipse != null)
             {
+                //DEBUG draw ellipses
+                Drawing.drawEllipse(img, bestEllipse, new ColorRGBA("#00ff00"), 3);
                 return test;
             }
             contours.remove(testIndex);
@@ -161,11 +195,11 @@ public final class Beacon {
 
         //Return the best if we have one, otherwise just return the largest
         //TODO return first or null?
-        //return (contours.size() > 0) ? best : null;
-        return null;
+        return first;
+        //return null;
     }
 
-    public static BeaconColorAnalysis analyzeColor(List<Contour> contoursR, List<Contour> contoursB, Mat img, Mat gray)
+    public BeaconColorAnalysis analyzeColor(List<Contour> contoursR, List<Contour> contoursB, Mat img, Mat gray)
     {
         List<Contour> contoursRed = new ArrayList<>(contoursR);
         List<Contour> contoursBlue= new ArrayList<>(contoursB);
@@ -175,18 +209,21 @@ public final class Beacon {
         PrimitiveDetection primitiveDetection = new PrimitiveDetection();
         PrimitiveDetection.EllipseLocationResult ellipseLocationResult = primitiveDetection.locateEllipses_fit(gray);
 
+        //Filter out bad ellipses
+        List<Ellipse> ellipses = filterEllipses(ellipseLocationResult.getEllipses());
+
+        //DEBUG Ellipse data
+        Drawing.drawEllipses(img, ellipses, new ColorRGBA("#FFEB3B"), 1);
+
         //Get the best contour in each (starting with the largest) if any contours exist
         //We're calling this one the main light
-        Contour bestRed = (contoursRed.size() > 0) ? getBestContour(contoursRed, ellipseLocationResult.getEllipses()) : null;
-        Contour bestBlue = (contoursBlue.size() > 0) ? getBestContour(contoursBlue, ellipseLocationResult.getEllipses()) : null;
+        Contour bestRed = (contoursRed.size() > 0) ? getBestContour(contoursRed, ellipses, img) : null;
+        Contour bestBlue = (contoursBlue.size() > 0) ? getBestContour(contoursBlue, ellipses, img) : null;
 
         //If we don't have a main light for one of the colors, we know both colors are the same
         //TODO we should re-filter the contours by size to ensure that we get at least a decent size
         if (bestRed == null && bestBlue == null)
             return new BeaconColorAnalysis(BeaconColor.UNKNOWN, BeaconColor.UNKNOWN);
-
-        //Test contour
-
 
         //TODO rotate image based on camera rotation here
 
@@ -230,6 +267,7 @@ public final class Beacon {
         Point largestRedCenter = bestRed.center();
         Point largestBlueCenter = bestBlue.center();
 
+        //DEBUG R/B text
         Drawing.drawText(img, "R", largestRedCenter, 1.0f, new ColorRGBA(255, 0, 0));
         Drawing.drawText(img, "B", largestBlueCenter, 1.0f, new ColorRGBA(0, 0, 255));
 

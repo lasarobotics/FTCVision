@@ -109,6 +109,6 @@ public class Ellipse {
      */
     public boolean isInside(Contour contour) {
         return left() >= contour.left() && right() <= contour.right() &&
-                top() <= contour.top() && bottom() <= contour.bottom();
+                top() >= contour.top() && bottom() <= contour.bottom();
     }
 }

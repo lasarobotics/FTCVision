@@ -33,7 +33,6 @@ public class ColorBlobDetector {
     private boolean isRadiusSet = true;
 
     private List<Contour> contours = new ArrayList<>();
-    private double maxArea;
 
     public ColorBlobDetector(Color color)
     {
@@ -141,31 +140,12 @@ public class ColorBlobDetector {
 
         Imgproc.findContours(mDilatedMask, contourListTemp, mHierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
 
-        // Find max contour area
-        double maxArea = 0;
-        List<Contour> contourList = new ArrayList<>();
-        for (MatOfPoint c : contourListTemp) {
-            Contour con = new Contour(c);
-            contourList.add(con);
-            double area = con.area();
-            if (area > maxArea)
-                maxArea = area;
-        }
-        this.maxArea = maxArea;
-
         // Filter contours by area and resize to fit the original image size
         contours.clear();
-        for (Contour c : contourList ) {
-            if (Imgproc.contourArea(c) > minContourArea*maxArea) {
-                Core.multiply(c, new Scalar(4,4), c);
-                contours.add(new Contour(c));
-            }
+        for (MatOfPoint c : contourListTemp ) {
+            Core.multiply(c, new Scalar(4,4), c);
+            contours.add(new Contour(c));
         }
-    }
-
-    public double getContourMaxArea()
-    {
-        return maxArea;
     }
 
     public void drawContours(Mat img, Color color)
