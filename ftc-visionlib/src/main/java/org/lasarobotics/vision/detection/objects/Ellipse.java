@@ -39,6 +39,35 @@ public class Ellipse {
     {
         return rect.center;
     }
+    public double left()
+    {
+        return center().x -( width()/2);
+    }
+    public double right()
+    {
+        return center().x +( width()/2);
+    }
+    public double top()
+    {
+        return center().y-(height()/2);
+    }
+    public double bottom()
+    {
+        return center().y+(height()/2);
+    }
+    public Point topLeft()
+    {
+        return new Point(top(), left());
+    }
+
+    /**
+     * Gets the area of the ellipse
+     * @return Area = semi-major axis * semi-minor axis * PI
+     */
+    public double area()
+    {
+        return semiMajorAxis() * semiMinorAxis() * Math.PI;
+    }
     public double majorAxis()
     {
         return Math.max(height(), width());
@@ -71,5 +100,15 @@ public class Ellipse {
     public double eccentricity()
     {
         return Math.sqrt(1 - (semiMinorAxis()*semiMinorAxis())/(semiMajorAxis()*semiMajorAxis()));
+    }
+
+    /**
+     * Returns true if the ellipse is ENTIRELY inside the contour
+     * @param contour The contour to test against
+     * @return True if the ellipse is entirely inside the contour, false otherwise
+     */
+    public boolean isInside(Contour contour) {
+        return left() >= contour.left() && right() <= contour.right() &&
+                top() <= contour.top() && bottom() <= contour.bottom();
     }
 }

@@ -9,7 +9,6 @@ import org.lasarobotics.vision.android.Cameras;
 import org.lasarobotics.vision.detection.ColorBlobDetector;
 import org.lasarobotics.vision.detection.PrimitiveDetection;
 import org.lasarobotics.vision.detection.objects.Contour;
-import org.lasarobotics.vision.detection.objects.Ellipse;
 import org.lasarobotics.vision.ftc.resq.Beacon;
 import org.lasarobotics.vision.image.Drawing;
 import org.lasarobotics.vision.util.FPS;
@@ -185,7 +184,7 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
             List<Contour> contoursBlue = detectorBlue.getContours();
 
             //Get color analysis
-            Beacon.BeaconColorAnalysis colorAnalysis = Beacon.analyzeColor(contoursRed, contoursBlue, mRgba);
+            Beacon.BeaconColorAnalysis colorAnalysis = Beacon.analyzeColor(contoursRed, contoursBlue, mRgba, mGray);
 
             //Draw red and blue contours
             Drawing.drawContours(mRgba, contoursRed, new ColorRGBA(255, 0, 0), 3);
@@ -194,12 +193,9 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
                     new Point(0, 8), 1.0f, new ColorGRAY(255), Drawing.Anchor.BOTTOMLEFT);
 
             //Detect circles
-            List<Ellipse> ellipses = detectorEllipse.locateEllipses_houghCircles(mGray, mRgba);
-            Drawing.drawEllipses(mRgba, ellipses, new ColorRGBA("#FFEB3B"), 2);
-
-            //PrimitiveDetection.EllipseLocationResult ellipseLocationResult = detectorEllipse.locateEllipses_fit(mGray);
-            //Drawing.drawContours(mRgba, ellipseLocationResult.getContours(), new ColorRGBA(127, 127, 127), 1);
-            //Drawing.drawEllipses(mRgba, ellipseLocationResult.getEllipses(), new ColorRGBA("#FFEB3B"), 2);
+            PrimitiveDetection.EllipseLocationResult ellipseLocationResult = detectorEllipse.locateEllipses_fit(mGray);
+            Drawing.drawContours(mRgba, ellipseLocationResult.getContours(), new ColorRGBA(127, 127, 127), 1);
+            Drawing.drawEllipses(mRgba, ellipseLocationResult.getEllipses(), new ColorRGBA("#FFEB3B"), 2);
         }
         catch (Exception e)
         {
