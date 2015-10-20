@@ -21,6 +21,8 @@ import java.util.List;
 public final class Beacon {
 
     private Size screenSize;
+    //FIXME test this value
+    public static final int ELLIPSE_THRESHOLD = 40;
 
     public Beacon(Size screenSize)
     {
@@ -116,13 +118,13 @@ public final class Beacon {
         }
     }
 
-    private List<Ellipse> filterEllipses(List<Ellipse> ellipses)
+    private List<Ellipse> filterEllipses(List<Ellipse> ellipses, Mat gray)
     {
         for (int i=ellipses.size() - 1; i>=0; i--)
         {
             Ellipse ellipse = ellipses.get(i);
             //Remove the ellipse if it's larger than a portion of the screen
-            if (Math.max(ellipse.width(), ellipse.height()) > 0.1 * Math.max(screenSize.width, screenSize.height))
+            if (Math.max(ellipse.width(), ellipse.height()) > 0.1 * Math.max(screenSize.width, screenSize.height) || ellipse.colorAverage(gray) > ELLIPSE_THRESHOLD)
             {
                 ellipses.remove(i);
             }
@@ -210,7 +212,7 @@ public final class Beacon {
         PrimitiveDetection.EllipseLocationResult ellipseLocationResult = primitiveDetection.locateEllipses_fit(gray);
 
         //Filter out bad ellipses
-        List<Ellipse> ellipses = filterEllipses(ellipseLocationResult.getEllipses());
+        List<Ellipse> ellipses = filterEllipses(ellipseLocationResult.getEllipses(), gray);
 
         //DEBUG Ellipse data
         Drawing.drawEllipses(img, ellipses, new ColorRGBA("#FFEB3B"), 1);

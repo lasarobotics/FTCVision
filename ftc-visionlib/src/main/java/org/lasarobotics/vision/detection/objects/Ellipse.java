@@ -1,5 +1,7 @@
 package org.lasarobotics.vision.detection.objects;
 
+import org.lasarobotics.vision.util.MathUtil;
+import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.RotatedRect;
 import org.opencv.core.Size;
@@ -91,6 +93,38 @@ public class Ellipse {
     public double flattening()
     {
         return (semiMajorAxis() - semiMinorAxis()) / semiMajorAxis();
+    }
+
+    public int colorAverage(Mat gray)
+    {
+        //Determine left and right X values
+        double widthOffset = width()/3.0;
+        double leftX = widthOffset + left();
+        double rightX = leftX + widthOffset;
+
+        //Determine top and bottom Y values
+        double heightOffset = height()/3.0;
+        double topY = heightOffset + top();
+        double bottomY = topY + heightOffset;
+
+        //Coerce values
+        leftX = MathUtil.coerce(0, gray.cols()-1, leftX);
+        rightX = MathUtil.coerce(0, gray.cols()-1, rightX);
+        topY = MathUtil.coerce(0, gray.rows()-1, topY);
+        bottomY = MathUtil.coerce(0, gray.rows()-1, bottomY);
+
+        //Input points into array for calculation
+        double[] colorArr = new double[4];
+        colorArr[0] = gray.get((int)topY, (int)leftX)[0];
+        colorArr[1] = gray.get((int)topY, (int)rightX)[0];
+        colorArr[2] = gray.get((int)bottomY, (int)leftX)[0];
+        colorArr[3] = gray.get((int)bottomY, (int)rightX)[0];
+
+        //Calculate average
+        double result = colorArr[0] + colorArr[1] + colorArr[2] + colorArr[3];
+        result /= 4;
+
+        return (int)result;
     }
 
     /**
