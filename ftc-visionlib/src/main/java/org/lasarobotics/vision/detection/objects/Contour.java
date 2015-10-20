@@ -1,7 +1,8 @@
-package org.lasarobotics.vision.detection;
+package org.lasarobotics.vision.detection.objects;
 
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.Point;
+import org.opencv.core.Rect;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
@@ -10,7 +11,7 @@ import org.opencv.imgproc.Imgproc;
  */
 public class Contour extends MatOfPoint {
 
-    Contour(MatOfPoint data)
+    public Contour(MatOfPoint data)
     {
         super(data);
     }
@@ -62,6 +63,10 @@ public class Contour extends MatOfPoint {
     public double right()
     {
         return topLeft().x + size().width;
+    }
+    public Rect getBoundingRect()
+    {
+        return new Rect((int)top(), (int)left(), width(), height());
     }
 
     public Point bottomRight()

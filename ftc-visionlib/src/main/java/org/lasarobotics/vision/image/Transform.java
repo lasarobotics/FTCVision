@@ -7,12 +7,12 @@ import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
 /**
- * Image manipulation and correction
+ * Transform manipulation and correction
  */
-public class Image {
+public class Transform {
     /**
      * Rotate an image by an angle (counterclockwise)
-     * @param image Image matrix
+     * @param image Transform matrix
      * @param angle Angle to rotate by (counterclockwise) from -360 to 360
      */
     static void rotate(Mat image, double angle)
