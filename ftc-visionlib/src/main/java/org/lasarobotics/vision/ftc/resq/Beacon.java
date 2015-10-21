@@ -7,6 +7,7 @@ import org.lasarobotics.vision.image.Drawing;
 import org.lasarobotics.vision.util.MathUtil;
 import org.lasarobotics.vision.util.color.ColorGRAY;
 import org.lasarobotics.vision.util.color.ColorRGBA;
+import org.lasarobotics.vision.util.color.ColorSpace;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
@@ -123,8 +124,11 @@ public final class Beacon {
         for (int i=ellipses.size() - 1; i>=0; i--)
         {
             Ellipse ellipse = ellipses.get(i);
-            //Remove the ellipse if it's larger than a portion of the screen
-            if (Math.max(ellipse.width(), ellipse.height()) > 0.1 * Math.max(screenSize.width, screenSize.height) || ellipse.colorAverage(gray) > ELLIPSE_THRESHOLD)
+            //Remove the ellipse if it's larger than a portion of the screen OR
+            //If the ellipse color is NOT approximately black
+            //TODO this is currently in grayscale... what about actual color?
+            if (Math.max(ellipse.width(), ellipse.height()) > 0.1 * Math.max(screenSize.width, screenSize.height) ||
+                    ellipse.averageColor(gray, ColorSpace.GRAY).getScalar().val[0] > ELLIPSE_THRESHOLD)
             {
                 ellipses.remove(i);
             }

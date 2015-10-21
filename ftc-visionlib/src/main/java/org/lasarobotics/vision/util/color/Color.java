@@ -17,6 +17,17 @@ public abstract class Color {
         setScalar(s);
     }
 
+    public static Color create(Scalar s, ColorSpace colorSpace)
+    {
+        Class<? extends Color> colorClass = colorSpace.getColorClass();
+
+        try {
+            return colorClass.getConstructor(Scalar.class).newInstance(s);
+        } catch (Exception ignored) {
+            throw new IllegalArgumentException("Cannot create new color instance.");
+        }
+    }
+
     public void setScalar(Scalar s)
     {
         this.scalar = parseScalar(s);
