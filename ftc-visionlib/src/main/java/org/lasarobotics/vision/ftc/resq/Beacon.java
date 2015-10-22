@@ -238,19 +238,10 @@ public final class Beacon {
         final double beaconWidthHeightRatio = beaconActualWidth / beaconActualHeight;
         double beaconWidth = beaconHeight * beaconWidthHeightRatio;
         Size beaconSize = new Size(beaconWidth, beaconHeight);
-        //Get the left-most best contour
-        Contour leftMostContour = ((bestRed != null ? bestRed.topLeft().x : Integer.MAX_VALUE) <
-                (bestBlue != null ? bestBlue.topLeft().x : Integer.MAX_VALUE)) ? bestRed : bestBlue;
-        assert leftMostContour != null;
-        Point beaconOrigin = leftMostContour.topLeft();
 
-        //Draw the rectangle containing the beacon
-        Point beaconBottomRight = new Point(beaconOrigin.x + beaconSize.width, beaconOrigin.y + beaconSize.height);
-        Drawing.drawRectangle(img, beaconOrigin, beaconBottomRight, new ColorRGBA(0, 255, 0), 4);
 
-        //Tell us the height of the beacon
-        //TODO later we can get the distance away from the beacon based on its height and position
-        Drawing.drawText(img, "Height: " + beaconHeight, new Point(img.width()-256, 8), 1.0f, new ColorGRAY(255), Drawing.Anchor.BOTTOMLEFT);
+
+
 
         //If the largest part of the non-null color is wider than a certain distance, then both are bright
         //Otherwise, only one may be lit
@@ -271,6 +262,8 @@ public final class Beacon {
         Drawing.drawText(img, "R", largestRedCenter, 1.0f, new ColorRGBA(255, 0, 0));
         Drawing.drawText(img, "B", largestBlueCenter, 1.0f, new ColorRGBA(0, 0, 255));
 
+        //Test which side is red and blue
+        //If the distance between the sides is smaller than a value, then return unknown
         final int xMinDistance = (int)(0.05 * beaconSize.width); //percent of beacon width
         boolean leftIsRed;
         if (largestRedCenter.x + xMinDistance < largestBlueCenter.x) {
@@ -283,6 +276,33 @@ public final class Beacon {
         {
             return new BeaconColorAnalysis(BeaconColor.UNKNOWN, BeaconColor.UNKNOWN);
         }
+
+        //Get the left-most best contour
+        Contour leftMostContour = ((bestRed.topLeft().x) < (bestBlue.topLeft().x)) ? bestRed : bestBlue;
+        //Get the right-most best contour
+        Contour rightMostContour = ((bestRed.topLeft().x) < (bestBlue.topLeft().x)) ? bestBlue : bestRed;
+
+        Point beaconOrigin = leftMostContour.topLeft();
+
+
+        //Extend picture to match the actual scale
+        double widthBeacon = rightMostContour.right() - leftMostContour.left();
+        Point centerY = new Point((rightMostContour.center().x + leftMostContour.center().x)/2, (leftMostContour.center().y + rightMostContour.center().y)/2);
+        Point centerX = new Point(beaconOrigin.x + beaconSize.width/2, beaconOrigin.y + beaconSize.height);
+        //Define corners of beacon
+        Point beaconBottomRight = new Point(beaconOrigin.x + beaconSize.width, beaconOrigin.y + beaconSize.height);
+
+        double heightBeacon = Math.max(beaconSize])
+
+
+        //Draw the rectangle containing the beacon
+
+        Drawing.drawRectangle(img, beaconOrigin, beaconBottomRight, new ColorRGBA(0, 255, 0), 4);
+
+
+        //Tell us the height of the beacon
+        //TODO later we can get the distance away from the beacon based on its height and position
+        Drawing.drawText(img, "Height: " + beaconHeight, new Point(img.width()-256, 8), 1.0f, new ColorGRAY(255), Drawing.Anchor.BOTTOMLEFT);
 
         //Remove the largest index and look for the next largest
         //If the next largest is (mostly) within the area of the box, then merge it in with the largest
@@ -320,4 +340,6 @@ public final class Beacon {
         }
         return largestIndex;
     }
+
+
 }
