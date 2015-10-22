@@ -185,6 +185,8 @@ public final class Beacon {
             //Find the best ellipse within the current contour
             Ellipse bestEllipse = findBestEllipse(test, ellipses);
 
+            //TODO Do we want to return the first that has an ellipse or should we add it to a new
+            //TODO list of possibilites then run more checks on these?
             //If this ellipse exists, then return it because it is the largest!
             if (bestEllipse != null)
             {
