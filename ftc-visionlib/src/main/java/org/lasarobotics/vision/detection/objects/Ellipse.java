@@ -1,6 +1,11 @@
 package org.lasarobotics.vision.detection.objects;
 
 import org.lasarobotics.vision.util.MathUtil;
+import org.lasarobotics.vision.util.color.Color;
+import org.lasarobotics.vision.util.color.ColorGRAY;
+import org.lasarobotics.vision.util.color.ColorRGBA;
+import org.lasarobotics.vision.util.color.ColorSpace;
+import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.RotatedRect;
@@ -9,7 +14,7 @@ import org.opencv.core.Size;
 /**
  * Implements a single ellipse (acts like RotatedRect) with advanced measurement utilities
  */
-public class Ellipse {
+public class Ellipse extends Detectable {
     private RotatedRect rect;
 
     public Ellipse(RotatedRect rect)
@@ -95,36 +100,13 @@ public class Ellipse {
         return (semiMajorAxis() - semiMinorAxis()) / semiMajorAxis();
     }
 
-    public int colorAverage(Mat gray)
+    /**
+     * Scale this ellipse by a scaling factor about its center
+     * @param factor Scaling factor, 1 for no scale, less than one to contract, greater than one to expand
+     */
+    public void scale(double factor)
     {
-        //Determine left and right X values
-        double widthOffset = width()/3.0;
-        double leftX = widthOffset + left();
-        double rightX = leftX + widthOffset;
-
-        //Determine top and bottom Y values
-        double heightOffset = height()/3.0;
-        double topY = heightOffset + top();
-        double bottomY = topY + heightOffset;
-
-        //Coerce values
-        leftX = MathUtil.coerce(0, gray.cols()-1, leftX);
-        rightX = MathUtil.coerce(0, gray.cols()-1, rightX);
-        topY = MathUtil.coerce(0, gray.rows()-1, topY);
-        bottomY = MathUtil.coerce(0, gray.rows()-1, bottomY);
-
-        //Input points into array for calculation
-        double[] colorArr = new double[4];
-        colorArr[0] = gray.get((int)topY, (int)leftX)[0];
-        colorArr[1] = gray.get((int)topY, (int)rightX)[0];
-        colorArr[2] = gray.get((int)bottomY, (int)leftX)[0];
-        colorArr[3] = gray.get((int)bottomY, (int)rightX)[0];
-
-        //Calculate average
-        double result = colorArr[0] + colorArr[1] + colorArr[2] + colorArr[3];
-        result /= 4;
-
-        return (int)result;
+        rect.size = new Size(factor * rect.size.width, factor * rect.size.height);
     }
 
     /**
