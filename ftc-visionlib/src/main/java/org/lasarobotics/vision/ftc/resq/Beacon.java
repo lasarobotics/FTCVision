@@ -287,12 +287,22 @@ public final class Beacon {
 
         //Extend picture to match the actual scale
         double widthBeacon = rightMostContour.right() - leftMostContour.left();
-        Point centerY = new Point((rightMostContour.center().x + leftMostContour.center().x)/2, (leftMostContour.center().y + rightMostContour.center().y)/2);
-        Point centerX = new Point(beaconOrigin.x + beaconSize.width/2, beaconOrigin.y + beaconSize.height);
-        //Define corners of beacon
+        double centerX = (widthBeacon)/2;
+        double centerY = (leftMostContour.center().y + rightMostContour.center().y)/2;
+        //Define bottom right corner of beacon
         Point beaconBottomRight = new Point(beaconOrigin.x + beaconSize.width, beaconOrigin.y + beaconSize.height);
+        //Calculate final length and height of image
+        double heightBeacon = Math.max(leftMostContour.top(), rightMostContour.top()) - Math.min(leftMostContour.bottom(),rightMostContour.bottom());
+        double heightRatio = heightBeacon/beaconActualHeight;
+        double widthRatio = widthBeacon/beaconActualWidth;
+        double heightFinal = heightBeacon * heightRatio;
+        double widthFinal = widthBeacon * widthRatio;
+        //Calculate final corners of image
+        Point topLeft = new Point(centerX - widthFinal/2, centerY - heightFinal/2);
+        Point topRight = new Point(centerX + widthFinal/2, centerY - heightFinal/2);
+        Point bottomLeft = new Point(centerX - widthFinal/2, centerY + heightFinal/2);
+        Point bottomRight = new Point(centerX + widthFinal/2, centerY + heightFinal/2);
 
-        double heightBeacon = Math.max(beaconSize])
 
 
         //Draw the rectangle containing the beacon
