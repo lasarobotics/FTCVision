@@ -238,19 +238,10 @@ public final class Beacon {
         final double beaconWidthHeightRatio = beaconActualWidth / beaconActualHeight;
         double beaconWidth = beaconHeight * beaconWidthHeightRatio;
         Size beaconSize = new Size(beaconWidth, beaconHeight);
-        //Get the left-most best contour
-        Contour leftMostContour = ((bestRed != null ? bestRed.topLeft().x : Integer.MAX_VALUE) <
-                (bestBlue != null ? bestBlue.topLeft().x : Integer.MAX_VALUE)) ? bestRed : bestBlue;
-        assert leftMostContour != null;
-        Point beaconOrigin = leftMostContour.topLeft();
 
-        //Draw the rectangle containing the beacon
-        Point beaconBottomRight = new Point(beaconOrigin.x + beaconSize.width, beaconOrigin.y + beaconSize.height);
-        Drawing.drawRectangle(img, beaconOrigin, beaconBottomRight, new ColorRGBA(0, 255, 0), 4);
 
-        //Tell us the height of the beacon
-        //TODO later we can get the distance away from the beacon based on its height and position
-        Drawing.drawText(img, "Height: " + beaconHeight, new Point(img.width()-256, 8), 1.0f, new ColorGRAY(255), Drawing.Anchor.BOTTOMLEFT);
+
+
 
         //If the largest part of the non-null color is wider than a certain distance, then both are bright
         //Otherwise, only one may be lit
@@ -271,6 +262,8 @@ public final class Beacon {
         Drawing.drawText(img, "R", largestRedCenter, 1.0f, new ColorRGBA(255, 0, 0));
         Drawing.drawText(img, "B", largestBlueCenter, 1.0f, new ColorRGBA(0, 0, 255));
 
+        //Test which side is red and blue
+        //If the distance between the sides is smaller than a value, then return unknown
         final int xMinDistance = (int)(0.05 * beaconSize.width); //percent of beacon width
         boolean leftIsRed;
         if (largestRedCenter.x + xMinDistance < largestBlueCenter.x) {
@@ -283,6 +276,40 @@ public final class Beacon {
         {
             return new BeaconColorAnalysis(BeaconColor.UNKNOWN, BeaconColor.UNKNOWN);
         }
+
+        //Get the left-most best contour
+        Contour leftMostContour = ((bestRed.topLeft().x) < (bestBlue.topLeft().x)) ? bestRed : bestBlue;
+        //Get the right-most best contour
+        Contour rightMostContour = ((bestRed.topLeft().x) < (bestBlue.topLeft().x)) ? bestBlue : bestRed;
+
+        //Draw the box surrounding both contours
+        //Get the width of the contours
+        double widthBeacon = rightMostContour.right() - leftMostContour.left();
+        //Center of contours is the average of centers of the contours
+        Point center = new Point((leftMostContour.center().x + rightMostContour.center().x) / 2,
+                                 (leftMostContour.center().y + rightMostContour.center().y) / 2);
+        //Get the combined height of the contours
+        double heightContours = Math.max(leftMostContour.bottom(), rightMostContour.bottom()) -
+                                Math.min(leftMostContour.top(), rightMostContour.top());
+        //The largest size ratio of tested over actual is the scale ratio
+        double scale = Math.max(widthBeacon/beaconActualWidth, heightContours / beaconActualHeight);
+        //Define size of bounding box by scaling the actual beacon size
+        Size beaconSizeFinal = new Size(beaconActualWidth * scale, beaconActualHeight * scale);
+
+        //Get points of the bounding box
+        Point beaconTopLeft = new Point(center.x - (beaconSizeFinal.width / 2),
+                                        center.y - (beaconSizeFinal.height / 2));
+        Point beaconBottomRight = new Point(center.x + (beaconSizeFinal.width / 2),
+                center.y + (beaconSizeFinal.height / 2));
+
+        //Draw the rectangle containing the beacon
+
+        Drawing.drawRectangle(img, beaconTopLeft, beaconBottomRight, new ColorRGBA(0, 255, 0), 4);
+
+
+        //Tell us the height of the beacon
+        //TODO later we can get the distance away from the beacon based on its height and position
+        Drawing.drawText(img, "Height: " + beaconHeight, new Point(img.width()-256, 8), 1.0f, new ColorGRAY(255), Drawing.Anchor.BOTTOMLEFT);
 
         //Remove the largest index and look for the next largest
         //If the next largest is (mostly) within the area of the box, then merge it in with the largest
@@ -320,4 +347,6 @@ public final class Beacon {
         }
         return largestIndex;
     }
+
+
 }
