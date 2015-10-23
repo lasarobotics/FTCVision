@@ -282,22 +282,29 @@ public final class Beacon {
         //Get the right-most best contour
         Contour rightMostContour = ((bestRed.topLeft().x) < (bestBlue.topLeft().x)) ? bestBlue : bestRed;
 
-        Point beaconOrigin = leftMostContour.topLeft();
-
-
-        //Extend picture to match the actual scale
+        //Draw the box surrounding both contours
+        //Get the width of the contours
         double widthBeacon = rightMostContour.right() - leftMostContour.left();
-        Point centerY = new Point((rightMostContour.center().x + leftMostContour.center().x)/2, (leftMostContour.center().y + rightMostContour.center().y)/2);
-        Point centerX = new Point(beaconOrigin.x + beaconSize.width/2, beaconOrigin.y + beaconSize.height);
-        //Define corners of beacon
-        Point beaconBottomRight = new Point(beaconOrigin.x + beaconSize.width, beaconOrigin.y + beaconSize.height);
+        //Center of contours is the average of centers of the contours
+        Point center = new Point((leftMostContour.center().x + rightMostContour.center().x) / 2,
+                                 (leftMostContour.center().y + rightMostContour.center().y) / 2);
+        //Get the combined height of the contours
+        double heightContours = Math.max(leftMostContour.bottom(), rightMostContour.bottom()) -
+                                Math.min(leftMostContour.top(), rightMostContour.top());
+        //The largest size ratio of tested over actual is the scale ratio
+        double scale = Math.max(widthBeacon/beaconActualWidth, heightContours / beaconActualHeight);
+        //Define size of bounding box by scaling the actual beacon size
+        Size beaconSizeFinal = new Size(beaconActualWidth * scale, beaconActualHeight * scale);
 
-        double heightBeacon = Math.max(beaconSize])
-
+        //Get points of the bounding box
+        Point beaconTopLeft = new Point(center.x - (beaconSizeFinal.width / 2),
+                                        center.y - (beaconSizeFinal.height / 2));
+        Point beaconBottomRight = new Point(center.x + (beaconSizeFinal.width / 2),
+                center.y + (beaconSizeFinal.height / 2));
 
         //Draw the rectangle containing the beacon
 
-        Drawing.drawRectangle(img, beaconOrigin, beaconBottomRight, new ColorRGBA(0, 255, 0), 4);
+        Drawing.drawRectangle(img, beaconTopLeft, beaconBottomRight, new ColorRGBA(0, 255, 0), 4);
 
 
         //Tell us the height of the beacon
