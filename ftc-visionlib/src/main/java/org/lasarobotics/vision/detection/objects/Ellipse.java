@@ -1,5 +1,12 @@
 package org.lasarobotics.vision.detection.objects;
 
+import org.lasarobotics.vision.util.MathUtil;
+import org.lasarobotics.vision.util.color.Color;
+import org.lasarobotics.vision.util.color.ColorGRAY;
+import org.lasarobotics.vision.util.color.ColorRGBA;
+import org.lasarobotics.vision.util.color.ColorSpace;
+import org.opencv.core.Core;
+import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.RotatedRect;
 import org.opencv.core.Size;
@@ -7,7 +14,7 @@ import org.opencv.core.Size;
 /**
  * Implements a single ellipse (acts like RotatedRect) with advanced measurement utilities
  */
-public class Ellipse {
+public class Ellipse extends Detectable {
     private RotatedRect rect;
 
     public Ellipse(RotatedRect rect)
@@ -91,6 +98,15 @@ public class Ellipse {
     public double flattening()
     {
         return (semiMajorAxis() - semiMinorAxis()) / semiMajorAxis();
+    }
+
+    /**
+     * Scale this ellipse by a scaling factor about its center
+     * @param factor Scaling factor, 1 for no scale, less than one to contract, greater than one to expand
+     */
+    public void scale(double factor)
+    {
+        rect.size = new Size(factor * rect.size.width, factor * rect.size.height);
     }
 
     /**

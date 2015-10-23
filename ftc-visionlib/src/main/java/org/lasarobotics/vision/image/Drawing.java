@@ -78,7 +78,7 @@ public class Drawing {
     public static void drawContour(Mat img, Contour contour, Color color, int thickness)
     {
         List<MatOfPoint> contoursOut = new ArrayList<>();
-        contoursOut.add(contour);
+        contoursOut.add(contour.getData());
         Imgproc.drawContours(img, contoursOut, -1, color.getScalarRGBA(), thickness);
     }
     public static void drawContours(Mat img, List<Contour> contours, Color color)
@@ -88,7 +88,8 @@ public class Drawing {
     public static void drawContours(Mat img, List<Contour> contours, Color color, int thickness)
     {
         List<MatOfPoint> contoursOut = new ArrayList<>();
-        contoursOut.addAll(contours);
+        for (Contour contour : contours)
+            contoursOut.add(contour.getData());
         Imgproc.drawContours(img, contoursOut, -1, color.getScalarRGBA(), thickness);
     }
 

@@ -9,21 +9,28 @@ import org.opencv.imgproc.Imgproc;
 /**
  * Implements a single contour (MatOfPoint) with advanced measurement utilities
  */
-public class Contour extends MatOfPoint {
+public class Contour extends Detectable {
+
+    MatOfPoint mat;
 
     public Contour(MatOfPoint data)
     {
-        super(data);
+        this.mat = data;
+    }
+
+    public MatOfPoint getData()
+    {
+        return mat;
     }
 
     public double area()
     {
-        return Imgproc.contourArea(this);
+        return Imgproc.contourArea(mat);
     }
 
     public boolean isConvex()
     {
-        return Imgproc.isContourConvex(this);
+        return Imgproc.isContourConvex(mat);
     }
 
     public Point center()
@@ -37,13 +44,11 @@ public class Contour extends MatOfPoint {
         return new Point(sum.x / points.length, sum.y / points.length);
     }
 
-    @Override
-    public int height()
+    public double height()
     {
         return (int)size().height;
     }
-    @Override
-    public int width()
+    public double width()
     {
         return (int)size().width;
     }
@@ -66,7 +71,7 @@ public class Contour extends MatOfPoint {
     }
     public Rect getBoundingRect()
     {
-        return new Rect((int)top(), (int)left(), width(), height());
+        return new Rect((int)top(), (int)left(), (int)width(), (int)height());
     }
 
     public Point bottomRight()
@@ -114,6 +119,6 @@ public class Contour extends MatOfPoint {
 
     public Point[] getPoints()
     {
-        return this.toArray();
+        return mat.toArray();
     }
 }

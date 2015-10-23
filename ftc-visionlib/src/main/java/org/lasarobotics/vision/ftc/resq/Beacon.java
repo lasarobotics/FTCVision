@@ -7,6 +7,7 @@ import org.lasarobotics.vision.image.Drawing;
 import org.lasarobotics.vision.util.MathUtil;
 import org.lasarobotics.vision.util.color.ColorGRAY;
 import org.lasarobotics.vision.util.color.ColorRGBA;
+import org.lasarobotics.vision.util.color.ColorSpace;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
@@ -21,6 +22,8 @@ import java.util.List;
 public final class Beacon {
 
     private Size screenSize;
+    //FIXME test this value
+    public static final int ELLIPSE_THRESHOLD = 255;
 
     public Beacon(Size screenSize)
     {
@@ -116,13 +119,18 @@ public final class Beacon {
         }
     }
 
-    private List<Ellipse> filterEllipses(List<Ellipse> ellipses)
+    private List<Ellipse> filterEllipses(List<Ellipse> ellipses, Mat gray, Mat img)
     {
         for (int i=ellipses.size() - 1; i>=0; i--)
         {
             Ellipse ellipse = ellipses.get(i);
-            //Remove the ellipse if it's larger than a portion of the screen
-            if (Math.max(ellipse.width(), ellipse.height()) > 0.1 * Math.max(screenSize.width, screenSize.height))
+            ellipse.scale(0.5);
+            //Remove the ellipse if it's larger than a portion of the screen OR
+            //If the ellipse color is NOT approximately black
+            double averageColor = ellipse.averageColor(gray, ColorSpace.GRAY, img).getScalar().val[0];
+            if (Math.max(ellipse.width(), ellipse.height()) > 0.1 *
+                    Math.max(screenSize.width, screenSize.height) ||
+                    averageColor > ELLIPSE_THRESHOLD)
             {
                 ellipses.remove(i);
             }
@@ -183,6 +191,8 @@ public final class Beacon {
             //Find the best ellipse within the current contour
             Ellipse bestEllipse = findBestEllipse(test, ellipses);
 
+            //TODO Do we want to return the first that has an ellipse or should we add it to a new
+            //TODO list of possibilites then run more checks on these?
             //If this ellipse exists, then return it because it is the largest!
             if (bestEllipse != null)
             {
@@ -210,7 +220,7 @@ public final class Beacon {
         PrimitiveDetection.EllipseLocationResult ellipseLocationResult = primitiveDetection.locateEllipses_fit(gray);
 
         //Filter out bad ellipses
-        List<Ellipse> ellipses = filterEllipses(ellipseLocationResult.getEllipses());
+        List<Ellipse> ellipses = filterEllipses(ellipseLocationResult.getEllipses(), gray, img);
 
         //DEBUG Ellipse data
         Drawing.drawEllipses(img, ellipses, new ColorRGBA("#FFEB3B"), 1);
