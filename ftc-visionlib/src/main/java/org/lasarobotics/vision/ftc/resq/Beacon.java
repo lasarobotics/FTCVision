@@ -23,7 +23,7 @@ public final class Beacon {
 
     private Size screenSize;
     //FIXME test this value
-    public static final int ELLIPSE_THRESHOLD = 40;
+    public static final int ELLIPSE_THRESHOLD = 255;
 
     public Beacon(Size screenSize)
     {
@@ -119,16 +119,18 @@ public final class Beacon {
         }
     }
 
-    private List<Ellipse> filterEllipses(List<Ellipse> ellipses, Mat gray)
+    private List<Ellipse> filterEllipses(List<Ellipse> ellipses, Mat gray, Mat img)
     {
         for (int i=ellipses.size() - 1; i>=0; i--)
         {
             Ellipse ellipse = ellipses.get(i);
+            ellipse.scale(0.5);
             //Remove the ellipse if it's larger than a portion of the screen OR
             //If the ellipse color is NOT approximately black
-            //TODO this is currently in grayscale... what about actual color?
-            if (Math.max(ellipse.width(), ellipse.height()) > 0.1 * Math.max(screenSize.width, screenSize.height) ||
-                    ellipse.averageColor(gray, ColorSpace.GRAY).getScalar().val[0] > ELLIPSE_THRESHOLD)
+            double averageColor = ellipse.averageColor(gray, ColorSpace.GRAY, img).getScalar().val[0];
+            if (Math.max(ellipse.width(), ellipse.height()) > 0.1 *
+                    Math.max(screenSize.width, screenSize.height) ||
+                    averageColor > ELLIPSE_THRESHOLD)
             {
                 ellipses.remove(i);
             }
@@ -218,7 +220,7 @@ public final class Beacon {
         PrimitiveDetection.EllipseLocationResult ellipseLocationResult = primitiveDetection.locateEllipses_fit(gray);
 
         //Filter out bad ellipses
-        List<Ellipse> ellipses = filterEllipses(ellipseLocationResult.getEllipses(), gray);
+        List<Ellipse> ellipses = filterEllipses(ellipseLocationResult.getEllipses(), gray, img);
 
         //DEBUG Ellipse data
         Drawing.drawEllipses(img, ellipses, new ColorRGBA("#FFEB3B"), 1);
