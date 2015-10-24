@@ -20,10 +20,11 @@ public class PrimitiveDetection {
 
     }
 
-    public void locateRectangles(Mat gray, Mat output)
+    //TODO locateRectangles() not implemented
+    /*public void locateRectangles(Mat gray, Mat output)
     {
 
-    }
+    }*/
 
     public class EllipseLocationResult
     {
