@@ -188,10 +188,10 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
             Beacon.BeaconColorAnalysis colorAnalysis = beacon.analyzeColor_cannyCentric(contoursRed, contoursBlue, mRgba, mGray);
 
             //Draw red and blue contours
-            Drawing.drawContours(mRgba, contoursRed, new ColorRGBA(255, 0, 0), 3);
+            /*Drawing.drawContours(mRgba, contoursRed, new ColorRGBA(255, 0, 0), 3);
             Drawing.drawContours(mRgba, contoursBlue, new ColorRGBA(0, 0, 255), 3);
             Drawing.drawText(mRgba, colorAnalysis.getStateLeft().toString() + ", " + colorAnalysis.getStateRight().toString(),
-                    new Point(0, 8), 1.0f, new ColorGRAY(255), Drawing.Anchor.BOTTOMLEFT);
+                    new Point(0, 8), 1.0f, new ColorGRAY(255), Drawing.Anchor.BOTTOMLEFT);*/
 
             //Detect circles
             PrimitiveDetection.EllipseLocationResult ellipseLocationResult = detectorEllipse.locateEllipses(mGray);

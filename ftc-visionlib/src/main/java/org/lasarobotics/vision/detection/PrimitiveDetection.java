@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Implements primitive (ellipse, rectangle, etc.) detection, based on a custom, highly-robust version of the Hough transform
+ * Implements primitive (ellipse, polygon) detection based on a custom, highly-robust (size and position invariant) version of the Hough transform
  */
 public class PrimitiveDetection {
 
@@ -28,6 +28,8 @@ public class PrimitiveDetection {
     private static final int THRESHOLD_CANNY = 75;
     private static final double MAX_COSINE_VALUE = 0.3;
 
+    //TODO convert this to locatePolygons() with n sides
+    //TODO http://opencv-code.com/tutorials/detecting-simple-shapes-in-an-image/
     public List<Rectangle> locateRectangles(Mat grayImage, Mat output) {
         Mat gray = grayImage.clone();
 
@@ -60,6 +62,8 @@ public class PrimitiveDetection {
             List<MatOfPoint> contoursTemp = new ArrayList<>();
             //Find contours - the parameters here are very important to compression and retention
             Imgproc.findContours(grayTemp, contoursTemp, cacheHierarchy, Imgproc.CV_RETR_TREE, Imgproc.CHAIN_APPROX_TC89_KCOS);
+            //DEBUG
+            Imgproc.drawContours(output, contoursTemp, -1, new ColorRGBA("#9E9E9E").getScalarRGBA(), 1);
 
             //For each contour, test whether the contour is a rectangle
             //List<Contour> contours = new ArrayList<>();
@@ -76,10 +80,32 @@ public class PrimitiveDetection {
                 Contour approxContour = new Contour(approx);
 
                 //Make sure the contour is big enough, CLOSED (convex), and has exactly 4 points
+
+                if (approx.toArray().length > 4 && approx.toArray().length <= 12
+                        && Math.abs(approxContour.area()) > 1000 &&
+                        approxContour.isConvex())
+                {
+                    double maxCosine = 0;
+
+                    for (int j = 2; j < approx.toArray().length + 1; j++) {
+                        double cosine = Math.abs(MathUtil.angle(approx.toArray()[j % approx.toArray().length],
+                                approx.toArray()[j - 2], approx.toArray()[j - 1]));
+                        maxCosine = Math.max(maxCosine, cosine);
+                    }
+
+                    if (maxCosine < 20) {
+                        //DEBUG
+                        Drawing.drawContour(output, approxContour, new ColorRGBA("#FFFF00"), 1);
+                    }
+                }
+
                 if (approx.toArray().length == 4 &&
                         Math.abs(approxContour.area()) > 1000 &&
                         approxContour.isConvex()) {
                     double maxCosine = 0;
+
+                    //DEBUG
+                    Drawing.drawContour(output, approxContour, new ColorRGBA("#FF9100"), 2);
 
                     //Check each angle to be approximately 90 degrees
                     for (int j = 2; j < 5; j++) {
@@ -96,7 +122,8 @@ public class PrimitiveDetection {
             }
         }
 
-        Drawing.drawRectangles(output, rectangles, new ColorRGBA(255, 255, 255), 3);
+        //DEBUG
+        Drawing.drawRectangles(output, rectangles, new ColorRGBA("#00FF00"), 3);
         return rectangles;
     }
 

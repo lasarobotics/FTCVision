@@ -262,6 +262,7 @@ public final class Beacon {
         Drawing.drawEllipses(img, ellipses, new ColorRGBA("#FFC107"), 2);*/
 
         //Detect rectangles
+        //DEBUG output=gray
         List<Rectangle> rectangles = primitiveDetection.locateRectangles(gray, img);
 
         return new BeaconColorAnalysis(BeaconColor.UNKNOWN, BeaconColor.UNKNOWN);
