@@ -1,5 +1,6 @@
 package org.lasarobotics.vision.ftc.resq;
 
+import org.lasarobotics.vision.detection.EdgeDetection;
 import org.lasarobotics.vision.detection.PrimitiveDetection;
 import org.lasarobotics.vision.detection.objects.Contour;
 import org.lasarobotics.vision.detection.objects.Ellipse;

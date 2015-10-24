@@ -1,4 +1,4 @@
-package org.lasarobotics.vision.detection;
+package org.lasarobotics.vision.detection.objects;
 
 import org.opencv.core.Point;
 
