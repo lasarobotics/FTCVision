@@ -2,6 +2,7 @@ package org.lasarobotics.vision.image;
 
 import org.lasarobotics.vision.detection.objects.Contour;
 import org.lasarobotics.vision.detection.objects.Ellipse;
+import org.lasarobotics.vision.detection.objects.Rectangle;
 import org.lasarobotics.vision.util.color.Color;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -93,6 +94,24 @@ public class Drawing {
         Imgproc.drawContours(img, contoursOut, -1, color.getScalarRGBA(), thickness);
     }
 
+    public static void drawRectangles(Mat img, List<Rectangle> rects, Color color)
+    {
+        for (Rectangle r : rects)
+            drawRectangle(img, r.topLeft(), r.bottomRight(), color, 2);
+    }
+    public static void drawRectangles(Mat img, List<Rectangle> rects, Color color, int thickness)
+    {
+        for (Rectangle r : rects)
+            drawRectangle(img, r.topLeft(), r.bottomRight(), color, thickness);
+    }
+    public static void drawRectangle(Mat img, Rectangle rect, Color color)
+    {
+        drawRectangle(img, rect.topLeft(), rect.bottomRight(), color, 2);
+    }
+    public static void drawRectangle(Mat img, Rectangle rect, Color color, int thickness)
+    {
+        drawRectangle(img, rect.topLeft(), rect.bottomRight(), color, thickness);
+    }
     public static void drawRectangle(Mat img, Point topLeft, Point bottomRight, Color color)
     {
         drawRectangle(img, topLeft, bottomRight, color, 2);

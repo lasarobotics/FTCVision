@@ -185,7 +185,7 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
 
             //Get color analysis
             Beacon beacon = new Beacon(inputFrame.rgba().size());
-            Beacon.BeaconColorAnalysis colorAnalysis = beacon.analyzeColor_smartScoring(contoursRed, contoursBlue, mRgba, mGray);
+            Beacon.BeaconColorAnalysis colorAnalysis = beacon.analyzeColor_cannyCentric(contoursRed, contoursBlue, mRgba, mGray);
 
             //Draw red and blue contours
             Drawing.drawContours(mRgba, contoursRed, new ColorRGBA(255, 0, 0), 3);
@@ -194,7 +194,7 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
                     new Point(0, 8), 1.0f, new ColorGRAY(255), Drawing.Anchor.BOTTOMLEFT);
 
             //Detect circles
-            PrimitiveDetection.EllipseLocationResult ellipseLocationResult = detectorEllipse.locateEllipses_fit(mGray);
+            PrimitiveDetection.EllipseLocationResult ellipseLocationResult = detectorEllipse.locateEllipses(mGray);
             //Drawing.drawContours(mRgba, ellipseLocationResult.getContours(), new ColorRGBA(127, 127, 127), 1);
             //Drawing.drawEllipses(mRgba, ellipseLocationResult.getEllipses(), new ColorRGBA("#FFEB3B"), 2);
         }

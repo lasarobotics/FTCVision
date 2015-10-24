@@ -63,10 +63,6 @@ public class Ellipse extends Detectable implements Comparable<Ellipse> {
     {
         return center().y+(height()/2);
     }
-    public Point topLeft()
-    {
-        return new Point(top(), left());
-    }
 
     /**
      * Gets the area of the ellipse
@@ -125,6 +121,7 @@ public class Ellipse extends Detectable implements Comparable<Ellipse> {
      * @return True if the ellipse is entirely inside the contour, false otherwise
      */
     public boolean isInside(Contour contour) {
+        //TODO this algorithm checks for entirety; make an isEntirelyInside() and isPartiallyInside()
         return left() >= contour.left() && right() <= contour.right() &&
                 top() >= contour.top() && bottom() <= contour.bottom();
     }

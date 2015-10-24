@@ -3,6 +3,7 @@ package org.lasarobotics.vision.ftc.resq;
 import org.lasarobotics.vision.detection.PrimitiveDetection;
 import org.lasarobotics.vision.detection.objects.Contour;
 import org.lasarobotics.vision.detection.objects.Ellipse;
+import org.lasarobotics.vision.detection.objects.Rectangle;
 import org.lasarobotics.vision.image.Drawing;
 import org.lasarobotics.vision.util.MathUtil;
 import org.lasarobotics.vision.util.color.ColorGRAY;
@@ -14,8 +15,6 @@ import org.opencv.core.Rect;
 import org.opencv.core.Size;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -245,6 +244,26 @@ public final class Beacon {
             //Both colors greatly improve the score
         //TODO Finally, the best rectangle's contours are used to calculate the location of the beacon
 
+        List<Contour> contoursRed = new ArrayList<>(contoursR);
+        List<Contour> contoursBlue= new ArrayList<>(contoursB);
+
+        //Locate ellipses in the image to process contours against
+        //Each contour must have an ellipse of correct specification
+        PrimitiveDetection primitiveDetection = new PrimitiveDetection();
+        /*PrimitiveDetection.EllipseLocationResult ellipseLocationResult = primitiveDetection.locateEllipses(gray);
+
+        //DEBUG Ellipse data prior to filtering
+        Drawing.drawEllipses(img, ellipseLocationResult.getEllipses(), new ColorRGBA("#EC407A"), 1);
+
+        //Filter out bad ellipses
+        List<Ellipse> ellipses = filterEllipses(ellipseLocationResult.getEllipses(), gray, img);
+
+        //DEBUG Ellipse data
+        Drawing.drawEllipses(img, ellipses, new ColorRGBA("#FFC107"), 2);*/
+
+        //Detect rectangles
+        List<Rectangle> rectangles = primitiveDetection.locateRectangles(gray, img);
+
         return new BeaconColorAnalysis(BeaconColor.UNKNOWN, BeaconColor.UNKNOWN);
     }
 
@@ -273,7 +292,7 @@ public final class Beacon {
         //Locate ellipses in the image to process contours against
         //Each contour must have an ellipse of correct specification
         PrimitiveDetection primitiveDetection = new PrimitiveDetection();
-        PrimitiveDetection.EllipseLocationResult ellipseLocationResult = primitiveDetection.locateEllipses_fit(gray);
+        PrimitiveDetection.EllipseLocationResult ellipseLocationResult = primitiveDetection.locateEllipses(gray);
 
         //DEBUG Ellipse data prior to filtering
         Drawing.drawEllipses(img, ellipseLocationResult.getEllipses(), new ColorRGBA("#EC407A"), 1);
@@ -299,7 +318,7 @@ public final class Beacon {
         //Locate ellipses in the image to process contours against
         //Each contour must have an ellipse of correct specification
         PrimitiveDetection primitiveDetection = new PrimitiveDetection();
-        PrimitiveDetection.EllipseLocationResult ellipseLocationResult = primitiveDetection.locateEllipses_fit(gray);
+        PrimitiveDetection.EllipseLocationResult ellipseLocationResult = primitiveDetection.locateEllipses(gray);
 
         //Filter out bad ellipses
         List<Ellipse> ellipses = filterEllipses(ellipseLocationResult.getEllipses(), gray, img);

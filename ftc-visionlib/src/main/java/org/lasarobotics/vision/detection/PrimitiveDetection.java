@@ -2,10 +2,18 @@ package org.lasarobotics.vision.detection;
 
 import org.lasarobotics.vision.detection.objects.Contour;
 import org.lasarobotics.vision.detection.objects.Ellipse;
+import org.lasarobotics.vision.detection.objects.Rectangle;
+import org.lasarobotics.vision.image.Drawing;
 import org.lasarobotics.vision.image.Filter;
+import org.lasarobotics.vision.util.MathUtil;
+import org.lasarobotics.vision.util.color.ColorRGBA;
+import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.MatOfPoint2f;
+import org.opencv.core.Point;
+import org.opencv.core.Rect;
+import org.opencv.core.RotatedRect;
 import org.opencv.imgproc.Imgproc;
 
 import java.util.ArrayList;
@@ -15,16 +23,82 @@ import java.util.List;
  * Implements primitive (ellipse, rectangle, etc.) detection, based on a custom, highly-robust version of the Hough transform
  */
 public class PrimitiveDetection {
-    public PrimitiveDetection()
-    {
 
+    private static final int THRESHOLD_STEPS = 5;
+    private static final int THRESHOLD_CANNY = 75;
+    private static final double MAX_COSINE_VALUE = 0.3;
+
+    public List<Rectangle> locateRectangles(Mat grayImage, Mat output) {
+        Mat gray = grayImage.clone();
+
+        //Filter out some noise
+        Filter.downsample(gray, 2);
+        Filter.upsample(gray, 2);
+
+        Mat cacheHierarchy = new Mat();
+        Mat grayTemp = new Mat();
+        List<Rectangle> rectangles = new ArrayList<>();
+
+        for (int step = 0; step < THRESHOLD_STEPS; step++) {
+
+            //Filter the threshold a bit
+            if (step == 0)
+            {
+                //Use Canny at zero-threshold to help with gradient shading
+                //TODO not sure about the last parameter
+                Imgproc.Canny(gray, grayTemp, 0, THRESHOLD_CANNY, 3, true);
+
+                //Remove potential holes between segments
+                Filter.dilate(grayTemp, 0);
+            }
+            else
+            {
+                //Apply threshold
+                Imgproc.threshold(gray, grayTemp, (step+1)*255/THRESHOLD_STEPS, 255, Imgproc.THRESH_TRUNC);
+            }
+
+            List<MatOfPoint> contoursTemp = new ArrayList<>();
+            //Find contours - the parameters here are very important to compression and retention
+            Imgproc.findContours(grayTemp, contoursTemp, cacheHierarchy, Imgproc.CV_RETR_TREE, Imgproc.CHAIN_APPROX_TC89_KCOS);
+
+            //For each contour, test whether the contour is a rectangle
+            //List<Contour> contours = new ArrayList<>();
+            MatOfPoint2f approx = new MatOfPoint2f();
+            for (MatOfPoint co : contoursTemp) {
+                //contours.add(new Contour(co));
+                MatOfPoint2f matOfPoint2f = new MatOfPoint2f(co.toArray());
+                Contour c = new Contour(co);
+
+                //Attempt to fit the contour to the best polygon
+                Imgproc.approxPolyDP(matOfPoint2f, approx,
+                        c.arcLength(true) * 0.02, true);
+
+                Contour approxContour = new Contour(approx);
+
+                //Make sure the contour is big enough, CLOSED (convex), and has exactly 4 points
+                if (approx.toArray().length == 4 &&
+                        Math.abs(approxContour.area()) > 1000 &&
+                        approxContour.isConvex()) {
+                    double maxCosine = 0;
+
+                    //Check each angle to be approximately 90 degrees
+                    for (int j = 2; j < 5; j++) {
+                        double cosine = Math.abs(MathUtil.angle(approx.toArray()[j % 4],
+                                approx.toArray()[j - 2], approx.toArray()[j - 1]));
+                        maxCosine = Math.max(maxCosine, cosine);
+                    }
+
+                    if (maxCosine < MAX_COSINE_VALUE) {
+                        //Convert the points to a rectangle instance
+                        rectangles.add(new Rectangle(approx.toArray()));
+                    }
+                }
+            }
+        }
+
+        Drawing.drawRectangles(output, rectangles, new ColorRGBA(255, 255, 255), 3);
+        return rectangles;
     }
-
-    //TODO locateRectangles() not implemented
-    /*public void locateRectangles(Mat gray, Mat output)
-    {
-
-    }*/
 
     public class EllipseLocationResult
     {
@@ -48,7 +122,7 @@ public class PrimitiveDetection {
         }
     }
 
-    public EllipseLocationResult locateEllipses_fit(Mat grayImage)
+    public EllipseLocationResult locateEllipses(Mat grayImage)
     {
         Mat gray = grayImage.clone();
 
