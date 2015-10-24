@@ -139,6 +139,20 @@ public final class Beacon {
         return ellipses;
     }
 
+    private List<Contour> filterContours(List<Contour> contours)
+    {
+        double screenArea = screenSize.area();
+        for (int i=contours.size() - 1; i>=0; i--)
+        {
+            Contour contour = contours.get(i);
+
+            //Remove the contour if its area is smaller than a portion of the area of the screen
+            if (contour.area() < 0.00025 * screenArea)
+                contours.remove(i);
+        }
+        return contours;
+    }
+
     private Ellipse findBestEllipse(Contour contour, List<Ellipse> ellipses)
     {
         Ellipse best = null;
@@ -244,8 +258,8 @@ public final class Beacon {
             //Both colors greatly improve the score
         //TODO Finally, the best rectangle's contours are used to calculate the location of the beacon
 
-        List<Contour> contoursRed = new ArrayList<>(contoursR);
-        List<Contour> contoursBlue= new ArrayList<>(contoursB);
+        List<Contour> contoursRed = filterContours(contoursR);
+        List<Contour> contoursBlue = filterContours(contoursB);
 
         //Locate ellipses in the image to process contours against
         //Each contour must have an ellipse of correct specification

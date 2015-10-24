@@ -38,7 +38,11 @@ public class Contour extends Detectable {
         return Imgproc.contourArea(mat);
     }
 
-    public boolean isConvex()
+    /**
+     * Tests if the contour is closed (convex)
+     * @return True if closed (convex), false otherwise
+     */
+    public boolean isClosed()
     {
         return Imgproc.isContourConvex(mat);
     }

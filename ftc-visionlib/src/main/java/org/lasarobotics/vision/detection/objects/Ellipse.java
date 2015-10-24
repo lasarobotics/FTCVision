@@ -1,13 +1,6 @@
 package org.lasarobotics.vision.detection.objects;
 
 import org.jetbrains.annotations.NotNull;
-import org.lasarobotics.vision.util.MathUtil;
-import org.lasarobotics.vision.util.color.Color;
-import org.lasarobotics.vision.util.color.ColorGRAY;
-import org.lasarobotics.vision.util.color.ColorRGBA;
-import org.lasarobotics.vision.util.color.ColorSpace;
-import org.opencv.core.Core;
-import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.RotatedRect;
 import org.opencv.core.Size;
@@ -122,6 +115,9 @@ public class Ellipse extends Detectable implements Comparable<Ellipse> {
      */
     public boolean isInside(Contour contour) {
         //TODO this algorithm checks for entirety; make an isEntirelyInside() and isPartiallyInside()
+        //FIXME this is an inaccurate method using only the bounding box of the contour
+        //TODO try ray-casting (even-odd) algorithm - use center as point (will show partial matches)
+        //TODO also try all 4 points to match (will ensure it is entirely inside)
         return left() >= contour.left() && right() <= contour.right() &&
                 top() >= contour.top() && bottom() <= contour.bottom();
     }

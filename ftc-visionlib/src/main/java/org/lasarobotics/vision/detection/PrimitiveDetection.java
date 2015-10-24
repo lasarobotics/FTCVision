@@ -7,13 +7,9 @@ import org.lasarobotics.vision.image.Drawing;
 import org.lasarobotics.vision.image.Filter;
 import org.lasarobotics.vision.util.MathUtil;
 import org.lasarobotics.vision.util.color.ColorRGBA;
-import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.MatOfPoint2f;
-import org.opencv.core.Point;
-import org.opencv.core.Rect;
-import org.opencv.core.RotatedRect;
 import org.opencv.imgproc.Imgproc;
 
 import java.util.ArrayList;
@@ -24,12 +20,14 @@ import java.util.List;
  */
 public class PrimitiveDetection {
 
-    private static final int THRESHOLD_STEPS = 5;
     private static final int THRESHOLD_CANNY = 75;
-    private static final double MAX_COSINE_VALUE = 0.3;
+    private static final int APERTURE_CANNY = 3;
+    private static final double MAX_COSINE_VALUE = 0.5;
+    private static final double EPLISON_APPROX_TOLERANCE_FACTOR = 0.02;
 
     //TODO convert this to locatePolygons() with n sides
-    //TODO http://opencv-code.com/tutorials/detecting-simple-shapes-in-an-image/
+    //TODO see http://opencv-code.com/tutorials/detecting-simple-shapes-in-an-image/
+
     public List<Rectangle> locateRectangles(Mat grayImage, Mat output) {
         Mat gray = grayImage.clone();
 
@@ -41,83 +39,47 @@ public class PrimitiveDetection {
         Mat grayTemp = new Mat();
         List<Rectangle> rectangles = new ArrayList<>();
 
-        for (int step = 0; step < THRESHOLD_STEPS; step++) {
+        Imgproc.Canny(gray, grayTemp, 0, THRESHOLD_CANNY, APERTURE_CANNY, true);
+        Filter.dilate(gray, 2);
 
-            //Filter the threshold a bit
-            if (step == 0)
-            {
-                //Use Canny at zero-threshold to help with gradient shading
-                //TODO not sure about the last parameter
-                Imgproc.Canny(gray, grayTemp, 0, THRESHOLD_CANNY, 3, true);
+        List<MatOfPoint> contoursTemp = new ArrayList<>();
+        //Find contours - the parameters here are very important to compression and retention
+        Imgproc.findContours(grayTemp, contoursTemp, cacheHierarchy, Imgproc.CV_RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
+        //DEBUG
+        Imgproc.drawContours(output, contoursTemp, -1, new ColorRGBA("#9E9E9E").getScalarRGBA(), 1);
 
-                //Remove potential holes between segments
-                Filter.dilate(grayTemp, 0);
-            }
-            else
-            {
-                //Apply threshold
-                Imgproc.threshold(gray, grayTemp, (step+1)*255/THRESHOLD_STEPS, 255, Imgproc.THRESH_TRUNC);
-            }
+        //For each contour, test whether the contour is a rectangle
+        //List<Contour> contours = new ArrayList<>();
+        MatOfPoint2f approx = new MatOfPoint2f();
+        for (MatOfPoint co : contoursTemp) {
+            MatOfPoint2f matOfPoint2f = new MatOfPoint2f(co.toArray());
+            Contour c = new Contour(co);
 
-            List<MatOfPoint> contoursTemp = new ArrayList<>();
-            //Find contours - the parameters here are very important to compression and retention
-            Imgproc.findContours(grayTemp, contoursTemp, cacheHierarchy, Imgproc.CV_RETR_TREE, Imgproc.CHAIN_APPROX_TC89_KCOS);
-            //DEBUG
-            Imgproc.drawContours(output, contoursTemp, -1, new ColorRGBA("#9E9E9E").getScalarRGBA(), 1);
+            //Attempt to fit the contour to the best polygon
+            Imgproc.approxPolyDP(matOfPoint2f, approx,
+                    c.arcLength(true) * EPLISON_APPROX_TOLERANCE_FACTOR, true);
 
-            //For each contour, test whether the contour is a rectangle
-            //List<Contour> contours = new ArrayList<>();
-            MatOfPoint2f approx = new MatOfPoint2f();
-            for (MatOfPoint co : contoursTemp) {
-                //contours.add(new Contour(co));
-                MatOfPoint2f matOfPoint2f = new MatOfPoint2f(co.toArray());
-                Contour c = new Contour(co);
+            Contour approxContour = new Contour(approx);
 
-                //Attempt to fit the contour to the best polygon
-                Imgproc.approxPolyDP(matOfPoint2f, approx,
-                        c.arcLength(true) * 0.02, true);
+            //Make sure the contour is big enough, CLOSED (convex), and has exactly 4 points
+            if (approx.toArray().length == 4 &&
+                    Math.abs(approxContour.area()) > 1000 &&
+                    approxContour.isClosed()) {
 
-                Contour approxContour = new Contour(approx);
+                //DEBUG
+                Drawing.drawContour(output, approxContour, new ColorRGBA("#FFD740"), 2);
 
-                //Make sure the contour is big enough, CLOSED (convex), and has exactly 4 points
-
-                if (approx.toArray().length > 4 && approx.toArray().length <= 12
-                        && Math.abs(approxContour.area()) > 1000 &&
-                        approxContour.isConvex())
-                {
-                    double maxCosine = 0;
-
-                    for (int j = 2; j < approx.toArray().length + 1; j++) {
-                        double cosine = Math.abs(MathUtil.angle(approx.toArray()[j % approx.toArray().length],
-                                approx.toArray()[j - 2], approx.toArray()[j - 1]));
-                        maxCosine = Math.max(maxCosine, cosine);
-                    }
-
-                    if (maxCosine < 20) {
-                        //DEBUG
-                        Drawing.drawContour(output, approxContour, new ColorRGBA("#FFFF00"), 1);
-                    }
+                //Check each angle to be approximately 90 degrees
+                double maxCosine = 0;
+                for (int j = 2; j < 5; j++) {
+                    double cosine = Math.abs(MathUtil.angle(approx.toArray()[j % 4],
+                            approx.toArray()[j - 2], approx.toArray()[j - 1]));
+                    maxCosine = Math.max(maxCosine, cosine);
                 }
 
-                if (approx.toArray().length == 4 &&
-                        Math.abs(approxContour.area()) > 1000 &&
-                        approxContour.isConvex()) {
-                    double maxCosine = 0;
-
-                    //DEBUG
-                    Drawing.drawContour(output, approxContour, new ColorRGBA("#FF9100"), 2);
-
-                    //Check each angle to be approximately 90 degrees
-                    for (int j = 2; j < 5; j++) {
-                        double cosine = Math.abs(MathUtil.angle(approx.toArray()[j % 4],
-                                approx.toArray()[j - 2], approx.toArray()[j - 1]));
-                        maxCosine = Math.max(maxCosine, cosine);
-                    }
-
-                    if (maxCosine < MAX_COSINE_VALUE) {
-                        //Convert the points to a rectangle instance
-                        rectangles.add(new Rectangle(approx.toArray()));
-                    }
+                if (maxCosine < MAX_COSINE_VALUE) {
+                    //Convert the points to a rectangle instance
+                    rectangles.add(new Rectangle(approx.toArray()));
                 }
             }
         }
