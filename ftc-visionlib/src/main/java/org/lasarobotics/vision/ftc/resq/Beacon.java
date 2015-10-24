@@ -23,7 +23,8 @@ public final class Beacon {
 
     private Size screenSize;
     //FIXME test this value
-    public static final int ELLIPSE_THRESHOLD = 40;
+    public static final int ELLIPSE_THRESHOLD = 60;
+    private static final double MAX_ELLIPSE_ECCENTRICITY = 0.7;
 
     public Beacon(Size screenSize)
     {
@@ -124,10 +125,22 @@ public final class Beacon {
         for (int i=ellipses.size() - 1; i>=0; i--)
         {
             Ellipse ellipse = ellipses.get(i);
+            if (ellipse.eccentricity() > MAX_ELLIPSE_ECCENTRICITY)
+            {
+                ellipses.remove(i);
+                continue;
+            }
+
+            //DEBUG draw tested ellipse
+            Drawing.drawEllipse(img, ellipse, new ColorRGBA("#EC407A"), 1);
+
+            //Weigh only the center 50% of the ellipse
             ellipse.scale(0.5);
+
             //Remove the ellipse if it's larger than a portion of the screen OR
             //If the ellipse color is NOT approximately black
             double averageColor = ellipse.averageColor(gray, ColorSpace.GRAY, img).getScalar().val[0];
+
             if (Math.max(ellipse.width(), ellipse.height()) > 0.05 *
                     Math.max(screenSize.width, screenSize.height) ||
                     averageColor > ELLIPSE_THRESHOLD)
@@ -291,7 +304,7 @@ public final class Beacon {
         //TODO Third, comparative analysis is used on each ellipse and contour to create a score for the contours
             //Ellipses within rectangles strongly increase in value
             //Ellipses without nearby/contained contours are removed
-            //Ellipses with nearbly/contained contours associate themselves with the contour
+            //Ellipses with nearby/contained contours associate themselves with the contour
             //Pairs of ellipses (those with similar size and x-position) greatly increase the associated contours' value
             //Contours without nearby/contained ellipses lose value
             //FIXME Contours within rectangles strongly increase in value
@@ -311,13 +324,10 @@ public final class Beacon {
         PrimitiveDetection primitiveDetection = new PrimitiveDetection();
         PrimitiveDetection.EllipseLocationResult ellipseLocationResult = primitiveDetection.locateEllipses(gray);
 
-        //DEBUG Ellipse data prior to filtering
-        Drawing.drawEllipses(img, ellipseLocationResult.getEllipses(), new ColorRGBA("#EC407A"), 1);
-
         //Filter out bad ellipses
         List<Ellipse> ellipses = filterEllipses(ellipseLocationResult.getEllipses(), gray, img);
 
-        //DEBUG Ellipse data
+        //DEBUG Ellipse data after filtering
         Drawing.drawEllipses(img, ellipses, new ColorRGBA("#FFC107"), 2);
 
         //TODO Score ellipses and contours
