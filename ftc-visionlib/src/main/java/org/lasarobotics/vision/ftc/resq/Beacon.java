@@ -23,7 +23,7 @@ public final class Beacon {
 
     private Size screenSize;
     //FIXME test this value
-    public static final int ELLIPSE_THRESHOLD = 255;
+    public static final int ELLIPSE_THRESHOLD = 60;
 
     public Beacon(Size screenSize)
     {
