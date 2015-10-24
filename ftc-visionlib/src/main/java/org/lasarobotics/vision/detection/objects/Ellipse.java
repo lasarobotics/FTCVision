@@ -1,5 +1,6 @@
 package org.lasarobotics.vision.detection.objects;
 
+import org.jetbrains.annotations.NotNull;
 import org.lasarobotics.vision.util.MathUtil;
 import org.lasarobotics.vision.util.color.Color;
 import org.lasarobotics.vision.util.color.ColorGRAY;
@@ -14,7 +15,7 @@ import org.opencv.core.Size;
 /**
  * Implements a single ellipse (acts like RotatedRect) with advanced measurement utilities
  */
-public class Ellipse extends Detectable {
+public class Ellipse extends Detectable implements Comparable<Ellipse> {
     private RotatedRect rect;
 
     public Ellipse(RotatedRect rect)
@@ -126,5 +127,15 @@ public class Ellipse extends Detectable {
     public boolean isInside(Contour contour) {
         return left() >= contour.left() && right() <= contour.right() &&
                 top() >= contour.top() && bottom() <= contour.bottom();
+    }
+
+    /***
+     * Compare ellipses by area
+     * @param another Another ellipse
+     * @return 1 if this is larger, -1 if another is larger, 0 otherwise
+     */
+    @Override
+    public int compareTo(@NotNull Ellipse another) {
+        return this.area() > another.area() ? 1 : this.area() < another.area() ? -1 : 0;
     }
 }
