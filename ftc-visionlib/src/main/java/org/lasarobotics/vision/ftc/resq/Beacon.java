@@ -3,7 +3,6 @@ package org.lasarobotics.vision.ftc.resq;
 import org.lasarobotics.vision.detection.PrimitiveDetection;
 import org.lasarobotics.vision.detection.objects.Contour;
 import org.lasarobotics.vision.detection.objects.Ellipse;
-import org.lasarobotics.vision.detection.objects.Rectangle;
 import org.lasarobotics.vision.image.Drawing;
 import org.lasarobotics.vision.util.MathUtil;
 import org.lasarobotics.vision.util.color.ColorGRAY;
@@ -258,6 +257,8 @@ public final class Beacon {
             //Both colors greatly improve the score
         //TODO Finally, the best rectangle's contours are used to calculate the location of the beacon
 
+        //FIXME this method fails to find the beacon because the beacon is not identified as a rectangle
+
         List<Contour> contoursRed = filterContours(contoursR);
         List<Contour> contoursBlue = filterContours(contoursB);
 
@@ -276,8 +277,8 @@ public final class Beacon {
         Drawing.drawEllipses(img, ellipses, new ColorRGBA("#FFC107"), 2);*/
 
         //Detect rectangles
-        //DEBUG output=gray
-        List<Rectangle> rectangles = primitiveDetection.locateRectangles(gray, img);
+        //FIXME this does not work for the beacon
+        //PrimitiveDetection.RectangleLocationResult rectangles = primitiveDetection.locateRectangles(gray, img);
 
         return new BeaconColorAnalysis(BeaconColor.UNKNOWN, BeaconColor.UNKNOWN);
     }
@@ -285,15 +286,15 @@ public final class Beacon {
     public BeaconColorAnalysis analyzeColor_smartScoring(List<Contour> contoursR, List<Contour> contoursB, Mat img, Mat gray)
     {
         //The idea behind the SmartScoring algorithm is that the largest score in each contour/ellipse set will become the best
-        //TODO First, ellipses, rectangles and contours are are detected and pre-filtered to remove eccentricities
-        //TODO Second, ellipses, rectangles, and contours are scored independently based on size and color ... higher score is better
+        //TODO First, ellipses and contours are are detected and pre-filtered to remove eccentricities
+        //TODO Second, ellipses, and contours are scored independently based on size and color ... higher score is better
         //TODO Third, comparative analysis is used on each ellipse and contour to create a score for the contours
             //Ellipses within rectangles strongly increase in value
             //Ellipses without nearby/contained contours are removed
             //Ellipses with nearbly/contained contours associate themselves with the contour
             //Pairs of ellipses (those with similar size and x-position) greatly increase the associated contours' value
             //Contours without nearby/contained ellipses lose value
-            //Contours within rectangles strongly increase in value
+            //FIXME Contours within rectangles strongly increase in value
             //Contours near another contour of the opposite color increase in value
             //Contours and ellipses near the expected area (if any expected area) increase in value
         //TODO Finally, a fraction of the ellipse value is added to the value of the contour
@@ -301,8 +302,9 @@ public final class Beacon {
         //TODO The best contour from each color (if available) is selected as red and blue
         //TODO The two best contours are then used to calculate the location of the beacon
 
-        List<Contour> contoursRed = new ArrayList<>(contoursR);
-        List<Contour> contoursBlue= new ArrayList<>(contoursB);
+        //Filter out bad contours
+        List<Contour> contoursRed = filterContours(contoursR);
+        List<Contour> contoursBlue = filterContours(contoursB);
 
         //Locate ellipses in the image to process contours against
         //Each contour must have an ellipse of correct specification
@@ -317,8 +319,6 @@ public final class Beacon {
 
         //DEBUG Ellipse data
         Drawing.drawEllipses(img, ellipses, new ColorRGBA("#FFC107"), 2);
-
-        //TODO Filter our bad contours
 
         //TODO Score ellipses and contours
 

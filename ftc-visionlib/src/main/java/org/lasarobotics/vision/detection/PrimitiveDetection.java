@@ -3,10 +3,8 @@ package org.lasarobotics.vision.detection;
 import org.lasarobotics.vision.detection.objects.Contour;
 import org.lasarobotics.vision.detection.objects.Ellipse;
 import org.lasarobotics.vision.detection.objects.Rectangle;
-import org.lasarobotics.vision.image.Drawing;
 import org.lasarobotics.vision.image.Filter;
 import org.lasarobotics.vision.util.MathUtil;
-import org.lasarobotics.vision.util.color.ColorRGBA;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.MatOfPoint2f;
@@ -25,10 +23,32 @@ public class PrimitiveDetection {
     private static final double MAX_COSINE_VALUE = 0.5;
     private static final double EPLISON_APPROX_TOLERANCE_FACTOR = 0.02;
 
+    public class RectangleLocationResult
+    {
+        List<Contour> contours;
+        List<Rectangle> ellipses;
+
+        RectangleLocationResult(List<Contour> contours, List<Rectangle> ellipses)
+        {
+            this.contours = contours;
+            this.ellipses = ellipses;
+        }
+
+        public List<Contour> getContours()
+        {
+            return contours;
+        }
+
+        public List<Rectangle> getRectangles()
+        {
+            return ellipses;
+        }
+    }
+
     //TODO convert this to locatePolygons() with n sides
     //TODO see http://opencv-code.com/tutorials/detecting-simple-shapes-in-an-image/
 
-    public List<Rectangle> locateRectangles(Mat grayImage, Mat output) {
+    public RectangleLocationResult locateRectangles(Mat grayImage, Mat output) {
         Mat gray = grayImage.clone();
 
         //Filter out some noise
@@ -38,6 +58,7 @@ public class PrimitiveDetection {
         Mat cacheHierarchy = new Mat();
         Mat grayTemp = new Mat();
         List<Rectangle> rectangles = new ArrayList<>();
+        List<Contour> contours = new ArrayList<>();
 
         Imgproc.Canny(gray, grayTemp, 0, THRESHOLD_CANNY, APERTURE_CANNY, true);
         Filter.dilate(gray, 2);
@@ -45,8 +66,6 @@ public class PrimitiveDetection {
         List<MatOfPoint> contoursTemp = new ArrayList<>();
         //Find contours - the parameters here are very important to compression and retention
         Imgproc.findContours(grayTemp, contoursTemp, cacheHierarchy, Imgproc.CV_RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
-        //DEBUG
-        Imgproc.drawContours(output, contoursTemp, -1, new ColorRGBA("#9E9E9E").getScalarRGBA(), 1);
 
         //For each contour, test whether the contour is a rectangle
         //List<Contour> contours = new ArrayList<>();
@@ -66,8 +85,8 @@ public class PrimitiveDetection {
                     Math.abs(approxContour.area()) > 1000 &&
                     approxContour.isClosed()) {
 
-                //DEBUG
-                Drawing.drawContour(output, approxContour, new ColorRGBA("#FFD740"), 2);
+                //TODO contours and rectangles array may not match up, but why would they?
+                contours.add(approxContour);
 
                 //Check each angle to be approximately 90 degrees
                 double maxCosine = 0;
@@ -84,9 +103,7 @@ public class PrimitiveDetection {
             }
         }
 
-        //DEBUG
-        Drawing.drawRectangles(output, rectangles, new ColorRGBA("#00FF00"), 3);
-        return rectangles;
+        return new RectangleLocationResult(contours, rectangles);
     }
 
     public class EllipseLocationResult
