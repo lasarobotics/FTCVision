@@ -128,6 +128,7 @@ public class ColorBlobDetector {
             //Mask 2 - from 255-n to 255
             lower.val[0] = tmp;
             upper.val[0] = 255;
+
             Core.inRange(mHsvMat, lower, upper, mMask);
             //OR the two masks
             Core.bitwise_or(mMaskOne, mMask, mMask);

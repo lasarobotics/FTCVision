@@ -1,6 +1,7 @@
 package org.lasarobotics.vision.detection.objects;
 
 import org.opencv.core.MatOfPoint;
+import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Size;
@@ -17,10 +18,19 @@ public class Contour extends Detectable {
     {
         this.mat = data;
     }
+    public Contour(MatOfPoint2f data)
+    {
+        this.mat = new MatOfPoint(data.toArray());
+    }
 
     public MatOfPoint getData()
     {
         return mat;
+    }
+
+    public MatOfPoint2f getFloatData()
+    {
+        return new MatOfPoint2f(mat.toArray());
     }
 
     public double area()
@@ -28,7 +38,11 @@ public class Contour extends Detectable {
         return Imgproc.contourArea(mat);
     }
 
-    public boolean isConvex()
+    /**
+     * Tests if the contour is closed (convex)
+     * @return True if closed (convex), false otherwise
+     */
+    public boolean isClosed()
     {
         return Imgproc.isContourConvex(mat);
     }
@@ -115,6 +129,11 @@ public class Contour extends Detectable {
         }
 
         return new Size(maxX - minX, maxY - minY);
+    }
+
+    public double arcLength(boolean closed)
+    {
+        return Imgproc.arcLength(getFloatData(), closed);
     }
 
     public Point[] getPoints()

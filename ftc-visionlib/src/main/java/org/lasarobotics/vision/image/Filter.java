@@ -27,4 +27,24 @@ public class Filter {
                 new Point(amount, amount));
         Imgproc.dilate(img, img, kernel);
     }
+
+    /**
+     * Downsample and blur an image (using a Gaussian pyramid kernel)
+     * @param img The image
+     * @param scale The scale, a number greater than 1
+     */
+    public static void downsample(Mat img, double scale)
+    {
+        Imgproc.pyrDown(img, img, new Size((double)img.width() / scale, (double)img.height() / scale));
+    }
+
+    /**
+     * Upsample and blur an image (using a Gaussian pyramid kernel)
+     * @param img The image
+     * @param scale The scale, a number greater than 1
+     */
+    public static void upsample(Mat img, double scale)
+    {
+        Imgproc.pyrUp(img, img, new Size((double)img.width() * scale, (double)img.height() * scale));
+    }
 }

@@ -23,7 +23,7 @@ public final class Beacon {
 
     private Size screenSize;
     //FIXME test this value
-    public static final int ELLIPSE_THRESHOLD = 255;
+    public static final int ELLIPSE_THRESHOLD = 40;
 
     public Beacon(Size screenSize)
     {
@@ -128,7 +128,7 @@ public final class Beacon {
             //Remove the ellipse if it's larger than a portion of the screen OR
             //If the ellipse color is NOT approximately black
             double averageColor = ellipse.averageColor(gray, ColorSpace.GRAY, img).getScalar().val[0];
-            if (Math.max(ellipse.width(), ellipse.height()) > 0.1 *
+            if (Math.max(ellipse.width(), ellipse.height()) > 0.05 *
                     Math.max(screenSize.width, screenSize.height) ||
                     averageColor > ELLIPSE_THRESHOLD)
             {
@@ -136,6 +136,20 @@ public final class Beacon {
             }
         }
         return ellipses;
+    }
+
+    private List<Contour> filterContours(List<Contour> contours)
+    {
+        double screenArea = screenSize.area();
+        for (int i=contours.size() - 1; i>=0; i--)
+        {
+            Contour contour = contours.get(i);
+
+            //Remove the contour if its area is smaller than a portion of the area of the screen
+            if (contour.area() < 0.00025 * screenArea)
+                contours.remove(i);
+        }
+        return contours;
     }
 
     private Ellipse findBestEllipse(Contour contour, List<Ellipse> ellipses)
@@ -209,6 +223,108 @@ public final class Beacon {
         //return null;
     }
 
+    /*private static class EllipsePair
+    {
+        Ellipse ellipse1;
+        Ellipse ellipse2;
+
+        EllipsePair(Ellipse ellipse1, Ellipse ellipse2)
+        {
+            this.ellipse1 = ellipse1;
+            this.ellipse2 = ellipse2;
+        }
+    }
+
+    private List<EllipsePair> getEllipsePairs(List<Ellipse> ellipses)
+    {
+        //Go through every ellipse and find matching pairs, or ellipses with similar sizes
+        //We do this by lining up every ellipse from smallest to largest, then comparing ellipses two at a time
+        Arrays.sort(ellipses.toArray());
+
+        //Create ellipse pair list
+        List<EllipsePair>
+    }*/
+
+    public BeaconColorAnalysis analyzeColor_cannyCentric(List<Contour> contoursR, List<Contour> contoursB, Mat img, Mat gray)
+    {
+        //The Canny-centric approach relies on the accuracy of the Canny detector to detect the border of the beacon
+
+        //TODO First, ellipses and rectangles are located using the primitive detection algorithms
+        //TODO Second, each ellipse and rectangle is filtered to remove eccentricities
+        //TODO Third, ellipses not within rectangles are removed
+        //TODO Fourth, rectangles are scored by the position and size of ellipses within them, if any present
+        //TODO Fifth, contours are located within the rectangles and, if exist, add to the value of the rectangle
+            //Both colors greatly improve the score
+        //TODO Finally, the best rectangle's contours are used to calculate the location of the beacon
+
+        //FIXME this method fails to find the beacon because the beacon is not identified as a rectangle
+
+        List<Contour> contoursRed = filterContours(contoursR);
+        List<Contour> contoursBlue = filterContours(contoursB);
+
+        //Locate ellipses in the image to process contours against
+        //Each contour must have an ellipse of correct specification
+        PrimitiveDetection primitiveDetection = new PrimitiveDetection();
+        /*PrimitiveDetection.EllipseLocationResult ellipseLocationResult = primitiveDetection.locateEllipses(gray);
+
+        //DEBUG Ellipse data prior to filtering
+        Drawing.drawEllipses(img, ellipseLocationResult.getEllipses(), new ColorRGBA("#EC407A"), 1);
+
+        //Filter out bad ellipses
+        List<Ellipse> ellipses = filterEllipses(ellipseLocationResult.getEllipses(), gray, img);
+
+        //DEBUG Ellipse data
+        Drawing.drawEllipses(img, ellipses, new ColorRGBA("#FFC107"), 2);*/
+
+        //Detect rectangles
+        //FIXME this does not work for the beacon
+        //PrimitiveDetection.RectangleLocationResult rectangles = primitiveDetection.locateRectangles(gray, img);
+
+        return new BeaconColorAnalysis(BeaconColor.UNKNOWN, BeaconColor.UNKNOWN);
+    }
+
+    public BeaconColorAnalysis analyzeColor_smartScoring(List<Contour> contoursR, List<Contour> contoursB, Mat img, Mat gray)
+    {
+        //The idea behind the SmartScoring algorithm is that the largest score in each contour/ellipse set will become the best
+        //TODO First, ellipses and contours are are detected and pre-filtered to remove eccentricities
+        //TODO Second, ellipses, and contours are scored independently based on size and color ... higher score is better
+        //TODO Third, comparative analysis is used on each ellipse and contour to create a score for the contours
+            //Ellipses within rectangles strongly increase in value
+            //Ellipses without nearby/contained contours are removed
+            //Ellipses with nearbly/contained contours associate themselves with the contour
+            //Pairs of ellipses (those with similar size and x-position) greatly increase the associated contours' value
+            //Contours without nearby/contained ellipses lose value
+            //FIXME Contours within rectangles strongly increase in value
+            //Contours near another contour of the opposite color increase in value
+            //Contours and ellipses near the expected area (if any expected area) increase in value
+        //TODO Finally, a fraction of the ellipse value is added to the value of the contour
+            //The best ellipse is found first, then only this ellipse adds to the value
+        //TODO The best contour from each color (if available) is selected as red and blue
+        //TODO The two best contours are then used to calculate the location of the beacon
+
+        //Filter out bad contours
+        List<Contour> contoursRed = filterContours(contoursR);
+        List<Contour> contoursBlue = filterContours(contoursB);
+
+        //Locate ellipses in the image to process contours against
+        //Each contour must have an ellipse of correct specification
+        PrimitiveDetection primitiveDetection = new PrimitiveDetection();
+        PrimitiveDetection.EllipseLocationResult ellipseLocationResult = primitiveDetection.locateEllipses(gray);
+
+        //DEBUG Ellipse data prior to filtering
+        Drawing.drawEllipses(img, ellipseLocationResult.getEllipses(), new ColorRGBA("#EC407A"), 1);
+
+        //Filter out bad ellipses
+        List<Ellipse> ellipses = filterEllipses(ellipseLocationResult.getEllipses(), gray, img);
+
+        //DEBUG Ellipse data
+        Drawing.drawEllipses(img, ellipses, new ColorRGBA("#FFC107"), 2);
+
+        //TODO Score ellipses and contours
+
+        return new BeaconColorAnalysis(BeaconColor.UNKNOWN, BeaconColor.UNKNOWN);
+    }
+
     public BeaconColorAnalysis analyzeColor(List<Contour> contoursR, List<Contour> contoursB, Mat img, Mat gray)
     {
         List<Contour> contoursRed = new ArrayList<>(contoursR);
@@ -217,7 +333,7 @@ public final class Beacon {
         //Locate ellipses in the image to process contours against
         //Each contour must have an ellipse of correct specification
         PrimitiveDetection primitiveDetection = new PrimitiveDetection();
-        PrimitiveDetection.EllipseLocationResult ellipseLocationResult = primitiveDetection.locateEllipses_fit(gray);
+        PrimitiveDetection.EllipseLocationResult ellipseLocationResult = primitiveDetection.locateEllipses(gray);
 
         //Filter out bad ellipses
         List<Ellipse> ellipses = filterEllipses(ellipseLocationResult.getEllipses(), gray, img);

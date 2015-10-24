@@ -21,6 +21,15 @@ public abstract class Detectable {
     public abstract double width();
     public abstract double height();
 
+    public Point topLeft()
+    {
+        return new Point(left(), top());
+    }
+    public Point bottomRight()
+    {
+        return new Point(right(), bottom());
+    }
+
     /**
      * Gets the average color of the contour
      * @param img The image matrix, of any color size
