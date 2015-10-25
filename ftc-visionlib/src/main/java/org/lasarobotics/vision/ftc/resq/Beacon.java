@@ -141,7 +141,7 @@ public final class Beacon {
             //If the ellipse color is NOT approximately black
             double averageColor = ellipse.averageColor(gray, ColorSpace.GRAY, img).getScalar().val[0];
 
-            if (Math.max(ellipse.width(), ellipse.height()) > 0.05 *
+            if (Math.max(ellipse.width(), ellipse.height()) > 0.1 *
                     Math.max(screenSize.width, screenSize.height) ||
                     averageColor > ELLIPSE_THRESHOLD)
             {
