@@ -6,6 +6,7 @@ import android.view.WindowManager;
 
 import org.lasarobotics.vision.android.Camera;
 import org.lasarobotics.vision.android.Cameras;
+import org.lasarobotics.vision.detection.CascadeObjectDetection;
 import org.lasarobotics.vision.detection.ColorBlobDetector;
 import org.lasarobotics.vision.detection.objects.Contour;
 import org.lasarobotics.vision.ftc.resq.Beacon;
@@ -24,8 +25,10 @@ import org.opencv.android.OpenCVLoader;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.core.MatOfRect;
 import org.opencv.core.Point;
 import org.opencv.core.Size;
+import org.opencv.objdetect.CascadeClassifier;
 
 import java.util.List;
 
@@ -189,6 +192,10 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
             //Get color analysis
             Beacon beacon = new Beacon(mRgba.size());
             Beacon.BeaconColorAnalysis colorAnalysis = beacon.analyzeColor(contoursRed, contoursBlue, mRgba, mGray);
+
+            CascadeObjectDetection cascadeObjectDetection = new CascadeObjectDetection(new CascadeClassifier());
+            MatOfRect objects = cascadeObjectDetection.detect(mGray);
+            CascadeObjectDetection.drawObjects(mRgba, objects, new ColorRGBA("#ffffff"));
 
             //Draw red and blue contours
             Drawing.drawContours(mRgba, contoursRed, new ColorRGBA(255, 0, 0), 2);
