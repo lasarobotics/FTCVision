@@ -10,6 +10,7 @@ import org.lasarobotics.vision.detection.ColorBlobDetector;
 import org.lasarobotics.vision.detection.objects.Contour;
 import org.lasarobotics.vision.ftc.resq.Beacon;
 import org.lasarobotics.vision.image.Drawing;
+import org.lasarobotics.vision.image.Transform;
 import org.lasarobotics.vision.util.FPS;
 import org.lasarobotics.vision.util.color.ColorGRAY;
 import org.lasarobotics.vision.util.color.ColorHSV;
@@ -20,9 +21,11 @@ import org.opencv.android.CameraBridgeViewBase.CvCameraViewFrame;
 import org.opencv.android.CameraBridgeViewBase.CvCameraViewListener2;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
+import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
+import org.opencv.core.Size;
 
 import java.util.List;
 
@@ -167,6 +170,10 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
         // input frame has RGBA format
         mRgba = inputFrame.rgba();
         mGray = inputFrame.gray();
+        //Size originalSize = mRgba.size();
+
+        //Transform.shrink(mRgba, new Size(480, 480), true);
+        //Transform.shrink(mGray, new Size(480, 480), true);
 
         fpsCounter.update();
 
@@ -180,12 +187,16 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
             List<Contour> contoursBlue = detectorBlue.getContours();
 
             //Get color analysis
-            Beacon beacon = new Beacon(inputFrame.rgba().size());
+            Beacon beacon = new Beacon(mRgba.size());
             Beacon.BeaconColorAnalysis colorAnalysis = beacon.analyzeColor(contoursRed, contoursBlue, mRgba, mGray);
 
             //Draw red and blue contours
             Drawing.drawContours(mRgba, contoursRed, new ColorRGBA(255, 0, 0), 2);
             Drawing.drawContours(mRgba, contoursBlue, new ColorRGBA(0, 0, 255), 2);
+
+            //Transform.enlarge(mRgba, originalSize, true);
+            //Transform.enlarge(mGray, originalSize, true);
+
             Drawing.drawText(mRgba, colorAnalysis.getStateLeft().toString() + ", " + colorAnalysis.getStateRight().toString(),
                     new Point(0, 8), 1.0f, new ColorGRAY(255), Drawing.Anchor.BOTTOMLEFT);
         }
