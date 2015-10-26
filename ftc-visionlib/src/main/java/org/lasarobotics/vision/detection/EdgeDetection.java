@@ -35,6 +35,7 @@ public class EdgeDetection {
     }
 
     public List<Contour> getBreaks(Mat grayImage) {
+        //Manipulate image in order to get best canny results
         Mat gray = grayImage.clone();
 
         Filter.blur(gray, 1);
@@ -50,23 +51,40 @@ public class EdgeDetection {
         return filterContours(lines, rectangles);
     }
 
+    //Filters out all rectangles/contours that do not contain parallel lines going through it
     private List<Contour> filterContours(ArrayList<Line> lines, List<Contour> contours) {
         for (int i = 0; i < contours.size(); i++) {
+            //Get the contours corner points and create the top line and bottom line of the contour
             Point[] cornerPoints = sortPoints(contours.get(i).getPoints());
             Line topLine = new Line(cornerPoints[1], cornerPoints[3]);
             Line bottomLine = new Line(cornerPoints[0], cornerPoints[2]);
 
+            //If the top and bottom lines of the quadrilateral arent approx. parallel, its not the beacon
+            if(!sameSlope(topLine, bottomLine.getSlope()))
+            {
+                contours.remove(i);
+                continue;
+            }
+
+            //Get the height of the contour
             double rectHeight = Math.sqrt(Math.pow(topLine.getStartPoint().x - bottomLine.getStartPoint().x, 2)
                     + Math.pow(topLine.getStartPoint().y - bottomLine.getStartPoint().y, 2));
 
+            //Get the intercepts of the top line and bottom line, for a line to be passing through
+            //this contour it must have an intercept inbetween these two, as well as a similar slope
+            //as the top and bottom
             double maxIntercept = topLine.getYIntercept();
             double minIntercept = bottomLine.getYIntercept();
             double avgSlope = (topLine.getSlope() + bottomLine.getSlope()) / 2.0;
 
+            //Find all the lines that have approx the same slope as avgSlope and have intercepts
+            //inbetween the min and max intercepts. The 2D array stores the lines such that the
             //First Array = lines left of contour, Second Array = lines right of contour
             ArrayList<ArrayList<Line>> possibleLines = findLines(maxIntercept, minIntercept, avgSlope, lines,
                     Math.min(topLine.getStartPoint().x, bottomLine.getStartPoint().x),
                     Math.min(topLine.getEndPoint().x, bottomLine.getEndPoint().x));
+            //If there are under 4 possible lines crossing through the contour its not the beacon
+            //If there is less than 2 possible lines on either side of the contour, its not the beacon
             if (possibleLines.get(0).size() + possibleLines.get(1).size() < 4 || possibleLines.get(0).size() < 2
                     || possibleLines.get(1).size() < 2)
             {
@@ -74,9 +92,13 @@ public class EdgeDetection {
                 continue;
             }
 
+            //If all previous conditions have been met, check if the height ratio of the contour to
+            //the height of the parallel lines meets the specified ratio of the real beacon to the real
+            //wall
             if (!meetsBreakRatio(possibleLines, rectHeight))
                 contours.remove(i);
         }
+        //Return filtered contours
         return contours;
     }
 
@@ -149,11 +171,13 @@ public class EdgeDetection {
         return result;
     }
 
+    //Checks if two lines are considered the same slope given a set tolerance
     public boolean sameSlope(Line line, double slope)
     {
         return Math.abs(line.getSlope() - slope) <= SLOPE_THRESHOLD;
     }
 
+    //Return an array of the four quadrilateral corner points sorted as follows
     //Point[0] = bottomLeft, Point[1] = topLeft, Point[2] = bottomRight, Point[3] = topRight
     private Point[] sortPoints(Point[] points)
     {
@@ -161,6 +185,7 @@ public class EdgeDetection {
         return null;
     }
 
+    //Return the set of all lines in a canny image using probalistic hough line transform
     private ArrayList<Line> getLines(Mat canny)
     {
         Mat lineMat = new Mat();
@@ -180,6 +205,7 @@ public class EdgeDetection {
     }
     private List<Contour> getRects(Mat canny)
     {
+        //Currently does not work, needs to fix rectangle detection, must detect beacon as contour
         //TODO fix rectangle detection
         Mat cacheHierarchy = new Mat();
         List<MatOfPoint> contoursTemp = new ArrayList<>();
