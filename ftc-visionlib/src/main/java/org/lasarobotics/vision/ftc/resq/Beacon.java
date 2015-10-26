@@ -332,6 +332,7 @@ public final class Beacon {
 
         //TODO Score ellipses and contours
 
+
         return new BeaconColorAnalysis(BeaconColor.UNKNOWN, BeaconColor.UNKNOWN);
     }
 
