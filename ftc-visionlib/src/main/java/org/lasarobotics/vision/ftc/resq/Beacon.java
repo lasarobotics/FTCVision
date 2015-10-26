@@ -331,7 +331,7 @@ public final class Beacon {
         Drawing.drawEllipses(img, ellipses, new ColorRGBA("#FFC107"), 2);
 
         //TODO Score ellipses and contours
-
+        List<BeaconScoring.ScoredEllipse> scoredEllipses = BeaconScoring.scoreEllipses(ellipses, null, null);
 
         return new BeaconColorAnalysis(BeaconColor.UNKNOWN, BeaconColor.UNKNOWN);
     }
