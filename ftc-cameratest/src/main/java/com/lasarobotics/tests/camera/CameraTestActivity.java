@@ -193,9 +193,10 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
             Beacon beacon = new Beacon(mRgba.size());
             Beacon.BeaconColorAnalysis colorAnalysis = beacon.analyzeColor(contoursRed, contoursBlue, mRgba, mGray);
 
-            CascadeObjectDetection cascadeObjectDetection = new CascadeObjectDetection(new CascadeClassifier());
+            //File does not yet exist
+            CascadeObjectDetection cascadeObjectDetection = new CascadeObjectDetection("beacon-haarcascade.xml");
             MatOfRect objects = cascadeObjectDetection.detect(mGray);
-            CascadeObjectDetection.drawObjects(mRgba, objects, new ColorRGBA("#ffffff"));
+            Drawing.drawRectangle(mRgba, objects, new ColorRGBA("#ffffff"), 1);
 
             //Draw red and blue contours
             Drawing.drawContours(mRgba, contoursRed, new ColorRGBA(255, 0, 0), 2);

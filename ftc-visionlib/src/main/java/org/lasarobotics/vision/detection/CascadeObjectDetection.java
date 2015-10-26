@@ -1,22 +1,21 @@
 package org.lasarobotics.vision.detection;
 
-import org.lasarobotics.vision.detection.objects.Rectangle;
-import org.lasarobotics.vision.image.Drawing;
-import org.lasarobotics.vision.util.color.Color;
+import android.os.Environment;
+
 import org.opencv.core.MatOfRect;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.objdetect.CascadeClassifier;
 import org.opencv.core.Mat;
-import org.opencv.core.Rect;
 
 /**
  * Implements cascade object detection, a rapid way of locating features such as human faces
  */
 public class CascadeObjectDetection {
+    public String FILE_DIR = Environment.getExternalStorageDirectory() + "/CascadeClassifiers/";
     private CascadeClassifier classifier = new CascadeClassifier();
 
     public CascadeObjectDetection(String filename) {
-        classifier.load(filename);
+        classifier.load(FILE_DIR + filename);
     }
 
     /**
