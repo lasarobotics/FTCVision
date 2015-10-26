@@ -13,15 +13,10 @@ public class Line {
     private Point startPoint;
     private Point endPoint;
 
-    public static final Comparator<Line> SlopeCompare = new Comparator<Line>() {
+    public static final Comparator<Line> LengthCompare = new Comparator<Line>() {
         @Override
         public int compare(Line lhs, Line rhs) {
-            if(lhs.getSlope() < rhs.getSlope())
-                return -1;
-            else if(lhs.getSlope() == rhs.getSlope())
-                return 0;
-            else
-                return 1;
+            return (int)(lhs.getLength() - rhs.getLength());
         }
     };
 
@@ -36,6 +31,10 @@ public class Line {
     public double getSlope()
     {
         return slope;
+    }
+    public double getYIntercept()
+    {
+        return slope*(-startPoint.x) + startPoint.y;
     }
     public double getLength()
     {

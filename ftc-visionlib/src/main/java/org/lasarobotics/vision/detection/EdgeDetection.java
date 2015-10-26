@@ -4,6 +4,7 @@ import org.lasarobotics.vision.detection.objects.Contour;
 import org.lasarobotics.vision.detection.objects.Line;
 import org.lasarobotics.vision.image.Drawing;
 import org.lasarobotics.vision.image.Filter;
+import org.lasarobotics.vision.util.MathUtil;
 import org.lasarobotics.vision.util.color.ColorRGBA;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
@@ -11,6 +12,7 @@ import org.opencv.core.Point;
 import org.opencv.imgproc.Imgproc;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -23,23 +25,22 @@ import java.util.List;
 public class EdgeDetection {
 
     //TODO find the ratio of the wall's top edge height to the beacons height
-    public static final double WALL_BEACON_HEIGHT_RATIO = 0.5;
-    public static final double RECT_RATIO_THRESHOLD = 0.15;
+    public static final double WALL_BEACON_HEIGHT_RATIO = 1.5;
+    public static final double HEIGHT_RATIO_THRESHOLD = 0.1;
+    public static final double LENGTH_DIFF_THRESHOLD = 0.10;
     public static final double SLOPE_THRESHOLD = 0.125;
 
-    public EdgeDetection()
-    {
+    public EdgeDetection() {
 
     }
 
-    public List<Contour> getBreaks(Mat grayImage)
-    {
+    public List<Contour> getBreaks(Mat grayImage) {
         Mat gray = grayImage.clone();
 
         Filter.blur(gray, 1);
         Filter.erode(gray, 1);
         Filter.dilate(gray, 1);
-        //TODO Establish lowTreshold and highThreshold
+
         //Convert grayscale image to Canny Image. Canny(Input, Output, LowThresh, HighTresh, KernelSize)
         Imgproc.Canny(gray, gray, 5, 75, 3, true);
         Filter.blur(gray, 0);
@@ -49,67 +50,115 @@ public class EdgeDetection {
         return filterContours(lines, rectangles);
     }
 
-    public List<Contour> filterContours(ArrayList<Line> lines, List<Contour> contours)
-    {
-        for(int i = 0; i < contours.size(); i++)
-        {
+    private List<Contour> filterContours(ArrayList<Line> lines, List<Contour> contours) {
+        for (int i = 0; i < contours.size(); i++) {
             Point[] cornerPoints = sortPoints(contours.get(i).getPoints());
-            double maxIntercept = (((double)cornerPoints[1].y - cornerPoints[3].y)/
-                    (cornerPoints[1].x - cornerPoints[3].x) * -cornerPoints[1].x + cornerPoints[1].y);
-            double minIntercept = (((double)cornerPoints[0].y - cornerPoints[2].y)/
-                    (cornerPoints[1].x - cornerPoints[2].x) * -cornerPoints[0].x + cornerPoints[0].y);
+            Line topLine = new Line(cornerPoints[1], cornerPoints[3]);
+            Line bottomLine = new Line(cornerPoints[0], cornerPoints[2]);
 
+            double rectHeight = Math.sqrt(Math.pow(topLine.getStartPoint().x - bottomLine.getStartPoint().x, 2)
+                    + Math.pow(topLine.getStartPoint().y - bottomLine.getStartPoint().y, 2));
+
+            double maxIntercept = topLine.getYIntercept();
+            double minIntercept = bottomLine.getYIntercept();
+            double avgSlope = (topLine.getSlope() + bottomLine.getSlope()) / 2.0;
+
+            //First Array = lines left of contour, Second Array = lines right of contour
+            ArrayList<ArrayList<Line>> possibleLines = findLines(maxIntercept, minIntercept, avgSlope, lines,
+                    Math.min(topLine.getStartPoint().x, bottomLine.getStartPoint().x),
+                    Math.min(topLine.getEndPoint().x, bottomLine.getEndPoint().x));
+            if (possibleLines.get(0).size() + possibleLines.get(1).size() < 4 || possibleLines.get(0).size() < 2
+                    || possibleLines.get(1).size() < 2)
+            {
+                contours.remove(i);
+                continue;
+            }
+
+            if (!meetsBreakRatio(possibleLines, rectHeight))
+                contours.remove(i);
         }
-        return null;
+        return contours;
+    }
+
+    private boolean meetsBreakRatio(ArrayList<ArrayList<Line>> lines, double rectHeight)
+    {
+        //TODO add extra check to insure we get best two lines
+        ArrayList<Line> leftTwoLines = new ArrayList<>();
+        Collections.sort(lines.get(0), Line.LengthCompare);
+        boolean lastHadPair = hasPair(lines.get(0).get(lines.get(0).size() - 1), lines.get(0));
+        for(int i = lines.get(0).size() - 2; i >= 0; i--)
+        {
+            boolean thisHasPair = hasPair(lines.get(0).get(i), lines.get(0));
+            if(lines.get(0).get(i + 1).getLength()/lines.get(0).get(i).getLength() - 1 <= LENGTH_DIFF_THRESHOLD
+                    && lastHadPair && thisHasPair)
+            {
+                leftTwoLines.add(lines.get(0).get(i + 1));
+                leftTwoLines.add(lines.get(0).get(i));
+                break;
+            }
+            else
+            {
+                lastHadPair = thisHasPair;
+            }
+        }
+        if(leftTwoLines.isEmpty())
+            return false;
+        if(Math.max(leftTwoLines.get(0).getStartPoint().x, leftTwoLines.get(1).getStartPoint().x) <
+                Math.min(leftTwoLines.get(0).getEndPoint().x, leftTwoLines.get(1).getEndPoint().x))
+        {
+            double x = Math.max(leftTwoLines.get(0).getStartPoint().x, leftTwoLines.get(1).getStartPoint().x);
+            double lineHeight = Math.cos(Math.atan((leftTwoLines.get(0).getSlope() + leftTwoLines.get(1).getSlope()) /
+                2))*Math.sqrt(Math.pow(leftTwoLines.get(0).evaluateX(x) - leftTwoLines.get(1).evaluateX(x), 2));
+            if(Math.abs(WALL_BEACON_HEIGHT_RATIO - rectHeight/lineHeight) <= HEIGHT_RATIO_THRESHOLD)
+                return true;
+        }
+        else
+            return false;
+        return false;
+    }
+
+    private boolean hasPair(Line line, ArrayList<Line> lines)
+    {
+        boolean hasPair = false;
+        for(Line li : lines)
+        {
+            if(sameSlope(new Line(line.getStartPoint(), li.getStartPoint()), line.getSlope()))
+                hasPair = true;
+        }
+        return hasPair;
+    }
+
+    private ArrayList<ArrayList<Line>> findLines(double maxYIntercept, double minYIntercept, double slope,
+                                                ArrayList<Line> lines, double leftVal, double rightVal)
+    {
+        ArrayList<ArrayList<Line>> result = new ArrayList<>();
+        for(Line li : lines)
+        {
+            if(MathUtil.inBounds(minYIntercept, maxYIntercept, li.getYIntercept()) && sameSlope(li, slope))
+            {
+                if(li.getEndPoint().x <= leftVal)
+                {
+                    result.get(0).add(li);
+                }
+                else if(li.getStartPoint().x >= rightVal)
+                {
+                    result.get(1).add(li);
+                }
+            }
+        }
+        return result;
+    }
+
+    public boolean sameSlope(Line line, double slope)
+    {
+        return Math.abs(line.getSlope() - slope) <= SLOPE_THRESHOLD;
     }
 
     //Point[0] = bottomLeft, Point[1] = topLeft, Point[2] = bottomRight, Point[3] = topRight
     private Point[] sortPoints(Point[] points)
     {
-        Point[] results = new Point[4];
-
-        int[] leftMostIndex = new int[]{0, 1};
-        for(int i = 2; i < 4; i++)
-        {
-            if(points[i].x < points[leftMostIndex[0]].x)
-                leftMostIndex[0] = i;
-            else if(points[i].x < points[leftMostIndex[1]].x)
-                leftMostIndex[1] = i;
-        }
-        if(points[leftMostIndex[0]].y < points[leftMostIndex[1]].y)
-        {
-            results[0] = points[leftMostIndex[0]];
-            results[1] = points[leftMostIndex[1]];
-        }
-        else
-        {
-            results[0] = points[leftMostIndex[1]];
-            results[1] = points[leftMostIndex[0]];
-        }
-
-        int[] rightMostIndex = new int[]{-1, -1};
-        for(int i = 0; i < 4; i++)
-        {
-            if(!(i == leftMostIndex[0] || i == leftMostIndex[1]))
-            {
-                if(rightMostIndex[0] == -1)
-                    rightMostIndex[0] = i;
-                else
-                    rightMostIndex[1] = i;
-            }
-        }
-        if(points[rightMostIndex[0]].y < points[rightMostIndex[1]].y)
-        {
-            results[2] = points[rightMostIndex[0]];
-            results[3] = points[leftMostIndex[1]];
-        }
-        else
-        {
-            results[2] = points[leftMostIndex[1]];
-            results[3] = points[leftMostIndex[0]];
-        }
-
-        return results;
+        //TODO return an array of the rects corner points matching the above listed sortment
+        return null;
     }
 
     private ArrayList<Line> getLines(Mat canny)
@@ -131,6 +180,7 @@ public class EdgeDetection {
     }
     private List<Contour> getRects(Mat canny)
     {
+        //TODO fix rectangle detection
         Mat cacheHierarchy = new Mat();
         List<MatOfPoint> contoursTemp = new ArrayList<>();
         //Find contours - Copied from PrimitiveDetection
@@ -144,7 +194,6 @@ public class EdgeDetection {
 
         //If the percent difference in the contour area and the estimated rect area is greater than
         //threshold, remove contour
-        //TODO create better method for getting only rects ??
         for(int i = 0; i < contours.size(); i++)
         {
             if(contours.get(i).getPoints().length >= 4)
