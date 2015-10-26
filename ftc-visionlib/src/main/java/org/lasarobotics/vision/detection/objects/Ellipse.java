@@ -1,12 +1,6 @@
 package org.lasarobotics.vision.detection.objects;
 
-import org.lasarobotics.vision.util.MathUtil;
-import org.lasarobotics.vision.util.color.Color;
-import org.lasarobotics.vision.util.color.ColorGRAY;
-import org.lasarobotics.vision.util.color.ColorRGBA;
-import org.lasarobotics.vision.util.color.ColorSpace;
-import org.opencv.core.Core;
-import org.opencv.core.Mat;
+import org.jetbrains.annotations.NotNull;
 import org.opencv.core.Point;
 import org.opencv.core.RotatedRect;
 import org.opencv.core.Size;
@@ -14,7 +8,7 @@ import org.opencv.core.Size;
 /**
  * Implements a single ellipse (acts like RotatedRect) with advanced measurement utilities
  */
-public class Ellipse extends Detectable {
+public class Ellipse extends Detectable implements Comparable<Ellipse> {
     private RotatedRect rect;
 
     public Ellipse(RotatedRect rect)
@@ -61,10 +55,6 @@ public class Ellipse extends Detectable {
     public double bottom()
     {
         return center().y+(height()/2);
-    }
-    public Point topLeft()
-    {
-        return new Point(top(), left());
     }
 
     /**
@@ -124,7 +114,21 @@ public class Ellipse extends Detectable {
      * @return True if the ellipse is entirely inside the contour, false otherwise
      */
     public boolean isInside(Contour contour) {
+        //TODO this algorithm checks for entirety; make an isEntirelyInside() and isPartiallyInside()
+        //FIXME this is an inaccurate method using only the bounding box of the contour
+        //TODO try ray-casting (even-odd) algorithm - use center as point (will show partial matches)
+        //TODO also try all 4 points to match (will ensure it is entirely inside)
         return left() >= contour.left() && right() <= contour.right() &&
                 top() >= contour.top() && bottom() <= contour.bottom();
+    }
+
+    /***
+     * Compare ellipses by area
+     * @param another Another ellipse
+     * @return 1 if this is larger, -1 if another is larger, 0 otherwise
+     */
+    @Override
+    public int compareTo(@NotNull Ellipse another) {
+        return this.area() > another.area() ? 1 : this.area() < another.area() ? -1 : 0;
     }
 }

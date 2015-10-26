@@ -26,4 +26,5 @@ repositories {
 
 dependencies {
     compile project(':opencv-java')
+    compile 'org.jetbrains:annotations:13.0'
 }
