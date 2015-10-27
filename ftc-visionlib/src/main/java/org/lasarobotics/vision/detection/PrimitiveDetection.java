@@ -144,7 +144,7 @@ public class PrimitiveDetection {
         //Find contours - the parameters here are very important to compression and retention
         Imgproc.findContours(gray, contoursTemp, cacheHierarchy, Imgproc.CV_RETR_TREE, Imgproc.CHAIN_APPROX_TC89_KCOS);
 
-        //List and draw contours
+        //List contours
         List<Contour> contours = new ArrayList<>();
         for (MatOfPoint co : contoursTemp ) {
             contours.add(new Contour(co));

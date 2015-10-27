@@ -139,11 +139,11 @@ public final class Beacon {
 
             //Remove the ellipse if it's larger than a portion of the screen OR
             //If the ellipse color is NOT approximately black
-            double averageColor = ellipse.averageColor(gray, ColorSpace.GRAY, img).getScalar().val[0];
+            double averageColor = ellipse.averageColor(gray, ColorSpace.GRAY).getScalar().val[0];
 
             if (Math.max(ellipse.width(), ellipse.height()) > 0.1 *
-                    Math.max(screenSize.width, screenSize.height) ||
-                    averageColor > ELLIPSE_THRESHOLD)
+                    Math.max(screenSize.width, screenSize.height))// ||
+                    //averageColor > ELLIPSE_THRESHOLD)
             {
                 ellipses.remove(i);
             }
@@ -324,14 +324,18 @@ public final class Beacon {
         PrimitiveDetection primitiveDetection = new PrimitiveDetection();
         PrimitiveDetection.EllipseLocationResult ellipseLocationResult = primitiveDetection.locateEllipses(gray);
 
-        //Filter out bad ellipses
-        List<Ellipse> ellipses = filterEllipses(ellipseLocationResult.getEllipses(), gray, img);
+        //Filter out bad ellipses - TODO filtering currently ignored
+        List<Ellipse> ellipses = ellipseLocationResult.getEllipses();
 
-        //DEBUG Ellipse data after filtering
-        Drawing.drawEllipses(img, ellipses, new ColorRGBA("#FFC107"), 2);
+        //DEBUG Ellipse data before filtering
+        Drawing.drawEllipses(img, ellipses, new ColorRGBA("#ff0745"), 1);
 
         //TODO Score ellipses and contours
-        List<BeaconScoring.ScoredEllipse> scoredEllipses = BeaconScoring.scoreEllipses(ellipses, null, null);
+        BeaconScoring scorer = new BeaconScoring(img.size());
+        List<BeaconScoring.ScoredEllipse> scoredEllipses = scorer.scoreEllipses(ellipses, null, null, gray);
+
+        //DEBUG Ellipse data after filtering
+        Drawing.drawEllipses(img, BeaconScoring.ScoredEllipse.getList(scoredEllipses), new ColorRGBA("#FFC107"), 2);
 
         return new BeaconColorAnalysis(BeaconColor.UNKNOWN, BeaconColor.UNKNOWN);
     }

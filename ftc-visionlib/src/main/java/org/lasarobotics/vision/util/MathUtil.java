@@ -112,15 +112,29 @@ public final class MathUtil {
     }
 
     /**
-     * Calculate a normal distribution based on a variance and mean value
+     * Calculate a normal probability density function (PDF) based on a variance and mean value
      * @param x The location on the normal distribution. The location at the mean would be the largest value
      * @param variance The variance (stddev^2) of the normal distribution.
-     * @param meanValue The mean value is the x location at which the function is the largest
+     * @param meanValue The mean value is the x location at which the function is the largest (i.e. has median)
      * @return The normal distribution at the location x
      */
-    public static double normalDistribution(double x, double variance, double meanValue)
+    public static double normalPDF(double x, double variance, double meanValue)
     {
         double standardDeviation = Math.sqrt(variance);
-        return (1/(standardDeviation*Math.sqrt(2*Math.PI))) * Math.pow(Math.E, -((x - meanValue)*(x - meanValue))/(2*variance));
+        return (1/(standardDeviation*Math.sqrt(2*Math.PI))) * Math.pow(Math.E, -((x - meanValue) * (x - meanValue)) / (2 * variance));
+    }
+
+    /**
+     * Calculate a normal probability density function (PDF) based on a variance and mean value in which the median value is equal to 1
+     * @param x The location on the normal distribution. The location at the mean would be the largest value
+     * @param variance The variance (stddev^2) of the normal distribution.
+     * @param meanValue The mean value is the x location at which the function is the largest (i.e. has median)
+     * @return The normal distribution at the location x
+     */
+    public static double normalPDFNormalized(double x, double variance, double meanValue)
+    {
+        double standardDeviation = Math.sqrt(variance);
+        double normal = (1/(standardDeviation*Math.sqrt(2*Math.PI)));
+        return (1/(standardDeviation*Math.sqrt(2*Math.PI))/normal) * Math.pow(Math.E, -((x - meanValue)*(x - meanValue))/(2*variance));
     }
 }

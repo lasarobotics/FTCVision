@@ -94,9 +94,11 @@ public class Ellipse extends Detectable implements Comparable<Ellipse> {
      * Scale this ellipse by a scaling factor about its center
      * @param factor Scaling factor, 1 for no scale, less than one to contract, greater than one to expand
      */
-    public void scale(double factor)
+    public Ellipse scale(double factor)
     {
-        rect.size = new Size(factor * rect.size.width, factor * rect.size.height);
+        RotatedRect r = rect.clone();
+        r.size = new Size(factor * rect.size.width, factor * rect.size.height);
+        return new Ellipse(r);
     }
 
     /**
