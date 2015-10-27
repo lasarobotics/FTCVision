@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lasarobotics.vision.detection.objects.Contour;
 import org.lasarobotics.vision.detection.objects.Ellipse;
+import org.lasarobotics.vision.image.Drawing;
 import org.lasarobotics.vision.util.MathUtil;
 import org.lasarobotics.vision.util.color.ColorSpace;
 import org.opencv.core.Mat;
@@ -83,29 +84,34 @@ class BeaconScoring {
     static final double ECCENTRICITY_BIAS = 3.0; //points given at best eccentricity
     static final double ECCENTRICITY_NORM = 0.1; //normal distribution variance for eccentricity
 
-    static final double AREA_MIN = 0.0025;        //minimum area as percentage of screen (0 points)
-    static final double AREA_MAX = 0.1;           //maximum area (0 points given)
+    static final double AREA_MIN = 0.0001;        //minimum area as percentage of screen (0 points)
+    static final double AREA_MAX = 0.01;         //maximum area (0 points given)
+    static final double AREA_NORM = 1;
+    static final double AREA_BIAS = 2.0;
 
     static final double CONTRAST_THRESHOLD = 60.0;
     static final double CONTRAST_BIAS = 7.0;
     static final double CONTRAST_NORM = 0.1;
 
-    static final double SCORE_MIN = 1; //minimum score to keep the ellipse
+    static final double SCORE_MIN = 1; //minimum score to keep the ellipse - theoretically, should be 1
 
     /**
      * Create a normalized subscore around a current and expected value, using the normalized Normal CDF.
      *
      * This function is derived from the statistical probability of achieving the optimal value. Values that
-     * are less than the best value will return the best subscore, or the bias.
+     * are less than the best value will return the best subscore, or the bias (unless ignoreSign = true).
      * @param value The actual value - if this is < bestValue, the subscore will be maximized to the bias
      * @param bestValue The optimal value
      * @param variance The variance of the normal CDF function, greater than 0
      * @param bias The bias that the normalized normal CDF is to be multiplied by - the result will not be larger than the bias
+     * @param ignoreSign If true, ignore the sign of value - bestValue. If false (default), the calculation of value in the
+     *                   normal PDF will be performed as Math.max(value - bestValue, 0), ensuring that if value is less than
+     *                   bestValue, that the PDF will return the bias.
      * @return The subscore based on the probability of achieving the optimal value
      */
-    private static double createSubscore(double value, double bestValue, double variance, double bias)
+    private static double createSubscore(double value, double bestValue, double variance, double bias, boolean ignoreSign)
     {
-        return Math.min(MathUtil.normalPDFNormalized(Math.max((value - bestValue), 0) / bestValue,
+        return Math.min(MathUtil.normalPDFNormalized((ignoreSign ? value - bestValue : Math.max((value - bestValue), 0)) / bestValue,
                 variance, 0) * bias, bias);
     }
 
@@ -123,20 +129,23 @@ class BeaconScoring {
 
             //Find the eccentricity - the closer it is to 0, the better
             double eccentricity = ellipse.eccentricity();
-            double eccentricitySubscore = createSubscore(eccentricity, ECCENTRICITY_BEST, ECCENTRICITY_NORM, ECCENTRICITY_BIAS);
+            double eccentricitySubscore = createSubscore(eccentricity, ECCENTRICITY_BEST, ECCENTRICITY_NORM, ECCENTRICITY_BIAS, false);
             score *= eccentricitySubscore;
             //f(0.3) = 5, f(0.75) = 0
 
             //TODO Find the area - the closer to a certain range, the better
-            double area = ellipse.area();
+            double area = ellipse.area() / gray.size().area(); //area as a percentage of the area of the screen
+            //Best value is the root mean squared of the min and max areas
+            final double areaBestValue = Math.sqrt(AREA_MIN*AREA_MIN + AREA_MAX*AREA_MAX) / 2;
+            double areaSubscore = createSubscore(area, areaBestValue, AREA_NORM, AREA_BIAS, true);
+            score *= areaSubscore;
 
             //TODO Find the on-screen location - the closer it is to the estimate, the better
-
 
             //Find the color - the more black, the better (significantly)
             Ellipse e = ellipse.scale(0.5); //get the center 50% of data
             double averageColor = e.averageColor(gray, ColorSpace.GRAY).getScalar().val[0];
-            double colorSubscore = createSubscore(averageColor, CONTRAST_THRESHOLD, CONTRAST_NORM, CONTRAST_BIAS);
+            double colorSubscore = createSubscore(averageColor, CONTRAST_THRESHOLD, CONTRAST_NORM, CONTRAST_BIAS, false);
             score *= colorSubscore;
 
             //If score is above a value, keep the ellipse

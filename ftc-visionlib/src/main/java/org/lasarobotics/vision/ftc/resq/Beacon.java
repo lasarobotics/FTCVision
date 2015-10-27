@@ -337,6 +337,14 @@ public final class Beacon {
         //DEBUG Ellipse data after filtering
         Drawing.drawEllipses(img, BeaconScoring.ScoredEllipse.getList(scoredEllipses), new ColorRGBA("#FFC107"), 2);
 
+        //DEBUG draw top 5 ellipses
+        if (scoredEllipses.size() > 0) {
+            Drawing.drawEllipses(img, BeaconScoring.ScoredEllipse.getList(scoredEllipses.subList(0, scoredEllipses.size() > 5 ? 5 : scoredEllipses.size()))
+                    , new ColorRGBA("#d0ff00"), 3);
+            Drawing.drawEllipses(img, BeaconScoring.ScoredEllipse.getList(scoredEllipses.subList(0, scoredEllipses.size() > 3 ? 3 : scoredEllipses.size()))
+                    , new ColorRGBA("#00ff00"), 3);
+        }
+
         return new BeaconColorAnalysis(BeaconColor.UNKNOWN, BeaconColor.UNKNOWN);
     }
 
