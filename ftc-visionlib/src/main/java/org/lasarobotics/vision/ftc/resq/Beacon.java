@@ -296,10 +296,10 @@ public final class Beacon {
         return new BeaconColorAnalysis(BeaconColor.UNKNOWN, BeaconColor.UNKNOWN);
     }
 
-    public BeaconColorAnalysis analyzeColor_smartScoring(List<Contour> contoursR, List<Contour> contoursB, Mat img, Mat gray)
+    public BeaconColorAnalysis analyzeColor_smartScoring(List<Contour> contoursRed, List<Contour> contoursBlue, Mat img, Mat gray)
     {
         //The idea behind the SmartScoring algorithm is that the largest score in each contour/ellipse set will become the best
-        //TODO First, ellipses and contours are are detected and pre-filtered to remove eccentricities
+        //DONE First, ellipses and contours are are detected and pre-filtered to remove eccentricities
         //TODO Second, ellipses, and contours are scored independently based on size and color ... higher score is better
         //TODO Third, comparative analysis is used on each ellipse and contour to create a score for the contours
             //Ellipses within rectangles strongly increase in value
@@ -315,9 +315,20 @@ public final class Beacon {
         //TODO The best contour from each color (if available) is selected as red and blue
         //TODO The two best contours are then used to calculate the location of the beacon
 
-        //Filter out bad contours
-        List<Contour> contoursRed = filterContours(contoursR);
-        List<Contour> contoursBlue = filterContours(contoursB);
+        //TODO Filter out bad contours - filtering currently ignored
+
+        //DEBUG Draw contours before filtering
+        Drawing.drawContours(img, contoursRed, new ColorRGBA("#FFCDD2"), 2);
+        Drawing.drawContours(img, contoursBlue, new ColorRGBA("#BBDEFB"), 2);
+
+        //TODO Score contours
+        BeaconScoring scorer = new BeaconScoring(img.size());
+        List<BeaconScoring.ScoredContour> scoredContoursRed = scorer.scoreContours(contoursRed, null, null, img, gray);
+        List<BeaconScoring.ScoredContour> scoredContoursBlue = scorer.scoreContours(contoursBlue, null, null, img, gray);
+
+        //DEBUG Draw red and blue contours after filtering
+        Drawing.drawContours(img, BeaconScoring.ScoredContour.getList(scoredContoursRed), new ColorRGBA(255, 0, 0), 2);
+        Drawing.drawContours(img, BeaconScoring.ScoredContour.getList(scoredContoursBlue), new ColorRGBA(0, 0, 255), 2);
 
         //Locate ellipses in the image to process contours against
         //Each contour must have an ellipse of correct specification
@@ -328,10 +339,9 @@ public final class Beacon {
         List<Ellipse> ellipses = ellipseLocationResult.getEllipses();
 
         //DEBUG Ellipse data before filtering
-        Drawing.drawEllipses(img, ellipses, new ColorRGBA("#ff0745"), 1);
+        //Drawing.drawEllipses(img, ellipses, new ColorRGBA("#ff0745"), 1);
 
-        //TODO Score ellipses and contours
-        BeaconScoring scorer = new BeaconScoring(img.size());
+        //Score ellipses
         List<BeaconScoring.ScoredEllipse> scoredEllipses = scorer.scoreEllipses(ellipses, null, null, gray);
 
         //DEBUG Ellipse data after filtering

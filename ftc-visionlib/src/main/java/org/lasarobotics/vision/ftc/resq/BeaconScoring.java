@@ -4,7 +4,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lasarobotics.vision.detection.objects.Contour;
 import org.lasarobotics.vision.detection.objects.Ellipse;
-import org.lasarobotics.vision.image.Drawing;
 import org.lasarobotics.vision.util.MathUtil;
 import org.lasarobotics.vision.util.color.ColorSpace;
 import org.opencv.core.Mat;
@@ -78,22 +77,36 @@ class BeaconScoring {
             super(score);
             this.contour = contour;
         }
+
+        public static List<Contour> getList(List<ScoredContour> scored)
+        {
+            List<Contour> contours= new ArrayList<>();
+            for (ScoredContour c : scored)
+                contours.add(c.contour);
+            return contours;
+        }
     }
 
-    static final double ECCENTRICITY_BEST = 0.4; //best eccentricity for 100% score
-    static final double ECCENTRICITY_BIAS = 3.0; //points given at best eccentricity
-    static final double ECCENTRICITY_NORM = 0.1; //normal distribution variance for eccentricity
+    static final double CONTOUR_RATIO_BEST = Constants.BEACON_WH_RATIO; //best ratio for 100% score
+    static final double CONTOUR_RATIO_BIAS = 3.0; //points given at best ratio
+    static final double CONTOUR_RATIO_NORM = 0.1; //normal distribution variance for ratio
 
-    static final double AREA_MIN = 0.0001;        //minimum area as percentage of screen (0 points)
-    static final double AREA_MAX = 0.01;         //maximum area (0 points given)
-    static final double AREA_NORM = 1;
-    static final double AREA_BIAS = 2.0;
+    static final double CONTOUR_SCORE_MIN = 0; //FIXME change from zero
 
-    static final double CONTRAST_THRESHOLD = 60.0;
-    static final double CONTRAST_BIAS = 7.0;
-    static final double CONTRAST_NORM = 0.1;
+    static final double ELLIPSE_ECCENTRICITY_BEST = 0.4; //best eccentricity for 100% score
+    static final double ELLIPSE_ECCENTRICITY_BIAS = 3.0; //points given at best eccentricity
+    static final double ELLIPSE_ECCENTRICITY_NORM = 0.1; //normal distribution variance for eccentricity
 
-    static final double SCORE_MIN = 1; //minimum score to keep the ellipse - theoretically, should be 1
+    static final double ELLIPSE_AREA_MIN = 0.0001;        //minimum area as percentage of screen (0 points)
+    static final double ELLIPSE_AREA_MAX = 0.01;         //maximum area (0 points given)
+    static final double ELLIPSE_AREA_NORM = 1;
+    static final double ELLIPSE_AREA_BIAS = 2.0;
+
+    static final double ELLIPSE_CONTRAST_THRESHOLD = 60.0;
+    static final double ELLIPSE_CONTRAST_BIAS = 7.0;
+    static final double ELLIPSE_CONTRAST_NORM = 0.1;
+
+    static final double ELLIPSE_SCORE_MIN = 1; //minimum score to keep the ellipse - theoretically, should be 1
 
     /**
      * Create a normalized subscore around a current and expected value, using the normalized Normal CDF.
@@ -115,6 +128,34 @@ class BeaconScoring {
                 variance, 0) * bias, bias);
     }
 
+    List<ScoredContour> scoreContours(List<Contour> contours,
+                                      @Nullable Point estimateLocation,
+                                      @Nullable Double estimateDistance,
+                                      Mat rgba,
+                                      Mat gray)
+    {
+        List<ScoredContour> scores = new ArrayList<>();
+
+        for(Contour contour : contours)
+        {
+            double score = 1;
+
+            //Find ratio - the closer it is to the actual ratio of the beacon, the better
+            Size size = contour.size();
+            double ratio = size.width / size.height;
+            double ratioSubscore = createSubscore(ratio, CONTOUR_RATIO_BEST, CONTOUR_RATIO_NORM, CONTOUR_RATIO_BIAS, false);
+            score *= ratioSubscore;
+
+            //Find the area - the closer to a certain range, the better
+            double area = size.area();
+
+            //If score is above a value, keep the contour
+            if (score >= CONTOUR_SCORE_MIN)
+                scores.add(new ScoredContour(contour, score));
+        }
+        return scores;
+    }
+
     @SuppressWarnings("unchecked")
     List<ScoredEllipse> scoreEllipses(List<Ellipse> ellipses,
                                       @Nullable Point estimateLocation,
@@ -129,15 +170,15 @@ class BeaconScoring {
 
             //Find the eccentricity - the closer it is to 0, the better
             double eccentricity = ellipse.eccentricity();
-            double eccentricitySubscore = createSubscore(eccentricity, ECCENTRICITY_BEST, ECCENTRICITY_NORM, ECCENTRICITY_BIAS, false);
+            double eccentricitySubscore = createSubscore(eccentricity, ELLIPSE_ECCENTRICITY_BEST, ELLIPSE_ECCENTRICITY_NORM, ELLIPSE_ECCENTRICITY_BIAS, false);
             score *= eccentricitySubscore;
             //f(0.3) = 5, f(0.75) = 0
 
-            //TODO Find the area - the closer to a certain range, the better
+            //Find the area - the closer to a certain range, the better
             double area = ellipse.area() / gray.size().area(); //area as a percentage of the area of the screen
             //Best value is the root mean squared of the min and max areas
-            final double areaBestValue = Math.sqrt(AREA_MIN*AREA_MIN + AREA_MAX*AREA_MAX) / 2;
-            double areaSubscore = createSubscore(area, areaBestValue, AREA_NORM, AREA_BIAS, true);
+            final double areaBestValue = Math.sqrt(ELLIPSE_AREA_MIN * ELLIPSE_AREA_MIN + ELLIPSE_AREA_MAX * ELLIPSE_AREA_MAX) / 2;
+            double areaSubscore = createSubscore(area, areaBestValue, ELLIPSE_AREA_NORM, ELLIPSE_AREA_BIAS, true);
             score *= areaSubscore;
 
             //TODO Find the on-screen location - the closer it is to the estimate, the better
@@ -145,11 +186,11 @@ class BeaconScoring {
             //Find the color - the more black, the better (significantly)
             Ellipse e = ellipse.scale(0.5); //get the center 50% of data
             double averageColor = e.averageColor(gray, ColorSpace.GRAY).getScalar().val[0];
-            double colorSubscore = createSubscore(averageColor, CONTRAST_THRESHOLD, CONTRAST_NORM, CONTRAST_BIAS, false);
+            double colorSubscore = createSubscore(averageColor, ELLIPSE_CONTRAST_THRESHOLD, ELLIPSE_CONTRAST_NORM, ELLIPSE_CONTRAST_BIAS, false);
             score *= colorSubscore;
 
             //If score is above a value, keep the ellipse
-            if (score >= SCORE_MIN)
+            if (score >= ELLIPSE_SCORE_MIN)
                 scores.add(new ScoredEllipse(ellipse, score));
         }
 
