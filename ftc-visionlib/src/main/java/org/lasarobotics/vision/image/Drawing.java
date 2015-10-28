@@ -7,7 +7,9 @@ import org.lasarobotics.vision.util.color.Color;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
+import org.opencv.core.MatOfRect;
 import org.opencv.core.Point;
+import org.opencv.core.Rect;
 import org.opencv.imgproc.Imgproc;
 
 import java.util.ArrayList;
@@ -119,5 +121,10 @@ public class Drawing {
     public static void drawRectangle(Mat img, Point topLeft, Point bottomRight, Color color, int thickness)
     {
         Core.rectangle(img, topLeft, bottomRight, color.getScalarRGBA(), thickness);
+    }
+    public static void drawRectangle(Mat img, MatOfRect rectangles, Color color, int thickness) {
+        for (Rect rect : rectangles.toArray()) {
+            drawRectangle(img, new Rectangle(rect), color, thickness);
+        }
     }
 }
