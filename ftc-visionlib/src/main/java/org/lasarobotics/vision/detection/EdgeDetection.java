@@ -27,14 +27,15 @@ public class EdgeDetection {
     //TODO find the ratio of the wall's top edge height to the beacons height
     public static final double WALL_BEACON_HEIGHT_RATIO = 1.5;
     public static final double HEIGHT_RATIO_THRESHOLD = 0.1;
-    public static final double LENGTH_DIFF_THRESHOLD = 0.10;
-    public static final double SLOPE_THRESHOLD = 0.125;
+    public static final double SLOPE_THRESHOLD = 0.5;
 
-    public EdgeDetection() {
+    public EdgeDetection()
+    {
 
     }
 
-    public List<Contour> getBreaks(Mat grayImage) {
+    public List<Contour> getBreaks(Mat grayImage, Mat img)
+    {
         //Manipulate image in order to get best canny results
         Mat gray = grayImage.clone();
 
@@ -46,16 +47,50 @@ public class EdgeDetection {
         Imgproc.Canny(gray, gray, 5, 75, 3, true);
         Filter.blur(gray, 0);
 
-        ArrayList<Line> lines = getLines(gray);
+        ArrayList<Line> lines = combineLines(getLines(gray), img.rows());
         List<Contour> rectangles = getRects(gray);
-        return filterContours(lines, rectangles);
+        //DEBUG
+        for(int i = 0; i < lines.size(); i++) {
+            Drawing.drawLine(img, lines.get(i).getStartPoint(), lines.get(i).getEndPoint(), new ColorRGBA("#FFFF00"));
+        }
+
+        //return filterContours(lines, rectangles);
+        return null;
+    }
+
+    public ArrayList<Line> combineLines(ArrayList<Line> lines, int rows)
+    {
+        ArrayList<Line> resultLines = new ArrayList<>();
+        Collections.sort(lines, Line.InterceptCompare);
+        Line startLine = lines.get(0);
+        Point endPoint = lines.get(0).getEndPoint();
+        for(int i = 0; i < lines.size(); i += 2) {
+            if(i == 0)
+                continue;
+            if(Line.slopeInterceptCompare(startLine, lines.get(i), SLOPE_THRESHOLD))
+                endPoint = lines.get(i).getEndPoint();
+            else {
+                if(Line.slopeInterceptCompare(startLine, lines.get(i-1), SLOPE_THRESHOLD)) {
+                    resultLines.add(new Line(startLine.getStartPoint(), lines.get(i - 1).getEndPoint()));
+                    startLine = lines.get(i);
+                    endPoint = startLine.getEndPoint();
+                } else {
+                    resultLines.add(new Line(startLine.getStartPoint(), endPoint));
+                    startLine = lines.get(i - 1);
+                    endPoint = startLine.getEndPoint();
+                    i -= 2;
+
+                }
+            }
+        }
+        return resultLines;
     }
 
     //Filters out all rectangles/contours that do not contain parallel lines going through it
     private List<Contour> filterContours(ArrayList<Line> lines, List<Contour> contours) {
         for (int i = 0; i < contours.size(); i++) {
             //Get the contours corner points and create the top line and bottom line of the contour
-            Point[] cornerPoints = sortPoints(contours.get(i).getPoints());
+            Point[] cornerPoints = getCornerPoints(contours.get(i).getPoints());
             Line topLine = new Line(cornerPoints[1], cornerPoints[3]);
             Line bottomLine = new Line(cornerPoints[0], cornerPoints[2]);
 
@@ -85,8 +120,8 @@ public class EdgeDetection {
                     Math.min(topLine.getEndPoint().x, bottomLine.getEndPoint().x));
             //If there are under 4 possible lines crossing through the contour its not the beacon
             //If there is less than 2 possible lines on either side of the contour, its not the beacon
-            if (possibleLines.get(0).size() + possibleLines.get(1).size() < 4 || possibleLines.get(0).size() < 2
-                    || possibleLines.get(1).size() < 2)
+            if (possibleLines.get(0).size() + possibleLines.get(1).size() < 4 || possibleLines.get(0).size() < 1
+                    || possibleLines.get(1).size() < 1)
             {
                 contours.remove(i);
                 continue;
@@ -95,47 +130,21 @@ public class EdgeDetection {
             //If all previous conditions have been met, check if the height ratio of the contour to
             //the height of the parallel lines meets the specified ratio of the real beacon to the real
             //wall
-            if (!meetsBreakRatio(possibleLines, rectHeight))
+            if (!meetsBreakRatio(possibleLines.get(0), rectHeight, bottomLine))
                 contours.remove(i);
         }
         //Return filtered contours
         return contours;
     }
 
-    private boolean meetsBreakRatio(ArrayList<ArrayList<Line>> lines, double rectHeight)
+    private boolean meetsBreakRatio(ArrayList<Line> lines, double rectHeight, Line bottomLine)
     {
-        //TODO add extra check to insure we get best two lines
-        ArrayList<Line> leftTwoLines = new ArrayList<>();
-        Collections.sort(lines.get(0), Line.LengthCompare);
-        boolean lastHadPair = hasPair(lines.get(0).get(lines.get(0).size() - 1), lines.get(0));
-        for(int i = lines.get(0).size() - 2; i >= 0; i--)
+        for(int i = 0; i < lines.size(); i++)
         {
-            boolean thisHasPair = hasPair(lines.get(0).get(i), lines.get(0));
-            if(lines.get(0).get(i + 1).getLength()/lines.get(0).get(i).getLength() - 1 <= LENGTH_DIFF_THRESHOLD
-                    && lastHadPair && thisHasPair)
-            {
-                leftTwoLines.add(lines.get(0).get(i + 1));
-                leftTwoLines.add(lines.get(0).get(i));
-                break;
-            }
-            else
-            {
-                lastHadPair = thisHasPair;
-            }
-        }
-        if(leftTwoLines.isEmpty())
-            return false;
-        if(Math.max(leftTwoLines.get(0).getStartPoint().x, leftTwoLines.get(1).getStartPoint().x) <
-                Math.min(leftTwoLines.get(0).getEndPoint().x, leftTwoLines.get(1).getEndPoint().x))
-        {
-            double x = Math.max(leftTwoLines.get(0).getStartPoint().x, leftTwoLines.get(1).getStartPoint().x);
-            double lineHeight = Math.cos(Math.atan((leftTwoLines.get(0).getSlope() + leftTwoLines.get(1).getSlope()) /
-                2))*Math.sqrt(Math.pow(leftTwoLines.get(0).evaluateX(x) - leftTwoLines.get(1).evaluateX(x), 2));
-            if(Math.abs(WALL_BEACON_HEIGHT_RATIO - rectHeight/lineHeight) <= HEIGHT_RATIO_THRESHOLD)
+            if(Math.abs(rectHeight/bottomLine.distFormula(new Point(50, lines.get(i).evaluateX(50)), new Point(50,
+                    bottomLine.evaluateX(50))) - WALL_BEACON_HEIGHT_RATIO) <= HEIGHT_RATIO_THRESHOLD)
                 return true;
         }
-        else
-            return false;
         return false;
     }
 
@@ -179,9 +188,8 @@ public class EdgeDetection {
 
     //Return an array of the four quadrilateral corner points sorted as follows
     //Point[0] = bottomLeft, Point[1] = topLeft, Point[2] = bottomRight, Point[3] = topRight
-    private Point[] sortPoints(Point[] points)
+    private Point[] getCornerPoints(Point[] points)
     {
-        //TODO return an array of the rects corner points matching the above listed sortment
         return null;
     }
 
@@ -191,7 +199,7 @@ public class EdgeDetection {
         Mat lineMat = new Mat();
         //Use Hough Lines Transform to identify lines in frame with the following characteristics
         int threshold = 100;
-        int minLineSize = 100;
+        int minLineSize = 50;
         int lineGap = 10;
         Imgproc.HoughLinesP(canny, lineMat, 1, Math.PI / 180, threshold, minLineSize, lineGap);
         //Create a list of lines detected
@@ -205,27 +213,6 @@ public class EdgeDetection {
     }
     private List<Contour> getRects(Mat canny)
     {
-        //Currently does not work, needs to fix rectangle detection, must detect beacon as contour
-        //TODO fix rectangle detection
-        Mat cacheHierarchy = new Mat();
-        List<MatOfPoint> contoursTemp = new ArrayList<>();
-        //Find contours - Copied from PrimitiveDetection
-        Imgproc.findContours(canny, contoursTemp, cacheHierarchy, Imgproc.CV_RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
-
-        //Instantiate contours
-        List<Contour> contours = new ArrayList<>();
-        for (MatOfPoint co : contoursTemp ) {
-            contours.add(new Contour(co));
-        }
-
-        //If the percent difference in the contour area and the estimated rect area is greater than
-        //threshold, remove contour
-        for(int i = 0; i < contours.size(); i++)
-        {
-            if(contours.get(i).getPoints().length >= 4)
-                contours.remove(i);
-        }
-
-        return contours;
+        return null;
     }
 }

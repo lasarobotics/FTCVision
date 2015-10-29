@@ -336,6 +336,9 @@ public final class Beacon {
         PrimitiveDetection primitiveDetection = new PrimitiveDetection();
         PrimitiveDetection.EllipseLocationResult ellipseLocationResult = primitiveDetection.locateEllipses(gray);
 
+        EdgeDetection ed = new EdgeDetection();
+        List<Contour> possibleBeacons = ed.getBreaks(gray, img);
+
         //Filter out bad ellipses
         List<Ellipse> ellipses = filterEllipses(ellipseLocationResult.getEllipses(), gray, img);
 
