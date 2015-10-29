@@ -1,5 +1,5 @@
 //Libraries
-include ':opencv-java'
+include ':opencv-java', ':cascadetrainer'
 include ':ftc-visionlib'
 
 //Demos and Tests
