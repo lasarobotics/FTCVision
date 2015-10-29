@@ -91,6 +91,11 @@ class BeaconScoring {
     static final double CONTOUR_RATIO_BIAS = 3.0; //points given at best ratio
     static final double CONTOUR_RATIO_NORM = 0.1; //normal distribution variance for ratio
 
+    static final double CONTOUR_AREA_MIN = 0;  //FIXME Give me a real value. minimum area as percentage of screen (0 points)
+    static final double CONTOUR_AREA_MAX = 1;  //FIXME Give me a real value. maximum area (0 points given)
+    static final double CONTOUR_AREA_NORM = 1;
+    static final double CONTOUR_AREA_BIAS = 2.0;
+
     static final double CONTOUR_SCORE_MIN = 0; //FIXME change from zero
 
     static final double ELLIPSE_ECCENTRICITY_BEST = 0.4; //best eccentricity for 100% score
@@ -148,6 +153,10 @@ class BeaconScoring {
 
             //Find the area - the closer to a certain range, the better
             double area = size.area();
+            //Best value is the root mean squared of the min and max areas
+            final double areaBestValue = Math.sqrt(CONTOUR_AREA_MIN * CONTOUR_AREA_MIN + CONTOUR_AREA_MAX * CONTOUR_AREA_MAX) / 2;
+            double areaSubscore = createSubscore(area, areaBestValue, CONTOUR_AREA_NORM, CONTOUR_AREA_BIAS, true);
+            score *= areaSubscore;
 
             //If score is above a value, keep the contour
             if (score >= CONTOUR_SCORE_MIN)
