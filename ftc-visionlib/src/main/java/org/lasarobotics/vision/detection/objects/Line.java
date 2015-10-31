@@ -59,6 +59,22 @@ public class Line {
                 Math.abs(l1.getSlope() - l2.getSlope()) <= slopeThreshold;
     }
 
+    public double slopeToAngle(){
+        /* Line.angle() -> double
+        @return the angle in degrees with y=0 being 0 degrees
+         */
+        return Math.atan(slope)*180/Math.PI;
+    }
+
+    public Point intersection(Line l1){
+        /* Line.intersection(@param Line l1) -> Point
+        @return the intersection between Line self and Line l1
+         */
+        double x = (l1.getYIntercept()-this.getYIntercept())/(this.getSlope()-l1.getSlope());
+        Point inters = new Point(x, this.getYIntercept()+this.getSlope()*x);
+        return inters;
+    }
+
     public double getSlope()
     {
         return slope;
