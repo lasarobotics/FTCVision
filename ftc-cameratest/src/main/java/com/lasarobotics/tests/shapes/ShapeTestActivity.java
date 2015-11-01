@@ -61,7 +61,7 @@ public class ShapeTestActivity {
         return true;
     }
 
-    public static boolean hlineTest() throws{
+    public static boolean hlineTest() throws IncorrectAnswerError{
         Line hLine = new Line(new Point(2,4), new Point(4,4));
         try{
             if (hLine.getSlope() != 0){
