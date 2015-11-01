@@ -47,6 +47,7 @@ public class Line {
     {
         this.startPoint = startPoint;
         this.endPoint = endPoint;
+        // TODO VALUE FOR SLOPE IF UNDEFINED
         slope = (double)(startPoint.y - endPoint.y)/(startPoint.x - endPoint.x);
         length = Math.sqrt(Math.pow(startPoint.x - endPoint.x, 2)+Math.pow(startPoint.y - endPoint.y, 2));
     }
@@ -95,6 +96,7 @@ public class Line {
     {
         return endPoint;
     }
+
 
     public double evaluateX(double x)
     {
