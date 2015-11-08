@@ -8,7 +8,6 @@ Computer Vision library for FTC based on OpenCV.
 This library is currently under insanely active development. We're in late-Alpha phase right now. If you have any questions or would like to help,
 send a note to smo-key (contact info on profile). Thank you!
 
-
 ## Goals
 
 - Locate the lit target (the thing with two buttons) within the camera viewfield
