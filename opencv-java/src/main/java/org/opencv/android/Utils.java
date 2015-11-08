@@ -6,7 +6,7 @@ import android.graphics.Bitmap;
 import org.opencv.core.CvException;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
-import org.opencv.highgui.Highgui;
+import org.opencv.imgcodecs.Imgcodecs;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -67,7 +67,7 @@ public class Utils {
         encoded.put(0, 0, os.toByteArray());
         os.close();
 
-        Mat decoded = Highgui.imdecode(encoded, flags);
+        Mat decoded = Imgcodecs.imdecode(encoded, flags);
         encoded.release();
 
         return decoded;
@@ -87,9 +87,9 @@ public class Utils {
      */
     public static void bitmapToMat(Bitmap bmp, Mat mat, boolean unPremultiplyAlpha) {
         if (bmp == null)
-            throw new IllegalArgumentException("bmp == null");
+            throw new java.lang.IllegalArgumentException("bmp == null");
         if (mat == null)
-            throw new IllegalArgumentException("mat == null");
+            throw new java.lang.IllegalArgumentException("mat == null");
         nBitmapToMat2(bmp, mat.nativeObj, unPremultiplyAlpha);
     }
 
@@ -117,9 +117,9 @@ public class Utils {
      */
     public static void matToBitmap(Mat mat, Bitmap bmp, boolean premultiplyAlpha) {
         if (mat == null)
-            throw new IllegalArgumentException("mat == null");
+            throw new java.lang.IllegalArgumentException("mat == null");
         if (bmp == null)
-            throw new IllegalArgumentException("bmp == null");
+            throw new java.lang.IllegalArgumentException("bmp == null");
         nMatToBitmap2(mat.nativeObj, bmp, premultiplyAlpha);
     }
 
