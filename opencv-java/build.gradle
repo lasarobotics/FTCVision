@@ -6,7 +6,9 @@ android {
 
     defaultConfig {
         minSdkVersion 16
-        targetSdkVersion 21
+        targetSdkVersion 16
+        versionCode 3
+        versionName "3.0.0"
     }
 
     buildTypes {
@@ -15,11 +17,4 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
     }
-    lintOptions {
-        abortOnError false
-    }
-}
-
-dependencies {
-
 }

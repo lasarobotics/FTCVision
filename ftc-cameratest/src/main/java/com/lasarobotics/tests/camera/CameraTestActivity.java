@@ -126,7 +126,7 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
         super.onResume();
         if (!OpenCVLoader.initDebug()) {
             // Internal OpenCV library not found. Using OpenCV Manager for initialization
-            OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_2_4_12, this, mLoaderCallback);
+            OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_0_0, this, mLoaderCallback);
         } else {
             // OpenCV library found inside package. Using it!
             mLoaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
