@@ -56,6 +56,21 @@ public final class Beacon {
 
             }
         }
+
+        public static BeaconColor parseString(String s)
+        {
+            if (s.compareTo("red") == 0)
+                return RED;
+            if (s.compareTo("blue") == 0)
+                return BLUE;
+            if (s.compareTo("RED!") == 0)
+                return RED_BRIGHT;
+            if (s.compareTo("BLUE!") == 0)
+                return BLUE_BRIGHT;
+            if (s.compareTo("???") == 0)
+                return UNKNOWN;
+            throw new IllegalArgumentException();
+        }
     }
 
     public static class BeaconColorAnalysis
@@ -116,6 +131,21 @@ public final class Beacon {
         {
             return (left == BeaconColor.BLUE_BRIGHT || left == BeaconColor.RED_BRIGHT ) &&
                     (right == BeaconColor.BLUE_BRIGHT || right == BeaconColor.RED_BRIGHT );
+        }
+
+        @Override
+        public String toString() {
+            return left.toString() + ", " + right.toString();
+        }
+
+        public static BeaconColorAnalysis parseString(String s)
+        {
+            String[] split = s.trim().split(" *, *");
+            if (split.length < 2)
+                throw new IllegalArgumentException("Incorrect string");
+            BeaconColor left = BeaconColor.parseString(split[0]);
+            BeaconColor right = BeaconColor.parseString(split[1]);
+            return new BeaconColorAnalysis(left, right);
         }
     }
 

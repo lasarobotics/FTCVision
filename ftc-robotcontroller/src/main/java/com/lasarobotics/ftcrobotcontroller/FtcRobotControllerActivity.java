@@ -82,6 +82,7 @@ import org.lasarobotics.vision.ftc.resq.Beacon;
 import org.lasarobotics.vision.image.Drawing;
 import org.lasarobotics.vision.image.Transform;
 import org.lasarobotics.vision.util.FPS;
+import org.lasarobotics.vision.util.IO;
 import org.lasarobotics.vision.util.color.ColorGRAY;
 import org.lasarobotics.vision.util.color.ColorHSV;
 import org.lasarobotics.vision.util.color.ColorRGBA;
@@ -751,8 +752,13 @@ public class FtcRobotControllerActivity extends Activity implements CameraBridge
             //Transform.enlarge(mRgba, originalSize, true);
             //Transform.enlarge(mGray, originalSize, true);
 
-            Drawing.drawText(mRgba, colorAnalysis.getStateLeft().toString() + ", " + colorAnalysis.getStateRight().toString(),
+            //Draw text
+            Drawing.drawText(mRgba, colorAnalysis.toString(),
                     new Point(0, 8), 1.0f, new ColorGRAY(255), Drawing.Anchor.BOTTOMLEFT);
+
+            //Write status text file
+            IO.writeTextFile("/FTCVision/", "rc_colors.txt", colorAnalysis.toString(), true);
+
         }
         catch (Exception e)
         {
