@@ -2,10 +2,15 @@ package org.lasarobotics.vision.util;
 
 import org.lasarobotics.vision.android.Util;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.List;
+import java.util.Scanner;
 
 /**
  * File Input/Output operations
@@ -30,5 +35,25 @@ public class IO {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public static String readTextFile(String directory, String filename)
+    {
+        File f = new File(directory, filename);
+        try {
+            String str = "";
+            Scanner s = new Scanner(f);
+            while(s.hasNextLine())
+                str += s.nextLine() + "\n";
+            return str;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static String[] getLines(String data)
+    {
+        return data.split("\r?\n");
     }
 }

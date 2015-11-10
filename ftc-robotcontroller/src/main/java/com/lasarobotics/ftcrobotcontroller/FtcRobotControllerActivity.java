@@ -689,11 +689,11 @@ public class FtcRobotControllerActivity extends Activity implements CameraBridge
     private void initialize()
     {
         //GET CAMERA PROPERTIES
-        Camera cam = Cameras.getPrimaryCamera();
+        /*Camera cam = Cameras.getPrimaryCamera();
         assert cam != null;
         android.hardware.Camera.Parameters pam = cam.getCamera().getParameters();
         focalLength = pam.getFocalLength();
-        cam.getCamera().release();
+        cam.getCamera().release();*/
 
         //UPDATE COUNTER
         fpsCounter = new FPS();

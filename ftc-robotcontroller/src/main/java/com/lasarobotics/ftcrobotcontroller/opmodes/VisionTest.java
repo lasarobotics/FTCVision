@@ -31,23 +31,46 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
 package com.lasarobotics.ftcrobotcontroller.opmodes;
 
-import com.qualcomm.robotcore.eventloop.opmode.OpModeManager;
-import com.qualcomm.robotcore.eventloop.opmode.OpModeRegister;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.lasarobotics.vision.ftc.resq.Beacon;
+import org.lasarobotics.vision.util.IO;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
- * Register Op Modes
+ * TeleOp Mode
+ * <p>
+ *Enables control of the robot via the gamepad
  */
-public class FtcOpModeRegister implements OpModeRegister {
+public class VisionTest extends OpMode {
 
-    /**
-     * The Op Mode Manager will call this method when it wants a list of all
-     * available op modes. Add your op mode to the list to enable it.
-     *
-     * @param manager op mode manager
-     */
-    public void register(OpModeManager manager) {
-        //Custom op modes
-        manager.register("Null", NullOp.class);
-        manager.register("Vision Test", VisionTest.class);
+  /*
+   * Code to run when the op mode is first enabled goes here
+   * @see com.qualcomm.robotcore.eventloop.opmode.OpMode#start()
+   */
+  @Override
+  public void init() {
+
+  }
+
+  /*
+   * This method will be called repeatedly in a loop
+   * @see com.qualcomm.robotcore.eventloop.opmode.OpMode#loop()
+   */
+  @Override
+  public void loop() {
+    String data;
+    try {
+      data = IO.readTextFile("/FTCVision/", "rc_colors.txt");
+    } catch (Exception e)
+    {
+      data = "???, ???";
     }
+    String[] lines = IO.getLines(data);
+    Beacon.BeaconColorAnalysis colorAnalysis = Beacon.BeaconColorAnalysis.parseString(lines[0]);
+    telemetry.addData("Vision Color", colorAnalysis.toString());
+  }
 }
