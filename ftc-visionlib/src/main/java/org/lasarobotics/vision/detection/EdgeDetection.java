@@ -28,6 +28,7 @@ public class EdgeDetection {
     public static final double WALL_BEACON_HEIGHT_RATIO = 1.5;
     public static final double HEIGHT_RATIO_THRESHOLD = 0.1;
     public static final double SLOPE_THRESHOLD = 0.5;
+    public static final double SLOPE_ABS_RANGE = 1000;
 
     public EdgeDetection()
     {
@@ -48,7 +49,7 @@ public class EdgeDetection {
         Filter.blur(gray, 0);
 
         ArrayList<Line> lines = combineLines(getLines(gray), img.rows());
-        List<Contour> rectangles = getRects(gray);
+        //List<Contour> rectangles = getRects(gray);
         //DEBUG
         for(int i = 0; i < lines.size(); i++) {
             Drawing.drawLine(img, lines.get(i).getStartPoint(), lines.get(i).getEndPoint(), new ColorRGBA("#FFFF00"));
@@ -61,25 +62,27 @@ public class EdgeDetection {
     public ArrayList<Line> combineLines(ArrayList<Line> lines, int rows)
     {
         ArrayList<Line> resultLines = new ArrayList<>();
-        Collections.sort(lines, Line.InterceptCompare);
-        Line startLine = lines.get(0);
-        Point endPoint = lines.get(0).getEndPoint();
-        for(int i = 0; i < lines.size(); i += 2) {
-            if(i == 0)
-                continue;
-            if(Line.slopeInterceptCompare(startLine, lines.get(i), SLOPE_THRESHOLD))
-                endPoint = lines.get(i).getEndPoint();
-            else {
-                if(Line.slopeInterceptCompare(startLine, lines.get(i-1), SLOPE_THRESHOLD)) {
-                    resultLines.add(new Line(startLine.getStartPoint(), lines.get(i - 1).getEndPoint()));
-                    startLine = lines.get(i);
-                    endPoint = startLine.getEndPoint();
-                } else {
-                    resultLines.add(new Line(startLine.getStartPoint(), endPoint));
-                    startLine = lines.get(i - 1);
-                    endPoint = startLine.getEndPoint();
-                    i -= 2;
+        if(lines.size() > 0) {
+            Collections.sort(lines, Line.InterceptCompare);
+            Line startLine = lines.get(0);
+            Point endPoint = lines.get(0).getEndPoint();
+            for (int i = 0; i < lines.size(); i += 2) {
+                if (i == 0)
+                    continue;
+                if (Line.slopeInterceptCompare(startLine, lines.get(i), SLOPE_THRESHOLD))
+                    endPoint = lines.get(i).getEndPoint();
+                else {
+                    if (Line.slopeInterceptCompare(startLine, lines.get(i - 1), SLOPE_THRESHOLD)) {
+                        resultLines.add(new Line(startLine.getStartPoint(), lines.get(i - 1).getEndPoint()));
+                        startLine = lines.get(i);
+                        endPoint = startLine.getEndPoint();
+                    } else {
+                        resultLines.add(new Line(startLine.getStartPoint(), endPoint));
+                        startLine = lines.get(i - 1);
+                        endPoint = startLine.getEndPoint();
+                        i -= 2;
 
+                    }
                 }
             }
         }
@@ -87,6 +90,7 @@ public class EdgeDetection {
     }
 
     //Filters out all rectangles/contours that do not contain parallel lines going through it
+    /*
     private List<Contour> filterContours(ArrayList<Line> lines, List<Contour> contours) {
         for (int i = 0; i < contours.size(); i++) {
             //Get the contours corner points and create the top line and bottom line of the contour
@@ -137,6 +141,7 @@ public class EdgeDetection {
         return contours;
     }
 
+
     private boolean meetsBreakRatio(ArrayList<Line> lines, double rectHeight, Line bottomLine)
     {
         for(int i = 0; i < lines.size(); i++)
@@ -179,18 +184,12 @@ public class EdgeDetection {
         }
         return result;
     }
+    */
 
     //Checks if two lines are considered the same slope given a set tolerance
     public boolean sameSlope(Line line, double slope)
     {
         return Math.abs(line.getSlope() - slope) <= SLOPE_THRESHOLD;
-    }
-
-    //Return an array of the four quadrilateral corner points sorted as follows
-    //Point[0] = bottomLeft, Point[1] = topLeft, Point[2] = bottomRight, Point[3] = topRight
-    private Point[] getCornerPoints(Point[] points)
-    {
-        return null;
     }
 
     //Return the set of all lines in a canny image using probalistic hough line transform
@@ -204,15 +203,19 @@ public class EdgeDetection {
         Imgproc.HoughLinesP(canny, lineMat, 1, Math.PI / 180, threshold, minLineSize, lineGap);
         //Create a list of lines detected
         ArrayList<Line> lines = new ArrayList<>();
-        for(int i = 0; i < lineMat.cols(); i++)
+        for(int i = 0; i < lineMat.rows(); i++)
         {
             double[] vec = lineMat.get(0, i);
-            lines.add(new Line(new Point(vec[0], vec[1]), new Point(vec[2], vec[3])));
+            Line line = new Line(new Point(vec[0], vec[1]), new Point(vec[2], vec[3]));
+            if(Math.abs(line.getSlope()) < SLOPE_ABS_RANGE)
+                lines.add(line);
         }
         return lines;
     }
+    /*
     private List<Contour> getRects(Mat canny)
     {
         return null;
     }
+    */
 }
