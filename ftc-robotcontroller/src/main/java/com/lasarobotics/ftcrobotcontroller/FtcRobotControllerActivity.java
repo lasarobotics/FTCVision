@@ -57,7 +57,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.lasarobotics.vision.detection.Features;
 import com.qualcomm.ftccommon.DbgLog;
 import com.qualcomm.ftccommon.FtcEventLoop;
 import com.qualcomm.ftccommon.FtcRobotControllerService;
@@ -75,24 +74,31 @@ import com.qualcomm.robotcore.util.ImmersiveMode;
 import com.qualcomm.robotcore.util.RobotLog;
 import com.qualcomm.robotcore.wifi.WifiDirectAssistant;
 
+import org.lasarobotics.vision.android.Camera;
+import org.lasarobotics.vision.android.Cameras;
+import org.lasarobotics.vision.detection.ColorBlobDetector;
+import org.lasarobotics.vision.detection.objects.Contour;
+import org.lasarobotics.vision.ftc.resq.Beacon;
+import org.lasarobotics.vision.image.Drawing;
+import org.lasarobotics.vision.image.Transform;
+import org.lasarobotics.vision.util.FPS;
+import org.lasarobotics.vision.util.color.ColorGRAY;
+import org.lasarobotics.vision.util.color.ColorHSV;
+import org.lasarobotics.vision.util.color.ColorRGBA;
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.core.Point;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.Serializable;
+import java.util.List;
 
 public class FtcRobotControllerActivity extends Activity implements CameraBridgeViewBase.CvCameraViewListener2 {
-
-    static {
-        //Load the C/C++ section of LASA Robotics' FTC library
-        //Only required if using any native functions such as object detection
-        System.loadLibrary("ftcvision");
-    }
 
     public static final String CONFIGURE_FILENAME = "CONFIGURE_FILENAME";
     private static final int REQUEST_CONFIG_WIFI_CHANNEL = 1;
@@ -155,7 +161,11 @@ public class FtcRobotControllerActivity extends Activity implements CameraBridge
             switch (status) {
                 case LoaderCallbackInterface.SUCCESS:
                 {
-                    Log.i(TAG, "OpenCV loaded successfully");
+                    // OpenCV loaded successfully!
+                    // Load native library AFTER OpenCV initialization
+
+                    initialize();
+
                     mOpenCvCameraView.enableView();
                 } break;
                 default:
@@ -165,8 +175,6 @@ public class FtcRobotControllerActivity extends Activity implements CameraBridge
             }
         }
     };
-    private Mat mGray;
-    private Mat mRgba;
 
     private void updateHeader()
     {
@@ -199,16 +207,6 @@ public class FtcRobotControllerActivity extends Activity implements CameraBridge
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_ftc_controller);
-
-        String s = Features.stringFromJNI();
-
-        // Create an instance of Camera
-        //mCamera = Cameras.getSecondaryCamera().getCamera();
-
-        // Create our Preview view and set it as the content of our activity.
-        //mPreview = new CameraPreview(this, mCamera);
-        //FrameLayout preview = (FrameLayout) findViewById(R.id.framePreview);
-        //preview.addView(mPreview);
 
         utility = new Utility(this);
         context = this;
@@ -456,6 +454,7 @@ public class FtcRobotControllerActivity extends Activity implements CameraBridge
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         mOpenCvCameraView = (CameraBridgeViewBase) findViewById(R.id.framePreview);
+        mOpenCvCameraView.setCameraIndex(0); //GET BACK CAMERA
         mOpenCvCameraView.setVisibility(SurfaceView.VISIBLE);
         mOpenCvCameraView.setCvCameraViewListener(this);
     }
@@ -489,7 +488,7 @@ public class FtcRobotControllerActivity extends Activity implements CameraBridge
 
         if (!OpenCVLoader.initDebug()) {
             Log.d(TAG, "Internal OpenCV library not found. Using OpenCV Manager for initialization");
-            OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_2_4_12, this, mLoaderCallback);
+            OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_0_0, this, mLoaderCallback);
         } else {
             Log.d(TAG, "OpenCV library found inside package. Using it!");
             mLoaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
@@ -662,10 +661,45 @@ public class FtcRobotControllerActivity extends Activity implements CameraBridge
         });
     }
 
+    /** VISION **/
+
+    private ColorBlobDetector detectorRed;
+    private ColorBlobDetector detectorBlue;
+    private static final ColorHSV colorRadius = new ColorHSV(50, 75, 127);
+
+    private static final ColorHSV lowerBoundRed = new ColorHSV( (int)(305         / 360.0 * 255.0), (int)(0.200 * 255.0), (int)(0.300 * 255.0));
+    private static final ColorHSV upperBoundRed = new ColorHSV( (int)((360.0+5.0) / 360.0 * 255.0), 255                 , 255);
+
+    private static final ColorHSV lowerBoundBlue = new ColorHSV((int)(170.0       / 360.0 * 255.0), (int)(0.200 * 255.0), (int)(0.750 * 255.0));
+    private static final ColorHSV upperBoundBlue = new ColorHSV((int)(227.0       / 360.0 * 255.0), 255                 , 255);
+
+    private Mat mGray;
+    private Mat mRgba;
+    private FPS fpsCounter;
+
+    private float focalLength;
+
     public void onDestroy() {
         super.onDestroy();
         if (mOpenCvCameraView != null)
             mOpenCvCameraView.disableView();
+    }
+
+    private void initialize()
+    {
+        //GET CAMERA PROPERTIES
+        Camera cam = Cameras.getPrimaryCamera();
+        assert cam != null;
+        android.hardware.Camera.Parameters pam = cam.getCamera().getParameters();
+        focalLength = pam.getFocalLength();
+        cam.getCamera().release();
+
+        //UPDATE COUNTER
+        fpsCounter = new FPS();
+
+        //Initialize all detectors here
+        detectorRed  = new ColorBlobDetector(lowerBoundRed, upperBoundRed);
+        detectorBlue = new ColorBlobDetector(lowerBoundBlue, upperBoundBlue);
     }
 
     public void onCameraViewStarted(int width, int height) {
@@ -679,9 +713,54 @@ public class FtcRobotControllerActivity extends Activity implements CameraBridge
     }
 
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
+        // input frame has RGBA format
         mRgba = inputFrame.rgba();
         mGray = inputFrame.gray();
-        Features.highlightFeatures(mGray.getNativeObjAddr(), mRgba.getNativeObjAddr());
+        //Size originalSize = mRgba.size();
+
+        //DEBUG for the Nexus
+        //Transform.flip(mRgba, Transform.FlipType.FLIP_BOTH);
+        //Transform.flip(mGray, Transform.FlipType.FLIP_BOTH);
+
+        //Transform.shrink(mRgba, new Size(480, 480), true);
+        //Transform.shrink(mGray, new Size(480, 480), true);
+
+        //DEBUG for the Moto G
+        Transform.rotate(mGray, -90);
+        Transform.rotate(mRgba, -90);
+
+        fpsCounter.update();
+
+        try {
+            //Process the frame for the color blobs
+            detectorRed.process(mRgba);
+            detectorBlue.process(mRgba);
+
+            //Get the list of contours
+            List<Contour> contoursRed = detectorRed.getContours();
+            List<Contour> contoursBlue = detectorBlue.getContours();
+
+            //Get color analysis
+            Beacon beacon = new Beacon(mRgba.size());
+            Beacon.BeaconColorAnalysis colorAnalysis = beacon.analyzeColor(contoursRed, contoursBlue, mRgba, mGray);
+
+            //Draw red and blue contours
+            Drawing.drawContours(mRgba, contoursRed, new ColorRGBA(255, 0, 0), 2);
+            Drawing.drawContours(mRgba, contoursBlue, new ColorRGBA(0, 0, 255), 2);
+
+            //Transform.enlarge(mRgba, originalSize, true);
+            //Transform.enlarge(mGray, originalSize, true);
+
+            Drawing.drawText(mRgba, colorAnalysis.getStateLeft().toString() + ", " + colorAnalysis.getStateRight().toString(),
+                    new Point(0, 8), 1.0f, new ColorGRAY(255), Drawing.Anchor.BOTTOMLEFT);
+        }
+        catch (Exception e)
+        {
+            Drawing.drawText(mRgba, "Analysis Error", new Point(0, 8), 1.0f, new ColorRGBA("#F44336"), Drawing.Anchor.BOTTOMLEFT);
+            e.printStackTrace();
+        }
+
+        Drawing.drawText(mRgba, "FPS: " + fpsCounter.getFPSString(), new Point(0, 24), 1.0f, new ColorRGBA("#ffffff")); //"#2196F3"
 
         return mRgba;
     }

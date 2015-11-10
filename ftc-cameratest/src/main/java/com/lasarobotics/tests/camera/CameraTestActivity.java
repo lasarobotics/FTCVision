@@ -172,6 +172,10 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
         mGray = inputFrame.gray();
         //Size originalSize = mRgba.size();
 
+        //DEBUG for the Nexus
+        Transform.flip(mRgba, Transform.FlipType.FLIP_BOTH);
+        Transform.flip(mGray, Transform.FlipType.FLIP_BOTH);
+
         //Transform.shrink(mRgba, new Size(480, 480), true);
         //Transform.shrink(mGray, new Size(480, 480), true);
 

@@ -1,6 +1,7 @@
 package org.lasarobotics.vision.image;
 
 import org.lasarobotics.vision.util.MathUtil;
+import org.opencv.android.Utils;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -18,15 +19,20 @@ public class Transform {
      */
     public static void rotate(Mat image, double angle)
     {
-        //Find the center of the image
-        int len = Math.max(image.rows(), image.cols());
-        Point center = new Point(len/2, len/2);
+        //Calculate size of new matrix
+        double radians = Math.toRadians(angle);
+        double sin = Math.abs(Math.sin(radians));
+        double cos = Math.abs(Math.cos(radians));
 
-        //Retrieve the rotation matrix
-        Mat rotationMatrix = Imgproc.getRotationMatrix2D(center, angle, 1.0);
+        int newWidth = (int) (image.width() * cos + image.height() * sin);
+        int newHeight = (int) (image.width() * sin + image.height() * cos);
 
-        //Warp the image by the rotation matrix
-        Imgproc.warpAffine(image, image, rotationMatrix, new Size(len, len));
+        // rotating image
+        Point center = new Point(newWidth/2, newHeight/2);
+        Mat rotMatrix = Imgproc.getRotationMatrix2D(center, angle, 1.0); //1.0 means 100 % scale
+
+        Size size = new Size(newWidth, newHeight);
+        Imgproc.warpAffine(image, image, rotMatrix, image.size());
     }
 
     public enum FlipType
