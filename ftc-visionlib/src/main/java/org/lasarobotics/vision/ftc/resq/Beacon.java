@@ -59,15 +59,15 @@ public final class Beacon {
 
         public static BeaconColor parseString(String s)
         {
-            if (s.compareTo("red") == 0)
+            if (s.startsWith("red"))
                 return RED;
-            if (s.compareTo("blue") == 0)
+            if (s.startsWith("blue"))
                 return BLUE;
-            if (s.compareTo("RED!") == 0)
+            if (s.startsWith("RED!"))
                 return RED_BRIGHT;
-            if (s.compareTo("BLUE!") == 0)
+            if (s.startsWith("BLUE!"))
                 return BLUE_BRIGHT;
-            if (s.compareTo("???") == 0)
+            if (s.startsWith("???"))
                 return UNKNOWN;
             throw new IllegalArgumentException();
         }
@@ -75,13 +75,21 @@ public final class Beacon {
 
     public static class BeaconColorAnalysis
     {
-        BeaconColor left;
-        BeaconColor right;
+        private BeaconColor left;
+        private BeaconColor right;
 
         //TODO Color and CONFIDENCE should make up the results
 
         //TODO add Size size, Point locationTopLeft, Distance distanceApprox
-        BeaconColorAnalysis(BeaconColor left, BeaconColor right)
+        public BeaconColorAnalysis()
+        {
+            assert left != null;
+            assert right != null;
+            this.left = BeaconColor.UNKNOWN;
+            this.right = BeaconColor.UNKNOWN;
+        }
+
+        public BeaconColorAnalysis(BeaconColor left, BeaconColor right)
         {
             assert left != null;
             assert right != null;

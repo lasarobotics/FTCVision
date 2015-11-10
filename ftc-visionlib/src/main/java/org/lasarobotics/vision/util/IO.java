@@ -1,5 +1,7 @@
 package org.lasarobotics.vision.util;
 
+import android.os.Environment;
+
 import org.lasarobotics.vision.android.Util;
 
 import java.io.BufferedReader;
@@ -39,7 +41,7 @@ public class IO {
 
     public static String readTextFile(String directory, String filename)
     {
-        File f = new File(directory, filename);
+        File f = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + directory, filename);
         try {
             String str = "";
             Scanner s = new Scanner(f);

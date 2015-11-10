@@ -56,6 +56,8 @@ public class VisionTest extends OpMode {
 
   }
 
+  Beacon.BeaconColorAnalysis colorAnalysis = new Beacon.BeaconColorAnalysis();
+
   /*
    * This method will be called repeatedly in a loop
    * @see com.qualcomm.robotcore.eventloop.opmode.OpMode#loop()
@@ -69,8 +71,17 @@ public class VisionTest extends OpMode {
     {
       data = "???, ???";
     }
+
+    if (data == null)
+      data = "???, ???";
+
     String[] lines = IO.getLines(data);
-    Beacon.BeaconColorAnalysis colorAnalysis = Beacon.BeaconColorAnalysis.parseString(lines[0]);
+    try {
+      colorAnalysis = Beacon.BeaconColorAnalysis.parseString(lines[0]);
+    } catch (IllegalArgumentException e)
+    {
+      //Use previous value
+    }
     telemetry.addData("Vision Color", colorAnalysis.toString());
   }
 }
