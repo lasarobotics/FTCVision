@@ -98,7 +98,9 @@ import java.io.FileNotFoundException;
 import java.io.Serializable;
 import java.util.List;
 
-public class FtcRobotControllerActivity extends Activity implements CameraBridgeViewBase.CvCameraViewListener2 {
+public class FtcRobotControllerActivity extends Activity {
+
+    public static FtcRobotControllerActivity instance;
 
     protected class RobotRestarter implements Restarter {
         public void requestRestart() {
@@ -366,9 +368,10 @@ public class FtcRobotControllerActivity extends Activity implements CameraBridge
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         mOpenCvCameraView = (CameraBridgeViewBase) findViewById(R.id.framePreview);
-        mOpenCvCameraView.setCameraIndex(0); //SET BACK (MAIN) CAMERA
+        //DEBUG this is for debug purposes, you can comment out this line (though it is really nice)
         mOpenCvCameraView.setVisibility(SurfaceView.VISIBLE);
-        mOpenCvCameraView.setCvCameraViewListener(this);
+
+        instance = this;
     }
 
     @Override
@@ -528,9 +531,7 @@ public class FtcRobotControllerActivity extends Activity implements CameraBridge
 
     private static final String TAG = "OCVSample::Activity";
 
-    private CameraBridgeViewBase mOpenCvCameraView;
-    private boolean              mIsJavaCamera = true;
-    private MenuItem             mItemSwitchCamera = null;
+    public static CameraBridgeViewBase mOpenCvCameraView;
 
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
         @Override
@@ -543,7 +544,6 @@ public class FtcRobotControllerActivity extends Activity implements CameraBridge
 
                     initialize();
 
-                    mOpenCvCameraView.enableView();
                 } break;
                 default:
                 {
@@ -716,10 +716,6 @@ public class FtcRobotControllerActivity extends Activity implements CameraBridge
     private static final ColorHSV lowerBoundBlue = new ColorHSV((int)(170.0       / 360.0 * 255.0), (int)(0.200 * 255.0), (int)(0.750 * 255.0));
     private static final ColorHSV upperBoundBlue = new ColorHSV((int)(227.0       / 360.0 * 255.0), 255                 , 255);
 
-    private Mat mGray;
-    private Mat mRgba;
-    private FPS fpsCounter;
-
     private float focalLength;
 
     public void onDestroy() {
@@ -737,79 +733,8 @@ public class FtcRobotControllerActivity extends Activity implements CameraBridge
         focalLength = pam.getFocalLength();
         cam.getCamera().release();*/
 
-        //UPDATE COUNTER
-        fpsCounter = new FPS();
-
         //Initialize all detectors here
         detectorRed  = new ColorBlobDetector(lowerBoundRed, upperBoundRed);
         detectorBlue = new ColorBlobDetector(lowerBoundBlue, upperBoundBlue);
-    }
-
-    public void onCameraViewStarted(int width, int height) {
-        mRgba = new Mat(height, width, CvType.CV_8UC4);
-        mGray = new Mat(height, width, CvType.CV_8UC1);
-    }
-
-    public void onCameraViewStopped() {
-        mRgba.release();
-        mGray.release();
-    }
-
-    public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
-        // input frame has RGBA format
-        mRgba = inputFrame.rgba();
-        mGray = inputFrame.gray();
-        //Size originalSize = mRgba.size();
-
-        //DEBUG for the Nexus
-        //Transform.flip(mRgba, Transform.FlipType.FLIP_BOTH);
-        //Transform.flip(mGray, Transform.FlipType.FLIP_BOTH);
-
-        //Transform.shrink(mRgba, new Size(480, 480), true);
-        //Transform.shrink(mGray, new Size(480, 480), true);
-
-        //DEBUG for the Moto G
-        Transform.rotate(mGray, -90);
-        Transform.rotate(mRgba, -90);
-
-        fpsCounter.update();
-
-        try {
-            //Process the frame for the color blobs
-            detectorRed.process(mRgba);
-            detectorBlue.process(mRgba);
-
-            //Get the list of contours
-            List<Contour> contoursRed = detectorRed.getContours();
-            List<Contour> contoursBlue = detectorBlue.getContours();
-
-            //Get color analysis
-            Beacon beacon = new Beacon(mRgba.size());
-            Beacon.BeaconColorAnalysis colorAnalysis = beacon.analyzeColor(contoursRed, contoursBlue, mRgba, mGray);
-
-            //Draw red and blue contours
-            Drawing.drawContours(mRgba, contoursRed, new ColorRGBA(255, 0, 0), 2);
-            Drawing.drawContours(mRgba, contoursBlue, new ColorRGBA(0, 0, 255), 2);
-
-            //Transform.enlarge(mRgba, originalSize, true);
-            //Transform.enlarge(mGray, originalSize, true);
-
-            //Draw text
-            Drawing.drawText(mRgba, colorAnalysis.toString(),
-                    new Point(0, 8), 1.0f, new ColorGRAY(255), Drawing.Anchor.BOTTOMLEFT);
-
-            //Write status text file
-            IO.writeTextFile("/FTCVision/", "rc_colors.txt", colorAnalysis.toString(), true);
-
-        }
-        catch (Exception e)
-        {
-            Drawing.drawText(mRgba, "Analysis Error", new Point(0, 8), 1.0f, new ColorRGBA("#F44336"), Drawing.Anchor.BOTTOMLEFT);
-            e.printStackTrace();
-        }
-
-        Drawing.drawText(mRgba, "FPS: " + fpsCounter.getFPSString(), new Point(0, 24), 1.0f, new ColorRGBA("#ffffff")); //"#2196F3"
-
-        return mRgba;
     }
 }

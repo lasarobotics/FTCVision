@@ -48,6 +48,6 @@ public class FtcOpModeRegister implements OpModeRegister {
     public void register(OpModeManager manager) {
         //Custom op modes
         manager.register("Null", NullOp.class);
-        manager.register("Vision Test", VisionTest.class);
+        manager.register("Vision Test 2", VisionTest2.class);
     }
 }
