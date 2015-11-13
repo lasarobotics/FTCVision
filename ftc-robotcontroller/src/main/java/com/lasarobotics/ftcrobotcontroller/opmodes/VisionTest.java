@@ -31,22 +31,24 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
 package com.lasarobotics.ftcrobotcontroller.opmodes;
 
-import android.content.Context;
-
-import com.lasarobotics.ftcrobotcontroller.FtcRobotControllerActivity;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
-import org.lasarobotics.vision.android.Util;
 import org.lasarobotics.vision.detection.ColorBlobDetector;
 import org.lasarobotics.vision.detection.objects.Contour;
 import org.lasarobotics.vision.ftc.resq.Beacon;
+import org.lasarobotics.vision.image.Drawing;
 import org.lasarobotics.vision.image.Transform;
 import org.lasarobotics.vision.ui.VisionEnabledActivity;
+import org.lasarobotics.vision.ui.VisionOpMode;
 import org.lasarobotics.vision.util.FPS;
+import org.lasarobotics.vision.util.IO;
+import org.lasarobotics.vision.util.color.ColorGRAY;
 import org.lasarobotics.vision.util.color.ColorHSV;
+import org.lasarobotics.vision.util.color.ColorRGBA;
 import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.core.Point;
 
 import java.util.List;
 
@@ -55,94 +57,33 @@ import java.util.List;
  * <p/>
  * Enables control of the robot via the gamepad
  */
-public class VisionTest1 extends OpMode implements CameraBridgeViewBase.CvCameraViewListener2 {
+public class VisionTest extends VisionOpMode {
 
-    private CameraBridgeViewBase mOpenCvCameraView;
-    Beacon.BeaconColorAnalysis colorAnalysis = new Beacon.BeaconColorAnalysis();
-    Mat mRgba, mGray;
-    int width, height;
-    boolean initialized = false;
-
-    private FPS fpsCounter;
+    private Beacon.BeaconColorAnalysis colorAnalysis = new Beacon.BeaconColorAnalysis();
     private ColorBlobDetector detectorRed;
     private ColorBlobDetector detectorBlue;
     private static final ColorHSV lowerBoundRed = new ColorHSV((int) (305 / 360.0 * 255.0), (int) (0.200 * 255.0), (int) (0.300 * 255.0));
     private static final ColorHSV upperBoundRed = new ColorHSV((int) ((360.0 + 5.0) / 360.0 * 255.0), 255, 255);
     private static final ColorHSV lowerBoundBlue = new ColorHSV((int) (170.0 / 360.0 * 255.0), (int) (0.200 * 255.0), (int) (0.750 * 255.0));
     private static final ColorHSV upperBoundBlue = new ColorHSV((int) (227.0 / 360.0 * 255.0), 255, 255);
+    private boolean noError = true;
 
-    /*
-     * Code to run when the op mode is first enabled goes here
-     * @see com.qualcomm.robotcore.eventloop.opmode.OpMode#start()
-     */
     @Override
-    public void init() {
-
-        //Initialize camera view
-        mOpenCvCameraView = VisionEnabledActivity.openCVCamera;
-        mOpenCvCameraView.setCameraIndex(0); //SET BACK (MAIN) CAMERA
-        mOpenCvCameraView.setCvCameraViewListener(this);
-        mOpenCvCameraView.enableView();
-
-        //Initialize FPS counter
-        fpsCounter = new FPS();
-
+    public void init(int width, int height) {
         //Initialize all detectors here
         detectorRed = new ColorBlobDetector(lowerBoundRed, upperBoundRed);
         detectorBlue = new ColorBlobDetector(lowerBoundBlue, upperBoundBlue);
-
-        initialized = true;
     }
 
-    /*
-     * This method will be called repeatedly in a loop
-     * @see com.qualcomm.robotcore.eventloop.opmode.OpMode#loop()
-     */
     @Override
     public void loop() {
+        telemetry.addData("Vision FPS", fps.getFPSString());
         telemetry.addData("Vision Color", colorAnalysis.toString());
+        telemetry.addData("Vision Status", noError ? "OK!" : "ANALYSIS ERROR!");
     }
 
-    /**
-     * This method is invoked when camera preview has started. After this method is invoked
-     * the frames will start to be delivered to client via the onCameraFrame() callback.
-     *
-     * @param width  -  the width of the frames that will be delivered
-     * @param height - the height of the frames that will be delivered
-     */
     @Override
-    public void onCameraViewStarted(int width, int height) {
-        this.width = width;
-        this.height = height;
-    }
-
-    /**
-     * This method is invoked when camera preview has been stopped for some reason.
-     * No frames will be delivered via onCameraFrame() callback after this method is called.
-     */
-    @Override
-    public void onCameraViewStopped() {
-        mRgba = new Mat(height, width, CvType.CV_8UC4);
-        mGray = new Mat(height, width, CvType.CV_8UC1);
-    }
-
-    /**
-     * This method is invoked when delivery of the frame needs to be done.
-     * The returned values - is a modified frame which needs to be displayed on the screen.
-     * TODO: pass the parameters specifying the format of the frame (BPP, YUV or RGB and etc)
-     *
-     * @param inputFrame
-     */
-    @Override
-    public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
-        if (!initialized) { return inputFrame.rgba(); }
-
-        // input frame has RGBA format
-        mRgba = inputFrame.rgba();
-        Mat mRgbaOriginal = inputFrame.rgba().clone();
-        mGray = inputFrame.gray();
-        //Size originalSize = mRgba.size();
-
+    public Mat frame(Mat rgba, Mat gray) {
         //DEBUG for the Nexus
         //Transform.flip(mRgba, Transform.FlipType.FLIP_BOTH);
         //Transform.flip(mGray, Transform.FlipType.FLIP_BOTH);
@@ -151,36 +92,49 @@ public class VisionTest1 extends OpMode implements CameraBridgeViewBase.CvCamera
         //Transform.shrink(mGray, new Size(480, 480), true);
 
         //DEBUG for the Moto G
-        Transform.rotate(mGray, -90);
-        Transform.rotate(mRgba, -90);
-
-        fpsCounter.update();
+        Transform.rotate(gray, -90);
+        Transform.rotate(rgba, -90);
 
         try {
             //Process the frame for the color blobs
-            detectorRed.process(mRgba);
-            detectorBlue.process(mRgba);
+            detectorRed.process(rgba);
+            detectorBlue.process(rgba);
 
             //Get the list of contours
             List<Contour> contoursRed = detectorRed.getContours();
             List<Contour> contoursBlue = detectorBlue.getContours();
 
             //Get color analysis
-            Beacon beacon = new Beacon(mRgba.size());
-            colorAnalysis = beacon.analyzeColor(contoursRed, contoursBlue, mRgba, mGray);
+            Beacon beacon = new Beacon(rgba.size());
+            colorAnalysis = beacon.analyzeColor(contoursRed, contoursBlue, rgba, gray);
 
-        } catch (Exception e) {
-            telemetry.addData("Vision Status", "Analysis Error");
+            //Draw red and blue contours
+            Drawing.drawContours(rgba, contoursRed, new ColorRGBA(255, 0, 0), 2);
+            Drawing.drawContours(rgba, contoursBlue, new ColorRGBA(0, 0, 255), 2);
+
+            //Transform.enlarge(mRgba, originalSize, true);
+            //Transform.enlarge(mGray, originalSize, true);
+
+            //Draw text
+            Drawing.drawText(rgba, colorAnalysis.toString(),
+                    new Point(0, 8), 1.0f, new ColorGRAY(255), Drawing.Anchor.BOTTOMLEFT);
+
+            noError = true;
+        }
+        catch (Exception e)
+        {
+            Drawing.drawText(rgba, "Analysis Error", new Point(0, 8), 1.0f, new ColorRGBA("#F44336"), Drawing.Anchor.BOTTOMLEFT);
+            noError = false;
             e.printStackTrace();
         }
 
-        telemetry.addData("Vision FPS", fpsCounter.getFPSString());
-        return mRgba;
+        Drawing.drawText(rgba, "FPS: " + fps.getFPSString(), new Point(0, 24), 1.0f, new ColorRGBA("#ffffff")); //"#2196F3"
+
+        return rgba;
     }
 
     @Override
     public void stop() {
-        if (mOpenCvCameraView != null)
-            mOpenCvCameraView.disableView();
+
     }
 }

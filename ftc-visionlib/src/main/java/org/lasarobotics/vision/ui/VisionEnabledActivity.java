@@ -13,13 +13,9 @@ import org.opencv.android.JavaCameraView;
 public abstract class VisionEnabledActivity extends Activity {
     public static CameraBridgeViewBase openCVCamera;
 
-    protected final void initializeVision(int framePreview, boolean visible) {
+    protected final void initializeVision(int framePreview) {
         openCVCamera = (CameraBridgeViewBase) findViewById(framePreview);
-        //DEBUG this is for debug purposes, you can comment out this line (though it is really nice)
-        if (visible)
-            openCVCamera.setVisibility(SurfaceView.VISIBLE);
-        else
-            openCVCamera.setVisibility(SurfaceView.INVISIBLE);
+        openCVCamera.setVisibility(SurfaceView.VISIBLE);
     }
 
     public void onDestroy() {
