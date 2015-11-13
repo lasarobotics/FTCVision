@@ -80,6 +80,7 @@ import org.lasarobotics.vision.detection.objects.Contour;
 import org.lasarobotics.vision.ftc.resq.Beacon;
 import org.lasarobotics.vision.image.Drawing;
 import org.lasarobotics.vision.image.Transform;
+import org.lasarobotics.vision.ui.VisionEnabledActivity;
 import org.lasarobotics.vision.util.FPS;
 import org.lasarobotics.vision.util.IO;
 import org.lasarobotics.vision.util.color.ColorGRAY;
@@ -98,9 +99,7 @@ import java.io.FileNotFoundException;
 import java.io.Serializable;
 import java.util.List;
 
-public class FtcRobotControllerActivity extends Activity {
-
-    public static FtcRobotControllerActivity instance;
+public class FtcRobotControllerActivity extends VisionEnabledActivity {
 
     protected class RobotRestarter implements Restarter {
         public void requestRestart() {
@@ -123,8 +122,10 @@ public class FtcRobotControllerActivity extends Activity {
 
         setContentView(R.layout.activity_ftc_controller);
 
+        //This method MUST be called after setContentView!
+        initializeVision(R.id.framePreview, true);
+
         utility = new Utility(this);
-        context = this;
         entireScreenLayout = (LinearLayout) findViewById(R.id.entire_screen);
         buttonMenu = (ImageButton) findViewById(R.id.menu_buttons);
         buttonMenu.setOnClickListener(new View.OnClickListener() {
@@ -366,12 +367,6 @@ public class FtcRobotControllerActivity extends Activity {
             HardwareFactory.enableDeviceEmulation(); }
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-
-        mOpenCvCameraView = (CameraBridgeViewBase) findViewById(R.id.framePreview);
-        //DEBUG this is for debug purposes, you can comment out this line (though it is really nice)
-        mOpenCvCameraView.setVisibility(SurfaceView.VISIBLE);
-
-        instance = this;
     }
 
     @Override
@@ -531,8 +526,6 @@ public class FtcRobotControllerActivity extends Activity {
 
     private static final String TAG = "OCVSample::Activity";
 
-    public static CameraBridgeViewBase mOpenCvCameraView;
-
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
         @Override
         public void onManagerConnected(int status) {
@@ -541,9 +534,6 @@ public class FtcRobotControllerActivity extends Activity {
                 {
                     // OpenCV loaded successfully!
                     // Load native library AFTER OpenCV initialization
-
-                    initialize();
-
                 } break;
                 default:
                 {
@@ -704,37 +694,7 @@ public class FtcRobotControllerActivity extends Activity {
         });
     }
 
-    /** VISION **/
-
-    private ColorBlobDetector detectorRed;
-    private ColorBlobDetector detectorBlue;
-    private static final ColorHSV colorRadius = new ColorHSV(50, 75, 127);
-
-    private static final ColorHSV lowerBoundRed = new ColorHSV( (int)(305         / 360.0 * 255.0), (int)(0.200 * 255.0), (int)(0.300 * 255.0));
-    private static final ColorHSV upperBoundRed = new ColorHSV( (int)((360.0+5.0) / 360.0 * 255.0), 255                 , 255);
-
-    private static final ColorHSV lowerBoundBlue = new ColorHSV((int)(170.0       / 360.0 * 255.0), (int)(0.200 * 255.0), (int)(0.750 * 255.0));
-    private static final ColorHSV upperBoundBlue = new ColorHSV((int)(227.0       / 360.0 * 255.0), 255                 , 255);
-
-    private float focalLength;
-
     public void onDestroy() {
         super.onDestroy();
-        if (mOpenCvCameraView != null)
-            mOpenCvCameraView.disableView();
-    }
-
-    private void initialize()
-    {
-        //GET CAMERA PROPERTIES
-        /*Camera cam = Cameras.getPrimaryCamera();
-        assert cam != null;
-        android.hardware.Camera.Parameters pam = cam.getCamera().getParameters();
-        focalLength = pam.getFocalLength();
-        cam.getCamera().release();*/
-
-        //Initialize all detectors here
-        detectorRed  = new ColorBlobDetector(lowerBoundRed, upperBoundRed);
-        detectorBlue = new ColorBlobDetector(lowerBoundBlue, upperBoundBlue);
     }
 }

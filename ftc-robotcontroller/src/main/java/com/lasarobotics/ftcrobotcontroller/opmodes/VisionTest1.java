@@ -41,6 +41,7 @@ import org.lasarobotics.vision.detection.ColorBlobDetector;
 import org.lasarobotics.vision.detection.objects.Contour;
 import org.lasarobotics.vision.ftc.resq.Beacon;
 import org.lasarobotics.vision.image.Transform;
+import org.lasarobotics.vision.ui.VisionEnabledActivity;
 import org.lasarobotics.vision.util.FPS;
 import org.lasarobotics.vision.util.color.ColorHSV;
 import org.opencv.android.CameraBridgeViewBase;
@@ -78,22 +79,7 @@ public class VisionTest1 extends OpMode implements CameraBridgeViewBase.CvCamera
     public void init() {
 
         //Initialize camera view
-        Context context = Util.getContext().getApplicationContext();
-        /*ctivityManager am = (ActivityManager) context.getSystemService(Application.ACTIVITY_SERVICE);
-        List<ActivityManager.RunningTaskInfo> taskInfo = am.getRunningTasks(1);
-        Log.d("topActivity", "CURRENT Activity ::" + taskInfo.get(0).topActivity.getClassName());
-        ComponentName componentInfo = taskInfo.get(0).topActivity;*/
-
-        //Activity activity = (Activity)FtcRobotControllerActivity.getOfficialContext();
-        //mOpenCvCameraView = new JavaCameraView(context, 0);
-
-        //mOpenCvCameraView.setCameraIndex(0); //SET BACK (MAIN) CAMERA
-        //mOpenCvCameraView.setVisibility(SurfaceView.VISIBLE);
-        //mOpenCvCameraView.setCvCameraViewListener(this);
-        //mOpenCvCameraView.enableView();
-
-        mOpenCvCameraView = FtcRobotControllerActivity.mOpenCvCameraView;
-
+        mOpenCvCameraView = VisionEnabledActivity.openCVCamera;
         mOpenCvCameraView.setCameraIndex(0); //SET BACK (MAIN) CAMERA
         mOpenCvCameraView.setCvCameraViewListener(this);
         mOpenCvCameraView.enableView();
