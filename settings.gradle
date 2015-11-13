@@ -4,4 +4,4 @@ include ':ftc-visionlib'
 
 //Demos and Tests
 include ':ftc-cameratest'
-//include ':ftc-robotcontroller'
+include ':ftc-robotcontroller'

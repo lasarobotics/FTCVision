@@ -57,7 +57,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.lasarobotics.vision.detection.Features;
 import com.qualcomm.ftccommon.DbgLog;
 import com.qualcomm.ftccommon.FtcEventLoop;
 import com.qualcomm.ftccommon.FtcRobotControllerService;
@@ -66,123 +65,46 @@ import com.qualcomm.ftccommon.LaunchActivityConstantsList;
 import com.qualcomm.ftccommon.Restarter;
 import com.qualcomm.ftccommon.UpdateUI;
 import com.lasarobotics.ftcrobotcontroller.opmodes.FtcOpModeRegister;
-import com.qualcomm.modernrobotics.ModernRoboticsHardwareFactory;
+import com.qualcomm.hardware.HardwareFactory;
 import com.qualcomm.robotcore.hardware.Gamepad;
-import com.qualcomm.robotcore.hardware.HardwareFactory;
 import com.qualcomm.robotcore.hardware.configuration.Utility;
 import com.qualcomm.robotcore.util.Dimmer;
 import com.qualcomm.robotcore.util.ImmersiveMode;
 import com.qualcomm.robotcore.util.RobotLog;
 import com.qualcomm.robotcore.wifi.WifiDirectAssistant;
 
+import org.lasarobotics.vision.android.Camera;
+import org.lasarobotics.vision.android.Cameras;
+import org.lasarobotics.vision.detection.ColorBlobDetector;
+import org.lasarobotics.vision.detection.objects.Contour;
+import org.lasarobotics.vision.ftc.resq.Beacon;
+import org.lasarobotics.vision.image.Drawing;
+import org.lasarobotics.vision.image.Transform;
+import org.lasarobotics.vision.ui.VisionEnabledActivity;
+import org.lasarobotics.vision.util.FPS;
+import org.lasarobotics.vision.util.IO;
+import org.lasarobotics.vision.util.color.ColorGRAY;
+import org.lasarobotics.vision.util.color.ColorHSV;
+import org.lasarobotics.vision.util.color.ColorRGBA;
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.core.Point;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.Serializable;
+import java.util.List;
 
-public class FtcRobotControllerActivity extends Activity implements CameraBridgeViewBase.CvCameraViewListener2 {
+public class FtcRobotControllerActivity extends VisionEnabledActivity {
 
-    static {
-        //Load the C/C++ section of LASA Robotics' FTC library
-        //Only required if using any native functions such as object detection
-        System.loadLibrary("ftcvision");
-    }
-
-    public static final String CONFIGURE_FILENAME = "CONFIGURE_FILENAME";
-    private static final int REQUEST_CONFIG_WIFI_CHANNEL = 1;
-    private static final boolean USE_DEVICE_EMULATION = false;
-    private static final int NUM_GAMEPADS = 2;
-    protected SharedPreferences preferences;
-
-    protected UpdateUI.Callback callback;
-    protected Context context;
-    protected ImageButton buttonMenu;
-    protected ImageButton buttonRobotRestart;
-    protected TextView textDeviceName;
-    protected TextView textWifiDirectStatus;
-    protected TextView textRobotStat;
-    protected TextView[] textGamepad = new TextView[NUM_GAMEPADS];
-    protected ImageView gamepad1;
-    protected ImageView gamepad2;
-    protected TextView textOpMode;
-    protected TextView textConfig;
-    protected TextView textActiveFilename;
-    protected TextView textErrorMessage;
-    protected ImageView imageWifi;
-    protected ImageView imageRobot;
-    protected ImageView imageConfig;
-    protected ImageView imageOp;
-    protected ImmersiveMode immersion;
-    protected UpdateUI updateUI;
-    protected Dimmer dimmer;
-    protected LinearLayout entireScreenLayout;
-    protected FtcRobotControllerService controllerService;
-    protected FtcEventLoop eventLoop;
-
-    private Utility utility;
-    protected ServiceConnection connection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            FtcRobotControllerBinder binder = (FtcRobotControllerBinder) service;
-            onServiceBind(binder.getService());
+    protected class RobotRestarter implements Restarter {
+        public void requestRestart() {
+            requestRobotRestart();
         }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            controllerService = null;
-        }
-    };
-
-    //CAMERAS
-    //private Camera mCamera;
-    //private CameraPreview mPreview;
-
-    private static final String TAG = "OCVSample::Activity";
-
-    private CameraBridgeViewBase mOpenCvCameraView;
-    private boolean              mIsJavaCamera = true;
-    private MenuItem             mItemSwitchCamera = null;
-
-    private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
-        @Override
-        public void onManagerConnected(int status) {
-            switch (status) {
-                case LoaderCallbackInterface.SUCCESS:
-                {
-                    Log.i(TAG, "OpenCV loaded successfully");
-                    mOpenCvCameraView.enableView();
-                } break;
-                default:
-                {
-                    super.onManagerConnected(status);
-                } break;
-            }
-        }
-    };
-    private Mat mGray;
-    private Mat mRgba;
-
-    private void updateHeader()
-    {
-        utility.updateHeader("Not configured", R.string.pref_hardware_config_filename, R.id.active_filename, R.id.header);
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                textConfig.setText("Configuration\n" + textActiveFilename.getText());
-
-                if (textActiveFilename.getText().toString().equalsIgnoreCase("Not configured") || textActiveFilename.getText().toString().equalsIgnoreCase("No current file!")) {
-                    imageConfig.setColorFilter(getResources().getColor(R.color.error_orange));
-                } else {
-                    imageConfig.setColorFilter(getResources().getColor(R.color.button));
-                }
-            }
-        });
     }
 
     @Override
@@ -200,18 +122,10 @@ public class FtcRobotControllerActivity extends Activity implements CameraBridge
 
         setContentView(R.layout.activity_ftc_controller);
 
-        String s = Features.stringFromJNI();
-
-        // Create an instance of Camera
-        //mCamera = Cameras.getSecondaryCamera().getCamera();
-
-        // Create our Preview view and set it as the content of our activity.
-        //mPreview = new CameraPreview(this, mCamera);
-        //FrameLayout preview = (FrameLayout) findViewById(R.id.framePreview);
-        //preview.addView(mPreview);
+        //This method MUST be called after setContentView!
+        initializeVision(R.id.framePreview, true);
 
         utility = new Utility(this);
-        context = this;
         entireScreenLayout = (LinearLayout) findViewById(R.id.entire_screen);
         buttonMenu = (ImageButton) findViewById(R.id.menu_buttons);
         buttonMenu.setOnClickListener(new View.OnClickListener() {
@@ -401,8 +315,7 @@ public class FtcRobotControllerActivity extends Activity implements CameraBridge
                     public void run() {
                         textOpMode.setText(n);
 
-                        if (o.equalsIgnoreCase("Not selected"))
-                        {
+                        if (o.equalsIgnoreCase("Not selected")) {
                             imageOp.setColorFilter(getResources().getColor(R.color.error_orange));
                         }
                         else if (o.equalsIgnoreCase("Stop Robot"))
@@ -451,13 +364,9 @@ public class FtcRobotControllerActivity extends Activity implements CameraBridge
         hittingMenuButtonBrightensScreen();
 
         if (USE_DEVICE_EMULATION) {
-            ModernRoboticsHardwareFactory.enableDeviceEmulation(); }
+            HardwareFactory.enableDeviceEmulation(); }
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-
-        mOpenCvCameraView = (CameraBridgeViewBase) findViewById(R.id.framePreview);
-        mOpenCvCameraView.setVisibility(SurfaceView.VISIBLE);
-        mOpenCvCameraView.setCvCameraViewListener(this);
     }
 
     @Override
@@ -481,6 +390,174 @@ public class FtcRobotControllerActivity extends Activity implements CameraBridge
                 return false;
             }
         });
+
+    }
+
+    /*@Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_restart_robot:
+                dimmer.handleDimTimer();
+                Toast.makeText(context, "Restarting Robot", Toast.LENGTH_SHORT).show();
+                requestRobotRestart();
+                return true;
+            case R.id.action_settings:
+                // The string to launch this activity must match what's in AndroidManifest of FtcCommon for this activity.
+                Intent settingsIntent = new Intent("com.qualcomm.ftccommon.FtcRobotControllerSettingsActivity.intent.action.Launch");
+                startActivityForResult(settingsIntent, LaunchActivityConstantsList.FTC_ROBOT_CONTROLLER_ACTIVITY_CONFIGURE_ROBOT);
+                return true;
+            case R.id.action_about:
+                // The string to launch this activity must match what's in AndroidManifest of FtcCommon for this activity.
+                Intent intent = new Intent("com.qualcomm.ftccommon.configuration.AboutActivity.intent.action.Launch");
+                startActivity(intent);
+                return true;
+            case R.id.action_exit_app:
+                finish();
+                return true;
+            case R.id.action_view_logs:
+                // The string to launch this activity must match what's in AndroidManifest of FtcCommon for this activity.
+                Intent viewLogsIntent = new Intent("com.qualcomm.ftccommon.ViewLogsActivity.intent.action.Launch");
+                viewLogsIntent.putExtra(LaunchActivityConstantsList.VIEW_LOGS_ACTIVITY_FILENAME, RobotLog.getLogFilename(this));
+                startActivity(viewLogsIntent);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }*/
+
+    @Override
+    protected void onActivityResult(int request, int result, Intent intent) {
+        if (request == REQUEST_CONFIG_WIFI_CHANNEL) {
+            if (result == RESULT_OK) {
+                Toast toast = Toast.makeText(context, "Configuration Complete", Toast.LENGTH_LONG);
+                toast.setGravity(Gravity.CENTER, 0, 0);
+                showToast(toast);
+            }
+        }
+        if (request == LaunchActivityConstantsList.FTC_ROBOT_CONTROLLER_ACTIVITY_CONFIGURE_ROBOT) {
+            if (result == RESULT_OK) {
+                Serializable extra = intent.getSerializableExtra(FtcRobotControllerActivity.CONFIGURE_FILENAME);
+                if (extra != null) {
+                    utility.saveToPreferences(extra.toString(), R.string.pref_hardware_config_filename);
+                    updateHeader();
+                }
+            }
+        }
+    }
+
+    public void onServiceBind(FtcRobotControllerService service) {
+        DbgLog.msg("Bound to Ftc Controller Service");
+        controllerService = service;
+        updateUI.setControllerService(controllerService);
+
+        callback.wifiDirectUpdate(controllerService.getWifiDirectStatus());
+        callback.robotUpdate(controllerService.getRobotStatus());
+        requestRobotSetup();
+    }
+
+    protected void hittingMenuButtonBrightensScreen() {
+        ActionBar actionBar = getActionBar();
+        if (actionBar != null) {
+            actionBar.addOnMenuVisibilityListener(new ActionBar.OnMenuVisibilityListener() {
+                @Override
+                public void onMenuVisibilityChanged(boolean isVisible) {
+                    if (isVisible) {
+                        dimmer.handleDimTimer();
+                    }
+                }
+            });
+        }
+    }
+
+    /*** QUESTIONABLE SECTION ***/
+
+    protected TextView textRobotStatus;
+
+    /*** PRIMARY SECTION ***/
+
+    public static final String CONFIGURE_FILENAME = "CONFIGURE_FILENAME";
+    private static final int REQUEST_CONFIG_WIFI_CHANNEL = 1;
+    private static final boolean USE_DEVICE_EMULATION = false;
+    private static final int NUM_GAMEPADS = 2;
+    protected SharedPreferences preferences;
+
+    protected UpdateUI.Callback callback;
+    protected Context context;
+    protected ImageButton buttonMenu;
+    protected ImageButton buttonRobotRestart;
+    protected TextView textDeviceName;
+    protected TextView textWifiDirectStatus;
+    protected TextView textRobotStat;
+    protected TextView[] textGamepad = new TextView[NUM_GAMEPADS];
+    protected ImageView gamepad1;
+    protected ImageView gamepad2;
+    protected TextView textOpMode;
+    protected TextView textConfig;
+    protected TextView textActiveFilename;
+    protected TextView textErrorMessage;
+    protected ImageView imageWifi;
+    protected ImageView imageRobot;
+    protected ImageView imageConfig;
+    protected ImageView imageOp;
+    protected ImmersiveMode immersion;
+    protected UpdateUI updateUI;
+    protected Dimmer dimmer;
+    protected LinearLayout entireScreenLayout;
+    protected FtcRobotControllerService controllerService;
+    protected FtcEventLoop eventLoop;
+
+    private Utility utility;
+    protected ServiceConnection connection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            FtcRobotControllerBinder binder = (FtcRobotControllerBinder) service;
+            onServiceBind(binder.getService());
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            controllerService = null;
+        }
+    };
+
+    //CAMERAS
+    //private Camera mCamera;
+    //private CameraPreview mPreview;
+
+    private static final String TAG = "OCVSample::Activity";
+
+    private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
+        @Override
+        public void onManagerConnected(int status) {
+            switch (status) {
+                case LoaderCallbackInterface.SUCCESS:
+                {
+                    // OpenCV loaded successfully!
+                    // Load native library AFTER OpenCV initialization
+                } break;
+                default:
+                {
+                    super.onManagerConnected(status);
+                } break;
+            }
+        }
+    };
+
+    private void updateHeader()
+    {
+        utility.updateHeader("Not configured", R.string.pref_hardware_config_filename, R.id.active_filename, R.id.header);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                textConfig.setText("Configuration\n" + textActiveFilename.getText());
+
+                if (textActiveFilename.getText().toString().equalsIgnoreCase("Not configured") || textActiveFilename.getText().toString().equalsIgnoreCase("No current file!")) {
+                    imageConfig.setColorFilter(getResources().getColor(R.color.error_orange));
+                } else {
+                    imageConfig.setColorFilter(getResources().getColor(R.color.button));
+                }
+            }
+        });
     }
 
     @Override
@@ -489,7 +566,7 @@ public class FtcRobotControllerActivity extends Activity implements CameraBridge
 
         if (!OpenCVLoader.initDebug()) {
             Log.d(TAG, "Internal OpenCV library not found. Using OpenCV Manager for initialization");
-            OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_2_4_12, this, mLoaderCallback);
+            OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_0_0, this, mLoaderCallback);
         } else {
             Log.d(TAG, "OpenCV library found inside package. Using it!");
             mLoaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
@@ -559,37 +636,6 @@ public class FtcRobotControllerActivity extends Activity implements CameraBridge
         // don't destroy assets on screen rotation
     }
 
-    @Override
-    protected void onActivityResult(int request, int result, Intent intent) {
-        if (request == REQUEST_CONFIG_WIFI_CHANNEL) {
-            if (result == RESULT_OK) {
-                Toast toast = Toast.makeText(context, "Configuration Complete", Toast.LENGTH_LONG);
-                toast.setGravity(Gravity.CENTER, 0, 0);
-                showToast(toast);
-            }
-        }
-        if (request == LaunchActivityConstantsList.FTC_ROBOT_CONTROLLER_ACTIVITY_CONFIGURE_ROBOT) {
-            if (result == RESULT_OK) {
-                Serializable extra = intent.getSerializableExtra(FtcRobotControllerActivity.CONFIGURE_FILENAME);
-                if (extra != null) {
-                    utility.saveToPreferences(extra.toString(), R.string.pref_hardware_config_filename);
-                    updateHeader();
-                }
-            }
-
-        }
-    }
-
-    public void onServiceBind(FtcRobotControllerService service) {
-        DbgLog.msg("Bound to Ftc Controller Service");
-        controllerService = service;
-        updateUI.setControllerService(controllerService);
-
-        callback.wifiDirectUpdate(controllerService.getWifiDirectStatus());
-        callback.robotUpdate(controllerService.getRobotStatus());
-        requestRobotSetup();
-    }
-
     private void requestRobotSetup() {
         if (controllerService == null) return;
 
@@ -600,7 +646,7 @@ public class FtcRobotControllerActivity extends Activity implements CameraBridge
         HardwareFactory factory;
 
         // Modern Robotics Factory for use with Modern Robotics hardware
-        ModernRoboticsHardwareFactory modernRoboticsFactory = new ModernRoboticsHardwareFactory(context);
+        HardwareFactory modernRoboticsFactory = new HardwareFactory(context);
         modernRoboticsFactory.setXmlInputStream(fis);
         factory = modernRoboticsFactory;
 
@@ -639,20 +685,6 @@ public class FtcRobotControllerActivity extends Activity implements CameraBridge
         requestRobotSetup();
     }
 
-    protected void hittingMenuButtonBrightensScreen() {
-        ActionBar actionBar = getActionBar();
-        if (actionBar != null) {
-            actionBar.addOnMenuVisibilityListener(new ActionBar.OnMenuVisibilityListener() {
-                @Override
-                public void onMenuVisibilityChanged(boolean isVisible) {
-                    if (isVisible) {
-                        dimmer.handleDimTimer();
-                    }
-                }
-            });
-        }
-    }
-
     public void showToast(final Toast toast) {
         runOnUiThread(new Runnable() {
             @Override
@@ -664,33 +696,5 @@ public class FtcRobotControllerActivity extends Activity implements CameraBridge
 
     public void onDestroy() {
         super.onDestroy();
-        if (mOpenCvCameraView != null)
-            mOpenCvCameraView.disableView();
-    }
-
-    public void onCameraViewStarted(int width, int height) {
-        mRgba = new Mat(height, width, CvType.CV_8UC4);
-        mGray = new Mat(height, width, CvType.CV_8UC1);
-    }
-
-    public void onCameraViewStopped() {
-        mRgba.release();
-        mGray.release();
-    }
-
-    public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
-        mRgba = inputFrame.rgba();
-        mGray = inputFrame.gray();
-        Features.highlightFeatures(mGray.getNativeObjAddr(), mRgba.getNativeObjAddr());
-
-        return mRgba;
-    }
-
-    protected class RobotRestarter implements Restarter {
-
-        public void requestRestart() {
-            requestRobotRestart();
-        }
-
     }
 }
