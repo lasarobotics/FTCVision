@@ -93,6 +93,7 @@ import org.opencv.android.OpenCVLoader;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
+import org.opencv.core.Size;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -123,9 +124,10 @@ public class FtcRobotControllerActivity extends VisionEnabledActivity {
         setContentView(R.layout.activity_ftc_controller);
 
         utility = new Utility(this);
+        context = getApplicationContext();
 
         //This method MUST be called after setContentView!
-        initializeVision(R.id.entire_screen);
+        initializeVision(R.id.entire_screen, Cameras.PRIMARY, new Size(1200, 1200));
 
         entireScreenLayout = (LinearLayout) findViewById(R.id.entire_screen);
         buttonMenu = (ImageButton) findViewById(R.id.menu_buttons);
