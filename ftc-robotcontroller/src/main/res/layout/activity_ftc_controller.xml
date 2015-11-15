@@ -1,3 +1,36 @@
+<!--
+Copyright (c) 2014, 2015 Qualcomm Technologies Inc
+
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification,
+are permitted (subject to the limitations in the disclaimer below) provided that
+the following conditions are met:
+
+Redistributions of source code must retain the above copyright notice, this list
+of conditions and the following disclaimer.
+
+Redistributions in binary form must reproduce the above copyright notice, this
+list of conditions and the following disclaimer in the documentation and/or
+other materials provided with the distribution.
+
+Neither the name of Qualcomm Technologies Inc nor the names of its contributors
+may be used to endorse or promote products derived from this software without
+specific prior written permission.
+
+NO EXPRESS OR IMPLIED LICENSES TO ANY PARTY'S PATENT RIGHTS ARE GRANTED BY THIS
+LICENSE. THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -11,8 +44,27 @@
   <RelativeLayout
     android:id="@+id/top_bar"
     android:layout_width="fill_parent"
-    android:layout_height="49dp"
-    android:background="@color/LASAPurple">
+    android:layout_height="80dp"
+    android:background="@color/black">
+    <ImageView
+      android:id="@+id/robotIcon"
+      android:layout_width="40dp"
+      android:layout_height="wrap_content"
+      android:adjustViewBounds="true"
+      android:layout_margin="5dp"
+      android:layout_centerVertical="true"
+      android:background="@drawable/icon_robotcontroller"/>
+
+    <TextView
+      android:id="@+id/textDeviceName"
+      android:layout_toRightOf="@id/robotIcon"
+      android:layout_toEndOf="@id/robotIcon"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:textColor="@color/white"
+      android:padding="8dp"
+      android:textSize="16sp"
+      android:textStyle="bold"/>
 
     <ImageButton
       android:id="@+id/menu_buttons"
@@ -21,66 +73,23 @@
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:src="@drawable/icon_menu"
-      android:background="@color/LASAPurple"
+      android:background="@color/black"
       android:padding="15dp"
       android:adjustViewBounds="true"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginRight="6dp" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="FTC Robot Controller"
-        android:id="@+id/textView"
-        android:layout_marginLeft="8dp"
-        android:layout_marginStart="8dp"
-        android:textColor="@color/white"
-        android:layout_centerVertical="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
-
-      <TextView
-          android:id="@+id/textDeviceName"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:textColor="@color/white"
-          android:textAppearance="?android:attr/textAppearanceSmall"
-          android:layout_above="@+id/textView"
-          android:layout_alignParentLeft="true"
-          android:layout_alignParentStart="true"
-          android:visibility="gone" />
+      android:layout_alignParentRight="true"
+      android:layout_alignParentEnd="true"
+      android:layout_centerInParent="true"
+      android:layout_centerHorizontal="true"
+      android:layout_margin="10dp"/>
 
   </RelativeLayout>
   <!-- end of black bar -->
 
-    <LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/header"
-        android:layout_alignParentTop="true"
-        android:paddingLeft="8dp"
-        android:paddingRight="8dp"
-        android:paddingTop="2dp"
-        android:paddingBottom="2dp"
-        android:background="#747474"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:visibility="gone">
+  <include layout="@layout/header"
+           android:id="@+id/included_header"/>
 
-        <TextView
-            android:id="@+id/active_filename"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/white"
-            android:textAppearance="?android:attr/textAppearanceSmall" />
-
-    </LinearLayout>
-
-    <RelativeLayout
+  <RelativeLayout
+    android:id="@+id/RelativeLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:keepScreenOn="true"
@@ -89,22 +98,45 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin" >
 
-  <include layout="@layout/wifidirect"
-      android:id="@+id/wifidirect"
+    <TextView
+      android:id="@+id/textWifiDirectStatus"
+      android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:layout_width="fill_parent"
-      android:layout_marginBottom="12dp"
-      android:layout_marginTop="6dp" />
+      android:text="" />
 
-      <TextView
+    <TextView
+      android:id="@+id/textRobotStatus"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_below="@+id/textWifiDirectStatus"
+      android:text="" />
+
+    <TextView
+      android:id="@+id/textOpMode"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_below="@+id/textRobotStatus"
+      android:text="" />
+
+    <TextView
+      android:id="@+id/textErrorMessage"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_below="@+id/textOpMode"
+      android:textColor="#990000"
+      android:textStyle="bold"
+      android:minLines="2"
+      android:maxLines="4"
+      android:text="" />
+
+    <TextView
       android:id="@+id/textGamepad1"
       android:layout_width="match_parent"
       android:layout_height="50dp"
       android:layout_above="@+id/textGamepad2"
       android:layout_marginBottom="10dp"
       android:minLines="3"
-      android:text=""
-          android:visibility="gone" />
+      android:text="" />
 
     <TextView
       android:id="@+id/textGamepad2"
@@ -113,79 +145,7 @@
       android:minLines="3"
       android:layout_alignParentBottom="true"
       android:layout_marginBottom="10dp"
-      android:text=""
-        android:visibility="gone" />
+      android:text="" />
 
-      <include
-        layout="@layout/robotstatus"
-        android:id="@+id/robotstatus"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/progressBar"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginBottom="6dp" />
-
-        <include
-            layout="@layout/camera"
-            android:id="@+id/camera"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/robotstatus"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentEnd="false"
-            android:layout_above="@+id/joysticks"
-            android:layout_marginBottom="6dp" />
-
-        <include
-            layout="@layout/joysticks"
-            android:id="@+id/joysticks"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_marginTop="6dp" />
-
-      <include
-          layout="@layout/configuration"
-          android:id="@+id/configuration"
-          android:layout_width="fill_parent"
-          android:layout_height="wrap_content"
-          android:layout_alignParentLeft="true"
-          android:layout_alignParentStart="true"
-          android:layout_below="@+id/wifidirect"
-          android:layout_marginBottom="12dp" />
-
-      <include
-          layout="@layout/opmode"
-          android:id="@+id/opmode"
-          android:layout_width="fill_parent"
-          android:layout_height="wrap_content"
-          android:layout_alignParentLeft="true"
-          android:layout_alignParentStart="true"
-          android:layout_below="@+id/configuration" />
-
-      <include
-          layout="@layout/timer"
-          android:id="@+id/timer"
-          android:layout_width="fill_parent"
-          android:layout_height="0dp"
-          android:layout_alignParentLeft="true"
-          android:layout_alignParentStart="true"
-          android:layout_below="@+id/opmode"
-          android:layout_marginBottom="6dp" />
-
-      <ProgressBar
-          style="?android:attr/progressBarStyleHorizontal"
-          android:layout_width="fill_parent"
-          android:layout_height="wrap_content"
-          android:id="@+id/progressBar"
-          android:layout_below="@+id/timer"
-          android:layout_alignParentLeft="true"
-          android:layout_alignParentStart="true"
-          android:layout_marginBottom="6dp" />
-
-    </RelativeLayout>
+  </RelativeLayout>
 </LinearLayout>

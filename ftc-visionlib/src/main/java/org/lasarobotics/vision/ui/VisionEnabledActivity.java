@@ -3,6 +3,7 @@ package org.lasarobotics.vision.ui;
 import android.app.Activity;
 import android.os.Bundle;
 import android.text.Layout;
+import android.util.Log;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -10,8 +11,11 @@ import android.widget.LinearLayout;
 import org.jetbrains.annotations.Nullable;
 import org.lasarobotics.vision.android.Camera;
 import org.lasarobotics.vision.android.Cameras;
+import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.JavaCameraView;
+import org.opencv.android.LoaderCallbackInterface;
+import org.opencv.android.OpenCVLoader;
 import org.opencv.core.Size;
 
 /**
@@ -19,6 +23,23 @@ import org.opencv.core.Size;
  */
 public abstract class VisionEnabledActivity extends Activity {
     public static CameraBridgeViewBase openCVCamera;
+
+    protected BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
+        @Override
+        public void onManagerConnected(int status) {
+            switch (status) {
+                case LoaderCallbackInterface.SUCCESS:
+                {
+                    //Woohoo!
+
+                } break;
+                default:
+                {
+                    super.onManagerConnected(status);
+                } break;
+            }
+        }
+    };
 
     /**
      * Initialize vision
@@ -35,9 +56,16 @@ public abstract class VisionEnabledActivity extends Activity {
         if (frameSize == null)
         {
             Camera c = camera.createCamera();
-            frameSize = c.getBestFrameSize();
-            c.unlock();
-            c.release();
+            if (c.doesExist()) {
+                frameSize = c.getBestFrameSize();
+                c.unlock();
+                c.release();
+            }
+            else
+            {
+                //get some kind of default
+                frameSize = new Size(900, 900);
+            }
         }
 
         layout.setLayoutParams(new LinearLayout.LayoutParams(
@@ -85,5 +113,18 @@ public abstract class VisionEnabledActivity extends Activity {
         super.onDestroy();
         if (openCVCamera != null)
             openCVCamera.disableView();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (!OpenCVLoader.initDebug()) {
+            Log.d("OpenCV", "Internal OpenCV library not found. Using OpenCV Manager for initialization");
+            OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_0_0, this, mLoaderCallback);
+        } else {
+            Log.d("OpenCV", "OpenCV library found inside package. Using it!");
+            mLoaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
+        }
     }
 }
