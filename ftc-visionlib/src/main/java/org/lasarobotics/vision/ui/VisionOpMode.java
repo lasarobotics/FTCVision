@@ -21,7 +21,6 @@ public abstract class VisionOpMode extends OpMode implements CameraBridgeViewBas
     public final void init() {
         //Initialize camera view
         openCVCamera = VisionEnabledActivity.openCVCamera;
-        openCVCamera.setCameraIndex(0); //SET BACK (MAIN) CAMERA
         openCVCamera.setCvCameraViewListener(this);
         if (openCVCamera != null)
             openCVCamera.disableView();
