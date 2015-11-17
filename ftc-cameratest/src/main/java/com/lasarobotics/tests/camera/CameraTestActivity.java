@@ -47,11 +47,10 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
     private void initialize()
     {
         //GET CAMERA PROPERTIES
-        Camera cam = Cameras.getPrimaryCamera();
-        assert cam != null;
+        Camera cam = Cameras.PRIMARY.createCamera();
         android.hardware.Camera.Parameters pam = cam.getCamera().getParameters();
         focalLength = pam.getFocalLength();
-        cam.getCamera().release();
+        cam.release();
 
         //GET OBJECT IMAGE
         //Read the target image file

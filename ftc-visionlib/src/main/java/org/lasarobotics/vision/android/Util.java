@@ -27,7 +27,7 @@ public final class Util {
             return (Application) method.invoke(null, (Object[]) null);
         } catch (final java.lang.Throwable e) {
             // handle exception
-            return null;
+            throw new IllegalArgumentException("No context could be retrieved!");
         }
     }
 
@@ -41,7 +41,7 @@ public final class Util {
         try {
             return ctx.getPackageManager().getPackageInfo(ctx.getPackageName(), 0).applicationInfo.dataDir;
         } catch (PackageManager.NameNotFoundException e) {
-            return null;
+            throw new IllegalArgumentException("Data directory not found!");
         }
     }
 

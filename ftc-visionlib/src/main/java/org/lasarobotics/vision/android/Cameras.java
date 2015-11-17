@@ -2,41 +2,37 @@ package org.lasarobotics.vision.android;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.hardware.camera2.CameraManager;
 
 import org.lasarobotics.vision.android.Camera;
 
 /**
  * Implements the Android camera
  */
-@SuppressWarnings("deprecation")
-public class Cameras {
+public enum Cameras {
+    PRIMARY(0),
+    SECONDARY(1),
+    OTHER_1(2),
+    OTHER_2(3);
+
+    int id;
+
+    Cameras(int id)
+    {
+        this.id = id;
+    }
+
+    public int getID()
+    {
+        return id;
+    }
+
+    public Camera createCamera()
+    {
+        return new Camera(this);
+    }
+
     public static boolean isHardwareAvailable(Context context) {
         return context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA);
-    }
-
-    /** A safe way to get an instance of the Camera object. */
-    public static Camera getPrimaryCamera(){
-        try {
-            return new Camera(android.hardware.Camera.open()); // attempt to get a Camera instance
-        }
-        catch (Exception e){
-            // Camera is not available (in use or does not exist)
-            return null;
-        }
-    }
-
-    public static Camera getSecondaryCamera(){
-        try {
-            if (android.hardware.Camera.getNumberOfCameras() >= 2) {
-                return new Camera(android.hardware.Camera.open(1)); // attempt to get a Camera instance
-            } else
-            {
-                return null;
-            }
-        }
-        catch (Exception e){
-            // Camera is not available (in use or does not exist)
-            return null;
-        }
     }
 }
