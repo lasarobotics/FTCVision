@@ -1,79 +1,91 @@
 package org.lasarobotics.vision.opmode;
 
-import org.lasarobotics.vision.opmode.VisionOpModeCore;
+import org.lasarobotics.vision.android.Cameras;
+import org.lasarobotics.vision.detection.ColorBlobDetector;
+import org.lasarobotics.vision.detection.objects.Contour;
+import org.lasarobotics.vision.ftc.resq.Beacon;
+import org.lasarobotics.vision.image.Drawing;
+import org.lasarobotics.vision.image.Transform;
+import org.lasarobotics.vision.opmode.extensions.BeaconColorExtension;
 import org.lasarobotics.vision.opmode.extensions.VisionExtension;
-import org.lasarobotics.vision.opmode.extensions.VisionExtensions;
+import org.lasarobotics.vision.util.color.ColorGRAY;
+import org.lasarobotics.vision.util.color.ColorHSV;
+import org.lasarobotics.vision.util.color.ColorRGBA;
 import org.opencv.core.Mat;
+import org.opencv.core.Point;
+import org.opencv.core.Size;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
+import java.util.List;
 
 /**
- * Easy-to-use vision op mode
- * For more custom implementations, use ManualVisionOpMode or create extensions (see opmode.extensions.VisionExtension)
+ * Easy-to-use, extensible vision op mode
+ * For more custom implementations, use ManualVisionOpMode or modify core extensions in opmode.extensions.*
  */
 public abstract class VisionOpMode extends VisionOpModeCore {
 
-    HashMap<VisionExtensions, VisionExtension> extensions;
+    private int extensions = 0;
+    private boolean initialized = false;
 
-    final protected void enableExtension(VisionExtensions extension)
+    protected boolean isEnabled(VisionExtensions extension)
     {
-        if (!extensions.containsKey(extension)) {
-
-            Class<? extends VisionExtension> c = extension.getExtension();
-            VisionExtension v;
-
-            try {
-                v = c.newInstance();
-            } catch (Exception e) {
-                e.printStackTrace();
-                return;
-            }
-
-            v.init(width, height);
-
-            extensions.put(extension, v);
-        }
+        return (extensions & extension.id) > 0;
     }
 
-    final protected void resetExtension(VisionExtensions extension)
-    {
+    /*** EXTENSION-SPECIFIC CODE ***/
+    private BeaconColorExtension beaconColorExtension = new BeaconColorExtension();
+    public Beacon.BeaconColorAnalysis beaconColor = new Beacon.BeaconColorAnalysis();
 
+    protected void enableExtension(VisionExtensions extension)
+    {
+        extensions = extensions | extension.id;
+
+        //Don't initialize extension if we haven't ever called init() yet
+        if (!initialized)
+            return;
+
+        if (extension == VisionExtensions.BEACON_COLOR)
+            beaconColorExtension.init(this);
     }
 
-    final protected void disableExtension(VisionExtensions extension)
+    protected void disableExtension(VisionExtensions extension)
     {
-        if (extensions.containsKey(extension)) {
-            extensions.remove(extension).deinit();
-        }
-    }
+        extensions -= extensions & extension.id;
 
-    final protected VisionExtension getExtension(VisionExtension extension)
-    {
-
+        if (extension == VisionExtensions.BEACON_COLOR)
+            beaconColorExtension.stop(this);
     }
 
     @Override
-    public final void init(int width, int height) {
+    public void init() {
         super.init();
 
-        init();
+        if (isEnabled(VisionExtensions.BEACON_COLOR))
+            beaconColorExtension.init(this);
+
+        initialized = true;
     }
 
     @Override
     public void loop() {
+        super.loop();
 
-    }
-
-    @Override
-    public void stop(boolean success) {
-
+        if (isEnabled(VisionExtensions.BEACON_COLOR))
+            beaconColorExtension.loop(this);
     }
 
     @Override
     public Mat frame(Mat rgba, Mat gray) {
-        return null;
+        if (isEnabled(VisionExtensions.BEACON_COLOR))
+            beaconColorExtension.frame(this, rgba, gray);
+
+        return rgba;
     }
-    
-    public abstract void init();
+
+    @Override
+    public void stop() {
+        super.stop();
+
+        if (isEnabled(VisionExtensions.BEACON_COLOR))
+            beaconColorExtension.stop(this);
+    }
 }

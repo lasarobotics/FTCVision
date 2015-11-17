@@ -1,6 +1,7 @@
 package org.lasarobotics.vision.opmode;
 
 import android.app.Activity;
+import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +27,9 @@ abstract class VisionOpModeCore extends OpMode implements CameraBridgeViewBase.C
     protected int width, height;
     private static boolean initialized = false;
     protected FPS fps;
+    private static final int initialMaxSize = 1200;
+
+    private static boolean openCVInitialized = false;
 
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(hardwareMap.appContext) {
         @Override
@@ -35,6 +39,7 @@ abstract class VisionOpModeCore extends OpMode implements CameraBridgeViewBase.C
                 {
                     //Woohoo!
                     Log.d("OpenCV", "OpenCV Manager connected!");
+                    openCVInitialized = true;
                 } break;
                 default:
                 {
@@ -44,16 +49,22 @@ abstract class VisionOpModeCore extends OpMode implements CameraBridgeViewBase.C
         }
     };
 
-    protected final void setCamera(Cameras camera)
+    public final void setCamera(Cameras camera)
     {
+        openCVCamera.disconnectCamera();
         openCVCamera.setCameraIndex(camera.getID());
+        openCVCamera.connectCamera(width, height);
     }
 
-    protected final void setFrameSize(Size frameSize)
+    public final void setFrameSize(Size frameSize)
     {
         openCVCamera.setMaxFrameSize((int) frameSize.width, (int) frameSize.height);
-        openCVCamera.setMinimumWidth((int) frameSize.width);
-        openCVCamera.setMinimumHeight((int) frameSize.height);
+
+        openCVCamera.disconnectCamera();
+        openCVCamera.connectCamera((int)frameSize.width, (int)frameSize.height);
+
+        width = openCVCamera.getFrameWidth();
+        height = openCVCamera.getFrameHeight();
     }
 
     @Override
@@ -62,18 +73,30 @@ abstract class VisionOpModeCore extends OpMode implements CameraBridgeViewBase.C
         final Activity activity = (Activity)hardwareMap.appContext;
         final VisionOpModeCore t = this;
 
+        if (!OpenCVLoader.initDebug()) {
+            Log.d("OpenCV", "Internal OpenCV library not found. Using OpenCV Manager for initialization");
+            boolean success = OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_0_0, hardwareMap.appContext, mLoaderCallback);
+            if (!success)
+                Log.e("OpenCV", "Asynchronous initialization failed!");
+            else
+                Log.d("OpenCV", "Asynchronous initialization succeeded!");
+        } else {
+            Log.d("OpenCV", "OpenCV library found inside package. Using it!");
+            mLoaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
+        }
+
+        while(!openCVInitialized)
+        {
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
         activity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-
-                if (!OpenCVLoader.initDebug()) {
-                    Log.d("OpenCV", "Internal OpenCV library not found. Using OpenCV Manager for initialization");
-                    OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_0_0, hardwareMap.appContext, mLoaderCallback);
-                } else {
-                    Log.d("OpenCV", "OpenCV library found inside package. Using it!");
-                    mLoaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
-                }
-
                 LinearLayout layout = new LinearLayout(activity);
                 layout.setOrientation(LinearLayout.VERTICAL);
 
@@ -89,17 +112,31 @@ abstract class VisionOpModeCore extends OpMode implements CameraBridgeViewBase.C
                 if (openCVCamera != null)
                     openCVCamera.disableView();
                 openCVCamera.enableView();
-                openCVCamera.setMinimumWidth(900);
-                openCVCamera.setMinimumHeight(900);
-                openCVCamera.connectCamera(900, 900);
+                openCVCamera.connectCamera(initialMaxSize, initialMaxSize);
 
                 //Initialize FPS counter
                 fps = new FPS();
 
                 //Done!
+                width = openCVCamera.getFrameWidth();
+                height = openCVCamera.getFrameHeight();
                 initialized = true;
             }
         });
+
+        while(!initialized)
+        {
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Override
+    public void loop() {
+
     }
 
     @Override
@@ -108,8 +145,6 @@ abstract class VisionOpModeCore extends OpMode implements CameraBridgeViewBase.C
 
         if (openCVCamera != null)
             openCVCamera.disableView();
-
-        stop(true);
     }
 
     @Override
@@ -129,13 +164,11 @@ abstract class VisionOpModeCore extends OpMode implements CameraBridgeViewBase.C
             return inputFrame.rgba();
         }
 
+        telemetry.addData("Vision Status", "Ready!");
+
         fps.update();
         return frame(inputFrame.rgba(), inputFrame.gray());
     }
 
-    public abstract void init(int width, int height);
-    @Override
-    public abstract void loop();
-    public abstract void stop(boolean success);
     public abstract Mat frame(Mat rgba, Mat gray);
 }

@@ -52,7 +52,7 @@ import java.util.List;
  * <p/>
  * Enables control of the robot via the gamepad
  */
-public class ManualVisionTest extends ManualVisionOpMode {
+public class ManualVisionSample extends ManualVisionOpMode {
 
     private Beacon.BeaconColorAnalysis colorAnalysis = new Beacon.BeaconColorAnalysis();
     private ColorBlobDetector detectorRed;
@@ -64,20 +64,30 @@ public class ManualVisionTest extends ManualVisionOpMode {
     private boolean noError = true;
 
     @Override
-    public void init(int width, int height) {
+    public void init() {
+        super.init();
+
         //Initialize all detectors here
         detectorRed = new ColorBlobDetector(lowerBoundRed, upperBoundRed);
         detectorBlue = new ColorBlobDetector(lowerBoundBlue, upperBoundBlue);
 
-        this.setCamera(Cameras.SECONDARY);
+        this.setCamera(Cameras.PRIMARY);
         this.setFrameSize(new Size(900, 900));
     }
 
     @Override
     public void loop() {
+        super.loop();
+
         telemetry.addData("Vision FPS", fps.getFPSString());
         telemetry.addData("Vision Color", colorAnalysis.toString());
+        telemetry.addData("Vision Size", "Width: " + width + " Height: " + height);
         telemetry.addData("Vision Status", noError ? "OK!" : "ANALYSIS ERROR!");
+    }
+
+    @Override
+    public void stop() {
+        super.stop();
     }
 
     @Override
@@ -129,10 +139,5 @@ public class ManualVisionTest extends ManualVisionOpMode {
         Drawing.drawText(rgba, "FPS: " + fps.getFPSString(), new Point(0, 24), 1.0f, new ColorRGBA("#ffffff")); //"#2196F3"
 
         return rgba;
-    }
-
-    @Override
-    public void stop(boolean success) {
-
     }
 }

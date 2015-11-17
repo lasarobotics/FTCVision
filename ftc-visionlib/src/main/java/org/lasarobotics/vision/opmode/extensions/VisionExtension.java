@@ -1,12 +1,14 @@
 package org.lasarobotics.vision.opmode.extensions;
 
+import org.lasarobotics.vision.opmode.VisionOpMode;
 import org.opencv.core.Mat;
 
 /**
- * Vision extension
+ * Interface for vision extensions for VisionOpMode
  */
 public interface VisionExtension {
-    void init(int width, int height);
-    void run(Mat rgba, Mat gray, Mat output);
-    void deinit();
+    void init(VisionOpMode opmode);
+    void loop(VisionOpMode opmode);
+    Mat frame(VisionOpMode opmode, Mat rgba, Mat gray);
+    void stop(VisionOpMode opmode);
 }

@@ -31,31 +31,52 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
 package com.qualcomm.ftcrobotcontroller.opmodes;
 
-import com.qualcomm.robotcore.eventloop.opmode.OpModeManager;
-import com.qualcomm.robotcore.eventloop.opmode.OpModeRegister;
+import org.lasarobotics.vision.android.Cameras;
+import org.lasarobotics.vision.detection.ColorBlobDetector;
+import org.lasarobotics.vision.detection.objects.Contour;
+import org.lasarobotics.vision.ftc.resq.Beacon;
+import org.lasarobotics.vision.image.Drawing;
+import org.lasarobotics.vision.image.Transform;
+import org.lasarobotics.vision.opmode.ManualVisionOpMode;
+import org.lasarobotics.vision.opmode.VisionExtensions;
+import org.lasarobotics.vision.opmode.VisionOpMode;
+import org.lasarobotics.vision.util.color.ColorGRAY;
+import org.lasarobotics.vision.util.color.ColorHSV;
+import org.lasarobotics.vision.util.color.ColorRGBA;
+import org.opencv.core.Mat;
+import org.opencv.core.Point;
+import org.opencv.core.Size;
+
+import java.util.List;
 
 /**
- * Register Op Modes
+ * TeleOp Mode
+ * <p/>
+ * Enables control of the robot via the gamepad
  */
-public class FtcOpModeRegister implements OpModeRegister {
+public class BasicVisionSample extends VisionOpMode {
 
-    /**
-     * The Op Mode Manager will call this method when it wants a list of all
-     * available op modes. Add your op mode to the list to enable it.
-     *
-     * @param manager op mode manager
-     */
-    public void register(OpModeManager manager) {
+    @Override
+    public void init() {
+        super.init();
 
-    /*
-     * register your op modes here.
-     * The first parameter is the name of the op mode
-     * The second parameter is the op mode class property
-     *
-     * If two or more op modes are registered with the same name, the app will display an error.
-     */
-        manager.register("NullOp", NullOp.class);
-        manager.register("Basic Vision Sample", BasicVisionSample.class);
-        manager.register("Manual Vision Sample", ManualVisionSample.class);
+        this.setCamera(Cameras.PRIMARY);
+        this.setFrameSize(new Size(900, 900));
+
+        enableExtension(VisionExtensions.BEACON_COLOR);
+    }
+
+    @Override
+    public void loop() {
+        super.loop();
+
+        telemetry.addData("Beacon Color", beaconColor.toString());
+        telemetry.addData("Frame Rate", fps.getFPSString() + " FPS");
+        telemetry.addData("Frame Size", "Width: " + width + " Height: " + height);
+    }
+
+    @Override
+    public void stop() {
+        super.stop();
     }
 }
