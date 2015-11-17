@@ -233,7 +233,7 @@ public class JavaCameraView extends CameraBridgeViewBase implements PreviewCallb
     private boolean mCameraFrameReady = false;
 
     @Override
-    protected boolean connectCamera(int width, int height) {
+    public boolean connectCamera(int width, int height) {
 
         /* 1. We need to instantiate camera
          * 2. We need to start thread which will be getting frames

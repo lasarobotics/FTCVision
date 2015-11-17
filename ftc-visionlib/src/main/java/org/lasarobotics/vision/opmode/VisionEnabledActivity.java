@@ -1,10 +1,7 @@
-package org.lasarobotics.vision.ui;
+package org.lasarobotics.vision.opmode;
 
 import android.app.Activity;
-import android.os.Bundle;
-import android.text.Layout;
 import android.util.Log;
-import android.view.SurfaceView;
 import android.view.View;
 import android.widget.LinearLayout;
 

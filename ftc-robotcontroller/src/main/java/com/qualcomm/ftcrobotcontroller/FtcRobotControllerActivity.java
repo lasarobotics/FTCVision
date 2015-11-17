@@ -32,6 +32,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 package com.qualcomm.ftcrobotcontroller;
 
 import android.app.ActionBar;
+import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -67,15 +68,11 @@ import com.qualcomm.robotcore.util.ImmersiveMode;
 import com.qualcomm.robotcore.util.RobotLog;
 import com.qualcomm.robotcore.wifi.WifiDirectAssistant;
 
-import org.lasarobotics.vision.ui.VisionEnabledActivity;
-import org.opencv.android.BaseLoaderCallback;
-import org.opencv.android.LoaderCallbackInterface;
-
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.Serializable;
 
-public class FtcRobotControllerActivity extends VisionEnabledActivity {
+public class FtcRobotControllerActivity extends Activity {
 
     private static final int REQUEST_CONFIG_WIFI_CHANNEL = 1;
     private static final boolean USE_DEVICE_EMULATION = false;
@@ -142,7 +139,7 @@ public class FtcRobotControllerActivity extends VisionEnabledActivity {
 
         setContentView(R.layout.activity_ftc_controller);
 
-        initializeVision(R.id.entire_screen);
+        //initializeVision(R.id.entire_screen);
 
         utility = new Utility(this);
         context = this;

@@ -31,17 +31,19 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
 package com.qualcomm.ftcrobotcontroller.opmodes;
 
+import org.lasarobotics.vision.android.Cameras;
 import org.lasarobotics.vision.detection.ColorBlobDetector;
 import org.lasarobotics.vision.detection.objects.Contour;
 import org.lasarobotics.vision.ftc.resq.Beacon;
 import org.lasarobotics.vision.image.Drawing;
 import org.lasarobotics.vision.image.Transform;
-import org.lasarobotics.vision.ui.VisionOpMode;
+import org.lasarobotics.vision.opmode.ManualVisionOpMode;
 import org.lasarobotics.vision.util.color.ColorGRAY;
 import org.lasarobotics.vision.util.color.ColorHSV;
 import org.lasarobotics.vision.util.color.ColorRGBA;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
+import org.opencv.core.Size;
 
 import java.util.List;
 
@@ -50,7 +52,7 @@ import java.util.List;
  * <p/>
  * Enables control of the robot via the gamepad
  */
-public class VisionTest extends VisionOpMode {
+public class ManualVisionTest extends ManualVisionOpMode {
 
     private Beacon.BeaconColorAnalysis colorAnalysis = new Beacon.BeaconColorAnalysis();
     private ColorBlobDetector detectorRed;
@@ -66,6 +68,9 @@ public class VisionTest extends VisionOpMode {
         //Initialize all detectors here
         detectorRed = new ColorBlobDetector(lowerBoundRed, upperBoundRed);
         detectorBlue = new ColorBlobDetector(lowerBoundBlue, upperBoundBlue);
+
+        this.setCamera(Cameras.SECONDARY);
+        this.setFrameSize(new Size(900, 900));
     }
 
     @Override
@@ -127,7 +132,7 @@ public class VisionTest extends VisionOpMode {
     }
 
     @Override
-    public void stop() {
+    public void stop(boolean success) {
 
     }
 }
