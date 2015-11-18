@@ -1,9 +1,9 @@
-![FTC Vision][https://raw.githubusercontent.com/lasarobotics/ftcvision/dev/img/logo-github.png]
+![FTC Vision](https://raw.githubusercontent.com/lasarobotics/ftcvision/dev/img/logo-github.png)
 
 # FTCVision Library [![Build Status](https://travis-ci.org/lasarobotics/FTCVision.svg?branch=feature-java)](https://travis-ci.org/lasarobotics/FTCVision)
 Computer Vision library for FTC based on OpenCV.
 
-![A test from 8 feet away!](https://github.com/lasarobotics/FTCVision/blob/dev/img/test3.png)
+![A test from 8 feet away!](https://raw.githubusercontent.com/lasarobotics/ftcvision/dev/img/test3.png)
 
 
 ## Hi there!
