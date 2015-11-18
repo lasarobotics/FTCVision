@@ -1,5 +1,6 @@
 package org.lasarobotics.vision.ftc.resq;
 
+import org.lasarobotics.vision.detection.EdgeDetection;
 import org.lasarobotics.vision.detection.PrimitiveDetection;
 import org.lasarobotics.vision.detection.objects.Contour;
 import org.lasarobotics.vision.detection.objects.Ellipse;
@@ -372,6 +373,9 @@ public final class Beacon {
         //Each contour must have an ellipse of correct specification
         PrimitiveDetection primitiveDetection = new PrimitiveDetection();
         PrimitiveDetection.EllipseLocationResult ellipseLocationResult = primitiveDetection.locateEllipses(gray);
+
+        EdgeDetection ed = new EdgeDetection();
+        List<Contour> possibleBeacons = ed.getBreaks(gray, img);
 
         //Filter out bad ellipses
         List<Ellipse> ellipses = filterEllipses(ellipseLocationResult.getEllipses(), gray, img);
