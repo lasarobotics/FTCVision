@@ -31,7 +31,7 @@ public class Drawing {
     }
     public static void drawEllipse(Mat img, Ellipse ellipse, Color color, int thickness)
     {
-        Imgproc.ellipse(img, ellipse.getRect(), color.getScalarRGBA(), thickness);
+        Imgproc.ellipse(img, ellipse.center(), ellipse.size(), ellipse.angle(), 0, 360, color.getScalarRGBA(), thickness);
     }
     public static void drawEllipses(Mat img, List<Ellipse> ellipses, Color color)
     {
@@ -40,7 +40,15 @@ public class Drawing {
     public static void drawEllipses(Mat img, List<Ellipse> ellipses, Color color, int thickness)
     {
         for (Ellipse ellipse : ellipses)
-            Imgproc.ellipse(img, ellipse.getRect(), color.getScalarRGBA(), thickness);
+            drawEllipse(img, ellipse, color, thickness);
+    }
+    public static void drawArc(Mat img, Ellipse ellipse, Color color, double angleDegrees)
+    {
+        drawArc(img, ellipse, color, angleDegrees, 2);
+    }
+    public static void drawArc(Mat img, Ellipse ellipse, Color color, double angleDegrees, int thickness)
+    {
+        Imgproc.ellipse(img, ellipse.center(), ellipse.size(), ellipse.angle(), 0, angleDegrees, color.getScalarRGBA(), thickness);
     }
 
     public enum Anchor
