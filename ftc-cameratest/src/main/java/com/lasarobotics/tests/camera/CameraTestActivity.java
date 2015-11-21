@@ -171,9 +171,8 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
         mGray = inputFrame.gray();
         //Size originalSize = mRgba.size();
 
-        //DEBUG for the Nexus
-        Transform.flip(mRgba, Transform.FlipType.FLIP_BOTH);
-        Transform.flip(mGray, Transform.FlipType.FLIP_BOTH);
+        //Transform.flip(mRgba, Transform.FlipType.FLIP_BOTH);
+        //Transform.flip(mGray, Transform.FlipType.FLIP_BOTH);
 
         //Transform.shrink(mRgba, new Size(480, 480), true);
         //Transform.shrink(mGray, new Size(480, 480), true);
@@ -191,7 +190,7 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
 
             //Get color analysis
 
-            Beacon beacon = new Beacon(inputFrame.rgba().size());
+            Beacon beacon = new Beacon(mRgba.size());
             Beacon.BeaconColorAnalysis colorAnalysis = beacon.analyzeColor_smartScoring(contoursRed, contoursBlue, mRgba, mGray);
 
             //Transform.enlarge(mRgba, originalSize, true);
