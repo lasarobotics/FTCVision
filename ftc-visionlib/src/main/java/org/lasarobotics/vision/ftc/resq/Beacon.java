@@ -57,17 +57,40 @@ public final class Beacon {
 
             }
         }
+
+        public static BeaconColor parseString(String s)
+        {
+            if (s.startsWith("red"))
+                return RED;
+            if (s.startsWith("blue"))
+                return BLUE;
+            if (s.startsWith("RED!"))
+                return RED_BRIGHT;
+            if (s.startsWith("BLUE!"))
+                return BLUE_BRIGHT;
+            if (s.startsWith("???"))
+                return UNKNOWN;
+            throw new IllegalArgumentException();
+        }
     }
 
     public static class BeaconColorAnalysis
     {
-        BeaconColor left;
-        BeaconColor right;
+        private BeaconColor left;
+        private BeaconColor right;
 
         //TODO Color and CONFIDENCE should make up the results
 
         //TODO add Size size, Point locationTopLeft, Distance distanceApprox
-        BeaconColorAnalysis(BeaconColor left, BeaconColor right)
+        public BeaconColorAnalysis()
+        {
+            assert left != null;
+            assert right != null;
+            this.left = BeaconColor.UNKNOWN;
+            this.right = BeaconColor.UNKNOWN;
+        }
+
+        public BeaconColorAnalysis(BeaconColor left, BeaconColor right)
         {
             assert left != null;
             assert right != null;
@@ -117,6 +140,21 @@ public final class Beacon {
         {
             return (left == BeaconColor.BLUE_BRIGHT || left == BeaconColor.RED_BRIGHT ) &&
                     (right == BeaconColor.BLUE_BRIGHT || right == BeaconColor.RED_BRIGHT );
+        }
+
+        @Override
+        public String toString() {
+            return left.toString() + ", " + right.toString();
+        }
+
+        public static BeaconColorAnalysis parseString(String s)
+        {
+            String[] split = s.trim().split(" *, *");
+            if (split.length < 2)
+                throw new IllegalArgumentException("Incorrect string");
+            BeaconColor left = BeaconColor.parseString(split[0]);
+            BeaconColor right = BeaconColor.parseString(split[1]);
+            return new BeaconColorAnalysis(left, right);
         }
     }
 

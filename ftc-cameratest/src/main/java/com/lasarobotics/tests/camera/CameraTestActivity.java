@@ -47,11 +47,10 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
     private void initialize()
     {
         //GET CAMERA PROPERTIES
-        Camera cam = Cameras.getPrimaryCamera();
-        assert cam != null;
+        Camera cam = Cameras.PRIMARY.createCamera();
         android.hardware.Camera.Parameters pam = cam.getCamera().getParameters();
         focalLength = pam.getFocalLength();
-        cam.getCamera().release();
+        cam.release();
 
         //GET OBJECT IMAGE
         //Read the target image file
@@ -171,6 +170,10 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
         mRgba = inputFrame.rgba();
         mGray = inputFrame.gray();
         //Size originalSize = mRgba.size();
+
+        //DEBUG for the Nexus
+        Transform.flip(mRgba, Transform.FlipType.FLIP_BOTH);
+        Transform.flip(mGray, Transform.FlipType.FLIP_BOTH);
 
         //Transform.shrink(mRgba, new Size(480, 480), true);
         //Transform.shrink(mGray, new Size(480, 480), true);

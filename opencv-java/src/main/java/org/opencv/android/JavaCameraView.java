@@ -41,6 +41,16 @@ public class JavaCameraView extends CameraBridgeViewBase implements PreviewCallb
     protected JavaCameraFrame[] mCameraFrame;
     private SurfaceTexture mSurfaceTexture;
 
+    public int getFrameWidth()
+    {
+        return mFrameWidth;
+    }
+
+    public int getFrameHeight()
+    {
+        return mFrameHeight;
+    }
+
     public static class JavaCameraSizeAccessor implements ListItemAccessor {
 
         @Override
@@ -233,7 +243,7 @@ public class JavaCameraView extends CameraBridgeViewBase implements PreviewCallb
     private boolean mCameraFrameReady = false;
 
     @Override
-    protected boolean connectCamera(int width, int height) {
+    public boolean connectCamera(int width, int height) {
 
         /* 1. We need to instantiate camera
          * 2. We need to start thread which will be getting frames
@@ -255,7 +265,7 @@ public class JavaCameraView extends CameraBridgeViewBase implements PreviewCallb
     }
 
     @Override
-    protected void disconnectCamera() {
+    public void disconnectCamera() {
         /* 1. We need to stop thread which updating the frames
          * 2. Stop camera and release it
          */
