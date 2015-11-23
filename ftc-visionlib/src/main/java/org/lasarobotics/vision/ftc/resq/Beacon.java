@@ -4,6 +4,7 @@ import org.lasarobotics.vision.detection.PrimitiveDetection;
 import org.lasarobotics.vision.detection.objects.Contour;
 import org.lasarobotics.vision.detection.objects.Ellipse;
 import org.lasarobotics.vision.image.Drawing;
+import org.lasarobotics.vision.util.color.ColorGRAY;
 import org.lasarobotics.vision.util.color.ColorRGBA;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -85,13 +86,13 @@ public final class Beacon {
             pixelsWidth = (pixelsWidth + currWidth)/2;
             pixelsHeight = (pixelsHeight + currHeight)/2;
             //Recalculate radius
-            CalculateRadius(useButton);
+            calculateRadius(useButton);
         }
         //Call if robot is moving
         public void nonStationaryUpdate(double currHeight, double currButtonHeight, boolean useButton) {
             pixelsHeight = currHeight;
             buttonHeight = (currButtonHeight != 0) ? currButtonHeight : buttonHeight;
-            CalculateRadius(useButton);
+            calculateRadius(useButton);
         }
 
         //Call this each time theta is changed to get real time update of the derivative of width
@@ -100,7 +101,7 @@ public final class Beacon {
             pixelsWidth = currWidth;
         }
 
-        private void CalculateRadius(boolean useButton) {
+        private void calculateRadius(boolean useButton) {
             if(useButton)
                 radius = Constants.BEACON_BUTTON_HEIGHT/(2*Math.tan((Constants.CAMERA_VERT_VANGLE*buttonHeight)/(2*imageHeight)));
             else
@@ -269,6 +270,9 @@ public final class Beacon {
         ellipseHeight = ((buttonOne ? bestAssociatedRed.ellipses.get(0).ellipse.height() : 0)
                 + (buttonTwo ? bestAssociatedBlue.ellipses.get(0).ellipse.height() : 0))/numberOfEllipses;
         result.nonStationaryUpdate((bestRed.height()+bestBlue.height())/2.0, ellipseHeight, numberOfEllipses > 0);
+
+        Drawing.drawText(img, "Radius: " + result.getRadius(),
+                new Point(0, 25), 1.0f, new ColorGRAY(255), Drawing.Anchor.BOTTOMLEFT);
 
         //Send movement data
         result.beaconWeightedCenter = new Point((bestBlue.center().x + bestRed.center().x)/2.0, (bestBlue.center().y + bestRed.center().y)/2.0);

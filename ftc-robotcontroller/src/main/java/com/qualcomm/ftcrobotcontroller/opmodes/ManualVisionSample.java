@@ -54,7 +54,7 @@ import java.util.List;
  */
 public class ManualVisionSample extends ManualVisionOpMode {
 
-    private Beacon.BeaconAnalysis colorAnalysis = new Beacon.BeaconAnalysis();
+    private Beacon.BeaconAnalysis colorAnalysis = new Beacon.BeaconAnalysis(new Size());
     private ColorBlobDetector detectorRed;
     private ColorBlobDetector detectorBlue;
     private static final ColorHSV lowerBoundRed = new ColorHSV((int) (305 / 360.0 * 255.0), (int) (0.200 * 255.0), (int) (0.300 * 255.0));

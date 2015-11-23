@@ -9,6 +9,7 @@ import org.lasarobotics.vision.android.Cameras;
 import org.lasarobotics.vision.detection.ColorBlobDetector;
 import org.lasarobotics.vision.detection.objects.Contour;
 import org.lasarobotics.vision.ftc.resq.Beacon;
+import org.lasarobotics.vision.ftc.resq.Constants;
 import org.lasarobotics.vision.image.Drawing;
 import org.lasarobotics.vision.util.FPS;
 import org.lasarobotics.vision.util.color.ColorGRAY;
@@ -46,6 +47,8 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
         //GET CAMERA PROPERTIES
         Camera cam = Cameras.PRIMARY.createCamera();
         android.hardware.Camera.Parameters pam = cam.getCamera().getParameters();
+        Constants.CAMERA_HOR_VANGLE = pam.getHorizontalViewAngle();
+        Constants.CAMERA_VERT_VANGLE = pam.getVerticalViewAngle();
         focalLength = pam.getFocalLength();
         cam.release();
 

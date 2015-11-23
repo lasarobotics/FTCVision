@@ -3,6 +3,7 @@ package org.lasarobotics.vision.opmode;
 import org.lasarobotics.vision.ftc.resq.Beacon;
 import org.lasarobotics.vision.opmode.extensions.BeaconColorExtension;
 import org.opencv.core.Mat;
+import org.opencv.core.Size;
 
 /**
  * Easy-to-use, extensible vision op mode
@@ -20,7 +21,7 @@ public abstract class VisionOpMode extends VisionOpModeCore {
 
     /*** EXTENSION-SPECIFIC CODE ***/
     private BeaconColorExtension beaconColorExtension = new BeaconColorExtension();
-    public Beacon.BeaconAnalysis beaconColor = new Beacon.BeaconAnalysis();
+    public Beacon.BeaconAnalysis beaconColor = new Beacon.BeaconAnalysis(new Size());
 
     protected void enableExtension(VisionExtensions extension)
     {
