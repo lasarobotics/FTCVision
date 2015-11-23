@@ -10,7 +10,6 @@ import org.lasarobotics.vision.detection.ColorBlobDetector;
 import org.lasarobotics.vision.detection.objects.Contour;
 import org.lasarobotics.vision.ftc.resq.Beacon;
 import org.lasarobotics.vision.image.Drawing;
-import org.lasarobotics.vision.image.Transform;
 import org.lasarobotics.vision.util.FPS;
 import org.lasarobotics.vision.util.color.ColorGRAY;
 import org.lasarobotics.vision.util.color.ColorHSV;
@@ -21,11 +20,9 @@ import org.opencv.android.CameraBridgeViewBase.CvCameraViewFrame;
 import org.opencv.android.CameraBridgeViewBase.CvCameraViewListener2;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
-import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
-import org.opencv.core.Size;
 
 import java.util.List;
 
@@ -191,7 +188,7 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
             //Get color analysis
 
             Beacon beacon = new Beacon(mRgba.size());
-            Beacon.BeaconColorAnalysis colorAnalysis = beacon.analyzeColor_smartScoring(contoursRed, contoursBlue, mRgba, mGray);
+            Beacon.BeaconColorAnalysis colorAnalysis = beacon.analyzeColor(contoursRed, contoursBlue, mRgba, mGray);
 
             //Transform.enlarge(mRgba, originalSize, true);
             //Transform.enlarge(mGray, originalSize, true);
