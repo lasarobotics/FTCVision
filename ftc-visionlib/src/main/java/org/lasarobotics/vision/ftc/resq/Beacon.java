@@ -338,17 +338,16 @@ public final class Beacon {
     {
         //The idea behind the SmartScoring algorithm is that the largest score in each contour/ellipse set will become the best
         //DONE First, ellipses and contours are are detected and pre-filtered to remove eccentricities
-        //TODO Second, ellipses, and contours are scored independently based on size and color ... higher score is better
+        //Second, ellipses, and contours are scored independently based on size and color ... higher score is better
         //TODO Third, comparative analysis is used on each ellipse and contour to create a score for the contours
             //Ellipses within rectangles strongly increase in value
             //Ellipses without nearby/contained contours are removed
             //Ellipses with nearby/contained contours associate themselves with the contour
             //Pairs of ellipses (those with similar size and x-position) greatly increase the associated contours' value
             //Contours without nearby/contained ellipses lose value
-            //FIXME Contours within rectangles strongly increase in value
             //Contours near another contour of the opposite color increase in value
             //Contours and ellipses near the expected area (if any expected area) increase in value
-        //TODO Finally, a fraction of the ellipse value is added to the value of the contour
+        //Finally, a fraction of the ellipse value is added to the value of the contour
             //The best ellipse is found first, then only this ellipse adds to the value
         //TODO The best contour from each color (if available) is selected as red and blue
         //TODO The two best contours are then used to calculate the location of the beacon
@@ -392,6 +391,11 @@ public final class Beacon {
             Drawing.drawEllipses(img, BeaconScoring.ScoredEllipse.getList(scoredEllipses.subList(0, scoredEllipses.size() > 3 ? 3 : scoredEllipses.size()))
                     , new ColorRGBA("#00ff00"), 3);
         }
+
+        //TODO Third, comparative analysis is used on each ellipse and contour to create a score for the contours
+
+        //TODO The best contour from each color (if available) is selected as red and blue
+        //TODO The two best contours are then used to calculate the location of the beacon
 
         return new BeaconColorAnalysis(BeaconColor.UNKNOWN, BeaconColor.UNKNOWN);
     }

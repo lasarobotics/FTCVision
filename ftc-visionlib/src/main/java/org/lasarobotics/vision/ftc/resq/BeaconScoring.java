@@ -87,16 +87,38 @@ class BeaconScoring {
         }
     }
 
+    static class AssociatedContour extends Scorable
+    {
+        ScoredContour contour;
+        List<ScoredEllipse> ellipses;
+
+        AssociatedContour(ScoredContour contour, List<ScoredEllipse> ellipses)
+        {
+            super(score());
+            this.contour = contour;
+            this.ellipses = ellipses;
+        }
+
+        private static double score()
+        {
+            //TODO Finally, a fraction of the ellipse value is added to the value of the contour
+            //The best ellipse is found first, then only this ellipse adds to the value
+
+            return 0.0f;
+        }
+    }
+
     static final double CONTOUR_RATIO_BEST = Constants.BEACON_WH_RATIO; //best ratio for 100% score
-    static final double CONTOUR_RATIO_BIAS = 3.0; //points given at best ratio
-    static final double CONTOUR_RATIO_NORM = 0.1; //normal distribution variance for ratio
+    static final double CONTOUR_RATIO_BIAS = 1.5; //points given at best ratio
+    static final double CONTOUR_RATIO_NORM = 0.2; //normal distribution variance for ratio
 
-    static final double CONTOUR_AREA_MIN = 0;  //FIXME Give me a real value. minimum area as percentage of screen (0 points)
-    static final double CONTOUR_AREA_MAX = 1;  //FIXME Give me a real value. maximum area (0 points given)
-    static final double CONTOUR_AREA_NORM = 1;
-    static final double CONTOUR_AREA_BIAS = 2.0;
+    static final double CONTOUR_AREA_MIN = Math.log10(0.01);
+    static final double CONTOUR_AREA_MAX = Math.log10(0.75);
+    static final double CONTOUR_AREA_NORM = 0.2;
+    static final double CONTOUR_AREA_BIAS = 5.0;
 
-    static final double CONTOUR_SCORE_MIN = 0; //FIXME change from zero
+    static final double CONTOUR_SCORE_MIN = 1;
+
 
     static final double ELLIPSE_ECCENTRICITY_BEST = 0.4; //best eccentricity for 100% score
     static final double ELLIPSE_ECCENTRICITY_BIAS = 3.0; //points given at best eccentricity
@@ -148,15 +170,18 @@ class BeaconScoring {
             //Find ratio - the closer it is to the actual ratio of the beacon, the better
             Size size = contour.size();
             double ratio = size.width / size.height;
-            double ratioSubscore = createSubscore(ratio, CONTOUR_RATIO_BEST, CONTOUR_RATIO_NORM, CONTOUR_RATIO_BIAS, false);
+            double ratioSubscore = createSubscore(ratio, CONTOUR_RATIO_BEST, CONTOUR_RATIO_NORM, CONTOUR_RATIO_BIAS, true);
             score *= ratioSubscore;
 
             //Find the area - the closer to a certain range, the better
-            double area = size.area();
+            //We also take the log for better area comparisons
+            double area = Math.log10(size.area() / imgSize.area());
             //Best value is the root mean squared of the min and max areas
-            final double areaBestValue = Math.sqrt(CONTOUR_AREA_MIN * CONTOUR_AREA_MIN + CONTOUR_AREA_MAX * CONTOUR_AREA_MAX) / 2;
+            final double areaBestValue = Math.signum(CONTOUR_AREA_MIN) * Math.sqrt(CONTOUR_AREA_MIN * CONTOUR_AREA_MIN + CONTOUR_AREA_MAX * CONTOUR_AREA_MAX) / 2;
             double areaSubscore = createSubscore(area, areaBestValue, CONTOUR_AREA_NORM, CONTOUR_AREA_BIAS, true);
             score *= areaSubscore;
+
+            //TODO take color estimations into account
 
             //If score is above a value, keep the contour
             if (score >= CONTOUR_SCORE_MIN)
@@ -204,5 +229,23 @@ class BeaconScoring {
         }
 
         return (List<ScoredEllipse>)Scorable.sort(scores);
+    }
+
+    List<AssociatedContour> scoreAssociations(List<Contour> contours, List<Ellipse> ellipses)
+    {
+        //TODO Ellipses without nearby/contained contours are removed
+        //TODO Ellipses with nearby/contained contours associate themselves with the contour
+        //TODO Contours without nearby/contained ellipses lose value
+        //associate()
+
+        //TODO Pairs of ellipses (those with similar size and x-position) greatly increase the associated contours' value
+        //calculateEllipsePairs()
+        //TODO Contours near another contour of the opposite color increase in value
+        //calculateContourPairs()
+        //TODO Contours and ellipses near the expected zone (if any expected zone) increase in value
+
+        //TODO Finally, the list is sorted by value
+
+        return null;
     }
 }
