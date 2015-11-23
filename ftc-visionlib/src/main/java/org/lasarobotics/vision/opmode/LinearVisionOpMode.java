@@ -1,7 +1,7 @@
 package org.lasarobotics.vision.opmode;
 
 /**
- * Created by S2061383 on 11/23/2015.
+ * Created by Russell Coleman on 11/23/2015.
  */
 public class LinearVisionOpMode {
     public LinearVisionOpMode() {
