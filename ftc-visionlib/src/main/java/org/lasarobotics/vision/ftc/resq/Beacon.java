@@ -392,12 +392,122 @@ public final class Beacon {
                     , new ColorRGBA("#00ff00"), 3);
         }
 
-        //TODO Third, comparative analysis is used on each ellipse and contour to create a score for the contours
+        //Third, comparative analysis is used on each ellipse and contour to create a score for the contours
+        BeaconScoring.MultiAssociatedContours associations = scorer.scoreAssociations(scoredContoursRed, scoredContoursBlue, scoredEllipses);
 
-        //TODO The best contour from each color (if available) is selected as red and blue
-        //TODO The two best contours are then used to calculate the location of the beacon
+        //INFO The best contour from each color (if available) is selected as red and blue
+        //INFO The two best contours are then used to calculate the location of the beacon
 
-        return new BeaconColorAnalysis(BeaconColor.UNKNOWN, BeaconColor.UNKNOWN);
+        //Get the best contour in each (starting with the largest) if any contours exist
+        //We're calling this one the main light
+        Contour bestRed = (associations.redContours.size() > 0) ? associations.redContours.get(0).contour.contour : null;
+        Contour bestBlue = (associations.blueContours.size() > 0) ? associations.blueContours.get(0).contour.contour : null;
+
+        //If we don't have a main light for one of the colors, we know both colors are the same
+        //TODO we should re-filter the contours by size to ensure that we get at least a decent size
+        if (bestRed == null && bestBlue == null)
+            return new BeaconColorAnalysis(BeaconColor.UNKNOWN, BeaconColor.UNKNOWN);
+
+        //TODO rotate image based on camera rotation here
+
+        //The height of the beacon on screen is the height of the best contour
+        Contour largestHeight = ((bestRed != null ? bestRed.size().height : 0) >
+                (bestBlue != null ? bestBlue.size().height : 0)) ? bestRed : bestBlue;
+        assert largestHeight != null;
+        double beaconHeight = largestHeight.size().height;
+        //Get beacon width on screen by extrapolating from height
+        final double beaconActualHeight = 12.5; //cm, only the lit up portion - 14.0 for entire
+        final double beaconActualWidth =  21.0; //cm
+        final double beaconWidthHeightRatio = beaconActualWidth / beaconActualHeight;
+        double beaconWidth = beaconHeight * beaconWidthHeightRatio;
+        Size beaconSize = new Size(beaconWidth, beaconHeight);
+
+        //If the largest part of the non-null color is wider than a certain distance, then both are bright
+        //Otherwise, only one may be lit
+        //If only one is lit, and is wider than a certain distance, it is bright
+        if (bestRed == null)
+            return new BeaconColorAnalysis(BeaconColor.BLUE_BRIGHT, BeaconColor.BLUE_BRIGHT);
+        else if (bestBlue == null)
+            return new BeaconColorAnalysis(BeaconColor.RED_BRIGHT, BeaconColor.RED_BRIGHT);
+
+        //Look at the locations of the largest contours
+        //Check to see if the largest red contour is more left-most than the largest right contour
+        //If it is, then we know that the left beacon is red and the other blue, and vice versa
+
+        Point largestRedCenter = bestRed.center();
+        Point largestBlueCenter = bestBlue.center();
+
+        //DEBUG R/B text
+        Drawing.drawText(img, "R", largestRedCenter, 1.0f, new ColorRGBA(255, 0, 0));
+        Drawing.drawText(img, "B", largestBlueCenter, 1.0f, new ColorRGBA(0, 0, 255));
+
+        //Test which side is red and blue
+        //If the distance between the sides is smaller than a value, then return unknown
+        final int xMinDistance = (int)(0.05 * beaconSize.width); //percent of beacon width
+        boolean leftIsRed;
+        if (largestRedCenter.x + xMinDistance < largestBlueCenter.x) {
+            leftIsRed = true;
+        }
+        else if (largestBlueCenter.y + xMinDistance < largestRedCenter.x) {
+            leftIsRed = false;
+        }
+        else
+        {
+            return new BeaconColorAnalysis(BeaconColor.UNKNOWN, BeaconColor.UNKNOWN);
+        }
+
+        //Get the left-most best contour
+        Contour leftMostContour = ((bestRed.topLeft().x) < (bestBlue.topLeft().x)) ? bestRed : bestBlue;
+        //Get the right-most best contour
+        Contour rightMostContour = ((bestRed.topLeft().x) < (bestBlue.topLeft().x)) ? bestBlue : bestRed;
+
+        //Draw the box surrounding both contours
+        //Get the width of the contours
+        double widthBeacon = rightMostContour.right() - leftMostContour.left();
+        //Center of contours is the average of centers of the contours
+        Point center = new Point((leftMostContour.center().x + rightMostContour.center().x) / 2,
+                (leftMostContour.center().y + rightMostContour.center().y) / 2);
+        //Get the combined height of the contours
+        double heightContours = Math.max(leftMostContour.bottom(), rightMostContour.bottom()) -
+                Math.min(leftMostContour.top(), rightMostContour.top());
+        //The largest size ratio of tested over actual is the scale ratio
+        double scale = Math.max(widthBeacon/beaconActualWidth, heightContours / beaconActualHeight);
+        //Define size of bounding box by scaling the actual beacon size
+        Size beaconSizeFinal = new Size(beaconActualWidth * scale, beaconActualHeight * scale);
+
+        //Get points of the bounding box
+        Point beaconTopLeft = new Point(center.x - (beaconSizeFinal.width / 2),
+                center.y - (beaconSizeFinal.height / 2));
+        Point beaconBottomRight = new Point(center.x + (beaconSizeFinal.width / 2),
+                center.y + (beaconSizeFinal.height / 2));
+
+        //Draw the rectangle containing the beacon
+
+        Drawing.drawRectangle(img, beaconTopLeft, beaconBottomRight, new ColorRGBA(0, 255, 0), 4);
+
+
+        //Tell us the height of the beacon
+        //TODO later we can get the distance away from the beacon based on its height and position
+        Drawing.drawText(img, "Height: " + beaconHeight, new Point(img.width()-256, 8), 1.0f, new ColorGRAY(255), Drawing.Anchor.BOTTOMLEFT);
+
+        //Remove the largest index and look for the next largest
+        //If the next largest is (mostly) within the area of the box, then merge it in with the largest
+
+        /*contoursRed.remove(largestIndexRed);
+        contoursBlue.remove(largestIndexBlue);
+        int secondLargestIndexRed = findLargestIndex(contoursRed);
+        int secondLargestIndexBlue = findLargestIndex(contoursBlue);
+        Contour secondLargestRed = (secondLargestIndexRed != -1) ? contoursRed.get(secondLargestIndexRed) : null;
+        Contour secondLargestBlue = (secondLargestIndexBlue != -1) ? contoursBlue.get(secondLargestIndexBlue) : null;
+        */
+        //Check if the size of the largest contour(s) is about twice the size of the other
+        //This would indicate one is brightly lit and the other is not
+
+        //If this is not true, then neither part of the beacon is highly lit
+        if (leftIsRed)
+            return new BeaconColorAnalysis(BeaconColor.RED, BeaconColor.BLUE);
+        else
+            return new BeaconColorAnalysis(BeaconColor.BLUE, BeaconColor.RED);
     }
 
     public BeaconColorAnalysis analyzeColor(List<Contour> contoursR, List<Contour> contoursB, Mat img, Mat gray)

@@ -94,6 +94,10 @@ public final class MathUtil {
     {
         return Math.sqrt((deltaX * deltaX) + (deltaY * deltaY));
     }
+    public static double distance(Point p1, Point p2)
+    {
+        return distance(Math.abs(p2.x - p1.x), Math.abs(p2.y - p1.y));
+    }
 
     /**
      * Calculate the angle between three points
@@ -135,6 +139,6 @@ public final class MathUtil {
     {
         double standardDeviation = Math.sqrt(variance);
         double normal = (1/(standardDeviation*Math.sqrt(2*Math.PI)));
-        return (1/(standardDeviation*Math.sqrt(2*Math.PI))/normal) * Math.pow(Math.E, -((x - meanValue)*(x - meanValue))/(2*variance));
+        return (1/(standardDeviation*Math.sqrt(2*Math.PI))/normal) * Math.pow(Math.E, -((x - meanValue) * (x - meanValue)) / (2 * variance));
     }
 }

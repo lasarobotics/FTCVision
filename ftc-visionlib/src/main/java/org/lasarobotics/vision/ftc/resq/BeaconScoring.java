@@ -135,6 +135,10 @@ class BeaconScoring {
 
     static final double ELLIPSE_SCORE_MIN = 1; //minimum score to keep the ellipse - theoretically, should be 1
 
+
+    static final double ASSOCIATION_MAX_DISTANCE = 0.05; //as fraction of screen
+
+
     /**
      * Create a normalized subscore around a current and expected value, using the normalized Normal CDF.
      *
@@ -231,21 +235,60 @@ class BeaconScoring {
         return (List<ScoredEllipse>)Scorable.sort(scores);
     }
 
-    List<AssociatedContour> scoreAssociations(List<Contour> contours, List<Ellipse> ellipses)
+    List<AssociatedContour> associate(List<ScoredContour> contours, List<ScoredEllipse> ellipses)
     {
-        //TODO Ellipses without nearby/contained contours are removed
         //TODO Ellipses with nearby/contained contours associate themselves with the contour
+        //TODO Ellipses without nearby/contained contours are removed
         //TODO Contours without nearby/contained ellipses lose value
-        //associate()
+
+        List<AssociatedContour> associations = new ArrayList<>();
+
+        for (ScoredContour contour : contours)
+        {
+            AssociatedContour associatedContour = new AssociatedContour(contour, new ArrayList<ScoredEllipse>());
+            for (ScoredEllipse ellipse : ellipses)
+            {
+                if (ellipse.ellipse.isInside(contour.contour) ||
+                        (MathUtil.distance(ellipse.ellipse.center(), contour.contour.center()) <=
+                                ASSOCIATION_MAX_DISTANCE * imgSize.width))
+                    associatedContour.ellipses.add(ellipse);
+            }
+            if (associatedContour.ellipses.size() > 0)
+                associations.add(associatedContour);
+        }
+
+        return associations;
+    }
+
+    static class MultiAssociatedContours
+    {
+        List<AssociatedContour> redContours;
+        List<AssociatedContour> blueContours;
+
+        MultiAssociatedContours(List<AssociatedContour> redContours, List<AssociatedContour> blueContours)
+        {
+            this.redContours = redContours;
+            this.blueContours = blueContours;
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    MultiAssociatedContours scoreAssociations(List<ScoredContour> contoursRed,
+                                              List<ScoredContour> contoursBlue,
+                                              List<ScoredEllipse> ellipses)
+    {
+        List<AssociatedContour> associationsRed = associate(contoursRed, ellipses);
+        List<AssociatedContour> associationsBlue = associate(contoursBlue, ellipses);
 
         //TODO Pairs of ellipses (those with similar size and x-position) greatly increase the associated contours' value
         //calculateEllipsePairs()
         //TODO Contours near another contour of the opposite color increase in value
         //calculateContourPairs()
-        //TODO Contours and ellipses near the expected zone (if any expected zone) increase in value
+        //TODO Contours near the expected zone (if any expected zone) increase in value
+        //calculateContourZones()
 
-        //TODO Finally, the list is sorted by value
-
-        return null;
+        //Finally, the list is sorted by score
+        return new MultiAssociatedContours((List<AssociatedContour>)AssociatedContour.sort(associationsRed),
+                (List<AssociatedContour>)AssociatedContour.sort(associationsBlue));
     }
 }
