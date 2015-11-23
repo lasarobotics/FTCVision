@@ -27,17 +27,3 @@ This library is currently under insanely active development. We're in the **Beta
 ## Progress
 - Beacon located successfully in multiple environments. Now, we are tuning detection so that it is (virtually) fail- and competition-proof.
 - A competition-proof `OpMode` scheme created so that the robot controller does not need to be modified to use the app.
-
-## Hi there!
-This library is currently under insanely active development. We're in late-Alpha phase right now. If you have any questions or would like to help,
-send a note to smo-key (contact info on profile). Thank you!
-
-## Goals
-
-- Locate the lit target (the thing with two buttons) within the camera viewfield
-- Move the robot to the lit target, while identifying the color status of the target
-- Locate the button of the target color and activate it
-
-## Progress
-
-- Beacon located successfully in multiple environments. Now, we are tuning detection so that it is (virtually) fail- and competition-proof.
