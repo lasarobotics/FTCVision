@@ -188,7 +188,7 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
             //Get color analysis
 
             Beacon beacon = new Beacon(mRgba.size());
-            Beacon.BeaconColorAnalysis colorAnalysis = beacon.analyzeColor(contoursRed, contoursBlue, mRgba, mGray);
+            Beacon.BeaconAnalysis colorAnalysis = beacon.analyzeBeacon(contoursRed, contoursBlue, mRgba, mGray);
 
             //Transform.enlarge(mRgba, originalSize, true);
             //Transform.enlarge(mGray, originalSize, true);

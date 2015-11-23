@@ -63,7 +63,7 @@ public class BeaconColorExtension implements VisionExtension
 
             //Get color analysis
             Beacon beacon = new Beacon(rgba.size());
-            opmode.beaconColor = beacon.analyzeColor(contoursRed, contoursBlue, rgba, gray);
+            opmode.beaconColor = beacon.analyzeBeacon(contoursRed, contoursBlue, rgba, gray);
         }
         catch (Exception e)
         {

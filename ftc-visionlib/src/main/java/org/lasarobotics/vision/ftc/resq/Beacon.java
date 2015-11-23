@@ -4,16 +4,11 @@ import org.lasarobotics.vision.detection.PrimitiveDetection;
 import org.lasarobotics.vision.detection.objects.Contour;
 import org.lasarobotics.vision.detection.objects.Ellipse;
 import org.lasarobotics.vision.image.Drawing;
-import org.lasarobotics.vision.util.MathUtil;
-import org.lasarobotics.vision.util.color.ColorGRAY;
 import org.lasarobotics.vision.util.color.ColorRGBA;
-import org.lasarobotics.vision.util.color.ColorSpace;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
-import org.opencv.core.Rect;
 import org.opencv.core.Size;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -56,28 +51,90 @@ public final class Beacon {
         }
     }
 
-    public static class BeaconColorAnalysis
+    public static class BeaconAnalysis
     {
+        public double imageHeight;
+        public double imageWidth;
+
+        //Movement values
+        private Point beaconWeightedCenter;
+
+        public Point getBeaconWeightedCenter() {
+            return beaconWeightedCenter;
+        }
+
+        //Position analysis
+        //Hard to calculate values
+        private double phi;
+        private double theta;
+        //Easy to calculate values
+        private double radius = 0;
+
+        //Physical properties in pixels
+        private double pixelsWidth;
+        private double pixelsHeight;
+
+        private double buttonHeight;
+
+        //Derivative of width of beacon in pixels with respect to theta
+        private double dPixelsWdTheta;
+
+        //If no variables are changing call this method so the system can get a sense of the variance due to noise
+        public void stationaryNoiseUpdate(double currWidth, double currHeight, boolean useButton) {
+            //If no position was changed, average the current values
+            pixelsWidth = (pixelsWidth + currWidth)/2;
+            pixelsHeight = (pixelsHeight + currHeight)/2;
+            //Recalculate radius
+            CalculateRadius(useButton);
+        }
+        //Call if robot is moving
+        public void nonStationaryUpdate(double currHeight, double currButtonHeight, boolean useButton) {
+            pixelsHeight = currHeight;
+            buttonHeight = (currButtonHeight != 0) ? currButtonHeight : buttonHeight;
+            CalculateRadius(useButton);
+        }
+
+        //Call this each time theta is changed to get real time update of the derivative of width
+        public void updatedPixelsWdTheta(double currWidth, boolean wasdThetaPositive) {
+            dPixelsWdTheta = (wasdThetaPositive) ? currWidth - pixelsWidth : pixelsWidth - currWidth;
+            pixelsWidth = currWidth;
+        }
+
+        private void CalculateRadius(boolean useButton) {
+            if(useButton)
+                radius = Constants.BEACON_BUTTON_HEIGHT/(2*Math.tan((Constants.CAMERA_VERT_VANGLE*buttonHeight)/(2*imageHeight)));
+            else
+                radius = Constants.BEACON_HEIGHT/(2*Math.tan((Constants.CAMERA_VERT_VANGLE*pixelsHeight)/(2*imageHeight)));
+        }
+        public double getRadius() {
+            return radius;
+        }
+
+        //Color Analysis
         private BeaconColor left;
         private BeaconColor right;
 
         //TODO Color and CONFIDENCE should make up the results
 
         //TODO add Size size, Point locationTopLeft, Distance distanceApprox
-        public BeaconColorAnalysis()
+        public BeaconAnalysis(Size imageSize)
         {
             assert left != null;
             assert right != null;
             this.left = BeaconColor.UNKNOWN;
             this.right = BeaconColor.UNKNOWN;
+            this.imageWidth = imageSize.width;
+            this.imageHeight = imageSize.height;
         }
 
-        public BeaconColorAnalysis(BeaconColor left, BeaconColor right)
+        public BeaconAnalysis(BeaconColor left, BeaconColor right, Size imageSize)
         {
             assert left != null;
             assert right != null;
             this.left = left;
             this.right = right;
+            this.imageWidth = imageSize.width;
+            this.imageHeight = imageSize.height;
         }
 
         public BeaconColor getStateLeft()
@@ -130,8 +187,10 @@ public final class Beacon {
         }
     }
 
-    public BeaconColorAnalysis analyzeColor(List<Contour> contoursRed, List<Contour> contoursBlue, Mat img, Mat gray)
+    public BeaconAnalysis analyzeBeacon(List<Contour> contoursRed, List<Contour> contoursBlue, Mat img, Mat gray)
     {
+        BeaconAnalysis result = new BeaconAnalysis(BeaconColor.UNKNOWN, BeaconColor.UNKNOWN, img.size());
+
         //The idea behind the SmartScoring algorithm is that the largest score in each contour/ellipse set will become the best
         //DONE First, ellipses and contours are are detected and pre-filtered to remove eccentricities
         //Second, ellipses, and contours are scored independently based on size and color ... higher score is better
@@ -196,13 +255,28 @@ public final class Beacon {
 
         //Get the best contour in each (starting with the largest) if any contours exist
         //We're calling this one the main light
-        Contour bestRed = (associations.redContours.size() > 0) ? associations.redContours.get(0).contour.contour : null;
-        Contour bestBlue = (associations.blueContours.size() > 0) ? associations.blueContours.get(0).contour.contour : null;
+        BeaconScoring.AssociatedContour bestAssociatedRed = (associations.redContours.size() > 0) ? associations.redContours.get(0) : null;
+        BeaconScoring.AssociatedContour bestAssociatedBlue = (associations.blueContours.size() > 0) ? associations.blueContours.get(0) : null;
 
+        Contour bestRed = (bestAssociatedRed != null) ? bestAssociatedRed.contour.contour : null;
+        Contour bestBlue = (bestAssociatedRed != null) ? bestAssociatedRed.contour.contour : null;
+
+        //Send data for position calculations
+        double ellipseHeight;
+        boolean buttonOne = bestAssociatedBlue.ellipses.size() > 0;
+        boolean buttonTwo = bestAssociatedRed.ellipses.size() > 0;
+        int numberOfEllipses = (buttonOne ? 1 : 0) + (buttonTwo ? 1 : 0);
+        ellipseHeight = ((buttonOne ? bestAssociatedRed.ellipses.get(0).ellipse.height() : 0)
+                + (buttonTwo ? bestAssociatedBlue.ellipses.get(0).ellipse.height() : 0))/numberOfEllipses;
+        result.nonStationaryUpdate((bestRed.height()+bestBlue.height())/2.0, ellipseHeight, numberOfEllipses > 0);
+
+        //Send movement data
+        result.beaconWeightedCenter = new Point((bestBlue.center().x + bestRed.center().x)/2.0, (bestBlue.center().y + bestRed.center().y)/2.0);
+        
         //If we don't have a main light for one of the colors, we know both colors are the same
         //TODO we should re-filter the contours by size to ensure that we get at least a decent size
         if (bestRed == null && bestBlue == null)
-            return new BeaconColorAnalysis(BeaconColor.UNKNOWN, BeaconColor.UNKNOWN);
+            return result;
 
         //TODO rotate image based on camera rotation here
 
@@ -222,10 +296,15 @@ public final class Beacon {
         //If the largest part of the non-null color is wider than a certain distance, then both are bright
         //Otherwise, only one may be lit
         //If only one is lit, and is wider than a certain distance, it is bright
-        if (bestRed == null)
-            return new BeaconColorAnalysis(BeaconColor.BLUE_BRIGHT, BeaconColor.BLUE_BRIGHT);
-        else if (bestBlue == null)
-            return new BeaconColorAnalysis(BeaconColor.RED_BRIGHT, BeaconColor.RED_BRIGHT);
+        if (bestRed == null) {
+            result.left = BeaconColor.BLUE_BRIGHT;
+            result.right = BeaconColor.BLUE_BRIGHT;
+            return result;
+        } else if (bestBlue == null) {
+            result.left = BeaconColor.RED_BRIGHT;
+            result.right = BeaconColor.RED_BRIGHT;
+            return result;
+        }
 
         //Look at the locations of the largest contours
         //Check to see if the largest red contour is more left-most than the largest right contour
@@ -250,7 +329,7 @@ public final class Beacon {
         }
         else
         {
-            return new BeaconColorAnalysis(BeaconColor.UNKNOWN, BeaconColor.UNKNOWN);
+            return result;
         }
 
         //Get the left-most best contour
@@ -295,9 +374,14 @@ public final class Beacon {
         //This would indicate one is brightly lit and the other is not
 
         //If this is not true, then neither part of the beacon is highly lit
-        if (leftIsRed)
-            return new BeaconColorAnalysis(BeaconColor.RED, BeaconColor.BLUE);
-        else
-            return new BeaconColorAnalysis(BeaconColor.BLUE, BeaconColor.RED);
+        if (leftIsRed) {
+            result.left = BeaconColor.RED;
+            result.right = BeaconColor.BLUE;
+            return result;
+        } else {
+            result.left = BeaconColor.BLUE;
+            result.right = BeaconColor.RED;
+            return result;
+        }
     }
 }
