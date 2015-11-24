@@ -4,24 +4,17 @@ import org.lasarobotics.vision.detection.PrimitiveDetection;
 import org.lasarobotics.vision.detection.objects.Contour;
 import org.lasarobotics.vision.detection.objects.Ellipse;
 import org.lasarobotics.vision.image.Drawing;
-import org.lasarobotics.vision.util.MathUtil;
-import org.lasarobotics.vision.util.color.ColorGRAY;
 import org.lasarobotics.vision.util.color.ColorRGBA;
-import org.lasarobotics.vision.util.color.ColorSpace;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
-import org.opencv.core.Rect;
 import org.opencv.core.Size;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Beacon location and analysis
  */
 public final class Beacon {
-
-    private final static double DETECTION_MIN_DISTANCE = 0.05;
 
     public enum BeaconColor
     {
@@ -216,10 +209,11 @@ public final class Beacon {
         //If the largest part of the non-null color is wider than a certain distance, then both are bright
         //Otherwise, only one may be lit
         //If only one is lit, and is wider than a certain distance, it is bright
+        //TODO We are currently assuming that the beacon cannot be in a "bright" state
         if (bestRed == null)
-            return new BeaconColorAnalysis(BeaconColor.BLUE_BRIGHT, BeaconColor.BLUE_BRIGHT);
+            return new BeaconColorAnalysis(BeaconColor.UNKNOWN, BeaconColor.UNKNOWN);
         else if (bestBlue == null)
-            return new BeaconColorAnalysis(BeaconColor.RED_BRIGHT, BeaconColor.RED_BRIGHT);
+            return new BeaconColorAnalysis(BeaconColor.UNKNOWN, BeaconColor.UNKNOWN);
 
         //Look at the locations of the largest contours
         //Check to see if the largest red contour is more left-most than the largest right contour
@@ -234,7 +228,7 @@ public final class Beacon {
 
         //Test which side is red and blue
         //If the distance between the sides is smaller than a value, then return unknown
-        final int xMinDistance = (int)(DETECTION_MIN_DISTANCE * beaconSize.width); //percent of beacon width
+        final int xMinDistance = (int)(Constants.DETECTION_MIN_DISTANCE * beaconSize.width); //percent of beacon width
         boolean leftIsRed;
         if (largestRedCenter.x + xMinDistance < largestBlueCenter.x) {
             leftIsRed = true;
