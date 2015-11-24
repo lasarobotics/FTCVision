@@ -8,6 +8,7 @@ import android.widget.LinearLayout;
 import org.jetbrains.annotations.Nullable;
 import org.lasarobotics.vision.android.Camera;
 import org.lasarobotics.vision.android.Cameras;
+import org.lasarobotics.vision.ftc.resq.Constants;
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.JavaCameraView;
@@ -53,6 +54,9 @@ public abstract class VisionEnabledActivity extends Activity {
         if (frameSize == null)
         {
             Camera c = camera.createCamera();
+            android.hardware.Camera.Parameters pam = c.getCamera().getParameters();
+            Constants.CAMERA_HOR_VANGLE = pam.getHorizontalViewAngle() * Math.PI/180.0;
+            Constants.CAMERA_VERT_VANGLE = pam.getVerticalViewAngle() * Math.PI/180.0;
             if (c.doesExist()) {
                 frameSize = c.getBestFrameSize();
                 c.unlock();
