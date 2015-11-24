@@ -1,13 +1,10 @@
 package org.lasarobotics.vision.opmode;
 
 /**
- * Created by Russell Coleman on 11/23/2015.
+ * Linear version of the Vision OpMode - NOT YET SUPPORTED
  */
 public class LinearVisionOpMode {
     public LinearVisionOpMode() {
-        throw new RuntimeException("Stop. Stop it. Use the right class. Use VisionOpMode." +
-                "Talk to Russell or Arthur if you need help." +
-                "And re-evaluate your life decisions. Non-linear Opmodes make everything better." +
-                "Thank you.");
+        throw new RuntimeException("Linear OpModes are not yet supported. Please use VisionOpMode.");
     }
 }

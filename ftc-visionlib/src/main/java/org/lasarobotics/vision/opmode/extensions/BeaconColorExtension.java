@@ -17,9 +17,9 @@ public class BeaconColorExtension implements VisionExtension
 {
     private ColorBlobDetector detectorRed;
     private ColorBlobDetector detectorBlue;
-    private final ColorHSV lowerBoundRed = new ColorHSV((int) (305 / 360.0 * 255.0), (int) (0.200 * 255.0), (int) (0.300 * 255.0));
+    private final ColorHSV lowerBoundRed = new ColorHSV((int) (305 / 360.0 * 255.0), (int) (0.100 * 255.0), (int) (0.300 * 255.0));
     private final ColorHSV upperBoundRed = new ColorHSV((int) ((360.0 + 5.0) / 360.0 * 255.0), 255, 255);
-    private final ColorHSV lowerBoundBlue = new ColorHSV((int) (170.0 / 360.0 * 255.0), (int) (0.200 * 255.0), (int) (0.750 * 255.0));
+    private final ColorHSV lowerBoundBlue = new ColorHSV((int) (170.0 / 360.0 * 255.0), (int) (0.100 * 255.0), (int) (0.300 * 255.0));
     private final ColorHSV upperBoundBlue = new ColorHSV((int) (227.0 / 360.0 * 255.0), 255, 255);
 
     public BeaconColorExtension()
@@ -62,7 +62,7 @@ public class BeaconColorExtension implements VisionExtension
             List<Contour> contoursBlue = detectorBlue.getContours();
 
             //Get color analysis
-            Beacon beacon = new Beacon(rgba.size());
+            Beacon beacon = new Beacon();
             opmode.beaconColor = beacon.analyzeColor(contoursRed, contoursBlue, rgba, gray);
         }
         catch (Exception e)

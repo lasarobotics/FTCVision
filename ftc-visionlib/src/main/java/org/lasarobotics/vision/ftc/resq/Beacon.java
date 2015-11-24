@@ -21,12 +21,7 @@ import java.util.List;
  */
 public final class Beacon {
 
-    private Size screenSize;
-
-    public Beacon(Size screenSize)
-    {
-        this.screenSize = screenSize;
-    }
+    private final static double DETECTION_MIN_DISTANCE = 0.05;
 
     public enum BeaconColor
     {
@@ -51,7 +46,6 @@ public final class Beacon {
                 case UNKNOWN:
                 default:
                     return "???";
-
             }
         }
     }
@@ -240,7 +234,7 @@ public final class Beacon {
 
         //Test which side is red and blue
         //If the distance between the sides is smaller than a value, then return unknown
-        final int xMinDistance = (int)(0.05 * beaconSize.width); //percent of beacon width
+        final int xMinDistance = (int)(DETECTION_MIN_DISTANCE * beaconSize.width); //percent of beacon width
         boolean leftIsRed;
         if (largestRedCenter.x + xMinDistance < largestBlueCenter.x) {
             leftIsRed = true;
