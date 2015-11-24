@@ -94,17 +94,26 @@ class BeaconScoring {
 
         AssociatedContour(ScoredContour contour, List<ScoredEllipse> ellipses)
         {
-            super(score());
+            super(score(contour, ellipses));
             this.contour = contour;
             this.ellipses = ellipses;
         }
 
-        private static double score()
+        private static double score(ScoredContour contour, List<ScoredEllipse> ellipses)
         {
-            //TODO Finally, a fraction of the ellipse value is added to the value of the contour
             //The best ellipse is found first, then only this ellipse adds to the value
+            double ellipseBest = 0.0f;
+            for (ScoredEllipse ellipse : ellipses)
+                ellipseBest = Math.max(ellipseBest, ellipse.score);
 
-            return 0.0f;
+            //Finally, a fraction of the ellipse value is added to the value of the contour
+            return contour.score + (ASSOCIATION_ELLIPSE_SCORE_MULTIPLIER * ellipseBest);
+        }
+
+        double updateScore()
+        {
+            this.score = score(contour, ellipses);
+            return score;
         }
     }
 
@@ -136,8 +145,9 @@ class BeaconScoring {
     static final double ELLIPSE_SCORE_MIN = 1; //minimum score to keep the ellipse - theoretically, should be 1
 
 
-    static final double ASSOCIATION_MAX_DISTANCE = 0.05; //as fraction of screen
-
+    static final double ASSOCIATION_MAX_DISTANCE = 0.20; //as fraction of screen
+    static final double ASSOCIATION_NO_ELLIPSE_FACTOR = 0.75;
+    static final double ASSOCIATION_ELLIPSE_SCORE_MULTIPLIER = 0.75;
 
     /**
      * Create a normalized subscore around a current and expected value, using the normalized Normal CDF.
@@ -237,9 +247,8 @@ class BeaconScoring {
 
     List<AssociatedContour> associate(List<ScoredContour> contours, List<ScoredEllipse> ellipses)
     {
-        //TODO Ellipses with nearby/contained contours associate themselves with the contour
-        //TODO Ellipses without nearby/contained contours are removed
-        //TODO Contours without nearby/contained ellipses lose value
+        //Ellipses with nearby/contained contours associate themselves with the contour
+        //Ellipses without nearby/contained contours are removed
 
         List<AssociatedContour> associations = new ArrayList<>();
 
@@ -253,8 +262,11 @@ class BeaconScoring {
                                 ASSOCIATION_MAX_DISTANCE * imgSize.width))
                     associatedContour.ellipses.add(ellipse);
             }
-            if (associatedContour.ellipses.size() > 0)
-                associations.add(associatedContour);
+            associatedContour.updateScore();
+            //Contours without nearby/contained ellipses lose value
+            if (associatedContour.ellipses.size() == 0)
+                associatedContour.score *= ASSOCIATION_NO_ELLIPSE_FACTOR;
+            associations.add(associatedContour);
         }
 
         return associations;
