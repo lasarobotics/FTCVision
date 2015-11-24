@@ -14,16 +14,23 @@ Computer Vision library for FTC based on OpenCV, featuring **beacon color and po
 
 1. Clone FTCVision into a clean directory (outside your robot controller app) using the following command: `git clone --depth=1 https://github.com/lasarobotics/ftcvision`.
 2. Navigate to the FTCVision directory that you just cloned and copy the `ftc-visionlib` and `opencv-java` folders into your existing robot controller app.
-3. Find your `settings.gradle` file and append the following two lines:
+3. Open your robot controller app in Android Studio.
+4. Find your `settings.gradle` file and append the following two lines:
 ```
 include ':opencv-java'
 include ':ftc-visionlib'
 ```
-4. Find the `AndroidManifest.xml` under your `ftc-robotcontroller` folder, sometimes named `sample`.
-5. Insert the following `uses-permission` tag in the appropriate location (look at the rest of the file for context).
+5. Find the `AndroidManifest.xml` under your `ftc-robotcontroller` folder, sometimes named `sample` or similar.
+6. Insert the following `uses-permission` tag in the appropriate location (look at the rest of the file for context).
 ```
 <uses-permission android:name="android.permission.CAMERA" android:required="true" />
 ```
+7. Find your `build.gradle` in the parent folder of `AndroidManifest.xml` and insert the following line under `dependencies`:
+```
+compile project(':ftc-visionlib')
+compile project(':opencv-java')
+```
+8. Copy in Vision opmodes (optional but recommended) from the FTCVision directory into your opmode directory.
 
 ## Status
 This library is currently under insanely active development. We're in the **Beta** phase right now. If you have any questions or would like to help, send a note to `smo-key` (contact info on profile). Thank you!
