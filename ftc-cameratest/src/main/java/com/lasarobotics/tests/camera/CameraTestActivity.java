@@ -9,8 +9,8 @@ import org.lasarobotics.vision.android.Cameras;
 import org.lasarobotics.vision.detection.ColorBlobDetector;
 import org.lasarobotics.vision.detection.objects.Contour;
 import org.lasarobotics.vision.ftc.resq.Beacon;
+import org.lasarobotics.vision.ftc.resq.Constants;
 import org.lasarobotics.vision.image.Drawing;
-import org.lasarobotics.vision.image.Transform;
 import org.lasarobotics.vision.util.FPS;
 import org.lasarobotics.vision.util.color.ColorGRAY;
 import org.lasarobotics.vision.util.color.ColorHSV;
@@ -21,11 +21,9 @@ import org.opencv.android.CameraBridgeViewBase.CvCameraViewFrame;
 import org.opencv.android.CameraBridgeViewBase.CvCameraViewListener2;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
-import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
-import org.opencv.core.Size;
 
 import java.util.List;
 
@@ -49,6 +47,8 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
         //GET CAMERA PROPERTIES
         Camera cam = Cameras.PRIMARY.createCamera();
         android.hardware.Camera.Parameters pam = cam.getCamera().getParameters();
+        Constants.CAMERA_HOR_VANGLE = pam.getHorizontalViewAngle();
+        Constants.CAMERA_VERT_VANGLE = pam.getVerticalViewAngle();
         focalLength = pam.getFocalLength();
         cam.release();
 
@@ -171,9 +171,8 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
         mGray = inputFrame.gray();
         //Size originalSize = mRgba.size();
 
-        //DEBUG for the Nexus
-        Transform.flip(mRgba, Transform.FlipType.FLIP_BOTH);
-        Transform.flip(mGray, Transform.FlipType.FLIP_BOTH);
+        //Transform.flip(mRgba, Transform.FlipType.FLIP_BOTH);
+        //Transform.flip(mGray, Transform.FlipType.FLIP_BOTH);
 
         //Transform.shrink(mRgba, new Size(480, 480), true);
         //Transform.shrink(mGray, new Size(480, 480), true);
@@ -190,12 +189,9 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
             List<Contour> contoursBlue = detectorBlue.getContours();
 
             //Get color analysis
-            Beacon beacon = new Beacon(mRgba.size());
-            Beacon.BeaconColorAnalysis colorAnalysis = beacon.analyzeColor(contoursRed, contoursBlue, mRgba, mGray);
 
-            //Draw red and blue contours
-            Drawing.drawContours(mRgba, contoursRed, new ColorRGBA(255, 0, 0), 2);
-            Drawing.drawContours(mRgba, contoursBlue, new ColorRGBA(0, 0, 255), 2);
+            Beacon beacon = new Beacon(mRgba.size());
+            Beacon.BeaconAnalysis colorAnalysis = beacon.analyzeBeacon(contoursRed, contoursBlue, mRgba, mGray);
 
             //Transform.enlarge(mRgba, originalSize, true);
             //Transform.enlarge(mGray, originalSize, true);

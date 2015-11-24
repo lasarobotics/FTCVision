@@ -37,7 +37,7 @@ public final class MathUtil {
      * @param b Second value
      * @return True if the values are equal, false otherwise
      */
-    public static Boolean equal(double a, double b) {
+    public static boolean equal(double a, double b) {
         return (Math.abs(a - b) < EPSILON);
     }
 
@@ -49,7 +49,7 @@ public final class MathUtil {
      * @param distance Maximum distance between a and b
      * @return True if the values are equal ot within distance, false otherwise
      */
-    public static Boolean equal(double a, double b, double distance) {
+    public static boolean equal(double a, double b, double distance) {
         return (Math.abs(a - b) < distance);
     }
 
@@ -94,13 +94,17 @@ public final class MathUtil {
     {
         return Math.sqrt((deltaX * deltaX) + (deltaY * deltaY));
     }
+    public static double distance(Point p1, Point p2)
+    {
+        return distance(Math.abs(p2.x - p1.x), Math.abs(p2.y - p1.y));
+    }
 
     /**
-     * Calculate the angle between three point-vectors
+     * Calculate the angle between three points
      * @param pt1 Vector 1
      * @param pt2 Vector 2
      * @param pt0 Vector 0
-     * @return The angle (cosine) between the three vectors
+     * @return The angle (cosine) between the points
      */
     public static double angle( Point pt1, Point pt2, Point pt0 )
     {
@@ -109,5 +113,32 @@ public final class MathUtil {
         double dx2 = pt2.x - pt0.x;
         double dy2 = pt2.y - pt0.y;
         return (dx1*dx2 + dy1*dy2)/Math.sqrt((dx1*dx1 + dy1*dy1)*(dx2*dx2 + dy2*dy2) + 1e-10);
+    }
+
+    /**
+     * Calculate a normal probability density function (PDF) based on a variance and mean value
+     * @param x The location on the normal distribution. The location at the mean would be the largest value
+     * @param variance The variance (stddev^2) of the normal distribution.
+     * @param meanValue The mean value is the x location at which the function is the largest (i.e. has median)
+     * @return The normal distribution at the location x
+     */
+    public static double normalPDF(double x, double variance, double meanValue)
+    {
+        double standardDeviation = Math.sqrt(variance);
+        return (1/(standardDeviation*Math.sqrt(2*Math.PI))) * Math.pow(Math.E, -((x - meanValue) * (x - meanValue)) / (2 * variance));
+    }
+
+    /**
+     * Calculate a normal probability density function (PDF) based on a variance and mean value in which the median value is equal to 1
+     * @param x The location on the normal distribution. The location at the mean would be the largest value
+     * @param variance The variance (stddev^2) of the normal distribution.
+     * @param meanValue The mean value is the x location at which the function is the largest (i.e. has median)
+     * @return The normal distribution at the location x
+     */
+    public static double normalPDFNormalized(double x, double variance, double meanValue)
+    {
+        double standardDeviation = Math.sqrt(variance);
+        double normal = (1/(standardDeviation*Math.sqrt(2*Math.PI)));
+        return (1/(standardDeviation*Math.sqrt(2*Math.PI))/normal) * Math.pow(Math.E, -((x - meanValue) * (x - meanValue)) / (2 * variance));
     }
 }

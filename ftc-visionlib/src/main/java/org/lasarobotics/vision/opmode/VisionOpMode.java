@@ -1,21 +1,9 @@
 package org.lasarobotics.vision.opmode;
 
-import org.lasarobotics.vision.android.Cameras;
-import org.lasarobotics.vision.detection.ColorBlobDetector;
-import org.lasarobotics.vision.detection.objects.Contour;
 import org.lasarobotics.vision.ftc.resq.Beacon;
-import org.lasarobotics.vision.image.Drawing;
-import org.lasarobotics.vision.image.Transform;
 import org.lasarobotics.vision.opmode.extensions.BeaconColorExtension;
-import org.lasarobotics.vision.opmode.extensions.VisionExtension;
-import org.lasarobotics.vision.util.color.ColorGRAY;
-import org.lasarobotics.vision.util.color.ColorHSV;
-import org.lasarobotics.vision.util.color.ColorRGBA;
 import org.opencv.core.Mat;
-import org.opencv.core.Point;
 import org.opencv.core.Size;
-
-import java.util.List;
 
 /**
  * Easy-to-use, extensible vision op mode
@@ -33,7 +21,7 @@ public abstract class VisionOpMode extends VisionOpModeCore {
 
     /*** EXTENSION-SPECIFIC CODE ***/
     private BeaconColorExtension beaconColorExtension = new BeaconColorExtension();
-    public Beacon.BeaconColorAnalysis beaconColor = new Beacon.BeaconColorAnalysis();
+    public Beacon.BeaconAnalysis beaconColor = new Beacon.BeaconAnalysis(new Size());
 
     protected void enableExtension(VisionExtensions extension)
     {

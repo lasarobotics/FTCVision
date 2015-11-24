@@ -1,19 +1,12 @@
 package org.lasarobotics.vision.opmode.extensions;
 
-import org.lasarobotics.vision.android.Cameras;
 import org.lasarobotics.vision.detection.ColorBlobDetector;
 import org.lasarobotics.vision.detection.objects.Contour;
 import org.lasarobotics.vision.ftc.resq.Beacon;
-import org.lasarobotics.vision.image.Drawing;
 import org.lasarobotics.vision.image.Transform;
-import org.lasarobotics.vision.opmode.VisionExtensions;
 import org.lasarobotics.vision.opmode.VisionOpMode;
-import org.lasarobotics.vision.util.color.ColorGRAY;
 import org.lasarobotics.vision.util.color.ColorHSV;
-import org.lasarobotics.vision.util.color.ColorRGBA;
 import org.opencv.core.Mat;
-import org.opencv.core.Point;
-import org.opencv.core.Size;
 
 import java.util.List;
 
@@ -70,7 +63,7 @@ public class BeaconColorExtension implements VisionExtension
 
             //Get color analysis
             Beacon beacon = new Beacon(rgba.size());
-            opmode.beaconColor = beacon.analyzeColor(contoursRed, contoursBlue, rgba, gray);
+            opmode.beaconColor = beacon.analyzeBeacon(contoursRed, contoursBlue, rgba, gray);
         }
         catch (Exception e)
         {

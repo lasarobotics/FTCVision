@@ -54,7 +54,7 @@ import java.util.List;
  */
 public class ManualVisionSample extends ManualVisionOpMode {
 
-    private Beacon.BeaconColorAnalysis colorAnalysis = new Beacon.BeaconColorAnalysis();
+    private Beacon.BeaconAnalysis colorAnalysis = new Beacon.BeaconAnalysis(new Size());
     private ColorBlobDetector detectorRed;
     private ColorBlobDetector detectorBlue;
     private static final ColorHSV lowerBoundRed = new ColorHSV((int) (305 / 360.0 * 255.0), (int) (0.200 * 255.0), (int) (0.300 * 255.0));
@@ -114,7 +114,7 @@ public class ManualVisionSample extends ManualVisionOpMode {
 
             //Get color analysis
             Beacon beacon = new Beacon(rgba.size());
-            colorAnalysis = beacon.analyzeColor(contoursRed, contoursBlue, rgba, gray);
+            colorAnalysis = beacon.analyzeBeacon(contoursRed, contoursBlue, rgba, gray);
 
             //Draw red and blue contours
             Drawing.drawContours(rgba, contoursRed, new ColorRGBA(255, 0, 0), 2);

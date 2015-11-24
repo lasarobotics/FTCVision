@@ -36,7 +36,7 @@ public abstract class Detectable {
      * @param imgSpace The image's color space
      * @return The average color of the region
      */
-    public Color averageColor(Mat img, ColorSpace imgSpace, Mat cimg)
+    public Color averageColor(Mat img, ColorSpace imgSpace)
     {
         //Coerce values to stay within screen dimensions
         double leftX = MathUtil.coerce(0, img.cols() - 1, left());
@@ -48,11 +48,6 @@ public abstract class Detectable {
         //Input points into array for calculation
         //TODO rectangular submatrix-basad calculation isn't perfectly accurate when you have ellipses or weird shapes
         Mat subMat = img.submat((int)topY, (int)bottomY, (int)leftX, (int)rightX);
-
-        //DEBUG
-        Point topLeft = new Point(leftX, topY);
-        Point bottomRight = new Point(rightX, bottomY);
-        Drawing.drawRectangle(cimg, topLeft, bottomRight, new ColorRGBA(255, 80, 255, 255), 2);
 
         //Calculate average and return new color instance
         return Color.create(Core.mean(subMat), imgSpace);

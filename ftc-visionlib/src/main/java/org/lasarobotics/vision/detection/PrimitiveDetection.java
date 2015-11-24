@@ -132,12 +132,11 @@ public class PrimitiveDetection {
     {
         Mat gray = grayImage.clone();
 
-        Filter.blur(gray, 1);
-        Filter.erode(gray, 1);
-        Filter.dilate(gray, 1);
+        Filter.downsample(gray, 2);
+        Filter.upsample(gray, 2);
 
         Imgproc.Canny(gray, gray, 5, 75, 3, true);
-        Filter.blur(gray, 0);
+        Filter.dilate(gray, 2);
 
         Mat cacheHierarchy = new Mat();
 
@@ -145,7 +144,7 @@ public class PrimitiveDetection {
         //Find contours - the parameters here are very important to compression and retention
         Imgproc.findContours(gray, contoursTemp, cacheHierarchy, Imgproc.CV_RETR_TREE, Imgproc.CHAIN_APPROX_TC89_KCOS);
 
-        //List and draw contours
+        //List contours
         List<Contour> contours = new ArrayList<>();
         for (MatOfPoint co : contoursTemp ) {
             contours.add(new Contour(co));
@@ -162,9 +161,6 @@ public class PrimitiveDetection {
             MatOfPoint2f matOfPoint2f = new MatOfPoint2f(co.toArray());
             //Fit an ellipse to the current contour
             Ellipse ellipse = new Ellipse(Imgproc.fitEllipse(matOfPoint2f));
-            //Test eccentricity of ellipse, if it's too eccentric, ignore it
-            if (ellipse.eccentricity() > 0.5)
-                continue;
 
             //Draw ellipse
             ellipses.add(ellipse);
