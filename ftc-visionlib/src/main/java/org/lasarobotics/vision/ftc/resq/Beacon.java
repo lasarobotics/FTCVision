@@ -88,6 +88,7 @@ public final class Beacon {
             //Recalculate radius
             calculateRadius(useButton);
         }
+
         //Call if robot is moving
         public void nonStationaryUpdate(double currHeight, double currButtonHeight, boolean useButton) {
             pixelsHeight = currHeight;
@@ -260,22 +261,25 @@ public final class Beacon {
         BeaconScoring.AssociatedContour bestAssociatedBlue = (associations.blueContours.size() > 0) ? associations.blueContours.get(0) : null;
 
         Contour bestRed = (bestAssociatedRed != null) ? bestAssociatedRed.contour.contour : null;
-        Contour bestBlue = (bestAssociatedRed != null) ? bestAssociatedRed.contour.contour : null;
+        Contour bestBlue = (bestAssociatedBlue != null) ? bestAssociatedBlue.contour.contour : null;
 
         //Send data for position calculations
-        double ellipseHeight;
-        boolean buttonOne = bestAssociatedBlue.ellipses.size() > 0;
-        boolean buttonTwo = bestAssociatedRed.ellipses.size() > 0;
-        int numberOfEllipses = (buttonOne ? 1 : 0) + (buttonTwo ? 1 : 0);
-        ellipseHeight = ((buttonOne ? bestAssociatedRed.ellipses.get(0).ellipse.height() : 0)
-                + (buttonTwo ? bestAssociatedBlue.ellipses.get(0).ellipse.height() : 0))/numberOfEllipses;
-        result.nonStationaryUpdate((bestRed.height()+bestBlue.height())/2.0, ellipseHeight, numberOfEllipses > 0);
+        int numberOfEllipses = (bestAssociatedBlue != null ? 1 : 0) + (bestAssociatedRed != null ? 1 : 0);
+        int numberOfEllipsesNoZero = numberOfEllipses <= 0 ? 1 : numberOfEllipses;
+        double ellipseHeight = ((bestAssociatedRed != null ? bestAssociatedRed.ellipses.get(0).ellipse.height() : 0)
+                + (bestAssociatedBlue != null ? bestAssociatedBlue.ellipses.get(0).ellipse.height() : 0))/numberOfEllipsesNoZero;
+        double heightSum = (bestRed != null ? bestRed.height() : 0) + (bestBlue != null ? bestBlue.height() : 0);
+        //TODO currently we assume that the robot is stationary
+        result.nonStationaryUpdate((heightSum)/numberOfEllipses, ellipseHeight, numberOfEllipses > 0);
 
-        Drawing.drawText(img, "Radius: " + result.getRadius() * Constants.CM_FT_SCALE + " ft",
-                new Point(0, 25), 1.0f, new ColorGRAY(255), Drawing.Anchor.BOTTOMLEFT);
+        Drawing.drawText(img, "Distance: " + result.getRadius() * Constants.CM_FT_SCALE + " ft",
+                new Point(0, 60), 1.0f, new ColorGRAY(255), Drawing.Anchor.BOTTOMLEFT);
 
         //Send movement data
-        result.beaconWeightedCenter = new Point((bestBlue.center().x + bestRed.center().x)/2.0, (bestBlue.center().y + bestRed.center().y)/2.0);
+        double centerSumX = (bestRed != null ? bestRed.center().x : 0) + (bestBlue != null ? bestBlue.center().x : 0);
+        double centerSumY = (bestRed != null ? bestRed.center().y : 0) + (bestBlue != null ? bestBlue.center().y : 0);
+        result.beaconWeightedCenter = new Point(centerSumX/numberOfEllipsesNoZero,
+                centerSumY/numberOfEllipsesNoZero);
         
         //If we don't have a main light for one of the colors, we know both colors are the same
         //TODO we should re-filter the contours by size to ensure that we get at least a decent size
