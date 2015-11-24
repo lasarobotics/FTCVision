@@ -271,7 +271,7 @@ public final class Beacon {
                 + (buttonTwo ? bestAssociatedBlue.ellipses.get(0).ellipse.height() : 0))/numberOfEllipses;
         result.nonStationaryUpdate((bestRed.height()+bestBlue.height())/2.0, ellipseHeight, numberOfEllipses > 0);
 
-        Drawing.drawText(img, "Radius: " + result.getRadius(),
+        Drawing.drawText(img, "Radius: " + result.getRadius() * Constants.CM_FT_SCALE + " ft",
                 new Point(0, 25), 1.0f, new ColorGRAY(255), Drawing.Anchor.BOTTOMLEFT);
 
         //Send movement data

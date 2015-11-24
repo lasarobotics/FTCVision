@@ -9,6 +9,8 @@ public abstract class Constants {
     public static final double BEACON_WH_RATIO = BEACON_WIDTH/BEACON_HEIGHT; //entire beacon ratio
     public static final double BEACON_BUTTON_HEIGHT = 2;
 
+    public static final double CM_FT_SCALE = 1.0/30.48;
+
     public static double CAMERA_HOR_VANGLE = 0;
     public static double CAMERA_VERT_VANGLE = 0;
 }
