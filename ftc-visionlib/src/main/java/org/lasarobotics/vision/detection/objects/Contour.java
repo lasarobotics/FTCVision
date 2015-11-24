@@ -1,6 +1,7 @@
 package org.lasarobotics.vision.detection.objects;
 
 import org.opencv.core.MatOfPoint;
+import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Size;
@@ -9,21 +10,41 @@ import org.opencv.imgproc.Imgproc;
 /**
  * Implements a single contour (MatOfPoint) with advanced measurement utilities
  */
-public class Contour extends MatOfPoint {
+public class Contour extends Detectable {
+
+    MatOfPoint mat;
 
     public Contour(MatOfPoint data)
     {
-        super(data);
+        this.mat = data;
+    }
+    public Contour(MatOfPoint2f data)
+    {
+        this.mat = new MatOfPoint(data.toArray());
+    }
+
+    public MatOfPoint getData()
+    {
+        return mat;
+    }
+
+    public MatOfPoint2f getFloatData()
+    {
+        return new MatOfPoint2f(mat.toArray());
     }
 
     public double area()
     {
-        return Imgproc.contourArea(this);
+        return Imgproc.contourArea(mat);
     }
 
-    public boolean isConvex()
+    /**
+     * Tests if the contour is closed (convex)
+     * @return True if closed (convex), false otherwise
+     */
+    public boolean isClosed()
     {
-        return Imgproc.isContourConvex(this);
+        return Imgproc.isContourConvex(mat);
     }
 
     public Point center()
@@ -37,13 +58,11 @@ public class Contour extends MatOfPoint {
         return new Point(sum.x / points.length, sum.y / points.length);
     }
 
-    @Override
-    public int height()
+    public double height()
     {
         return (int)size().height;
     }
-    @Override
-    public int width()
+    public double width()
     {
         return (int)size().width;
     }
@@ -66,7 +85,7 @@ public class Contour extends MatOfPoint {
     }
     public Rect getBoundingRect()
     {
-        return new Rect((int)top(), (int)left(), width(), height());
+        return new Rect((int)top(), (int)left(), (int)width(), (int)height());
     }
 
     public Point bottomRight()
@@ -112,8 +131,13 @@ public class Contour extends MatOfPoint {
         return new Size(maxX - minX, maxY - minY);
     }
 
+    public double arcLength(boolean closed)
+    {
+        return Imgproc.arcLength(getFloatData(), closed);
+    }
+
     public Point[] getPoints()
     {
-        return this.toArray();
+        return mat.toArray();
     }
 }

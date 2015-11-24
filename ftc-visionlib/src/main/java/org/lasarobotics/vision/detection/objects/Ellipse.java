@@ -1,5 +1,6 @@
 package org.lasarobotics.vision.detection.objects;
 
+import org.jetbrains.annotations.NotNull;
 import org.opencv.core.Point;
 import org.opencv.core.RotatedRect;
 import org.opencv.core.Size;
@@ -7,7 +8,7 @@ import org.opencv.core.Size;
 /**
  * Implements a single ellipse (acts like RotatedRect) with advanced measurement utilities
  */
-public class Ellipse {
+public class Ellipse extends Detectable implements Comparable<Ellipse> {
     private RotatedRect rect;
 
     public Ellipse(RotatedRect rect)
@@ -55,10 +56,6 @@ public class Ellipse {
     {
         return center().y+(height()/2);
     }
-    public Point topLeft()
-    {
-        return new Point(top(), left());
-    }
 
     /**
      * Gets the area of the ellipse
@@ -94,6 +91,17 @@ public class Ellipse {
     }
 
     /**
+     * Scale this ellipse by a scaling factor about its center
+     * @param factor Scaling factor, 1 for no scale, less than one to contract, greater than one to expand
+     */
+    public Ellipse scale(double factor)
+    {
+        RotatedRect r = rect.clone();
+        r.size = new Size(factor * rect.size.width, factor * rect.size.height);
+        return new Ellipse(r);
+    }
+
+    /**
      * Gets the eccentricity of the ellipse, between 0 (inclusive) and 1 (exclusive)
      * @return e = sqrt(1-(b^2/a^2)), where a=semi-major axis and b=semi-minor axis
      */
@@ -108,7 +116,21 @@ public class Ellipse {
      * @return True if the ellipse is entirely inside the contour, false otherwise
      */
     public boolean isInside(Contour contour) {
+        //TODO this algorithm checks for entirety; make an isEntirelyInside() and isPartiallyInside()
+        //FIXME this is an inaccurate method using only the bounding box of the contour
+        //TODO try ray-casting (even-odd) algorithm - use center as point (will show partial matches)
+        //TODO also try all 4 points to match (will ensure it is entirely inside)
         return left() >= contour.left() && right() <= contour.right() &&
                 top() >= contour.top() && bottom() <= contour.bottom();
+    }
+
+    /***
+     * Compare ellipses by area
+     * @param another Another ellipse
+     * @return 1 if this is larger, -1 if another is larger, 0 otherwise
+     */
+    @Override
+    public int compareTo(@NotNull Ellipse another) {
+        return this.area() > another.area() ? 1 : this.area() < another.area() ? -1 : 0;
     }
 }

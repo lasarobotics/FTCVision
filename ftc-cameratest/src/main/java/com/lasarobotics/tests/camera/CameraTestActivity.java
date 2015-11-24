@@ -7,7 +7,6 @@ import android.view.WindowManager;
 import org.lasarobotics.vision.android.Camera;
 import org.lasarobotics.vision.android.Cameras;
 import org.lasarobotics.vision.detection.ColorBlobDetector;
-import org.lasarobotics.vision.detection.PrimitiveDetection;
 import org.lasarobotics.vision.detection.objects.Contour;
 import org.lasarobotics.vision.ftc.resq.Beacon;
 import org.lasarobotics.vision.image.Drawing;
@@ -25,6 +24,7 @@ import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 
+import java.text.DecimalFormat;
 import java.util.List;
 
 public class CameraTestActivity extends Activity implements CvCameraViewListener2 {
@@ -45,11 +45,10 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
     private void initialize()
     {
         //GET CAMERA PROPERTIES
-        Camera cam = Cameras.getPrimaryCamera();
-        assert cam != null;
+        Camera cam = Cameras.PRIMARY.createCamera();
         android.hardware.Camera.Parameters pam = cam.getCamera().getParameters();
         focalLength = pam.getFocalLength();
-        cam.getCamera().release();
+        cam.release();
 
         //GET OBJECT IMAGE
         //Read the target image file
@@ -127,7 +126,7 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
         super.onResume();
         if (!OpenCVLoader.initDebug()) {
             // Internal OpenCV library not found. Using OpenCV Manager for initialization
-            OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_2_4_12, this, mLoaderCallback);
+            OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_0_0, this, mLoaderCallback);
         } else {
             // OpenCV library found inside package. Using it!
             mLoaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
@@ -147,10 +146,8 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
     private static final ColorHSV lowerBoundRed = new ColorHSV( (int)(305         / 360.0 * 255.0), (int)(0.200 * 255.0), (int)(0.300 * 255.0));
     private static final ColorHSV upperBoundRed = new ColorHSV( (int)((360.0+5.0) / 360.0 * 255.0), 255                 , 255);
 
-    private static final ColorHSV lowerBoundBlue = new ColorHSV((int)(187.0       / 360.0 * 255.0), (int)(0.750 * 255.0), (int)(0.750 * 255.0));
+    private static final ColorHSV lowerBoundBlue = new ColorHSV((int)(170.0       / 360.0 * 255.0), (int)(0.200 * 255.0), (int)(0.750 * 255.0));
     private static final ColorHSV upperBoundBlue = new ColorHSV((int)(227.0       / 360.0 * 255.0), 255                 , 255);
-
-    private PrimitiveDetection detectorEllipse;
 
     public void onCameraViewStarted(int width, int height) {
         mRgba = new Mat(height, width, CvType.CV_8UC4);
@@ -159,7 +156,6 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
         //Initialize all detectors here
         detectorRed  = new ColorBlobDetector(lowerBoundRed, upperBoundRed);
         detectorBlue = new ColorBlobDetector(lowerBoundBlue, upperBoundBlue);
-        detectorEllipse = new PrimitiveDetection();
     }
 
     public void onCameraViewStopped() {
@@ -171,6 +167,13 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
         // input frame has RGBA format
         mRgba = inputFrame.rgba();
         mGray = inputFrame.gray();
+        //Size originalSize = mRgba.size();
+
+        //Transform.flip(mRgba, Transform.FlipType.FLIP_BOTH);
+        //Transform.flip(mGray, Transform.FlipType.FLIP_BOTH);
+
+        //Transform.shrink(mRgba, new Size(480, 480), true);
+        //Transform.shrink(mGray, new Size(480, 480), true);
 
         fpsCounter.update();
 
@@ -184,19 +187,19 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
             List<Contour> contoursBlue = detectorBlue.getContours();
 
             //Get color analysis
-            Beacon beacon = new Beacon(inputFrame.rgba().size());
-            Beacon.BeaconColorAnalysis colorAnalysis = beacon.analyzeColor(contoursRed, contoursBlue, mRgba, mGray);
+            Beacon beacon = new Beacon();
+            Beacon.BeaconAnalysis colorAnalysis = beacon.analyzeColor(contoursRed, contoursBlue, mRgba, mGray);
 
-            //Draw red and blue contours
-            Drawing.drawContours(mRgba, contoursRed, new ColorRGBA(255, 0, 0), 3);
-            Drawing.drawContours(mRgba, contoursBlue, new ColorRGBA(0, 0, 255), 3);
+
+            //DEBUG confidence output
+            Drawing.drawText(mRgba, "Confidence: " + colorAnalysis.getConfidenceString() ,
+                    new Point(0, 50), 1.0f, new ColorGRAY(255));
+
+            //Transform.enlarge(mRgba, originalSize, true);
+            //Transform.enlarge(mGray, originalSize, true);
+
             Drawing.drawText(mRgba, colorAnalysis.getStateLeft().toString() + ", " + colorAnalysis.getStateRight().toString(),
                     new Point(0, 8), 1.0f, new ColorGRAY(255), Drawing.Anchor.BOTTOMLEFT);
-
-            //Detect circles
-            PrimitiveDetection.EllipseLocationResult ellipseLocationResult = detectorEllipse.locateEllipses_fit(mGray);
-            //Drawing.drawContours(mRgba, ellipseLocationResult.getContours(), new ColorRGBA(127, 127, 127), 1);
-            //Drawing.drawEllipses(mRgba, ellipseLocationResult.getEllipses(), new ColorRGBA("#FFEB3B"), 2);
         }
         catch (Exception e)
         {
