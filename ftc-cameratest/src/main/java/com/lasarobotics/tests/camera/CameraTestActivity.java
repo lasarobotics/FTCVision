@@ -10,7 +10,6 @@ import org.lasarobotics.vision.detection.ColorBlobDetector;
 import org.lasarobotics.vision.detection.objects.Contour;
 import org.lasarobotics.vision.ftc.resq.Beacon;
 import org.lasarobotics.vision.image.Drawing;
-import org.lasarobotics.vision.image.Transform;
 import org.lasarobotics.vision.util.FPS;
 import org.lasarobotics.vision.util.color.ColorGRAY;
 import org.lasarobotics.vision.util.color.ColorHSV;
@@ -21,12 +20,11 @@ import org.opencv.android.CameraBridgeViewBase.CvCameraViewFrame;
 import org.opencv.android.CameraBridgeViewBase.CvCameraViewListener2;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
-import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
-import org.opencv.core.Size;
 
+import java.text.DecimalFormat;
 import java.util.List;
 
 public class CameraTestActivity extends Activity implements CvCameraViewListener2 {
@@ -171,9 +169,8 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
         mGray = inputFrame.gray();
         //Size originalSize = mRgba.size();
 
-        //DEBUG for the Nexus
-        Transform.flip(mRgba, Transform.FlipType.FLIP_BOTH);
-        Transform.flip(mGray, Transform.FlipType.FLIP_BOTH);
+        //Transform.flip(mRgba, Transform.FlipType.FLIP_BOTH);
+        //Transform.flip(mGray, Transform.FlipType.FLIP_BOTH);
 
         //Transform.shrink(mRgba, new Size(480, 480), true);
         //Transform.shrink(mGray, new Size(480, 480), true);
@@ -190,12 +187,13 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
             List<Contour> contoursBlue = detectorBlue.getContours();
 
             //Get color analysis
-            Beacon beacon = new Beacon(mRgba.size());
-            Beacon.BeaconColorAnalysis colorAnalysis = beacon.analyzeColor(contoursRed, contoursBlue, mRgba, mGray);
+            Beacon beacon = new Beacon();
+            Beacon.BeaconAnalysis colorAnalysis = beacon.analyzeColor(contoursRed, contoursBlue, mRgba, mGray);
 
-            //Draw red and blue contours
-            Drawing.drawContours(mRgba, contoursRed, new ColorRGBA(255, 0, 0), 2);
-            Drawing.drawContours(mRgba, contoursBlue, new ColorRGBA(0, 0, 255), 2);
+
+            //DEBUG confidence output
+            Drawing.drawText(mRgba, "Confidence: " + colorAnalysis.getConfidenceString() ,
+                    new Point(0, 50), 1.0f, new ColorGRAY(255));
 
             //Transform.enlarge(mRgba, originalSize, true);
             //Transform.enlarge(mGray, originalSize, true);

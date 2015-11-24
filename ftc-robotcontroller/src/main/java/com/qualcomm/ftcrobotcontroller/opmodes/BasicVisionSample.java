@@ -71,6 +71,7 @@ public class BasicVisionSample extends VisionOpMode {
         super.loop();
 
         telemetry.addData("Beacon Color", beaconColor.toString());
+        telemetry.addData("Analysis Confidence", beaconColor.getConfidenceString());
         telemetry.addData("Frame Rate", fps.getFPSString() + " FPS");
         telemetry.addData("Frame Size", "Width: " + width + " Height: " + height);
     }
