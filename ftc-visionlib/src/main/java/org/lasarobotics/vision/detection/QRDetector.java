@@ -67,5 +67,22 @@ public class QRDetector {
         Imgproc.Canny(gray, edges, 100, 200, 3, true);
 
         Imgproc.findContours(edges, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
+
+        mark = 0;
+
+        //TODO line 77
+        //TODO line 78
+
+        for(int i = 0; i < contours.size(); i++) {
+            //TODO line 81
+            //TODO line 82
+        }
+
+        for(int i = 0; i < contours.size(); i++) {
+            int k = i;
+            int c = 0;
+
+            //while(hierarchy.get(k, 2))
+        }
     }
 }
