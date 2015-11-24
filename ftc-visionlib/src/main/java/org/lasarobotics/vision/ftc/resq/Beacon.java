@@ -4,11 +4,14 @@ import org.lasarobotics.vision.detection.PrimitiveDetection;
 import org.lasarobotics.vision.detection.objects.Contour;
 import org.lasarobotics.vision.detection.objects.Ellipse;
 import org.lasarobotics.vision.image.Drawing;
+import org.lasarobotics.vision.util.MathUtil;
+import org.lasarobotics.vision.util.color.ColorGRAY;
 import org.lasarobotics.vision.util.color.ColorRGBA;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Size;
 
+import java.text.DecimalFormat;
 import java.util.List;
 
 /**
@@ -43,28 +46,31 @@ public final class Beacon {
         }
     }
 
-    public static class BeaconColorAnalysis
+    public static class BeaconAnalysis
     {
         private BeaconColor left;
         private BeaconColor right;
+        private double confidence;
 
         //TODO Color and CONFIDENCE should make up the results
 
         //TODO add Size size, Point locationTopLeft, Distance distanceApprox
-        public BeaconColorAnalysis()
+        public BeaconAnalysis()
         {
             assert left != null;
             assert right != null;
             this.left = BeaconColor.UNKNOWN;
             this.right = BeaconColor.UNKNOWN;
+            this.confidence = 0.0f;
         }
 
-        public BeaconColorAnalysis(BeaconColor left, BeaconColor right)
+        public BeaconAnalysis(BeaconColor left, BeaconColor right, double confidence)
         {
             assert left != null;
             assert right != null;
             this.left = left;
             this.right = right;
+            this.confidence = confidence;
         }
 
         public BeaconColor getStateLeft()
@@ -75,6 +81,16 @@ public final class Beacon {
         public BeaconColor getStateRight()
         {
             return right;
+        }
+
+        public double getConfidence()
+        {
+            return MathUtil.coerce(0, 1, confidence);
+        }
+        public String getConfidenceString()
+        {
+            final DecimalFormat format = new DecimalFormat("0.000");
+            return format.format(getConfidence() * 100.0f) + "%";
         }
 
         public boolean isLeftKnown()
@@ -117,7 +133,7 @@ public final class Beacon {
         }
     }
 
-    public BeaconColorAnalysis analyzeColor(List<Contour> contoursRed, List<Contour> contoursBlue, Mat img, Mat gray)
+    public BeaconAnalysis analyzeColor(List<Contour> contoursRed, List<Contour> contoursBlue, Mat img, Mat gray)
     {
         //The idea behind the SmartScoring algorithm is that the largest score in each contour/ellipse set will become the best
         //DONE First, ellipses and contours are are detected and pre-filtered to remove eccentricities
@@ -177,6 +193,9 @@ public final class Beacon {
 
         //Third, comparative analysis is used on each ellipse and contour to create a score for the contours
         BeaconScoring.MultiAssociatedContours associations = scorer.scoreAssociations(scoredContoursRed, scoredContoursBlue, scoredEllipses);
+        double score = (associations.blueContours.size() > 0 ? associations.blueContours.get(0).score : 0) +
+                (associations.redContours.size() > 0 ? associations.redContours.get(0).score : 0);
+        double confidence = score / Constants.CONFIDENCE_DIVISOR;
 
         //INFO The best contour from each color (if available) is selected as red and blue
         //INFO The two best contours are then used to calculate the location of the beacon
@@ -189,7 +208,7 @@ public final class Beacon {
         //If we don't have a main light for one of the colors, we know both colors are the same
         //TODO we should re-filter the contours by size to ensure that we get at least a decent size
         if (bestRed == null && bestBlue == null)
-            return new BeaconColorAnalysis(BeaconColor.UNKNOWN, BeaconColor.UNKNOWN);
+            return new BeaconAnalysis(BeaconColor.UNKNOWN, BeaconColor.UNKNOWN, 0.0f);
 
         //TODO rotate image based on camera rotation here
 
@@ -211,9 +230,9 @@ public final class Beacon {
         //If only one is lit, and is wider than a certain distance, it is bright
         //TODO We are currently assuming that the beacon cannot be in a "bright" state
         if (bestRed == null)
-            return new BeaconColorAnalysis(BeaconColor.UNKNOWN, BeaconColor.UNKNOWN);
+            return new BeaconAnalysis(BeaconColor.UNKNOWN, BeaconColor.UNKNOWN, 0.0f);
         else if (bestBlue == null)
-            return new BeaconColorAnalysis(BeaconColor.UNKNOWN, BeaconColor.UNKNOWN);
+            return new BeaconAnalysis(BeaconColor.UNKNOWN, BeaconColor.UNKNOWN, 0.0f);
 
         //Look at the locations of the largest contours
         //Check to see if the largest red contour is more left-most than the largest right contour
@@ -238,7 +257,7 @@ public final class Beacon {
         }
         else
         {
-            return new BeaconColorAnalysis(BeaconColor.UNKNOWN, BeaconColor.UNKNOWN);
+            return new BeaconAnalysis(BeaconColor.UNKNOWN, BeaconColor.UNKNOWN, 0.0f);
         }
 
         //Get the left-most best contour
@@ -284,8 +303,8 @@ public final class Beacon {
 
         //If this is not true, then neither part of the beacon is highly lit
         if (leftIsRed)
-            return new BeaconColorAnalysis(BeaconColor.RED, BeaconColor.BLUE);
+            return new BeaconAnalysis(BeaconColor.RED, BeaconColor.BLUE, confidence);
         else
-            return new BeaconColorAnalysis(BeaconColor.BLUE, BeaconColor.RED);
+            return new BeaconAnalysis(BeaconColor.BLUE, BeaconColor.RED, confidence);
     }
 }

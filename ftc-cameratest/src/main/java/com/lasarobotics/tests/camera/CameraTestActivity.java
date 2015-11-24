@@ -24,6 +24,7 @@ import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 
+import java.text.DecimalFormat;
 import java.util.List;
 
 public class CameraTestActivity extends Activity implements CvCameraViewListener2 {
@@ -186,9 +187,13 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
             List<Contour> contoursBlue = detectorBlue.getContours();
 
             //Get color analysis
-
             Beacon beacon = new Beacon();
-            Beacon.BeaconColorAnalysis colorAnalysis = beacon.analyzeColor(contoursRed, contoursBlue, mRgba, mGray);
+            Beacon.BeaconAnalysis colorAnalysis = beacon.analyzeColor(contoursRed, contoursBlue, mRgba, mGray);
+
+
+            //DEBUG confidence output
+            Drawing.drawText(mRgba, "Confidence: " + colorAnalysis.getConfidenceString() ,
+                    new Point(0, 50), 1.0f, new ColorGRAY(255));
 
             //Transform.enlarge(mRgba, originalSize, true);
             //Transform.enlarge(mGray, originalSize, true);

@@ -1,5 +1,6 @@
 package org.lasarobotics.vision.opmode.extensions;
 
+import org.lasarobotics.vision.android.Cameras;
 import org.lasarobotics.vision.detection.ColorBlobDetector;
 import org.lasarobotics.vision.detection.objects.Contour;
 import org.lasarobotics.vision.ftc.resq.Beacon;
@@ -7,6 +8,7 @@ import org.lasarobotics.vision.image.Transform;
 import org.lasarobotics.vision.opmode.VisionOpMode;
 import org.lasarobotics.vision.util.color.ColorHSV;
 import org.opencv.core.Mat;
+import org.opencv.core.Size;
 
 import java.util.List;
 
@@ -41,17 +43,6 @@ public class BeaconColorExtension implements VisionExtension
     }
 
     public Mat frame(VisionOpMode opmode, Mat rgba, Mat gray) {
-        //DEBUG for the Nexus
-        //Transform.flip(mRgba, Transform.FlipType.FLIP_BOTH);
-        //Transform.flip(mGray, Transform.FlipType.FLIP_BOTH);
-
-        //Transform.shrink(mRgba, new Size(480, 480), true);
-        //Transform.shrink(mGray, new Size(480, 480), true);
-
-        //DEBUG for the Moto G
-        Transform.rotate(gray, -90);
-        Transform.rotate(rgba, -90);
-
         try {
             //Process the frame for the color blobs
             detectorRed.process(rgba);

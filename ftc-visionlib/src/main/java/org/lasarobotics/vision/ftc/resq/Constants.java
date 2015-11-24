@@ -8,7 +8,8 @@ public abstract class Constants {
     public static final double BEACON_HEIGHT = 14.5;    //entire beacon height
     public static final double BEACON_WH_RATIO = BEACON_WIDTH/BEACON_HEIGHT; //entire beacon ratio
 
-    final static double DETECTION_MIN_DISTANCE = 0.05;
+    static final double DETECTION_MIN_DISTANCE = 0.05;
+    static final double CONFIDENCE_DIVISOR = 30;
 
     static final double CONTOUR_RATIO_BEST = BEACON_WH_RATIO; //best ratio for 100% score
     static final double CONTOUR_RATIO_BIAS = 1.5; //points given at best ratio
