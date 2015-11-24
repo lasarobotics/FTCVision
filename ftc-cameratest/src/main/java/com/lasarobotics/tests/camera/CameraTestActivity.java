@@ -47,8 +47,8 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
         //GET CAMERA PROPERTIES
         Camera cam = Cameras.PRIMARY.createCamera();
         android.hardware.Camera.Parameters pam = cam.getCamera().getParameters();
-        Constants.CAMERA_HOR_VANGLE = pam.getHorizontalViewAngle();
-        Constants.CAMERA_VERT_VANGLE = pam.getVerticalViewAngle();
+        Constants.CAMERA_HOR_VANGLE = pam.getHorizontalViewAngle() * Math.PI/180.0;
+        Constants.CAMERA_VERT_VANGLE = pam.getVerticalViewAngle() * Math.PI/180.0;
         focalLength = pam.getFocalLength();
         cam.release();
 

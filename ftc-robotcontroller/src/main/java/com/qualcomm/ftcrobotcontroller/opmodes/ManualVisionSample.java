@@ -83,6 +83,7 @@ public class ManualVisionSample extends ManualVisionOpMode {
         telemetry.addData("Vision Color", colorAnalysis.toString());
         telemetry.addData("Vision Size", "Width: " + width + " Height: " + height);
         telemetry.addData("Vision Status", noError ? "OK!" : "ANALYSIS ERROR!");
+        telemetry.addData("Radius", "Radius: " + colorAnalysis.getRadius());
     }
 
     @Override
