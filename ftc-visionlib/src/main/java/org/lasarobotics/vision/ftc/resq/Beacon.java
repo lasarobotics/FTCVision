@@ -65,11 +65,10 @@ public final class Beacon {
         }
 
         //Position analysis
-        //Hard to calculate values
-        private double phi;
-        private double theta;
-        //Easy to calculate values
-        private double radius = 0;
+        private double phi; //Stores are angle relative to the wall to the right of the beacon
+        private double theta; //Stores are angular offset relative to when we are looking straight at the beacon
+
+        private double radius = 0; //The distance from us to the beacon
 
         //Physical properties in pixels
         private double pixelsWidth;
@@ -103,10 +102,12 @@ public final class Beacon {
         }
 
         private void calculateRadius(boolean useButton) {
+            double tempRadius;
             if(useButton)
-                radius = Constants.BEACON_BUTTON_HEIGHT/(2*Math.tan((Constants.CAMERA_VERT_VANGLE*buttonHeight)/(2*imageHeight)));
+                tempRadius = Constants.BEACON_BUTTON_HEIGHT/(2*Math.tan((Constants.CAMERA_VERT_VANGLE*buttonHeight)/(2*imageHeight)));
             else
-                radius = Constants.BEACON_HEIGHT/(2*Math.tan((Constants.CAMERA_VERT_VANGLE*pixelsHeight)/(2*imageHeight)));
+                tempRadius = Constants.BEACON_HEIGHT/(2*Math.tan((Constants.CAMERA_VERT_VANGLE*pixelsHeight)/(2*imageHeight)));
+            radius = (tempRadius * Constants.CM_FT_SCALE < Constants.MAX_DIST_FROM_BEACON) ? tempRadius : radius;
         }
         public double getRadius() {
             return radius;
@@ -265,17 +266,11 @@ public final class Beacon {
 
         //Send data for position calculations
         int numberOfEllipses = 0;
-        boolean ellipseOne = false;
-        if(bestAssociatedBlue != null)
-            ellipseOne = bestAssociatedBlue.ellipses.size() > 0;
-        boolean ellipseTwo = false;
-        if(bestAssociatedRed != null)
-            ellipseTwo = bestAssociatedRed.ellipses.size() > 0;
+        boolean ellipseOne = bestAssociatedBlue != null ? bestAssociatedBlue.ellipses.size() > 0 : false;
+        boolean ellipseTwo = bestAssociatedRed != null ? bestAssociatedRed.ellipses.size() > 0 : false;
         numberOfEllipses = (ellipseOne ? 1 : 0) + (ellipseTwo ? 1 : 0);
-        double ellipseHeight = 0;
-        if(numberOfEllipses != 0)
-            ellipseHeight = ((ellipseOne ? bestAssociatedBlue.ellipses.get(0).ellipse.height() : 0)
-                + (ellipseTwo ? bestAssociatedRed.ellipses.get(0).ellipse.height() : 0))/numberOfEllipses;
+        double ellipseHeight = numberOfEllipses != 0 ? ((ellipseOne ? bestAssociatedBlue.ellipses.get(0).ellipse.height() : 0)
+                + (ellipseTwo ? bestAssociatedRed.ellipses.get(0).ellipse.height() : 0))/numberOfEllipses : 0;
         double heightSum = (bestRed != null ? bestRed.height() : 0) + (bestBlue != null ? bestBlue.height() : 0);
         //TODO currently we assume that the robot is non stationary
         result.nonStationaryUpdate(heightSum, ellipseHeight, numberOfEllipses > 0);
