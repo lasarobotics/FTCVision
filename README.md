@@ -1,6 +1,6 @@
-![FTC Vision](https://raw.githubusercontent.com/lasarobotics/ftcvision/dev/img/logo-github.png)
+![FTC Vision](https://raw.githubusercontent.com/lasarobotics/ftcvision/img/logo.png)
 
-# FTC Vision Library [![Build Status](https://travis-ci.org/lasarobotics/FTCVision.svg?branch=staging)](https://travis-ci.org/lasarobotics/FTCVision)
+# FTC Vision Library [![Build Status](https://travis-ci.org/lasarobotics/FTCVision.svg?branch=master)](https://travis-ci.org/lasarobotics/FTCVision)
 Computer Vision library for FTC based on OpenCV, featuring **beacon color and position detection**, as well as an easy-to-use `VisionOpMode` format and many additional detection features planned in the future.
 
 ## Installing from Scratch
@@ -30,13 +30,19 @@ include ':ftc-visionlib'
 compile project(':ftc-visionlib')
 compile project(':opencv-java')
 ```
-- Copy in Vision opmodes (those that end in `VisionSample.java`) from the FTCVision directory into your opmode directory.
+- Update Gradle configuration by pressing the green "Sync Project with Gradle Files" button in the header (this may take a minute)
+- Copy in Vision opmodes (those that end in `VisionSample.java`, located in `[vision-root]/ftc-robotcontroller/src/main/java/com/qualcomm/ftcrobotcontroller/opmodes`) from the FTCVision directory into your opmode directory.
 - Run and test the code! Let us know if you encounter any difficulties.
+- You can now write your custom `VisionOpMode`!
 
 ## Status
 This library is currently under insanely active development. We're in the **Beta** phase right now. If you have any questions or would like to help, send a note to `smo-key` (contact info on profile). Thank you!
 
-![A test from 8 feet away](https://raw.githubusercontent.com/lasarobotics/ftcvision/dev/img/test3.png)
+#### Accuracy Test
+![A test from 8 feet away](https://raw.githubusercontent.com/lasarobotics/ftcvision/img/test2.png)
+
+#### Distance Test
+![A test from 8 feet away](https://raw.githubusercontent.com/lasarobotics/ftcvision/img/test1.png)
 
 ## Goals
 - Locate the lit target (the thing with two buttons) within the camera viewfield
