@@ -70,6 +70,8 @@ public final class Beacon {
 
         private double radius = 0; //The distance from us to the beacon
 
+        private boolean sameBeacon = false;
+
         //Physical properties in pixels
         private double pixelsWidth;
         private double pixelsHeight;
@@ -107,6 +109,8 @@ public final class Beacon {
                 tempRadius = Constants.BEACON_BUTTON_HEIGHT/(2*Math.tan((Constants.CAMERA_VERT_VANGLE*buttonHeight)/(2*imageHeight)));
             else
                 tempRadius = Constants.BEACON_HEIGHT/(2*Math.tan((Constants.CAMERA_VERT_VANGLE*pixelsHeight)/(2*imageHeight)));
+            if(sameBeacon)
+                tempRadius = Math.abs(tempRadius - radius) < Constants.DIST_CHANGE_THRESHOLD ? tempRadius : radius;
             radius = (tempRadius * Constants.CM_FT_SCALE < Constants.MAX_DIST_FROM_BEACON) ? tempRadius : radius;
         }
         public double getRadius() {
@@ -190,9 +194,10 @@ public final class Beacon {
         }
     }
 
-    public BeaconAnalysis analyzeBeacon(List<Contour> contoursRed, List<Contour> contoursBlue, Mat img, Mat gray)
+    public BeaconAnalysis analyzeBeacon(List<Contour> contoursRed, List<Contour> contoursBlue, Mat img, Mat gray, BeaconAnalysis currentState)
     {
         BeaconAnalysis result = new BeaconAnalysis(BeaconColor.UNKNOWN, BeaconColor.UNKNOWN, img.size());
+        result.radius = currentState.getRadius();
 
         //The idea behind the SmartScoring algorithm is that the largest score in each contour/ellipse set will become the best
         //DONE First, ellipses and contours are are detected and pre-filtered to remove eccentricities
@@ -264,6 +269,19 @@ public final class Beacon {
         Contour bestRed = (bestAssociatedRed != null) ? bestAssociatedRed.contour.contour : null;
         Contour bestBlue = (bestAssociatedBlue != null) ? bestAssociatedBlue.contour.contour : null;
 
+        //Send movement data
+        double centerSumX = (bestRed != null ? bestRed.center().x : 0) + (bestBlue != null ? bestBlue.center().x : 0);
+        double centerSumY = (bestRed != null ? bestRed.center().y : 0) + (bestBlue != null ? bestBlue.center().y : 0);
+        Point newWeightedCenter = new Point(centerSumX, centerSumY);
+        result.beaconWeightedCenter = newWeightedCenter;
+
+        //Check how much the weighted center of the beacon changed. If under threshold, set sameBeacon to true
+        if(newWeightedCenter != null && (currentState != null) ? currentState.beaconWeightedCenter != null : false)
+            result.sameBeacon = Math.abs(newWeightedCenter.x - currentState.beaconWeightedCenter.x) < Constants.MAX_CENTER_CHANGE*result.imageWidth
+                                && Math.abs(newWeightedCenter.y - currentState.beaconWeightedCenter.y) < Constants.MAX_CENTER_CHANGE*result.imageHeight;
+        else
+            result.sameBeacon = false;
+
         //Send data for position calculations
         int numberOfEllipses = 0;
         boolean ellipseOne = bestAssociatedBlue != null ? bestAssociatedBlue.ellipses.size() > 0 : false;
@@ -277,11 +295,6 @@ public final class Beacon {
 
         Drawing.drawText(img, "Distance: " + result.getRadius() * Constants.CM_FT_SCALE + " ft",
                 new Point(0, 60), 1.0f, new ColorGRAY(255), Drawing.Anchor.BOTTOMLEFT);
-
-        //Send movement data
-        double centerSumX = (bestRed != null ? bestRed.center().x : 0) + (bestBlue != null ? bestBlue.center().x : 0);
-        double centerSumY = (bestRed != null ? bestRed.center().y : 0) + (bestBlue != null ? bestBlue.center().y : 0);
-        result.beaconWeightedCenter = new Point(centerSumX, centerSumY);
         
         //If we don't have a main light for one of the colors, we know both colors are the same
         //TODO we should re-filter the contours by size to ensure that we get at least a decent size

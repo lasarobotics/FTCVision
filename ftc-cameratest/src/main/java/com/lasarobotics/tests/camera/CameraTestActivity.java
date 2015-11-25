@@ -24,6 +24,7 @@ import org.opencv.android.OpenCVLoader;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
+import org.opencv.core.Size;
 
 import java.util.List;
 
@@ -165,6 +166,8 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
         mGray.release();
     }
 
+    Beacon.BeaconAnalysis beaconAnalysis = new Beacon.BeaconAnalysis(new Size());
+
     public Mat onCameraFrame(CvCameraViewFrame inputFrame) {
         // input frame has RGBA format
         mRgba = inputFrame.rgba();
@@ -178,6 +181,7 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
         //Transform.shrink(mGray, new Size(480, 480), true);
 
         fpsCounter.update();
+        Constants.DIST_CHANGE_THRESHOLD = 4*Constants.MAX_DIST_CHANGE/fpsCounter.getFPS();
 
         try {
             //Process the frame for the color blobs
@@ -191,12 +195,12 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
             //Get color analysis
 
             Beacon beacon = new Beacon(mRgba.size());
-            Beacon.BeaconAnalysis colorAnalysis = beacon.analyzeBeacon(contoursRed, contoursBlue, mRgba, mGray);
+            beaconAnalysis = beacon.analyzeBeacon(contoursRed, contoursBlue, mRgba, mGray, beaconAnalysis);
 
             //Transform.enlarge(mRgba, originalSize, true);
             //Transform.enlarge(mGray, originalSize, true);
 
-            Drawing.drawText(mRgba, colorAnalysis.getStateLeft().toString() + ", " + colorAnalysis.getStateRight().toString(),
+            Drawing.drawText(mRgba, beaconAnalysis.getStateLeft().toString() + ", " + beaconAnalysis.getStateRight().toString(),
                     new Point(0, 8), 1.0f, new ColorGRAY(255), Drawing.Anchor.BOTTOMLEFT);
         }
         catch (Exception e)

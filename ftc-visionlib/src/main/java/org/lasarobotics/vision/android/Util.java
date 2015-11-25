@@ -3,6 +3,9 @@ package org.lasarobotics.vision.android;
 import android.app.Application;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorManager;
 import android.os.Environment;
 
 import java.io.File;

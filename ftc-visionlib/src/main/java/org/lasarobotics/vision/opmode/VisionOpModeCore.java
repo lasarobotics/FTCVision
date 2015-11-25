@@ -10,6 +10,7 @@ import android.widget.LinearLayout;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.lasarobotics.vision.android.Cameras;
+import org.lasarobotics.vision.ftc.resq.Constants;
 import org.lasarobotics.vision.util.FPS;
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase;
@@ -167,6 +168,7 @@ abstract class VisionOpModeCore extends OpMode implements CameraBridgeViewBase.C
         telemetry.addData("Vision Status", "Ready!");
 
         fps.update();
+        Constants.DIST_CHANGE_THRESHOLD = 4*Constants.MAX_DIST_CHANGE/fps.getFPS();
         return frame(inputFrame.rgba(), inputFrame.gray());
     }
 
