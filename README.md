@@ -1,4 +1,4 @@
-![FTC Vision](https://raw.githubusercontent.com/lasarobotics/ftcvision/img/logo.png)
+<img style="text-align:center;width=100%"><img src="https://raw.githubusercontent.com/lasarobotics/ftcvision/img/logo.png" /></img>
 
 # FTC Vision Library [![Build Status](https://travis-ci.org/lasarobotics/FTCVision.svg?branch=master)](https://travis-ci.org/lasarobotics/FTCVision)
 Computer Vision library for FTC based on OpenCV, featuring **beacon color and position detection**, as well as an easy-to-use `VisionOpMode` format and many additional detection features planned in the future.
