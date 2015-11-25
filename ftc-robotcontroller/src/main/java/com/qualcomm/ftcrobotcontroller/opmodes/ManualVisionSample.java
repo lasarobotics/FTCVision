@@ -31,15 +31,15 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
 package com.qualcomm.ftcrobotcontroller.opmodes;
 
-import org.lasarobotics.vision.android.Cameras;
-import org.lasarobotics.vision.detection.ColorBlobDetector;
-import org.lasarobotics.vision.detection.objects.Contour;
-import org.lasarobotics.vision.ftc.resq.Beacon;
-import org.lasarobotics.vision.image.Drawing;
-import org.lasarobotics.vision.opmode.ManualVisionOpMode;
-import org.lasarobotics.vision.util.color.ColorGRAY;
-import org.lasarobotics.vision.util.color.ColorHSV;
-import org.lasarobotics.vision.util.color.ColorRGBA;
+import org.lasarobotics.vision.test.android.Cameras;
+import org.lasarobotics.vision.test.detection.ColorBlobDetector;
+import org.lasarobotics.vision.test.detection.objects.Contour;
+import org.lasarobotics.vision.test.ftc.resq.Beacon;
+import org.lasarobotics.vision.test.image.Drawing;
+import org.lasarobotics.vision.test.opmode.ManualVisionOpMode;
+import org.lasarobotics.vision.test.util.color.ColorGRAY;
+import org.lasarobotics.vision.test.util.color.ColorHSV;
+import org.lasarobotics.vision.test.util.color.ColorRGBA;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Size;
@@ -53,13 +53,13 @@ import java.util.List;
  */
 public class ManualVisionSample extends ManualVisionOpMode {
 
-    private Beacon.BeaconAnalysis colorAnalysis = new Beacon.BeaconAnalysis();
-    private ColorBlobDetector detectorRed;
-    private ColorBlobDetector detectorBlue;
     private static final ColorHSV lowerBoundRed = new ColorHSV((int) (305 / 360.0 * 255.0), (int) (0.200 * 255.0), (int) (0.300 * 255.0));
     private static final ColorHSV upperBoundRed = new ColorHSV((int) ((360.0 + 5.0) / 360.0 * 255.0), 255, 255);
     private static final ColorHSV lowerBoundBlue = new ColorHSV((int) (170.0 / 360.0 * 255.0), (int) (0.200 * 255.0), (int) (0.750 * 255.0));
     private static final ColorHSV upperBoundBlue = new ColorHSV((int) (227.0 / 360.0 * 255.0), 255, 255);
+    private Beacon.BeaconAnalysis colorAnalysis = new Beacon.BeaconAnalysis();
+    private ColorBlobDetector detectorRed;
+    private ColorBlobDetector detectorBlue;
     private boolean noError = true;
 
     @Override
