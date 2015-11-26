@@ -46,4 +46,8 @@ public class QRDetector {
         Reader reader = new DataMatrixReader();
         return reader.decode(map);
     }
+
+    public void reset() {
+        qrc.reset();
+    }
 }
