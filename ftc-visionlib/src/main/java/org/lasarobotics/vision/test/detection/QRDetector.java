@@ -1,4 +1,4 @@
-package com.lasarobotics.qrtester;
+package org.lasarobotics.vision.test.detection;
 
 import android.graphics.Bitmap;
 
@@ -12,6 +12,9 @@ import com.google.zxing.Result;
 import com.google.zxing.common.HybridBinarizer;
 import com.google.zxing.qrcode.QRCodeReader;
 
+import org.opencv.android.Utils;
+import org.opencv.core.Mat;
+
 /**
  * Uses Google's ZXing library to detect QR codes
  */
@@ -20,6 +23,13 @@ public class QRDetector {
 
     public QRDetector() {
         qrc = new QRCodeReader();
+    }
+
+    public Result detectFromMat(Mat rgba) throws NotFoundException, ChecksumException, FormatException {
+        //Convert OpenCV Mat into Bitmap and detect from that
+        Bitmap bMap = Bitmap.createBitmap(rgba.width(), rgba.height(), Bitmap.Config.ARGB_8888);
+        Utils.matToBitmap(rgba, bMap);
+        return detectFromBitmap(bMap);
     }
 
     public Result detectFromBitmap(Bitmap bMap) throws FormatException, ChecksumException, NotFoundException {

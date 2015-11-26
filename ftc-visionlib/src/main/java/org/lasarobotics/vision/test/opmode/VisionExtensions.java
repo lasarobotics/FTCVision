@@ -4,7 +4,8 @@ package org.lasarobotics.vision.test.opmode;
  * List of Vision Extensions for the VisionOpMode
  */
 public enum VisionExtensions {
-    BEACON_COLOR(1);
+    BEACON_COLOR(1),
+    QR(2);
 
     final int id;
 
