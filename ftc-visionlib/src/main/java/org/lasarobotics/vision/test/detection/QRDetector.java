@@ -27,7 +27,7 @@ public class QRDetector {
         qrc = new QRCodeReader();
     }
 
-    public Result detect(Mat rgba) throws NotFoundException, ChecksumException, FormatException {
+    public Result detectFromMat(Mat rgba) throws NotFoundException, ChecksumException, FormatException {
         //Convert OpenCV Mat into BinaryBitmap so that ZXing understands it
         Bitmap bMap = Bitmap.createBitmap(rgba.width(), rgba.height(), Bitmap.Config.ARGB_8888);
         Utils.matToBitmap(rgba, bMap);
@@ -39,7 +39,11 @@ public class QRDetector {
 
         //Perform actual reading of image
         BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(source));
+        return detectFromBinaryBitmap(bitmap);
+    }
+
+    public Result detectFromBinaryBitmap(BinaryBitmap map) throws NotFoundException, ChecksumException, FormatException {
         Reader reader = new DataMatrixReader();
-        return reader.decode(bitmap);
+        return reader.decode(map);
     }
 }

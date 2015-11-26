@@ -1,8 +1,10 @@
 package org.lasarobotics.vision.test.util;
 
 import android.content.Context;
+import android.media.AudioManager;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
+import android.media.ToneGenerator;
 import android.net.Uri;
 
 /**
@@ -10,6 +12,20 @@ import android.net.Uri;
  */
 public class SoundFeedback {
     private SoundFeedback() {}
+
+    public enum Stream {
+        VOICE_CALL(0),
+        SYSTEM(1),
+        RING(2),
+        MUSIC(3),
+        ALARM(4),
+        NOTIFICATION(5);
+
+        private int val;
+        Stream(int val) {
+            this.val = val;
+        }
+    }
 
     public static void defaultNotification(Context context) {
         try {
@@ -19,5 +35,25 @@ public class SoundFeedback {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public static void playBeep(Stream s) {
+        ToneGenerator toneGen1 = new ToneGenerator(s.val, 100);
+        toneGen1.startTone(ToneGenerator.TONE_CDMA_PIP, 150);
+    }
+
+    public static void maximizeVolume(Context context, Stream s) {
+        AudioManager am =
+                (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+
+        am.setStreamVolume(
+                s.val,
+                am.getStreamMaxVolume(s.val),
+                0);
+    }
+
+    public static void playMaxBeepOnRing(Context c) {
+        maximizeVolume(c, Stream.RING);
+        playBeep(Stream.RING);
     }
 }
