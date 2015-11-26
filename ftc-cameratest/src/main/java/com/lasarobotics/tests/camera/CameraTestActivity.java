@@ -4,8 +4,6 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.WindowManager;
 
-import com.google.zxing.integration.android.IntentIntegrator;
-
 import org.lasarobotics.vision.test.android.Camera;
 import org.lasarobotics.vision.test.android.Cameras;
 import org.lasarobotics.vision.test.detection.ColorBlobDetector;
