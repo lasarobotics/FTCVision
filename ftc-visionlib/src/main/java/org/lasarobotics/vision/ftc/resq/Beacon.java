@@ -110,7 +110,7 @@ public final class Beacon {
             else
                 tempRadius = Constants.BEACON_HEIGHT/(2*Math.tan((Constants.CAMERA_VERT_VANGLE*pixelsHeight)/(2*imageHeight)));
             if(sameBeacon)
-                tempRadius = Math.abs(tempRadius - radius) < Constants.DIST_CHANGE_THRESHOLD ? tempRadius : radius;
+                tempRadius = Math.abs(tempRadius - radius)*Constants.CM_FT_SCALE < Constants.DIST_CHANGE_THRESHOLD ? tempRadius : radius;
             radius = (tempRadius * Constants.CM_FT_SCALE < Constants.MAX_DIST_FROM_BEACON) ? tempRadius : radius;
         }
         public double getRadius() {
