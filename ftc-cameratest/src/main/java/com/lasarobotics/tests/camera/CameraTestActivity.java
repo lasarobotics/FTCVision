@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.WindowManager;
 
+import com.google.zxing.integration.android.IntentIntegrator;
+
 import org.lasarobotics.vision.test.android.Camera;
 import org.lasarobotics.vision.test.android.Cameras;
 import org.lasarobotics.vision.test.detection.ColorBlobDetector;
@@ -154,7 +156,11 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
         mGray.release();
     }
 
+    int frames = 0;
     public Mat onCameraFrame(CvCameraViewFrame inputFrame) {
+        if(frames++ == 100) {
+            new IntentIntegrator(this).initiateScan();
+        }
         // input frame has RGBA format
         mRgba = inputFrame.rgba();
         mGray = inputFrame.gray();
