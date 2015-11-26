@@ -156,11 +156,7 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
         mGray.release();
     }
 
-    int frames = 0;
     public Mat onCameraFrame(CvCameraViewFrame inputFrame) {
-        if(frames++ == 100) {
-            new IntentIntegrator(this).initiateScan();
-        }
         // input frame has RGBA format
         mRgba = inputFrame.rgba();
         mGray = inputFrame.gray();
