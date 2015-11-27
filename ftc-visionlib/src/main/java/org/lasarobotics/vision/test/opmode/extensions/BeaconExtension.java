@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * Extension that supports finding and reading beacon color data
  */
-public class BeaconColorExtension implements VisionExtension {
+public class BeaconExtension implements VisionExtension {
     private final ColorHSV lowerBoundRed = new ColorHSV((int) (305 / 360.0 * 255.0), (int) (0.100 * 255.0), (int) (0.300 * 255.0));
     private final ColorHSV upperBoundRed = new ColorHSV((int) ((360.0 + 5.0) / 360.0 * 255.0), 255, 255);
     private final ColorHSV lowerBoundBlue = new ColorHSV((int) (170.0 / 360.0 * 255.0), (int) (0.100 * 255.0), (int) (0.300 * 255.0));
@@ -20,8 +20,10 @@ public class BeaconColorExtension implements VisionExtension {
     private ColorBlobDetector detectorRed;
     private ColorBlobDetector detectorBlue;
 
-    public BeaconColorExtension() {
-
+    private Beacon.BeaconAnalysis analysis;
+    public Beacon.BeaconAnalysis getAnalysis()
+    {
+        return analysis;
     }
 
     public void init(VisionOpMode opmode) {
@@ -49,7 +51,8 @@ public class BeaconColorExtension implements VisionExtension {
 
             //Get color analysis
             Beacon beacon = new Beacon();
-            opmode.beaconColor = beacon.analyzeColor(contoursRed, contoursBlue, rgba, gray);
+            this.analysis = beacon.analyzeColor(contoursRed, contoursBlue, rgba, gray);
+
         } catch (Exception e) {
             e.printStackTrace();
         }

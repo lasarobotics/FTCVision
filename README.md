@@ -54,3 +54,6 @@ This library is currently under insanely active development. We're in the **Beta
 ## Progress
 - Beacon located successfully in multiple environments. Now, we are tuning detection so that it is (virtually) fail- and competition-proof.
 - A competition-proof `OpMode` scheme created so that the robot controller does not need to be modified to use the app.
+
+## ZXing
+FTCVision uses the ZXing library for scanning QRCodes, and it uses an Apache 2.0 license. View the `ZXing_license` and `ZXing_notice` files for the appropriate information.

@@ -1,8 +1,12 @@
 package org.lasarobotics.vision.test.opmode;
 
 import org.lasarobotics.vision.test.ftc.resq.Beacon;
-import org.lasarobotics.vision.test.opmode.extensions.BeaconColorExtension;
+import org.lasarobotics.vision.test.opmode.extensions.BeaconExtension;
+import org.lasarobotics.vision.test.opmode.extensions.QRExtension;
+import org.lasarobotics.vision.test.opmode.extensions.VisionExtension;
 import org.opencv.core.Mat;
+
+import java.util.HashMap;
 
 /**
  * Easy-to-use, extensible vision op mode
@@ -11,41 +15,54 @@ import org.opencv.core.Mat;
 public abstract class VisionOpMode extends VisionOpModeCore {
 
     /***
-     * EXTENSION-SPECIFIC CODE
-     ***/
-    private final BeaconColorExtension beaconColorExtension = new BeaconColorExtension();
-    public Beacon.BeaconAnalysis beaconColor = new Beacon.BeaconAnalysis();
+     * CUSTOM EXTENSION INITIALIZATION
+     *
+     * Add your extension here and in the Extensions class below!
+     */
+    protected static BeaconExtension beacon = new BeaconExtension();
+    protected static QRExtension qr = new QRExtension();
+
+    public enum Extensions {
+        BEACON(1, beacon),
+        QR(2, qr);
+
+        final int id;
+        VisionExtension instance;
+
+        Extensions(int id, VisionExtension instance) {
+            this.id = id;
+            this.instance = instance;
+        }
+    }
+
     private int extensions = 0;
     private boolean initialized = false;
 
-    protected boolean isEnabled(VisionExtensions extension) {
+    protected boolean isEnabled(Extensions extension) {
         return (extensions & extension.id) > 0;
     }
 
-    protected void enableExtension(VisionExtensions extension) {
-        extensions = extensions | extension.id;
-
+    protected void enableExtension(Extensions extension) {
         //Don't initialize extension if we haven't ever called init() yet
-        if (!initialized)
-            return;
+        if (initialized)
+            extension.instance.init(this);
 
-        if (extension == VisionExtensions.BEACON_COLOR)
-            beaconColorExtension.init(this);
+        extensions = extensions | extension.id;
     }
 
-    protected void disableExtension(VisionExtensions extension) {
+    protected void disableExtension(Extensions extension) {
         extensions -= extensions & extension.id;
 
-        if (extension == VisionExtensions.BEACON_COLOR)
-            beaconColorExtension.stop(this);
+        extension.instance.stop(this);
     }
 
     @Override
     public void init() {
         super.init();
 
-        if (isEnabled(VisionExtensions.BEACON_COLOR))
-            beaconColorExtension.init(this);
+        for (Extensions extension : Extensions.values())
+            if (isEnabled(extension))
+                extension.instance.init(this);
 
         initialized = true;
     }
@@ -54,14 +71,16 @@ public abstract class VisionOpMode extends VisionOpModeCore {
     public void loop() {
         super.loop();
 
-        if (isEnabled(VisionExtensions.BEACON_COLOR))
-            beaconColorExtension.loop(this);
+        for (Extensions extension : Extensions.values())
+            if (isEnabled(extension))
+                extension.instance.loop(this);
     }
 
     @Override
     public Mat frame(Mat rgba, Mat gray) {
-        if (isEnabled(VisionExtensions.BEACON_COLOR))
-            beaconColorExtension.frame(this, rgba, gray);
+        for (Extensions extension : Extensions.values())
+            if (isEnabled(extension))
+                extension.instance.frame(this, rgba, gray);
 
         return rgba;
     }
@@ -70,7 +89,8 @@ public abstract class VisionOpMode extends VisionOpModeCore {
     public void stop() {
         super.stop();
 
-        if (isEnabled(VisionExtensions.BEACON_COLOR))
-            beaconColorExtension.stop(this);
+        for (Extensions extension : Extensions.values())
+            if (isEnabled(extension))
+                disableExtension(extension); //disable and stop
     }
 }
