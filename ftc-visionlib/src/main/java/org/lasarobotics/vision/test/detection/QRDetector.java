@@ -9,6 +9,7 @@ import com.google.zxing.LuminanceSource;
 import com.google.zxing.NotFoundException;
 import com.google.zxing.RGBLuminanceSource;
 import com.google.zxing.Result;
+import com.google.zxing.ResultPoint;
 import com.google.zxing.common.HybridBinarizer;
 import com.google.zxing.qrcode.QRCodeReader;
 
@@ -54,6 +55,31 @@ public class QRDetector {
     public Result detectFromBinaryBitmap(BinaryBitmap map) throws NotFoundException, ChecksumException, FormatException {
         //Read QR data from BinaryBitmap
         return qrc.decode(map);
+    }
+
+    public static Orientation getOrientation(ResultPoint[] points) {
+        if(points.length != 3) {
+            throw new RuntimeException("Wrong number of points");
+        }
+
+        //Determine if first two X or second two X are closest
+        float xDiffOneTwo = Math.abs(points[0].getX() - points[1].getX());
+        float xDiffTwoThree = Math.abs(points[1].getX() - points[2].getX());
+        if(xDiffOneTwo < xDiffTwoThree) {
+            //Code is orientated up or down
+            if(points[0].getY() > points[1].getY()) {
+                return Orientation.UP;
+            } else {
+                return Orientation.DOWN;
+            }
+        } else {
+            //Code is orientated left or right
+            if(points[1].getY() > points[2].getY()) {
+                return Orientation.LEFT;
+            } else {
+                return Orientation.RIGHT;
+            }
+        }
     }
 
     public void reset() {
