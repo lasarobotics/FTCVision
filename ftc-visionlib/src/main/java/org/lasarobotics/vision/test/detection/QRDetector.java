@@ -20,7 +20,7 @@ import org.opencv.core.Mat;
  * Uses Google's ZXing library to detect QR codes
  */
 public class QRDetector {
-    QRCodeReader qrc;
+    private QRCodeReader qrc;
 
     public enum Orientation {
         UP("Up"), //Code is normal
