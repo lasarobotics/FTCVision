@@ -63,7 +63,7 @@ public class QRDetector {
      * Left:  (142.5, 99.0) (75.5, 98.5)  (76.5, 31.5)
      * Right: (85.0, 32.0)  (148.0, 33.0) (146.5, 95.0)
      */
-    public static Orientation getOrientationHelper(ResultPoint[] points) {
+    public static Orientation getOrientation(ResultPoint[] points) {
         if(points.length != 3) {
             throw new RuntimeException("Wrong number of points");
         }
