@@ -19,7 +19,7 @@ public class QRExtension implements VisionExtension {
 
     private String reason;
     public boolean hasErrorReason() { return reason != null; }
-    public String getErrorReason() { return text != null ? text : ""; }
+    public String getErrorReason() { return reason != null ? reason : ""; }
 
     private String text;
     public boolean hasText()
