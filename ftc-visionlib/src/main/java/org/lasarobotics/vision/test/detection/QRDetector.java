@@ -74,7 +74,7 @@ public class QRDetector {
      */
     public static Orientation getOrientation(ResultPoint[] points) {
         if(points.length != 3) {
-            throw new RuntimeException("Wrong number of points");
+            throw new RuntimeException("Wrong number of points: " + points.length + ", expected 3.");
         }
 
         //Determine if first two X or second two X are closest
