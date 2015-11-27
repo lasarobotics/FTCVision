@@ -17,6 +17,10 @@ public class QRExtension implements VisionExtension {
     private QRDetector qrd;
     private Result lastResult;
 
+    private String reason;
+    public boolean hasErrorReason() { return reason != null; }
+    public String getErrorReason() { return text != null ? text : ""; }
+
     private String text;
     public boolean hasText()
     {
@@ -46,8 +50,17 @@ public class QRExtension implements VisionExtension {
         try {
             lastResult = qrd.detectFromMat(rgba);
             text = lastResult.getText();
-        } catch(NotFoundException|ChecksumException|FormatException ex) {
+            reason = null;
+            qrd.reset();
+        } catch(NotFoundException ex) {
             text = null;
+            reason = "QR Code not found. Extra info: " + ex.getMessage();
+        } catch(ChecksumException ex) {
+            text = null;
+            reason = "QR Code has invalid checksum. Extra info: " + ex.getMessage();
+        } catch(FormatException ex) {
+            text = null;
+            reason = "QR Code not properly formatted. Extra info: " + ex.getMessage();
         }
         return rgba;
     }
