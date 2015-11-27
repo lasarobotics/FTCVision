@@ -21,6 +21,13 @@ import org.opencv.core.Mat;
 public class QRDetector {
     QRCodeReader qrc;
 
+    public enum Orientation {
+        UP,
+        DOWN,
+        LEFT,
+        RIGHT
+    }
+
     public QRDetector() {
         qrc = new QRCodeReader();
     }
