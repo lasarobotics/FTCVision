@@ -22,10 +22,10 @@ public class QRDetector {
     QRCodeReader qrc;
 
     public enum Orientation {
-        UP,
-        DOWN,
-        LEFT,
-        RIGHT
+        UP, //Code is normal
+        DOWN, //Code is upside-down
+        LEFT, //Code has been rotated left
+        RIGHT //Code has been rotated right
     }
 
     public QRDetector() {
