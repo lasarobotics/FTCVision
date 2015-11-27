@@ -23,10 +23,19 @@ public class QRDetector {
     QRCodeReader qrc;
 
     public enum Orientation {
-        UP, //Code is normal
-        DOWN, //Code is upside-down
-        LEFT, //Code has been rotated left
-        RIGHT //Code has been rotated right
+        UP("Up"), //Code is normal
+        DOWN("Down"), //Code is upside-down
+        LEFT("Left"), //Code has been rotated left
+        RIGHT("Right"); //Code has been rotated right
+
+        private String s;
+        Orientation(String s) {
+            this.s = s;
+        }
+        @Override
+        public String toString() {
+            return s;
+        }
     }
 
     public QRDetector() {

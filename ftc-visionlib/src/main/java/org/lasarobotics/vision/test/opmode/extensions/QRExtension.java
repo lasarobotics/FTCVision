@@ -4,6 +4,7 @@ import com.google.zxing.ChecksumException;
 import com.google.zxing.FormatException;
 import com.google.zxing.NotFoundException;
 import com.google.zxing.Result;
+import com.google.zxing.ResultMetadataType;
 
 import org.lasarobotics.vision.test.opmode.VisionOpMode;
 import org.opencv.core.Mat;
@@ -30,6 +31,10 @@ public class QRExtension implements VisionExtension {
 
     public String getQrText() {
         return qrText;
+    }
+
+    public QRDetector.Orientation getOrientation() {
+        return QRDetector.getOrientation(lastResult.getResultPoints());
     }
 
     @Override
