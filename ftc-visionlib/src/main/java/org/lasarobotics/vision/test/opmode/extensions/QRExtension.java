@@ -4,7 +4,6 @@ import com.google.zxing.ChecksumException;
 import com.google.zxing.FormatException;
 import com.google.zxing.NotFoundException;
 import com.google.zxing.Result;
-import com.google.zxing.ResultMetadataType;
 
 import org.lasarobotics.vision.test.opmode.VisionOpMode;
 import org.opencv.core.Mat;
@@ -17,20 +16,20 @@ import org.lasarobotics.vision.test.detection.QRDetector;
 public class QRExtension implements VisionExtension {
     private QRDetector qrd;
     private Result lastResult;
-    private boolean enabled = false;
-    private String qrText;
+
+    private String text;
+    public boolean hasText()
+    {
+        return text != null;
+    }
+    public String getText()
+    {
+        return text != null ? text : "";
+    }
 
     @Override
     public void init(VisionOpMode opmode) {
         qrd = new QRDetector();
-    }
-
-    public void startLooking() {
-        enabled = true;
-    }
-
-    public String getQrText() {
-        return qrText;
     }
 
     public QRDetector.Orientation getOrientation() {
@@ -44,14 +43,11 @@ public class QRExtension implements VisionExtension {
 
     @Override
     public Mat frame(VisionOpMode opmode, Mat rgba, Mat gray) {
-        if(enabled) {
-            try {
-                lastResult = qrd.detectFromMat(rgba);
-                qrText = lastResult.getText();
-                enabled = false;
-            } catch(NotFoundException|ChecksumException|FormatException ex) {
-                //do nothing
-            }
+        try {
+            lastResult = qrd.detectFromMat(rgba);
+            text = lastResult.getText();
+        } catch(NotFoundException|ChecksumException|FormatException ex) {
+            text = null;
         }
         return rgba;
     }
