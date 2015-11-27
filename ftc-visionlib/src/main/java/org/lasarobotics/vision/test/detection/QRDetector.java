@@ -97,6 +97,10 @@ public class QRDetector {
         }
     }
 
+    public static Orientation getOrientationFromResult(Result r) {
+        return getOrientation(r.getResultPoints());
+    }
+
     public void reset() {
         qrc.reset();
     }
