@@ -18,16 +18,18 @@ public class QRExtension implements VisionExtension {
     private Result lastResult;
 
     private String reason;
-    public boolean hasErrorReason() { return reason != null; }
-    public String getErrorReason() { return reason != null ? reason : ""; }
+    public boolean hasErrorReason() {
+        return reason != null;
+    }
+    public String getErrorReason() {
+        return reason != null ? reason : "";
+    }
 
     private String text;
-    public boolean hasText()
-    {
+    public boolean hasText() {
         return text != null;
     }
-    public String getText()
-    {
+    public String getText() {
         return text != null ? text : "";
     }
 
