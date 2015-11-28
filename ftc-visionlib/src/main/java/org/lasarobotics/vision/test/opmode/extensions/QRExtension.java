@@ -21,9 +21,17 @@ public class QRExtension implements VisionExtension {
     private QRDetector qrd;
     private Result lastResult;
 
+    private boolean shouldColorCorrect = false;
+    public void setShouldColorCorrect(boolean shouldColorCorrect) {
+        this.shouldColorCorrect = shouldColorCorrect;
+    }
+    public boolean doesColorCorrect() {
+        return shouldColorCorrect;
+    }
+
     private boolean matDebugInfo = false;
-    public void hasDebugInfo(boolean matDebugInfo) {
-        this.matDebugInfo = matDebugInfo;
+    public boolean hasDebugInfo(boolean matDebugInfo) {
+        return matDebugInfo;
     }
     public void setDebugInfo(boolean matDebugInfo) {
         this.matDebugInfo = matDebugInfo;
