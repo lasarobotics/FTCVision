@@ -194,6 +194,9 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
                 qre.setDebugInfo(true);
             }
             qre.frame(null, mRgba, mGray);
+            QRExtension.FTCQRCodeInfo ftcqrci = qre.getCodeInfo();
+            Drawing.drawText(mRgba, "Valid: " + ftcqrci.isValid() + " Team: " + ftcqrci.getTeam() + " Num: " + ftcqrci.getNum(),
+                    new Point(0, 80), 1.0f, white);
             Drawing.drawText(mRgba, "Orientation: " + qre.getOrientation().toString(),
                     new Point(0, 50), 1.0f, white);
             Drawing.drawText(mRgba, "Text: " + qre.getText(),
