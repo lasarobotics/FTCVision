@@ -15,9 +15,11 @@ import android.widget.Toast;
 import org.lasarobotics.vision.test.android.Camera;
 import org.lasarobotics.vision.test.android.Cameras;
 import org.lasarobotics.vision.test.detection.ColorBlobDetector;
+import org.lasarobotics.vision.test.detection.QRDetector;
 import org.lasarobotics.vision.test.detection.objects.Contour;
 import org.lasarobotics.vision.test.ftc.resq.Beacon;
 import org.lasarobotics.vision.test.image.Drawing;
+import org.lasarobotics.vision.test.opmode.extensions.QRExtension;
 import org.lasarobotics.vision.test.util.FPS;
 import org.lasarobotics.vision.test.util.color.ColorGRAY;
 import org.lasarobotics.vision.test.util.color.ColorHSV;
@@ -69,6 +71,7 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
     };
     private ColorBlobDetector detectorRed;
     private ColorBlobDetector detectorBlue;
+    private QRExtension qre = new QRExtension();
     public CameraTestActivity() {
 
     }
@@ -186,7 +189,18 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
 
         ColorRGBA white = new ColorRGBA("#ffffff");
         if(detectQR) {
-
+            if(!qre.hasInit()) {
+                qre.init(null);
+                qre.setDebugInfo(true);
+            }
+            qre.frame(null, mRgba, mGray);
+            Drawing.drawText(mRgba, "Orientation: " + qre.getOrientation().toString(),
+                    new Point(0, 50), 1.0f, white);
+            Drawing.drawText(mRgba, "Text: " + qre.getText(),
+                    new Point(0, 8), 1.0f, white, Drawing.Anchor.BOTTOMLEFT);
+            if(qre.hasErrorReason()) {
+                Drawing.drawText(mRgba, "Error: " + qre.getErrorReason(), new Point(0, 38), 1.0f, new ColorRGBA("#F44336"), Drawing.Anchor.BOTTOMLEFT);
+            }
             Drawing.drawRectangle(mRgba, new Point(mRgba.width() - 80, 10), new Point(mRgba.width() - 10, 80), white);
         } else {
             try {
@@ -205,13 +219,13 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
 
                 //DEBUG confidence output
                 Drawing.drawText(mRgba, "Confidence: " + colorAnalysis.getConfidenceString(),
-                        new Point(0, 50), 1.0f, new ColorGRAY(255));
+                        new Point(0, 50), 1.0f, white);
 
                 //Transform.enlarge(mRgba, originalSize, true);
                 //Transform.enlarge(mGray, originalSize, true);
 
                 Drawing.drawText(mRgba, colorAnalysis.getStateLeft().toString() + ", " + colorAnalysis.getStateRight().toString(),
-                        new Point(0, 8), 1.0f, new ColorGRAY(255), Drawing.Anchor.BOTTOMLEFT);
+                        new Point(0, 8), 1.0f, white, Drawing.Anchor.BOTTOMLEFT);
             } catch (Exception e) {
                 Drawing.drawText(mRgba, "Analysis Error", new Point(0, 8), 1.0f, new ColorRGBA("#F44336"), Drawing.Anchor.BOTTOMLEFT);
                 e.printStackTrace();

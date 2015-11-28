@@ -26,7 +26,8 @@ public class QRDetector {
         UP("Up"), //Code is normal
         DOWN("Down"), //Code is upside-down
         LEFT("Left"), //Code has been rotated left
-        RIGHT("Right"); //Code has been rotated right
+        RIGHT("Right"), //Code has been rotated right
+        UNKNOWN("Unknown"); //Not known
 
         private String s;
         Orientation(String s) {
