@@ -1,5 +1,8 @@
 package org.lasarobotics.vision.test.opmode.extensions;
 
+import android.util.Log;
+import android.widget.Toast;
+
 import com.google.zxing.ChecksumException;
 import com.google.zxing.FormatException;
 import com.google.zxing.NotFoundException;
@@ -8,13 +11,17 @@ import com.google.zxing.ResultPoint;
 
 import org.lasarobotics.vision.test.detection.objects.Contour;
 import org.lasarobotics.vision.test.image.Drawing;
+import org.lasarobotics.vision.test.image.Transform;
 import org.lasarobotics.vision.test.opmode.VisionOpMode;
 import org.lasarobotics.vision.test.util.color.ColorRGBA;
+import org.opencv.core.Core;
 import org.opencv.core.Mat;
 
 import org.lasarobotics.vision.test.detection.QRDetector;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.Point;
+
+import java.util.Arrays;
 
 /**
  * Uses ZXing library to detect QR codes
@@ -207,27 +214,40 @@ public class QRExtension implements VisionExtension {
                     Drawing.drawLine(rgba, box[3], box[0], green);
 
                     Point upperMost = new Point(Float.MAX_VALUE, Float.MAX_VALUE);
-                    Point bottomMost = new Point(Float.MIN_VALUE, Float.MIN_VALUE);
+                    int upperMostIndex = -1;
                     float centerX = 0;
                     float centerY = 0;
                     for(int i = 0; i < box.length; i++) {
+                        Drawing.drawText(rgba, String.valueOf(i), box[i], 1.0f, blue);
                         if(box[i].y < upperMost.y) {
                             upperMost = box[i];
-                        }
-                        if(box[i].y > bottomMost.y) {
-                            bottomMost = box[i];
+                            upperMostIndex = i;
                         }
                         centerX += box[i].x;
                         centerY += box[i].y;
                     }
+                    Point oppUpperMost = box[(upperMostIndex + 2) % box.length]; //Point opposite side of uppermost
+                    Drawing.drawLine(rgba, upperMost, oppUpperMost, blue);
                     centerX /= box.length;
                     centerY /= box.length;
-                    float lineFromUpperMostToBottomMostLength = (float)Math.sqrt(Math.pow(upperMost.x - bottomMost.x, 2) + Math.pow(upperMost.y - bottomMost.y, 2));
+                    Drawing.drawRectangle(rgba, new Point(centerX - 1, centerY - 1), new Point(centerX + 1, centerY + 1), red);
+
+                    float lineFromUpperMostToBottomMostLength = (float)Math.sqrt(Math.pow(upperMost.x - oppUpperMost.x, 2) + Math.pow(upperMost.y - oppUpperMost.y, 2));
                     float line1 = lineFromUpperMostToBottomMostLength/2;
                     float line2 = (float)Math.sqrt(Math.pow(box[0].x - box[1].x, 2) + Math.pow(box[0].y - box[1].y, 2));
-                    float angleOfRotation = (float)Math.acos(line2/line1);
+                    float angleOfRotation = (float)Math.acos(line2 / line1);
                     float newSquareSideLength = line2/(float)(Math.cos(angleOfRotation) + Math.sin(angleOfRotation));
-                    Drawing.drawRectangle(rgba, new Point(centerX - newSquareSideLength/2, centerY - newSquareSideLength/2), new Point(centerX + newSquareSideLength/2, centerY + newSquareSideLength/2), red);
+                    Point[] newBox = new Point[] {
+                            new Point(centerX - newSquareSideLength / 2, centerY - newSquareSideLength / 2),
+                            new Point(centerX + newSquareSideLength / 2, centerY + newSquareSideLength / 2)
+                    };
+                    Drawing.drawRectangle(rgba, newBox[0], newBox[1], red);
+
+                    Drawing.drawText(rgba, "Oppmost line len: " + lineFromUpperMostToBottomMostLength, new Point(0, 110), 1.0f, new ColorRGBA("#ffffff"));
+                    Drawing.drawText(rgba, "line1: " + line1 + " line2: " + line2, new Point(0, 140), 1.0f, new ColorRGBA("#ffffff"));
+                    Drawing.drawText(rgba, "angle: " + angleOfRotation + " deg: " + Math.toDegrees(angleOfRotation), new Point(0, 170), 1.0f, new ColorRGBA("#ffffff"));
+                    Drawing.drawText(rgba, "new len: " + newSquareSideLength, new Point(0, 210), 1.0f, new ColorRGBA("#ffffff"));
+                    Drawing.drawText(rgba, "new rect: " + Arrays.toString(newBox), new Point(0, 230), 1.0f, new ColorRGBA("#ffffff"));
                 }
             }
             text = lastResult.getText();
