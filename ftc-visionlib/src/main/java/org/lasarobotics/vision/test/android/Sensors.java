@@ -21,12 +21,10 @@ public final class Sensors implements SensorEventListener {
     private static boolean activated = false;
     private final SensorManager mSensorManager;
     private final Sensor mAccelerometer;
-    private final Sensor mRotationVector;
     private final Sensor mMagneticField;
 
     static float[] gravity = new float[3];
     static float[] linear_acceleration = new float[3];
-    static float[] rotation_vector = new float[3];
     static float[] geomagnetic = new float[3];
 
     private static final float PITCH_TOLERANCE = 20.0f;
@@ -38,7 +36,6 @@ public final class Sensors implements SensorEventListener {
     {
         mSensorManager = (SensorManager)Util.getContext().getSystemService(Context.SENSOR_SERVICE);
         mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        mRotationVector = mSensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
         mMagneticField = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
         activated = false;
         resume();
@@ -49,7 +46,6 @@ public final class Sensors implements SensorEventListener {
         if (activated)
             return;
         mSensorManager.registerListener(this, mAccelerometer, READ_SPEED);
-        mSensorManager.registerListener(this, mRotationVector, READ_SPEED);
         mSensorManager.registerListener(this, mMagneticField, READ_SPEED);
         activated = true;
     }
@@ -135,10 +131,6 @@ public final class Sensors implements SensorEventListener {
                 linear_acceleration[0] = event.values[0] - gravity[0];
                 linear_acceleration[1] = event.values[1] - gravity[1];
                 linear_acceleration[2] = event.values[2] - gravity[2];
-                updateScreenOrientation();
-                break;
-            case Sensor.TYPE_ROTATION_VECTOR:
-                rotation_vector = event.values;
                 updateScreenOrientation();
                 break;
             case Sensor.TYPE_MAGNETIC_FIELD:
