@@ -43,7 +43,8 @@ abstract class VisionOpModeCore extends OpMode implements CameraBridgeViewBase.C
             }
         }
     };
-    protected int width, height;
+
+    public int width, height;
     protected FPS fps;
 
     public final void setCamera(Cameras camera) {

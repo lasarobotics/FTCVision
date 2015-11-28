@@ -223,16 +223,12 @@ public final class Beacon {
 
         //TODO add Size size, Point locationTopLeft, Distance distanceApprox
         public BeaconAnalysis() {
-            assert left != null;
-            assert right != null;
             this.left = BeaconColor.UNKNOWN;
             this.right = BeaconColor.UNKNOWN;
             this.confidence = 0.0f;
         }
 
         public BeaconAnalysis(BeaconColor left, BeaconColor right, double confidence) {
-            assert left != null;
-            assert right != null;
             this.left = left;
             this.right = right;
             this.confidence = confidence;

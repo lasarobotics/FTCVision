@@ -20,7 +20,7 @@ public class BeaconExtension implements VisionExtension {
     private ColorBlobDetector detectorRed;
     private ColorBlobDetector detectorBlue;
 
-    private Beacon.BeaconAnalysis analysis;
+    private Beacon.BeaconAnalysis analysis = new Beacon.BeaconAnalysis();
     public Beacon.BeaconAnalysis getAnalysis()
     {
         return analysis;

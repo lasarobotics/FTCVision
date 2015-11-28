@@ -1,16 +1,23 @@
 package com.lasarobotics.tests.camera;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.res.Configuration;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.Surface;
 import android.view.WindowManager;
 
 import org.lasarobotics.vision.test.android.Camera;
 import org.lasarobotics.vision.test.android.Cameras;
+import org.lasarobotics.vision.test.android.Sensors;
 import org.lasarobotics.vision.test.detection.ColorBlobDetector;
 import org.lasarobotics.vision.test.detection.objects.Contour;
 import org.lasarobotics.vision.test.ftc.resq.Beacon;
 import org.lasarobotics.vision.test.image.Drawing;
+import org.lasarobotics.vision.test.image.Transform;
 import org.lasarobotics.vision.test.util.FPS;
+import org.lasarobotics.vision.test.util.ScreenOrientation;
 import org.lasarobotics.vision.test.util.color.ColorGRAY;
 import org.lasarobotics.vision.test.util.color.ColorHSV;
 import org.lasarobotics.vision.test.util.color.ColorRGBA;
@@ -154,11 +161,18 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
         mGray.release();
     }
 
+    Sensors sensors = new Sensors();
+
     public Mat onCameraFrame(CvCameraViewFrame inputFrame) {
         // input frame has RGBA format
         mRgba = inputFrame.rgba();
         mGray = inputFrame.gray();
         //Size originalSize = mRgba.size();
+
+        double angle = sensors.getScreenOrientationCompensation();
+        Log.w("Rotation", Double.toString(angle));
+        Transform.rotate(mRgba, angle);
+        Transform.rotate(mGray, angle);
 
         //Transform.flip(mRgba, Transform.FlipType.FLIP_BOTH);
         //Transform.flip(mGray, Transform.FlipType.FLIP_BOTH);
@@ -197,6 +211,9 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
         }
 
         Drawing.drawText(mRgba, "FPS: " + fpsCounter.getFPSString(), new Point(0, 24), 1.0f, new ColorRGBA("#ffffff")); //"#2196F3"
+        Drawing.drawText(mRgba, "Rot: " + sensors.getScreenOrientationCompensation() + "("
+                + sensors.getActivityScreenOrientation().getAngle() + " act, "
+                + sensors.getScreenOrientation().getAngle() + " sen)", new Point(0, 50), 1.0f, new ColorRGBA("#ffffff"), Drawing.Anchor.BOTTOMLEFT); //"#2196F3"
 
         return mRgba;
     }

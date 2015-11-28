@@ -2,9 +2,13 @@ package org.lasarobotics.vision.test.opmode;
 
 import org.lasarobotics.vision.test.ftc.resq.Beacon;
 import org.lasarobotics.vision.test.opmode.extensions.BeaconExtension;
+import org.lasarobotics.vision.test.opmode.extensions.ImageRotationExtension;
 import org.lasarobotics.vision.test.opmode.extensions.QRExtension;
 import org.lasarobotics.vision.test.opmode.extensions.VisionExtension;
+import org.lasarobotics.vision.test.util.color.Color;
+import org.lasarobotics.vision.test.util.color.ColorSpace;
 import org.opencv.core.Mat;
+import org.opencv.imgproc.Imgproc;
 
 import java.util.HashMap;
 
@@ -21,10 +25,12 @@ public abstract class VisionOpMode extends VisionOpModeCore {
      */
     protected static BeaconExtension beacon = new BeaconExtension();
     protected static QRExtension qr = new QRExtension();
+    protected static ImageRotationExtension rotation = new ImageRotationExtension();
 
     public enum Extensions {
-        BEACON(1, beacon),
-        QR(2, qr);
+        BEACON(2, beacon),
+        QR(4, qr),
+        ROTATION(1, rotation); //high priority
 
         final int id;
         VisionExtension instance;
@@ -79,8 +85,11 @@ public abstract class VisionOpMode extends VisionOpModeCore {
     @Override
     public Mat frame(Mat rgba, Mat gray) {
         for (Extensions extension : Extensions.values())
-            if (isEnabled(extension))
+            if (isEnabled(extension)) {
+                //Pipe the rgba of the previous point into the gray of the next
+                Imgproc.cvtColor(rgba, gray, Imgproc.COLOR_RGBA2GRAY);
                 extension.instance.frame(this, rgba, gray);
+            }
 
         return rgba;
     }
