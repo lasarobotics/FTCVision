@@ -1,8 +1,16 @@
 package com.lasarobotics.tests.camera;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
+import android.util.Log;
+import android.view.Display;
+import android.view.KeyEvent;
+import android.view.MotionEvent;
+import android.view.View;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import org.lasarobotics.vision.test.android.Camera;
 import org.lasarobotics.vision.test.android.Cameras;
@@ -113,6 +121,14 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
 
         mOpenCvCameraView = (CameraBridgeViewBase) findViewById(R.id.surfaceView);
         mOpenCvCameraView.setCvCameraViewListener(this);
+
+        mOpenCvCameraView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                CameraTestActivity.this.toggleQRDetection();
+                return true;
+            }
+        });
     }
 
     @Override
@@ -168,36 +184,48 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
 
         fpsCounter.update();
 
-        try {
-            //Process the frame for the color blobs
-            detectorRed.process(mRgba);
-            detectorBlue.process(mRgba);
+        ColorRGBA white = new ColorRGBA("#ffffff");
+        if(detectQR) {
 
-            //Get the list of contours
-            List<Contour> contoursRed = detectorRed.getContours();
-            List<Contour> contoursBlue = detectorBlue.getContours();
+            Drawing.drawRectangle(mRgba, new Point(mRgba.width() - 80, 10), new Point(mRgba.width() - 10, 80), white);
+        } else {
+            try {
+                //Process the frame for the color blobs
+                detectorRed.process(mRgba);
+                detectorBlue.process(mRgba);
 
-            //Get color analysis
-            Beacon beacon = new Beacon();
-            Beacon.BeaconAnalysis colorAnalysis = beacon.analyzeColor(contoursRed, contoursBlue, mRgba, mGray);
+                //Get the list of contours
+                List<Contour> contoursRed = detectorRed.getContours();
+                List<Contour> contoursBlue = detectorBlue.getContours();
+
+                //Get color analysis
+                Beacon beacon = new Beacon();
+                Beacon.BeaconAnalysis colorAnalysis = beacon.analyzeColor(contoursRed, contoursBlue, mRgba, mGray);
 
 
-            //DEBUG confidence output
-            Drawing.drawText(mRgba, "Confidence: " + colorAnalysis.getConfidenceString(),
-                    new Point(0, 50), 1.0f, new ColorGRAY(255));
+                //DEBUG confidence output
+                Drawing.drawText(mRgba, "Confidence: " + colorAnalysis.getConfidenceString(),
+                        new Point(0, 50), 1.0f, new ColorGRAY(255));
 
-            //Transform.enlarge(mRgba, originalSize, true);
-            //Transform.enlarge(mGray, originalSize, true);
+                //Transform.enlarge(mRgba, originalSize, true);
+                //Transform.enlarge(mGray, originalSize, true);
 
-            Drawing.drawText(mRgba, colorAnalysis.getStateLeft().toString() + ", " + colorAnalysis.getStateRight().toString(),
-                    new Point(0, 8), 1.0f, new ColorGRAY(255), Drawing.Anchor.BOTTOMLEFT);
-        } catch (Exception e) {
-            Drawing.drawText(mRgba, "Analysis Error", new Point(0, 8), 1.0f, new ColorRGBA("#F44336"), Drawing.Anchor.BOTTOMLEFT);
-            e.printStackTrace();
+                Drawing.drawText(mRgba, colorAnalysis.getStateLeft().toString() + ", " + colorAnalysis.getStateRight().toString(),
+                        new Point(0, 8), 1.0f, new ColorGRAY(255), Drawing.Anchor.BOTTOMLEFT);
+            } catch (Exception e) {
+                Drawing.drawText(mRgba, "Analysis Error", new Point(0, 8), 1.0f, new ColorRGBA("#F44336"), Drawing.Anchor.BOTTOMLEFT);
+                e.printStackTrace();
+            }
         }
 
-        Drawing.drawText(mRgba, "FPS: " + fpsCounter.getFPSString(), new Point(0, 24), 1.0f, new ColorRGBA("#ffffff")); //"#2196F3"
+        Drawing.drawText(mRgba, "FPS: " + fpsCounter.getFPSString(), new Point(0, 24), 1.0f, white); //"#2196F3"
+        Drawing.drawText(mRgba, "QR", new Point(mRgba.width() - 67, 55), 1.0f, white);
 
         return mRgba;
+    }
+
+    private boolean detectQR = false;
+    public void toggleQRDetection() {
+        detectQR = (detectQR ? false : true);
     }
 }
