@@ -79,7 +79,14 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
     private void initialize() {
         //GET CAMERA PROPERTIES
         Camera cam = Cameras.PRIMARY.createCamera();
-        android.hardware.Camera.Parameters pam = cam.getCamera().getParameters();
+        if(cam == null) { //Try again if failed
+            cam = Cameras.PRIMARY.createCamera();
+        }
+        android.hardware.Camera ncam = cam.getCamera();
+        if(ncam == null) { //Try again if failed
+            ncam = cam.getCamera();
+        }
+        android.hardware.Camera.Parameters pam = ncam.getParameters();
         focalLength = pam.getFocalLength();
         cam.release();
 
