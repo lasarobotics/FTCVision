@@ -30,7 +30,7 @@ public class ImageRotationExtension implements VisionExtension {
 
     @Override
     public void init(VisionOpMode opmode) {
-
+        sensors.resume();
     }
 
     @Override
@@ -49,6 +49,6 @@ public class ImageRotationExtension implements VisionExtension {
 
     @Override
     public void stop(VisionOpMode opmode) {
-
+        sensors.stop();
     }
 }

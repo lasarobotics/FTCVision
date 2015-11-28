@@ -127,6 +127,7 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
         super.onPause();
         if (mOpenCvCameraView != null)
             mOpenCvCameraView.disableView();
+        sensors.stop();
     }
 
     @Override
@@ -139,6 +140,7 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
             // OpenCV library found inside package. Using it!
             mLoaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
         }
+        sensors.resume();
     }
 
     public void onDestroy() {
