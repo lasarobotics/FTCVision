@@ -170,6 +170,7 @@ public class QRExtension implements VisionExtension {
             lastResult = qrd.detectFromMat(rgba);
             if(matDebugInfo) {
                 ResultPoint[] rp = lastResult.getResultPoints();
+                ColorRGBA red = new ColorRGBA("#ff0000");
                 ColorRGBA blue = new ColorRGBA("#88ccff");
                 ColorRGBA green = new ColorRGBA("#66ff99");
                 Drawing.drawText(rgba, "0", new Point(rp[0].getX(), rp[0].getY()), 1.0f, blue);
@@ -204,6 +205,29 @@ public class QRExtension implements VisionExtension {
                     Drawing.drawLine(rgba, box[1], box[2], green);
                     Drawing.drawLine(rgba, box[2], box[3], green);
                     Drawing.drawLine(rgba, box[3], box[0], green);
+
+                    Point upperMost = new Point(Float.MAX_VALUE, Float.MAX_VALUE);
+                    Point bottomMost = new Point(Float.MIN_VALUE, Float.MIN_VALUE);
+                    float centerX = 0;
+                    float centerY = 0;
+                    for(int i = 0; i < box.length; i++) {
+                        if(box[i].y < upperMost.y) {
+                            upperMost = box[i];
+                        }
+                        if(box[i].y > bottomMost.y) {
+                            bottomMost = box[i];
+                        }
+                        centerX += box[i].x;
+                        centerY += box[i].y;
+                    }
+                    centerX /= box.length;
+                    centerY /= box.length;
+                    float lineFromUpperMostToBottomMostLength = (float)Math.sqrt(Math.pow(upperMost.x - bottomMost.x, 2) + Math.pow(upperMost.y - bottomMost.y, 2));
+                    float line1 = lineFromUpperMostToBottomMostLength/2;
+                    float line2 = (float)Math.sqrt(Math.pow(box[0].x - box[1].x, 2) + Math.pow(box[0].y - box[1].y, 2));
+                    float angleOfRotation = (float)Math.acos(line2/line1);
+                    float newSquareSideLength = line2/(float)(Math.cos(angleOfRotation) + Math.sin(angleOfRotation));
+                    Drawing.drawRectangle(rgba, new Point(centerX - newSquareSideLength/2, centerY - newSquareSideLength/2), new Point(centerX + newSquareSideLength/2, centerY + newSquareSideLength/2), red);
                 }
             }
             text = lastResult.getText();
