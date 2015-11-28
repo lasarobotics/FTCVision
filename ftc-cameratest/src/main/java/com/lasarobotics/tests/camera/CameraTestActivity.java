@@ -79,12 +79,23 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
     private void initialize() {
         //GET CAMERA PROPERTIES
         Camera cam = Cameras.PRIMARY.createCamera();
-        if(cam == null) { //Try again if failed
-            cam = Cameras.PRIMARY.createCamera();
-        }
         android.hardware.Camera ncam = cam.getCamera();
         if(ncam == null) { //Try again if failed
-            ncam = cam.getCamera();
+            for(int i = 0; i < 10 && ncam == null; i++) { //Try a max of 10 times
+                cam = Cameras.PRIMARY.createCamera();
+                ncam = cam.getCamera();
+                Toast.makeText(CameraTestActivity.this, "Unable to get camera object. Attempting " + (10-i) + " more time(s).", Toast.LENGTH_SHORT).show();
+                try {
+                    Thread.sleep(200);
+                } catch (InterruptedException e) {
+                    //Nobody cares
+                }
+            }
+            if(ncam == null) {
+                Toast.makeText(CameraTestActivity.this, "Unable to get camera object", Toast.LENGTH_SHORT).show();
+                finish();
+                System.exit(0);
+            }
         }
         android.hardware.Camera.Parameters pam = ncam.getParameters();
         focalLength = pam.getFocalLength();
