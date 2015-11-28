@@ -6,19 +6,21 @@ import com.google.zxing.NotFoundException;
 import com.google.zxing.Result;
 import com.google.zxing.ResultPoint;
 
+import org.lasarobotics.vision.test.detection.objects.Contour;
 import org.lasarobotics.vision.test.image.Drawing;
 import org.lasarobotics.vision.test.opmode.VisionOpMode;
 import org.lasarobotics.vision.test.util.color.ColorRGBA;
 import org.opencv.core.Mat;
 
 import org.lasarobotics.vision.test.detection.QRDetector;
+import org.opencv.core.MatOfPoint;
 import org.opencv.core.Point;
 
 /**
  * Uses ZXing library to detect QR codes
  */
 public class QRExtension implements VisionExtension {
-    private static final float GRAY_CARD_MULTIPLIER = 1.2f; //Multiplies line size that extends to gray card
+    private static final float GRAY_CARD_MULTIPLIER = 1.72f; //Multiplies line size that extends to gray card
     private static final float GRAY_CARD_BOX_SIZE = 0.3f; //Multiplies gray box size
     private QRDetector qrd;
     private Result lastResult;
@@ -169,7 +171,7 @@ public class QRExtension implements VisionExtension {
             if(matDebugInfo) {
                 ResultPoint[] rp = lastResult.getResultPoints();
                 ColorRGBA blue = new ColorRGBA("#88ccff");
-                ColorRGBA green = new ColorRGBA("#88ffcc");
+                ColorRGBA green = new ColorRGBA("#66ff99");
                 Drawing.drawText(rgba, "0", new Point(rp[0].getX(), rp[0].getY()), 1.0f, blue);
                 for(int i = 0; i < rp.length - 1; i++) {
                     ResultPoint topLeft = lastResult.getResultPoints()[i];
@@ -189,22 +191,19 @@ public class QRExtension implements VisionExtension {
                     float np1x = p0p1avgX + p2p1xDiff * adjMult;
                     float np1y = p0p1avgY + p2p1yDiff * adjMult;
                     Drawing.drawLine(rgba, new Point(p0p1avgX, p0p1avgY), new Point(np1x, np1y), green);
-                    /*float boxTop = np1y - p2p0xDiff * GRAY_CARD_BOX_SIZE;
-                    float boxLeft = np1x - p2p0xDiff * GRAY_CARD_BOX_SIZE;
-                    float boxBottom = np1y + p2p0xDiff * GRAY_CARD_BOX_SIZE;
-                    float boxRight = np1x + p2p0xDiff * GRAY_CARD_BOX_SIZE;
-                    Drawing.drawLine(rgba, new Point(boxLeft, boxTop), new Point(boxRight, boxTop), green);
-                    Drawing.drawLine(rgba, new Point(boxRight, boxTop), new Point(boxRight, boxBottom), green);
-                    Drawing.drawLine(rgba, new Point(boxLeft, boxBottom), new Point(boxRight, boxBottom), green);
-                    Drawing.drawLine(rgba, new Point(boxLeft, boxTop), new Point(boxLeft, boxBottom), green);*/
                     float xOffset = p2p1xDiff * GRAY_CARD_MULTIPLIER;
                     float yOffset = p2p1yDiff * GRAY_CARD_MULTIPLIER;
-                    Drawing.drawLine(rgba, new Point(rp[1].getX() + xOffset, rp[1].getY() + yOffset), new Point(rp[2].getX() + xOffset, rp[2].getY() + yOffset), green);
-                    Drawing.drawLine(rgba, new Point(rp[2].getX() + xOffset, rp[2].getY() + yOffset), new Point(rp[2].getX() + xOffset + (rp[1].getX() - rp[0].getX()), rp[2].getY() + yOffset + (rp[2].getY() - rp[1].getY())), green);
-                    Drawing.drawLine(rgba, new Point(rp[2].getX() + xOffset, rp[2].getY() + yOffset), new Point(rp[2].getX() + xOffset + (rp[1].getX() - rp[0].getX()), rp[2].getY() + yOffset + (rp[2].getY() - rp[1].getY())), green);
-                    Drawing.drawLine(rgba, new Point(rp[2].getX() + xOffset, rp[2].getY() + yOffset), new Point(rp[2].getX() + xOffset + (rp[1].getX() - rp[0].getX()), rp[2].getY() + yOffset + (rp[2].getY() - rp[1].getY())), green);
-                    Drawing.drawLine(rgba, new Point(rp[2].getX() + xOffset + (rp[1].getX() - rp[0].getX()), rp[2].getY() + yOffset + (rp[2].getY() - rp[1].getY())), new Point(rp[0].getX() + xOffset, rp[0].getY() + yOffset), green);
-                    Drawing.drawLine(rgba, new Point(rp[0].getX() + xOffset, rp[0].getY() + yOffset), new Point(rp[1].getX() + xOffset, rp[1].getY() + yOffset), green);
+                    Point[] box = new Point[] {
+                            new Point(rp[1].getX() + xOffset, rp[1].getY() + yOffset),
+                            new Point(rp[2].getX() + xOffset, rp[2].getY() + yOffset),
+                            new Point(rp[0].getX() + xOffset + (rp[2].getX() - rp[1].getX()), rp[2].getY() + yOffset + (rp[0].getY() - rp[1].getY())),
+                            new Point(rp[0].getX() + xOffset, rp[0].getY() + yOffset)
+                    };
+                    Contour c = new Contour(new MatOfPoint(box));
+                    Drawing.drawLine(rgba, box[0], box[1], green);
+                    Drawing.drawLine(rgba, box[1], box[2], green);
+                    Drawing.drawLine(rgba, box[2], box[3], green);
+                    Drawing.drawLine(rgba, box[3], box[0], green);
                 }
             }
             text = lastResult.getText();
