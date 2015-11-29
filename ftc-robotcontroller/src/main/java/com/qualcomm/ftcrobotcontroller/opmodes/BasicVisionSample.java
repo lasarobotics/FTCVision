@@ -47,7 +47,7 @@ public class BasicVisionSample extends VisionOpMode {
         super.init();
 
         this.setCamera(Cameras.PRIMARY);
-        this.setFrameSize(new Size(900, 900));
+        //this.setFrameSize(new Size(900, 900));
 
         enableExtension(Extensions.BEACON);
         enableExtension(Extensions.QR);
@@ -57,8 +57,12 @@ public class BasicVisionSample extends VisionOpMode {
     public void loop() {
         super.loop();
 
-        telemetry.addData("Beacon Color", beacon.getAnalysis().toString());
-        telemetry.addData("Beacon Confidence", beacon.getAnalysis().getConfidenceString());
+        if(beacon.getAnalysis() == null) {
+            telemetry.addData("Beacon Analysis", "null");
+        } else {
+            telemetry.addData("Beacon Color", beacon.getAnalysis().toString());
+            telemetry.addData("Beacon Confidence", beacon.getAnalysis().getConfidenceString());
+        }
         telemetry.addData("QR Error", qr.getErrorReason());
         telemetry.addData("QR String", qr.getText());
         telemetry.addData("Frame Rate", fps.getFPSString() + " FPS");

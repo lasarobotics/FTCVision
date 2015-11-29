@@ -29,6 +29,7 @@ import org.opencv.core.Point;
 import org.opencv.core.Scalar;
 
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Uses ZXing library to detect QR codes
@@ -349,12 +350,6 @@ public class QRExtension implements VisionExtension {
             if (stopOnFTCQRCode) {
                 if(getCodeInfo().isValid()) {
                     isEnabled = false;
-                    if(shouldColorCorrect) {
-                        org.lasarobotics.vision.test.android.Camera cam = Cameras.PRIMARY.createCamera();
-                        android.hardware.Camera ncam = cam.getCamera();
-                        Camera.Parameters pam = ncam.getParameters();
-                        pam.setAutoExposureLock(true);
-                    }
                 }
             }
             if(shouldRotate) {
