@@ -381,10 +381,12 @@ public class QRExtension implements VisionExtension {
         for(int x = (int)box.left(); x < box.right(); x += GRAY_CARD_SAMPLE_INTERVAL) {
             for(int y = (int)box.top(); y < box.bottom(); y += GRAY_CARD_SAMPLE_INTERVAL) {
                 double[] pt = m.get(y, x);
-                red += pt[0];
-                green += pt[1];
-                blue += pt[2];
-                count++;
+                if(pt != null) {
+                    red += pt[0];
+                    green += pt[1];
+                    blue += pt[2];
+                    count++;
+                }
             }
         }
         if(count == 0) {
