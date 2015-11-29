@@ -58,6 +58,14 @@ public class QRExtension implements VisionExtension {
         return stopOnFTCQRCode;
     }
 
+    private boolean shouldRotate = true;
+    public void setShouldRotate(boolean shouldRotate) {
+        this.shouldRotate = shouldRotate;
+    }
+    public boolean shouldRotate() {
+        return shouldRotate;
+    }
+
     private boolean playSoundOnFound = true;
     public void setPlaySoundOnFound(boolean playSoundOnFound) {
         this.playSoundOnFound = playSoundOnFound;
@@ -189,11 +197,29 @@ public class QRExtension implements VisionExtension {
         //do nothing
     }
 
+    public void rotateMat(Mat rgba) {
+        QRDetector.Orientation o = getOrientation();
+        switch(o) {
+            case DOWN:
+                Transform.rotate(rgba, 180);
+                break;
+            case LEFT:
+                Transform.rotate(rgba, 90);
+                break;
+            case RIGHT:
+                Transform.rotate(rgba, 270);
+                break;
+        }
+    }
+
     @Override
     public Mat frame(VisionOpMode opmode, Mat rgba, Mat gray) {
         if(!isEnabled) {
             if(shouldColorCorrect) {
                 Core.multiply(rgba, new Scalar(redMul, greenMul, blueMul), rgba);
+            }
+            if(shouldRotate) {
+                rotateMat(rgba);
             }
             return rgba;
         }
@@ -263,9 +289,6 @@ public class QRExtension implements VisionExtension {
                     redMul = GRAY_CARD_LEVEL / col[0];
                     greenMul = GRAY_CARD_LEVEL / col[1];
                     blueMul = GRAY_CARD_LEVEL / col[2];
-                    if (stopOnFTCQRCode) {
-                        isEnabled = false;
-                    }
                     if (matDebugInfo) {
                         ColorRGBA red = new ColorRGBA("#ff0000");
                         ColorRGBA blue = new ColorRGBA("#88ccff");
@@ -320,6 +343,13 @@ public class QRExtension implements VisionExtension {
             }
             text = lastResult.getText();
             reason = null;
+            if (stopOnFTCQRCode) {
+                if(getCodeInfo().isValid())
+                    isEnabled = false;
+            }
+            if(shouldRotate) {
+                rotateMat(rgba);
+            }
             qrd.reset();
         } catch(NotFoundException ex) {
             text = null;

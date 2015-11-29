@@ -209,6 +209,7 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
         if(detectQR) {
             if(!qre.hasInit()) {
                 qre.init(null);
+                qre.setStopOnFTCQRCode(false);
                 qre.setShouldColorCorrect(true);
                 qre.setDebugInfo(true);
             }
