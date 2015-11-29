@@ -23,6 +23,7 @@ import org.opencv.core.Mat;
 import org.lasarobotics.vision.test.detection.QRDetector;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.Point;
+import org.opencv.core.Scalar;
 
 import java.util.Arrays;
 
@@ -32,8 +33,13 @@ import java.util.Arrays;
 public class QRExtension implements VisionExtension {
     private static final float GRAY_CARD_MULTIPLIER = 1.72f; //Multiplies line size that extends to gray card
     private static final float GRAY_CARD_BOX_SIZE = 0.3f; //Multiplies gray box size
+    private static final int GRAY_CARD_SAMPLE_INTERVAL = 5; //Number of pixels for which one is sampled
+    private static final double GRAY_CARD_LEVEL = 119.0; //18% gray
     private QRDetector qrd;
     private Result lastResult;
+    private double redMul; //for color correction
+    private double greenMul;
+    private double blueMul;
 
     private boolean isEnabled = true;
     public void setEnabled(boolean isEnabled) {
@@ -176,6 +182,12 @@ public class QRExtension implements VisionExtension {
 
     @Override
     public Mat frame(VisionOpMode opmode, Mat rgba, Mat gray) {
+        if(!isEnabled) {
+            if(shouldColorCorrect) {
+                Core.multiply(rgba, new Scalar(redMul, greenMul, blueMul), rgba);
+            }
+            return rgba;
+        }
         try {
             lastResult = qrd.detectFromMat(rgba);
 
@@ -231,8 +243,14 @@ public class QRExtension implements VisionExtension {
                         new Point(centerX - newSquareSideLength / 2, centerY - newSquareSideLength / 2),
                         new Point(centerX + newSquareSideLength / 2, centerY + newSquareSideLength / 2)
                 };
-                Color col = getAvgColor(rgba, new Rectangle(newBox));
-                Drawing.drawText(rgba, "THIS IS THE COLOR", new Point(100, 600), 1.0f, col);
+                int[] col = getAvgColor(rgba, new Rectangle(newBox));
+                Drawing.drawText(rgba, "THIS IS THE COLOR", new Point(100, 600), 1.0f, new ColorRGBA(col[0], col[1], col[2]));
+                redMul = GRAY_CARD_LEVEL / col[0];
+                greenMul = GRAY_CARD_LEVEL / col[1];
+                blueMul = GRAY_CARD_LEVEL / col[2];
+                if(stopOnFTCQRCode) {
+                    isEnabled = false;
+                }
                 if (matDebugInfo) {
                     ColorRGBA red = new ColorRGBA("#ff0000");
                     ColorRGBA blue = new ColorRGBA("#88ccff");
@@ -298,7 +316,8 @@ public class QRExtension implements VisionExtension {
         return rgba;
     }
 
-    public Color getAvgColor(Mat m, Rectangle box) {
+    //Returns {r,g,b}
+    public int[] getAvgColor(Mat m, Rectangle box) {
         if(m.type() != CvType.CV_8UC4) {
             throw new RuntimeException("Unable to find average color within mat: Unknown mat type.");
         }
@@ -306,8 +325,8 @@ public class QRExtension implements VisionExtension {
         double green = 0;
         double blue = 0;
         int count = 0;
-        for(int x = (int)box.left(); x < box.right(); x += 3) {
-            for(int y = (int)box.top(); y < box.bottom(); y += 3) {
+        for(int x = (int)box.left(); x < box.right(); x += GRAY_CARD_SAMPLE_INTERVAL) {
+            for(int y = (int)box.top(); y < box.bottom(); y += GRAY_CARD_SAMPLE_INTERVAL) {
                 double[] pt = m.get(y, x);
                 red += pt[0];
                 green += pt[1];
@@ -317,9 +336,9 @@ public class QRExtension implements VisionExtension {
         }
         if(count == 0) {
             double[] rgba = m.get((int)box.top(), (int)box.left());
-            return new ColorRGBA((int)rgba[0], (int)rgba[1], (int)rgba[2]);
+            return new int[] {(int)rgba[0], (int)rgba[1], (int)rgba[2]};
         }
-        return new ColorRGBA((int)(red / count), (int)(green / count), (int)(blue / count));
+        return new int[] {(int)(red / count), (int)(green / count), (int)(blue / count)};
     }
 
     @Override
