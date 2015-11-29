@@ -1,5 +1,6 @@
 package org.lasarobotics.vision.test.opmode.extensions;
 
+import android.hardware.Camera;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -9,6 +10,7 @@ import com.google.zxing.NotFoundException;
 import com.google.zxing.Result;
 import com.google.zxing.ResultPoint;
 
+import org.lasarobotics.vision.test.android.Cameras;
 import org.lasarobotics.vision.test.detection.objects.Contour;
 import org.lasarobotics.vision.test.detection.objects.Rectangle;
 import org.lasarobotics.vision.test.image.Drawing;
@@ -345,8 +347,15 @@ public class QRExtension implements VisionExtension {
             text = lastResult.getText();
             reason = null;
             if (stopOnFTCQRCode) {
-                if(getCodeInfo().isValid())
+                if(getCodeInfo().isValid()) {
                     isEnabled = false;
+                    if(shouldColorCorrect) {
+                        org.lasarobotics.vision.test.android.Camera cam = Cameras.PRIMARY.createCamera();
+                        android.hardware.Camera ncam = cam.getCamera();
+                        Camera.Parameters pam = ncam.getParameters();
+                        pam.setAutoExposureLock(true);
+                    }
+                }
             }
             if(shouldRotate) {
                 rotateMat(rgba);
