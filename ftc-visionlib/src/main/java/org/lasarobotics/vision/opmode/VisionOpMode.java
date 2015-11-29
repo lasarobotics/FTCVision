@@ -1,8 +1,13 @@
 package org.lasarobotics.vision.opmode;
 
 import org.lasarobotics.vision.ftc.resq.Beacon;
+import org.lasarobotics.vision.ftc.resq.Constants;
+import org.lasarobotics.vision.image.Drawing;
 import org.lasarobotics.vision.opmode.extensions.BeaconColorExtension;
+import org.lasarobotics.vision.opmode.extensions.DistanceLinearization;
+import org.lasarobotics.vision.util.color.ColorGRAY;
 import org.opencv.core.Mat;
+import org.opencv.core.Point;
 import org.opencv.core.Size;
 
 /**
@@ -21,6 +26,7 @@ public abstract class VisionOpMode extends VisionOpModeCore {
 
     /*** EXTENSION-SPECIFIC CODE ***/
     private BeaconColorExtension beaconColorExtension = new BeaconColorExtension();
+    private DistanceLinearization distanceLinearization = new DistanceLinearization();
     public Beacon.BeaconAnalysis beaconColor = new Beacon.BeaconAnalysis(new Size());
 
     protected void enableExtension(VisionExtensions extension)
@@ -33,6 +39,8 @@ public abstract class VisionOpMode extends VisionOpModeCore {
 
         if (extension == VisionExtensions.BEACON_COLOR)
             beaconColorExtension.init(this);
+        else if(extension == VisionExtensions.DISTANCE_LINEARIZATION)
+            distanceLinearization.init(this);
     }
 
     protected void disableExtension(VisionExtensions extension)
@@ -41,6 +49,8 @@ public abstract class VisionOpMode extends VisionOpModeCore {
 
         if (extension == VisionExtensions.BEACON_COLOR)
             beaconColorExtension.stop(this);
+        else if(extension == VisionExtensions.DISTANCE_LINEARIZATION)
+            distanceLinearization.stop(this);
     }
 
     @Override
@@ -49,6 +59,8 @@ public abstract class VisionOpMode extends VisionOpModeCore {
 
         if (isEnabled(VisionExtensions.BEACON_COLOR))
             beaconColorExtension.init(this);
+        if(isEnabled(VisionExtensions.DISTANCE_LINEARIZATION))
+            distanceLinearization.init(this);
 
         initialized = true;
     }
@@ -59,12 +71,16 @@ public abstract class VisionOpMode extends VisionOpModeCore {
 
         if (isEnabled(VisionExtensions.BEACON_COLOR))
             beaconColorExtension.loop(this);
+        if(isEnabled(VisionExtensions.DISTANCE_LINEARIZATION))
+            distanceLinearization.loop(this);
     }
 
     @Override
     public Mat frame(Mat rgba, Mat gray) {
         if (isEnabled(VisionExtensions.BEACON_COLOR))
             beaconColorExtension.frame(this, rgba, gray);
+        if(isEnabled(VisionExtensions.DISTANCE_LINEARIZATION))
+            distanceLinearization.frame(this, rgba, gray);
 
         return rgba;
     }
@@ -75,5 +91,11 @@ public abstract class VisionOpMode extends VisionOpModeCore {
 
         if (isEnabled(VisionExtensions.BEACON_COLOR))
             beaconColorExtension.stop(this);
+        if(isEnabled(VisionExtensions.DISTANCE_LINEARIZATION))
+            distanceLinearization.stop(this);
+    }
+
+    public double getFPS() {
+        return fps.getFPS();
     }
 }

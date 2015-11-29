@@ -167,6 +167,9 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
     }
 
     Beacon.BeaconAnalysis beaconAnalysis = new Beacon.BeaconAnalysis(new Size());
+    DistanceLinearizationTest distanceLinearization = new DistanceLinearizationTest();
+
+    private static final boolean LINEARIZE_DATA = true;
 
     public Mat onCameraFrame(CvCameraViewFrame inputFrame) {
         // input frame has RGBA format
@@ -196,6 +199,12 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
 
             Beacon beacon = new Beacon(mRgba.size());
             beaconAnalysis = beacon.analyzeBeacon(contoursRed, contoursBlue, mRgba, mGray, beaconAnalysis);
+
+            if(LINEARIZE_DATA) {
+                distanceLinearization.update(fpsCounter.getFPS(), beaconAnalysis);
+                Drawing.drawText(mRgba, "Linearized Distance: " + beaconAnalysis.getRadius() * Constants.CM_FT_SCALE + " ft",
+                        new Point(0, 90), 1.0f, new ColorGRAY(255), Drawing.Anchor.BOTTOMLEFT);
+            }
 
             //Transform.enlarge(mRgba, originalSize, true);
             //Transform.enlarge(mGray, originalSize, true);

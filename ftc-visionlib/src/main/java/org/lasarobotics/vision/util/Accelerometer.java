@@ -16,6 +16,8 @@ public class Accelerometer implements SensorEventListener {
     //Faster delays give more accurate results but slow program speed
     private static final int DELAY_SPEED = SensorManager.SENSOR_DELAY_NORMAL;
 
+    private static final double ACCELERATION_THRESHOLD = 0.15; //Acceleration must be above this threshold to be considered not noise
+
     private float[] sensorData = new float[3];
 
     private Sensor accelerometer;
@@ -35,6 +37,12 @@ public class Accelerometer implements SensorEventListener {
     @Override
     public void onSensorChanged(SensorEvent event) {
         sensorData = event.values;
+    }
+
+    public boolean isAccelerating(int axis) {
+        if(axis >= 0 && axis <= 4)
+            return Math.abs(sensorData[axis]) > ACCELERATION_THRESHOLD;
+        return false;
     }
 
     public float[] getAcceleration() {

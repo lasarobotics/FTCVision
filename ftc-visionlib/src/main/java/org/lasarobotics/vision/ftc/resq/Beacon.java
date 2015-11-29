@@ -116,6 +116,9 @@ public final class Beacon {
         public double getRadius() {
             return radius;
         }
+        public void setRadius(double radius) {
+            this.radius = radius;
+        }
 
         //Color Analysis
         private BeaconColor left;
