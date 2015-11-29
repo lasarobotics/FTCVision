@@ -14,6 +14,7 @@ import org.lasarobotics.vision.test.detection.objects.Rectangle;
 import org.lasarobotics.vision.test.image.Drawing;
 import org.lasarobotics.vision.test.image.Transform;
 import org.lasarobotics.vision.test.opmode.VisionOpMode;
+import org.lasarobotics.vision.test.util.SoundFeedback;
 import org.lasarobotics.vision.test.util.color.Color;
 import org.lasarobotics.vision.test.util.color.ColorRGBA;
 import org.opencv.core.Core;
@@ -55,6 +56,14 @@ public class QRExtension implements VisionExtension {
     }
     public boolean doesStopOnFTCQRCode() {
         return stopOnFTCQRCode;
+    }
+
+    private boolean playSoundOnFound = true;
+    public void setPlaySoundOnFound(boolean playSoundOnFound) {
+        this.playSoundOnFound = playSoundOnFound;
+    }
+    public boolean doesPlaySoundOnFound() {
+        return playSoundOnFound;
     }
 
     private boolean shouldColorCorrect = false;
@@ -191,113 +200,122 @@ public class QRExtension implements VisionExtension {
         try {
             lastResult = qrd.detectFromMat(rgba);
 
+            if(playSoundOnFound) {
+                if(lastResult.getResultPoints().length >= 3) {
+                    SoundFeedback.playBeep(SoundFeedback.Stream.RING);
+                }
+            }
             if(shouldColorCorrect) {
                 ResultPoint[] rp = lastResult.getResultPoints();
-                float p0p1avgX = (rp[0].getX() + rp[1].getX()) / 2;
-                float p0p1avgY = (rp[0].getY() + rp[1].getY()) / 2;
-                float p1p0yDiff = (rp[1].getY() - rp[0].getY());
-                float p2p1xDiff = (rp[2].getX() - rp[1].getX());
-                float p2p1yDiff = (rp[2].getY() - rp[1].getY());
-                float p2p0yDiff = (rp[2].getY() - rp[0].getY());
-                float p2p0xDiff = (rp[2].getY() - rp[0].getY());
-                float adjMult = 1 + GRAY_CARD_MULTIPLIER;
-                float np1x = p0p1avgX + p2p1xDiff * adjMult;
-                float np1y = p0p1avgY + p2p1yDiff * adjMult;
-                float xOffset = p2p1xDiff * GRAY_CARD_MULTIPLIER;
-                float yOffset = p2p1yDiff * GRAY_CARD_MULTIPLIER;
-                Point[] box = new Point[]{
-                        new Point(rp[1].getX() + xOffset, rp[1].getY() + yOffset),
-                        new Point(rp[2].getX() + xOffset, rp[2].getY() + yOffset),
-                        new Point(rp[0].getX() + xOffset + (rp[2].getX() - rp[1].getX()), rp[2].getY() + yOffset + (rp[0].getY() - rp[1].getY())),
-                        new Point(rp[0].getX() + xOffset, rp[0].getY() + yOffset)
-                };
-                Point upperMost = new Point(Float.MAX_VALUE, Float.MAX_VALUE);
-                int upperMostIndex = -1;
-                float centerX = 0;
-                float centerY = 0;
-                for (int i = 0; i < box.length; i++) {
-                    if (box[i].y < upperMost.y) {
-                        upperMost = box[i];
-                        upperMostIndex = i;
-                    }
-                    centerX += box[i].x;
-                    centerY += box[i].y;
-                }
-                int oppUpperMostIndex = (upperMostIndex + 2) % box.length;
-                Point oppUpperMost = box[oppUpperMostIndex]; //Point opposite side of uppermost
-                centerX /= box.length;
-                centerY /= box.length;
-
-                int otherIndex = (oppUpperMostIndex + 1) % 4;
-                float line1 = (float) Math.sqrt(Math.pow(oppUpperMost.x - box[otherIndex].x, 2) + Math.pow(oppUpperMost.y - box[otherIndex].y, 2));
-                float line2 = (float) (oppUpperMost.y - box[otherIndex].y);
-                float angleOfRotation = (float) Math.acos(line2 / line1);
-                float newAngleOfRotation = angleOfRotation % (float) (Math.PI / 2);
-                if (newAngleOfRotation > Math.PI / 4) {
-                    int newOtherIndex = (otherIndex + 1) % 4;
-                    int newOppUpperMostIndex = (oppUpperMostIndex + 1) % 4;
-                    line2 = (float) (box[newOppUpperMostIndex].y - box[newOtherIndex].y);
-                }
-                float newSquareSideLength = line2 / (float) (Math.cos(newAngleOfRotation) + Math.sin(newAngleOfRotation));
-                Point[] newBox = new Point[]{
-                        new Point(centerX - newSquareSideLength / 2, centerY - newSquareSideLength / 2),
-                        new Point(centerX + newSquareSideLength / 2, centerY + newSquareSideLength / 2)
-                };
-                int[] col = getAvgColor(rgba, new Rectangle(newBox));
-                Drawing.drawText(rgba, "THIS IS THE COLOR", new Point(100, 600), 1.0f, new ColorRGBA(col[0], col[1], col[2]));
-                redMul = GRAY_CARD_LEVEL / col[0];
-                greenMul = GRAY_CARD_LEVEL / col[1];
-                blueMul = GRAY_CARD_LEVEL / col[2];
-                if(stopOnFTCQRCode) {
-                    isEnabled = false;
-                }
-                if (matDebugInfo) {
-                    ColorRGBA red = new ColorRGBA("#ff0000");
-                    ColorRGBA blue = new ColorRGBA("#88ccff");
-                    ColorRGBA green = new ColorRGBA("#66ff99");
-                    ColorRGBA white = new ColorRGBA("#ffffff");
-                    Drawing.drawLine(rgba, new Point(p0p1avgX, p0p1avgY), new Point(np1x, np1y), green);
-                    Drawing.drawRectangle(rgba, new Point(centerX - 1, centerY - 1), new Point(centerX + 1, centerY + 1), red);
-                    Drawing.drawContour(rgba, new Contour(new MatOfPoint(new Point[]{
-                            box[3],
-                            box[0],
-                            new Point(box[3].x, box[0].y)
-                    })), blue);
-                    Drawing.drawText(rgba, "0", new Point(rp[0].getX(), rp[0].getY()), 1.0f, blue);
-                    Drawing.drawLine(rgba, upperMost, oppUpperMost, blue);
+                if(rp.length >= 3) {
+                    float p0p1avgX = (rp[0].getX() + rp[1].getX()) / 2;
+                    float p0p1avgY = (rp[0].getY() + rp[1].getY()) / 2;
+                    float p1p0yDiff = (rp[1].getY() - rp[0].getY());
+                    float p2p1xDiff = (rp[2].getX() - rp[1].getX());
+                    float p2p1yDiff = (rp[2].getY() - rp[1].getY());
+                    float p2p0yDiff = (rp[2].getY() - rp[0].getY());
+                    float p2p0xDiff = (rp[2].getY() - rp[0].getY());
+                    float adjMult = 1 + GRAY_CARD_MULTIPLIER;
+                    float np1x = p0p1avgX + p2p1xDiff * adjMult;
+                    float np1y = p0p1avgY + p2p1yDiff * adjMult;
+                    float xOffset = p2p1xDiff * GRAY_CARD_MULTIPLIER;
+                    float yOffset = p2p1yDiff * GRAY_CARD_MULTIPLIER;
+                    Point[] box = new Point[]{
+                            new Point(rp[1].getX() + xOffset, rp[1].getY() + yOffset),
+                            new Point(rp[2].getX() + xOffset, rp[2].getY() + yOffset),
+                            new Point(rp[0].getX() + xOffset + (rp[2].getX() - rp[1].getX()), rp[2].getY() + yOffset + (rp[0].getY() - rp[1].getY())),
+                            new Point(rp[0].getX() + xOffset, rp[0].getY() + yOffset)
+                    };
+                    Point upperMost = new Point(Float.MAX_VALUE, Float.MAX_VALUE);
+                    int upperMostIndex = -1;
+                    float centerX = 0;
+                    float centerY = 0;
                     for (int i = 0; i < box.length; i++) {
-                        Drawing.drawText(rgba, String.valueOf(i), box[i], 1.0f, blue);
+                        if (box[i].y < upperMost.y) {
+                            upperMost = box[i];
+                            upperMostIndex = i;
+                        }
+                        centerX += box[i].x;
+                        centerY += box[i].y;
                     }
-                    for (int i = 0; i < rp.length - 1; i++) {
-                        ResultPoint topLeft = lastResult.getResultPoints()[i];
-                        ResultPoint bottomRight = lastResult.getResultPoints()[i + 1];
-                        Drawing.drawText(rgba, String.valueOf(i + 1), new Point(bottomRight.getX(), bottomRight.getY()), 1.0f, blue);
-                        Drawing.drawLine(rgba, new Point(topLeft.getX(), topLeft.getY()), new Point(bottomRight.getX(), bottomRight.getY()), new ColorRGBA("#ff0000"));
+                    int oppUpperMostIndex = (upperMostIndex + 2) % box.length;
+                    Point oppUpperMost = box[oppUpperMostIndex]; //Point opposite side of uppermost
+                    centerX /= box.length;
+                    centerY /= box.length;
+
+                    int otherIndex = (oppUpperMostIndex + 1) % 4;
+                    float line1 = (float) Math.sqrt(Math.pow(oppUpperMost.x - box[otherIndex].x, 2) + Math.pow(oppUpperMost.y - box[otherIndex].y, 2));
+                    float line2 = (float) (oppUpperMost.y - box[otherIndex].y);
+                    float angleOfRotation = (float) Math.acos(line2 / line1);
+                    float newAngleOfRotation = angleOfRotation % (float) (Math.PI / 2);
+                    if (newAngleOfRotation > Math.PI / 4) {
+                        int newOtherIndex = (otherIndex + 1) % 4;
+                        int newOppUpperMostIndex = (oppUpperMostIndex + 1) % 4;
+                        line2 = (float) (box[newOppUpperMostIndex].y - box[newOtherIndex].y);
                     }
-                    if (rp.length >= 3) {
-                        Contour c = new Contour(new MatOfPoint(box));
-                        Drawing.drawLine(rgba, box[0], box[1], green);
-                        Drawing.drawLine(rgba, box[1], box[2], green);
-                        Drawing.drawLine(rgba, box[2], box[3], green);
-                        Drawing.drawLine(rgba, box[3], box[0], green);
+                    float newSquareSideLength = line2 / (float) (Math.cos(newAngleOfRotation) + Math.sin(newAngleOfRotation));
+                    Point[] newBox = new Point[]{
+                            new Point(centerX - newSquareSideLength / 2, centerY - newSquareSideLength / 2),
+                            new Point(centerX + newSquareSideLength / 2, centerY + newSquareSideLength / 2)
+                    };
+                    int[] col = getAvgColor(rgba, new Rectangle(newBox));
+                    //Drawing.drawText(rgba, "THIS IS THE COLOR", new Point(100, 600), 1.0f, new ColorRGBA(col[0], col[1], col[2]));
+                    redMul = GRAY_CARD_LEVEL / col[0];
+                    greenMul = GRAY_CARD_LEVEL / col[1];
+                    blueMul = GRAY_CARD_LEVEL / col[2];
+                    if (stopOnFTCQRCode) {
+                        isEnabled = false;
+                    }
+                    if (matDebugInfo) {
+                        ColorRGBA red = new ColorRGBA("#ff0000");
+                        ColorRGBA blue = new ColorRGBA("#88ccff");
+                        ColorRGBA green = new ColorRGBA("#66ff99");
+                        ColorRGBA white = new ColorRGBA("#ffffff");
+                        Drawing.drawLine(rgba, new Point(p0p1avgX, p0p1avgY), new Point(np1x, np1y), green);
+                        Drawing.drawRectangle(rgba, new Point(centerX - 1, centerY - 1), new Point(centerX + 1, centerY + 1), red);
+                        Drawing.drawContour(rgba, new Contour(new MatOfPoint(new Point[]{
+                                box[3],
+                                box[0],
+                                new Point(box[3].x, box[0].y)
+                        })), blue);
+                        Drawing.drawText(rgba, "0", new Point(rp[0].getX(), rp[0].getY()), 1.0f, blue);
+                        Drawing.drawLine(rgba, upperMost, oppUpperMost, blue);
+                        for (int i = 0; i < box.length; i++) {
+                            Drawing.drawText(rgba, String.valueOf(i), box[i], 1.0f, blue);
+                        }
+                        for (int i = 0; i < rp.length - 1; i++) {
+                            ResultPoint topLeft = lastResult.getResultPoints()[i];
+                            ResultPoint bottomRight = lastResult.getResultPoints()[i + 1];
+                            Drawing.drawText(rgba, String.valueOf(i + 1), new Point(bottomRight.getX(), bottomRight.getY()), 1.0f, blue);
+                            Drawing.drawLine(rgba, new Point(topLeft.getX(), topLeft.getY()), new Point(bottomRight.getX(), bottomRight.getY()), new ColorRGBA("#ff0000"));
+                        }
+                        if (rp.length >= 3) {
+                            Contour c = new Contour(new MatOfPoint(box));
+                            Drawing.drawLine(rgba, box[0], box[1], green);
+                            Drawing.drawLine(rgba, box[1], box[2], green);
+                            Drawing.drawLine(rgba, box[2], box[3], green);
+                            Drawing.drawLine(rgba, box[3], box[0], green);
 
-                        Drawing.drawRectangle(rgba, newBox[0], newBox[1], red);
+                            Drawing.drawRectangle(rgba, newBox[0], newBox[1], red);
 
-                        Drawing.drawText(rgba, "line1: " + line1 + " line2: " + line2 + " line2/line1: " + (line2 / line1), new Point(0, 110), 1.0f, white);
-                        Drawing.drawText(rgba, "angle: " + angleOfRotation + " deg: " + Math.toDegrees(angleOfRotation) + " newangle: " + newAngleOfRotation + " deg: " + Math.toDegrees(newAngleOfRotation), new Point(0, 140), 1.0f, white);
-                        Drawing.drawText(rgba, "new len: " + newSquareSideLength, new Point(0, 170), 1.0f, white);
-                        Drawing.drawText(rgba, "new rect: " + Arrays.toString(newBox), new Point(0, 200), 1.0f, white);
-                        Drawing.drawText(rgba, "oppuppermostindex: " + oppUpperMostIndex + " otherindex: " + otherIndex, new Point(0, 230), 1.0f, white);
+                            Drawing.drawText(rgba, "line1: " + line1 + " line2: " + line2 + " line2/line1: " + (line2 / line1), new Point(0, 110), 1.0f, white);
+                            Drawing.drawText(rgba, "angle: " + angleOfRotation + " deg: " + Math.toDegrees(angleOfRotation) + " newangle: " + newAngleOfRotation + " deg: " + Math.toDegrees(newAngleOfRotation), new Point(0, 140), 1.0f, white);
+                            Drawing.drawText(rgba, "new len: " + newSquareSideLength, new Point(0, 170), 1.0f, white);
+                            Drawing.drawText(rgba, "new rect: " + Arrays.toString(newBox), new Point(0, 200), 1.0f, white);
+                            Drawing.drawText(rgba, "oppuppermostindex: " + oppUpperMostIndex + " otherindex: " + otherIndex, new Point(0, 230), 1.0f, white);
+                        }
                     }
                 }
             } else if(matDebugInfo) {
                 ResultPoint[] rp = lastResult.getResultPoints();
-                Drawing.drawText(rgba, "0", new Point(rp[0].getX(), rp[0].getY()), 1.0f, new ColorRGBA("#88ccff"));
-                for (int i = 0; i < rp.length - 1; i++) {
-                    ResultPoint topLeft = lastResult.getResultPoints()[i];
-                    ResultPoint bottomRight = lastResult.getResultPoints()[i + 1];
-                    Drawing.drawText(rgba, String.valueOf(i + 1), new Point(bottomRight.getX(), bottomRight.getY()), 1.0f, new ColorRGBA("#88ccff"));
-                    Drawing.drawLine(rgba, new Point(topLeft.getX(), topLeft.getY()), new Point(bottomRight.getX(), bottomRight.getY()), new ColorRGBA("#ff0000"));
+                if(rp.length >= 3) {
+                    Drawing.drawText(rgba, "0", new Point(rp[0].getX(), rp[0].getY()), 1.0f, new ColorRGBA("#88ccff"));
+                    for (int i = 0; i < rp.length - 1; i++) {
+                        ResultPoint topLeft = lastResult.getResultPoints()[i];
+                        ResultPoint bottomRight = lastResult.getResultPoints()[i + 1];
+                        Drawing.drawText(rgba, String.valueOf(i + 1), new Point(bottomRight.getX(), bottomRight.getY()), 1.0f, new ColorRGBA("#88ccff"));
+                        Drawing.drawLine(rgba, new Point(topLeft.getX(), topLeft.getY()), new Point(bottomRight.getX(), bottomRight.getY()), new ColorRGBA("#ff0000"));
+                    }
                 }
             }
             text = lastResult.getText();
