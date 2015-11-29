@@ -302,9 +302,9 @@ public class QRExtension implements VisionExtension {
         if(m.type() != CvType.CV_8UC4) {
             throw new RuntimeException("Unable to find average color within mat: Unknown mat type.");
         }
-        int red = 0;
-        int green = 0;
-        int blue = 0;
+        double red = 0;
+        double green = 0;
+        double blue = 0;
         int count = 0;
         for(int x = (int)box.left(); x < box.right(); x += 3) {
             for(int y = (int)box.top(); y < box.bottom(); y += 3) {
@@ -312,9 +312,14 @@ public class QRExtension implements VisionExtension {
                 red += pt[0];
                 green += pt[1];
                 blue += pt[2];
+                count++;
             }
         }
-        return new ColorRGBA(red / count, green / count, blue / count);
+        if(count == 0) {
+            double[] rgba = m.get((int)box.top(), (int)box.left());
+            return new ColorRGBA((int)rgba[0], (int)rgba[1], (int)rgba[2]);
+        }
+        return new ColorRGBA((int)(red / count), (int)(green / count), (int)(blue / count));
     }
 
     @Override
