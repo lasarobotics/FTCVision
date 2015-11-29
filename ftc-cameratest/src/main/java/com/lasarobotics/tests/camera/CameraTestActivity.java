@@ -211,6 +211,7 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
                 qre.init(null);
                 qre.setStopOnFTCQRCode(false);
                 qre.setShouldColorCorrect(true);
+                qre.setShouldRotate(false);
                 qre.setDebugInfo(true);
             }
             qre.frame(null, mRgba, mGray);
