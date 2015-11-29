@@ -227,33 +227,42 @@ public class QRExtension implements VisionExtension {
                         centerX += box[i].x;
                         centerY += box[i].y;
                     }
-                    Point oppUpperMost = box[(upperMostIndex + 2) % box.length]; //Point opposite side of uppermost
+                    int oppUpperMostIndex = (upperMostIndex + 2) % box.length;
+                    Point oppUpperMost = box[oppUpperMostIndex]; //Point opposite side of uppermost
                     Drawing.drawLine(rgba, upperMost, oppUpperMost, blue);
                     centerX /= box.length;
                     centerY /= box.length;
                     Drawing.drawRectangle(rgba, new Point(centerX - 1, centerY - 1), new Point(centerX + 1, centerY + 1), red);
 
-                    float lineFromUpperMostToBottomMostLength = (float)Math.sqrt(Math.pow(upperMost.x - oppUpperMost.x, 2) + Math.pow(upperMost.y - oppUpperMost.y, 2));
-                    Drawing.drawLine(rgba,
-                            new Point((upperMost.x + oppUpperMost.x)/2, (upperMost.y + oppUpperMost.y)/2),
-                            new Point(oppUpperMost.x, oppUpperMost.y),
-                            white);
-                    float line1 = lineFromUpperMostToBottomMostLength/2;
-                    float line2 = (float)Math.sqrt(Math.pow(box[0].x - box[1].x, 2) + Math.pow(box[0].y - box[1].y, 2));
-                    Drawing.drawLine(rgba, box[0], box[1], white);
-                    float angleOfRotation = (float)Math.acos(line2 / line1);
-                    float newSquareSideLength = line2/(float)(Math.cos(angleOfRotation) + Math.sin(angleOfRotation));
+                    int otherIndex = (oppUpperMostIndex + 1) % 4;
+                    float line1 = (float)Math.sqrt(Math.pow(oppUpperMost.x-box[otherIndex].x, 2) + Math.pow(oppUpperMost.y - box[otherIndex].y, 2));
+                    float line2 = (float)(oppUpperMost.y-box[otherIndex].y);
+                    float angleOfRotation = (float)Math.acos(line2/line1);
+                    float newAngleOfRotation = angleOfRotation % (float)(Math.PI/2);
+                    if(newAngleOfRotation > Math.PI/2) {
+                        int newOtherIndex = (otherIndex + 1) % 4;
+                        int newOppUpperMostIndex = (oppUpperMostIndex + 1) % 4;
+                        line2 = (float)(box[newOppUpperMostIndex].y-box[newOtherIndex].y);
+                        Drawing.drawText(rgba, "AAAAAAAAAAAAAAAAAAAAAAAAAA", new Point(0, 0), 1.0f, white);
+                    }
+                    float newSquareSideLength = line2/(float)(Math.cos(newAngleOfRotation) + Math.sin(newAngleOfRotation));
                     Point[] newBox = new Point[] {
                             new Point(centerX - newSquareSideLength / 2, centerY - newSquareSideLength / 2),
                             new Point(centerX + newSquareSideLength / 2, centerY + newSquareSideLength / 2)
                     };
+                    Drawing.drawContour(rgba, new Contour(new MatOfPoint(new Point[]{
+                            box[3],
+                            box[0],
+                            new Point(box[3].x, box[0].y)
+                    })), blue);
+
                     Drawing.drawRectangle(rgba, newBox[0], newBox[1], red);
 
-                    Drawing.drawText(rgba, "Oppmost line len: " + lineFromUpperMostToBottomMostLength, new Point(0, 110), 1.0f, white);
-                    Drawing.drawText(rgba, "line1: " + line1 + " line2: " + line2 + " line2/line1: " + (line2/line1), new Point(0, 140), 1.0f, white);
-                    Drawing.drawText(rgba, "angle: " + angleOfRotation + " deg: " + Math.toDegrees(angleOfRotation), new Point(0, 170), 1.0f, white);
-                    Drawing.drawText(rgba, "new len: " + newSquareSideLength, new Point(0, 200), 1.0f, white);
-                    Drawing.drawText(rgba, "new rect: " + Arrays.toString(newBox), new Point(0, 230), 1.0f, white);
+                    Drawing.drawText(rgba, "line1: " + line1 + " line2: " + line2 + " line2/line1: " + (line2 / line1), new Point(0, 110), 1.0f, white);
+                    Drawing.drawText(rgba, "angle: " + angleOfRotation + " deg: " + Math.toDegrees(angleOfRotation) + " newangle: " + newAngleOfRotation + " deg: " + Math.toDegrees(newAngleOfRotation), new Point(0, 140), 1.0f, white);
+                    Drawing.drawText(rgba, "new len: " + newSquareSideLength, new Point(0, 170), 1.0f, white);
+                    Drawing.drawText(rgba, "new rect: " + Arrays.toString(newBox), new Point(0, 200), 1.0f, white);
+                    Drawing.drawText(rgba, "oppuppermostindex: " + oppUpperMostIndex + " otherindex: " + otherIndex, new Point(0, 230), 1.0f, white);
                 }
             }
             text = lastResult.getText();

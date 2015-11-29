@@ -94,7 +94,6 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
             if(ncam == null) {
                 Toast.makeText(CameraTestActivity.this, "Unable to get camera object", Toast.LENGTH_SHORT).show();
                 finish();
-                System.exit(0);
             }
         }
         android.hardware.Camera.Parameters pam = ncam.getParameters();
