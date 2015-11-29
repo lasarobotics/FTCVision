@@ -71,7 +71,7 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
     };
     private ColorBlobDetector detectorRed;
     private ColorBlobDetector detectorBlue;
-    private QRExtension qre = new QRExtension();
+    private QRExtension qre;
     public CameraTestActivity() {
 
     }
@@ -183,6 +183,7 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
         //Initialize all detectors here
         detectorRed = new ColorBlobDetector(lowerBoundRed, upperBoundRed);
         detectorBlue = new ColorBlobDetector(lowerBoundBlue, upperBoundBlue);
+        qre = new QRExtension();
     }
 
     public void onCameraViewStopped() {
@@ -208,6 +209,7 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
         if(detectQR) {
             if(!qre.hasInit()) {
                 qre.init(null);
+                qre.setShouldColorCorrect(true);
                 qre.setDebugInfo(true);
             }
             qre.frame(null, mRgba, mGray);
