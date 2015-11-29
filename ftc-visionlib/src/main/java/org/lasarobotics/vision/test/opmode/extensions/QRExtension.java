@@ -180,6 +180,7 @@ public class QRExtension implements VisionExtension {
                 ColorRGBA red = new ColorRGBA("#ff0000");
                 ColorRGBA blue = new ColorRGBA("#88ccff");
                 ColorRGBA green = new ColorRGBA("#66ff99");
+                ColorRGBA white = new ColorRGBA("#ffffff");
                 Drawing.drawText(rgba, "0", new Point(rp[0].getX(), rp[0].getY()), 1.0f, blue);
                 for(int i = 0; i < rp.length - 1; i++) {
                     ResultPoint topLeft = lastResult.getResultPoints()[i];
@@ -233,8 +234,13 @@ public class QRExtension implements VisionExtension {
                     Drawing.drawRectangle(rgba, new Point(centerX - 1, centerY - 1), new Point(centerX + 1, centerY + 1), red);
 
                     float lineFromUpperMostToBottomMostLength = (float)Math.sqrt(Math.pow(upperMost.x - oppUpperMost.x, 2) + Math.pow(upperMost.y - oppUpperMost.y, 2));
+                    Drawing.drawLine(rgba,
+                            new Point((upperMost.x + oppUpperMost.x)/2, (upperMost.y + oppUpperMost.y)/2),
+                            new Point(oppUpperMost.x, oppUpperMost.y),
+                            white);
                     float line1 = lineFromUpperMostToBottomMostLength/2;
                     float line2 = (float)Math.sqrt(Math.pow(box[0].x - box[1].x, 2) + Math.pow(box[0].y - box[1].y, 2));
+                    Drawing.drawLine(rgba, box[0], box[1], white);
                     float angleOfRotation = (float)Math.acos(line2 / line1);
                     float newSquareSideLength = line2/(float)(Math.cos(angleOfRotation) + Math.sin(angleOfRotation));
                     Point[] newBox = new Point[] {
@@ -243,11 +249,11 @@ public class QRExtension implements VisionExtension {
                     };
                     Drawing.drawRectangle(rgba, newBox[0], newBox[1], red);
 
-                    Drawing.drawText(rgba, "Oppmost line len: " + lineFromUpperMostToBottomMostLength, new Point(0, 110), 1.0f, new ColorRGBA("#ffffff"));
-                    Drawing.drawText(rgba, "line1: " + line1 + " line2: " + line2, new Point(0, 140), 1.0f, new ColorRGBA("#ffffff"));
-                    Drawing.drawText(rgba, "angle: " + angleOfRotation + " deg: " + Math.toDegrees(angleOfRotation), new Point(0, 170), 1.0f, new ColorRGBA("#ffffff"));
-                    Drawing.drawText(rgba, "new len: " + newSquareSideLength, new Point(0, 210), 1.0f, new ColorRGBA("#ffffff"));
-                    Drawing.drawText(rgba, "new rect: " + Arrays.toString(newBox), new Point(0, 230), 1.0f, new ColorRGBA("#ffffff"));
+                    Drawing.drawText(rgba, "Oppmost line len: " + lineFromUpperMostToBottomMostLength, new Point(0, 110), 1.0f, white);
+                    Drawing.drawText(rgba, "line1: " + line1 + " line2: " + line2 + " line2/line1: " + (line2/line1), new Point(0, 140), 1.0f, white);
+                    Drawing.drawText(rgba, "angle: " + angleOfRotation + " deg: " + Math.toDegrees(angleOfRotation), new Point(0, 170), 1.0f, white);
+                    Drawing.drawText(rgba, "new len: " + newSquareSideLength, new Point(0, 200), 1.0f, white);
+                    Drawing.drawText(rgba, "new rect: " + Arrays.toString(newBox), new Point(0, 230), 1.0f, white);
                 }
             }
             text = lastResult.getText();
