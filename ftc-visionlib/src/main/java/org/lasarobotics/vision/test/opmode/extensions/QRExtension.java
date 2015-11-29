@@ -66,7 +66,7 @@ public class QRExtension implements VisionExtension {
         return playSoundOnFound;
     }
 
-    private boolean shouldColorCorrect = false;
+    private boolean shouldColorCorrect = true;
     public void setShouldColorCorrect(boolean shouldColorCorrect) {
         this.shouldColorCorrect = shouldColorCorrect;
     }
