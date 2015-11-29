@@ -289,6 +289,7 @@ public class QRExtension implements VisionExtension {
                     redMul = GRAY_CARD_LEVEL / col[0];
                     greenMul = GRAY_CARD_LEVEL / col[1];
                     blueMul = GRAY_CARD_LEVEL / col[2];
+                    Core.multiply(rgba, new Scalar(redMul, greenMul, blueMul), rgba);
                     if (matDebugInfo) {
                         ColorRGBA red = new ColorRGBA("#ff0000");
                         ColorRGBA blue = new ColorRGBA("#88ccff");
