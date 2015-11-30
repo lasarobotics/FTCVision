@@ -33,6 +33,7 @@ package com.qualcomm.ftcrobotcontroller.opmodes;
 
 import org.lasarobotics.vision.test.android.Cameras;
 import org.lasarobotics.vision.test.opmode.VisionOpMode;
+import org.lasarobotics.vision.test.util.ScreenOrientation;
 import org.opencv.core.Size;
 
 /**
@@ -46,12 +47,20 @@ public class BasicVisionSample extends VisionOpMode {
     public void init() {
         super.init();
 
+        //Set the camera used for detection
         this.setCamera(Cameras.PRIMARY);
+        //Set the frame size
+        //Larger = sometimes more accurate, but also much slower
         this.setFrameSize(new Size(900, 900));
 
-        enableExtension(Extensions.BEACON);
-        enableExtension(Extensions.QR);
-        enableExtension(Extensions.ROTATION);
+        //Enable extensions. Use what you need.
+        enableExtension(Extensions.BEACON);     //Beacon detection
+        enableExtension(Extensions.QR);         //QR Code detection
+        enableExtension(Extensions.ROTATION);   //Automatic screen rotation correction
+
+        //You can do this for certain phones which switch red and blue
+        //It will rotate the display and detection by 180 degrees, making it upright
+        //rotation.setUnbiasedOrientation(ScreenOrientation.LANDSCAPE_WEST);
     }
 
     @Override

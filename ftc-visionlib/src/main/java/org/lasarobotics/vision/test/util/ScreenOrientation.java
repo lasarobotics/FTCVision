@@ -17,6 +17,33 @@ public enum ScreenOrientation {
         this.angle = angle;
     }
 
+    public static ScreenOrientation getFromAngle(double angle)
+    {
+        return getFromAngle((int)angle);
+    }
+
+    public static ScreenOrientation getFromAngle(int angle)
+    {
+        while(angle > 360)
+            angle -= 360;
+        while(angle < 0)
+            angle += 360;
+
+        switch(angle)
+        {
+            case 0:
+                return LANDSCAPE;
+            case 90:
+                return PORTRAIT;
+            case 180:
+                return LANDSCAPE_WEST;
+            case 270:
+                return PORTRAIT_REVERSE;
+            default:
+                throw new RuntimeException("The input angle must be a multiple of 90 degrees!");
+        }
+    }
+
     public static ScreenOrientation getFromSurface(int id)
     {
         switch (id)
