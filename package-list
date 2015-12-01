@@ -1,0 +1,10 @@
+org.lasarobotics.vision.test
+org.lasarobotics.vision.test.android
+org.lasarobotics.vision.test.detection
+org.lasarobotics.vision.test.detection.objects
+org.lasarobotics.vision.test.ftc.resq
+org.lasarobotics.vision.test.image
+org.lasarobotics.vision.test.opmode
+org.lasarobotics.vision.test.opmode.extensions
+org.lasarobotics.vision.test.util
+org.lasarobotics.vision.test.util.color
