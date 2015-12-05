@@ -2,18 +2,21 @@ package com.lasarobotics.tests.camera;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.WindowManager;
 
-import org.lasarobotics.vision.test.android.Camera;
-import org.lasarobotics.vision.test.android.Cameras;
-import org.lasarobotics.vision.test.detection.ColorBlobDetector;
-import org.lasarobotics.vision.test.detection.objects.Contour;
-import org.lasarobotics.vision.test.ftc.resq.Beacon;
-import org.lasarobotics.vision.test.image.Drawing;
-import org.lasarobotics.vision.test.util.FPS;
-import org.lasarobotics.vision.test.util.color.ColorGRAY;
-import org.lasarobotics.vision.test.util.color.ColorHSV;
-import org.lasarobotics.vision.test.util.color.ColorRGBA;
+import org.lasarobotics.vision.android.Camera;
+import org.lasarobotics.vision.android.Cameras;
+import org.lasarobotics.vision.android.Sensors;
+import org.lasarobotics.vision.detection.ColorBlobDetector;
+import org.lasarobotics.vision.detection.objects.Contour;
+import org.lasarobotics.vision.ftc.resq.Beacon;
+import org.lasarobotics.vision.image.Drawing;
+import org.lasarobotics.vision.image.Transform;
+import org.lasarobotics.vision.util.FPS;
+import org.lasarobotics.vision.util.color.ColorGRAY;
+import org.lasarobotics.vision.util.color.ColorHSV;
+import org.lasarobotics.vision.util.color.ColorRGBA;
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.CameraBridgeViewBase.CvCameraViewFrame;
@@ -33,6 +36,7 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
     private static final ColorHSV upperBoundRed = new ColorHSV((int) ((360.0 + 5.0) / 360.0 * 255.0), 255, 255);
     private static final ColorHSV lowerBoundBlue = new ColorHSV((int) (170.0 / 360.0 * 255.0), (int) (0.200 * 255.0), (int) (0.750 * 255.0));
     private static final ColorHSV upperBoundBlue = new ColorHSV((int) (227.0 / 360.0 * 255.0), 255, 255);
+    Sensors sensors = new Sensors();
     private Mat mRgba; //RGBA scene image
     private Mat mGray; //Grayscale scene image
     private CameraBridgeViewBase mOpenCvCameraView;
@@ -61,6 +65,7 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
     };
     private ColorBlobDetector detectorRed;
     private ColorBlobDetector detectorBlue;
+
     public CameraTestActivity() {
 
     }
@@ -120,6 +125,7 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
         super.onPause();
         if (mOpenCvCameraView != null)
             mOpenCvCameraView.disableView();
+        sensors.stop();
     }
 
     @Override
@@ -132,6 +138,7 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
             // OpenCV library found inside package. Using it!
             mLoaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
         }
+        sensors.resume();
     }
 
     public void onDestroy() {
@@ -159,6 +166,11 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
         mRgba = inputFrame.rgba();
         mGray = inputFrame.gray();
         //Size originalSize = mRgba.size();
+
+        double angle = sensors.getScreenOrientationCompensation();
+        Log.w("Rotation", Double.toString(angle));
+        Transform.rotate(mRgba, angle);
+        Transform.rotate(mGray, angle);
 
         //Transform.flip(mRgba, Transform.FlipType.FLIP_BOTH);
         //Transform.flip(mGray, Transform.FlipType.FLIP_BOTH);
@@ -197,6 +209,9 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
         }
 
         Drawing.drawText(mRgba, "FPS: " + fpsCounter.getFPSString(), new Point(0, 24), 1.0f, new ColorRGBA("#ffffff")); //"#2196F3"
+        Drawing.drawText(mRgba, "Rot: " + sensors.getScreenOrientationCompensation() + "("
+                + sensors.getActivityScreenOrientation().getAngle() + " act, "
+                + sensors.getScreenOrientation().getAngle() + " sen)", new Point(0, 50), 1.0f, new ColorRGBA("#ffffff"), Drawing.Anchor.BOTTOMLEFT); //"#2196F3"
 
         return mRgba;
     }

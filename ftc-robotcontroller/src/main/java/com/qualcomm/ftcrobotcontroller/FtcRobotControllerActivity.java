@@ -68,28 +68,21 @@ import com.qualcomm.robotcore.util.ImmersiveMode;
 import com.qualcomm.robotcore.util.RobotLog;
 import com.qualcomm.robotcore.wifi.WifiDirectAssistant;
 
-import org.lasarobotics.vision.test.detection.QRDetector;
-import org.lasarobotics.vision.test.util.SoundFeedback;
-
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.Serializable;
 
 public class FtcRobotControllerActivity extends Activity {
 
+    public static final String CONFIGURE_FILENAME = "CONFIGURE_FILENAME";
     private static final int REQUEST_CONFIG_WIFI_CHANNEL = 1;
     private static final boolean USE_DEVICE_EMULATION = false;
     private static final int NUM_GAMEPADS = 2;
-
-    public static final String CONFIGURE_FILENAME = "CONFIGURE_FILENAME";
-
     protected SharedPreferences preferences;
 
     protected UpdateUI.Callback callback;
     protected Context context;
-    private Utility utility;
     protected ImageButton buttonMenu;
-
     protected TextView textDeviceName;
     protected TextView textWifiDirectStatus;
     protected TextView textRobotStatus;
@@ -97,23 +90,12 @@ public class FtcRobotControllerActivity extends Activity {
     protected TextView textOpMode;
     protected TextView textErrorMessage;
     protected ImmersiveMode immersion;
-
     protected UpdateUI updateUI;
     protected Dimmer dimmer;
     protected LinearLayout entireScreenLayout;
-
     protected FtcRobotControllerService controllerService;
-
     protected FtcEventLoop eventLoop;
-
-    protected class RobotRestarter implements Restarter {
-
-        public void requestRestart() {
-            requestRobotRestart();
-        }
-
-    }
-
+    private Utility utility;
     protected ServiceConnection connection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
@@ -241,7 +223,6 @@ public class FtcRobotControllerActivity extends Activity {
             immersion.cancelSystemUIHide();
         }
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -389,5 +370,13 @@ public class FtcRobotControllerActivity extends Activity {
                 toast.show();
             }
         });
+    }
+
+    protected class RobotRestarter implements Restarter {
+
+        public void requestRestart() {
+            requestRobotRestart();
+        }
+
     }
 }
