@@ -31,9 +31,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
 package com.qualcomm.ftcrobotcontroller.opmodes;
 
-import org.lasarobotics.vision.test.android.Cameras;
-import org.lasarobotics.vision.test.opmode.VisionOpMode;
-import org.lasarobotics.vision.test.util.ScreenOrientation;
+import org.lasarobotics.vision.android.Cameras;
+import org.lasarobotics.vision.opmode.VisionOpMode;
 import org.opencv.core.Size;
 
 /**

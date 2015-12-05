@@ -1,26 +1,22 @@
 package com.lasarobotics.tests.camera;
 
 import android.app.Activity;
-import android.content.Context;
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Surface;
 import android.view.WindowManager;
 
-import org.lasarobotics.vision.test.android.Camera;
-import org.lasarobotics.vision.test.android.Cameras;
-import org.lasarobotics.vision.test.android.Sensors;
-import org.lasarobotics.vision.test.detection.ColorBlobDetector;
-import org.lasarobotics.vision.test.detection.objects.Contour;
-import org.lasarobotics.vision.test.ftc.resq.Beacon;
-import org.lasarobotics.vision.test.image.Drawing;
-import org.lasarobotics.vision.test.image.Transform;
-import org.lasarobotics.vision.test.util.FPS;
-import org.lasarobotics.vision.test.util.ScreenOrientation;
-import org.lasarobotics.vision.test.util.color.ColorGRAY;
-import org.lasarobotics.vision.test.util.color.ColorHSV;
-import org.lasarobotics.vision.test.util.color.ColorRGBA;
+import org.lasarobotics.vision.android.Camera;
+import org.lasarobotics.vision.android.Cameras;
+import org.lasarobotics.vision.android.Sensors;
+import org.lasarobotics.vision.detection.ColorBlobDetector;
+import org.lasarobotics.vision.detection.objects.Contour;
+import org.lasarobotics.vision.ftc.resq.Beacon;
+import org.lasarobotics.vision.image.Drawing;
+import org.lasarobotics.vision.image.Transform;
+import org.lasarobotics.vision.util.FPS;
+import org.lasarobotics.vision.util.color.ColorGRAY;
+import org.lasarobotics.vision.util.color.ColorHSV;
+import org.lasarobotics.vision.util.color.ColorRGBA;
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.CameraBridgeViewBase.CvCameraViewFrame;
@@ -40,6 +36,7 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
     private static final ColorHSV upperBoundRed = new ColorHSV((int) ((360.0 + 5.0) / 360.0 * 255.0), 255, 255);
     private static final ColorHSV lowerBoundBlue = new ColorHSV((int) (170.0 / 360.0 * 255.0), (int) (0.200 * 255.0), (int) (0.750 * 255.0));
     private static final ColorHSV upperBoundBlue = new ColorHSV((int) (227.0 / 360.0 * 255.0), 255, 255);
+    Sensors sensors = new Sensors();
     private Mat mRgba; //RGBA scene image
     private Mat mGray; //Grayscale scene image
     private CameraBridgeViewBase mOpenCvCameraView;
@@ -68,6 +65,7 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
     };
     private ColorBlobDetector detectorRed;
     private ColorBlobDetector detectorBlue;
+
     public CameraTestActivity() {
 
     }
@@ -162,8 +160,6 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
         mRgba.release();
         mGray.release();
     }
-
-    Sensors sensors = new Sensors();
 
     public Mat onCameraFrame(CvCameraViewFrame inputFrame) {
         // input frame has RGBA format

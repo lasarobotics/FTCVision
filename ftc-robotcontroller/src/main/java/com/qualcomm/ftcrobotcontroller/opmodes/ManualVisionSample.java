@@ -31,15 +31,15 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
 package com.qualcomm.ftcrobotcontroller.opmodes;
 
-import org.lasarobotics.vision.test.android.Cameras;
-import org.lasarobotics.vision.test.detection.ColorBlobDetector;
-import org.lasarobotics.vision.test.detection.objects.Contour;
-import org.lasarobotics.vision.test.ftc.resq.Beacon;
-import org.lasarobotics.vision.test.image.Drawing;
-import org.lasarobotics.vision.test.opmode.ManualVisionOpMode;
-import org.lasarobotics.vision.test.util.color.ColorGRAY;
-import org.lasarobotics.vision.test.util.color.ColorHSV;
-import org.lasarobotics.vision.test.util.color.ColorRGBA;
+import org.lasarobotics.vision.android.Cameras;
+import org.lasarobotics.vision.detection.ColorBlobDetector;
+import org.lasarobotics.vision.detection.objects.Contour;
+import org.lasarobotics.vision.ftc.resq.Beacon;
+import org.lasarobotics.vision.image.Drawing;
+import org.lasarobotics.vision.opmode.ManualVisionOpMode;
+import org.lasarobotics.vision.util.color.ColorGRAY;
+import org.lasarobotics.vision.util.color.ColorHSV;
+import org.lasarobotics.vision.util.color.ColorRGBA;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Size;

@@ -1,4 +1,4 @@
-package org.lasarobotics.vision.test;
+package org.lasarobotics.test;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;
