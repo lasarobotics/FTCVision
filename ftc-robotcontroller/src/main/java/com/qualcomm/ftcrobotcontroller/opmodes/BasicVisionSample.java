@@ -66,7 +66,8 @@ public class BasicVisionSample extends VisionOpMode {
     public void loop() {
         super.loop();
 
-        telemetry.addData("Beacon Color", beacon.getAnalysis().toString());
+        telemetry.addData("Beacon Color", beacon.getAnalysis().getColorString());
+        telemetry.addData("Beacon Location (Center)", beacon.getAnalysis().getLocationString());
         telemetry.addData("Beacon Confidence", beacon.getAnalysis().getConfidenceString());
         telemetry.addData("QR Error", qr.getErrorReason());
         telemetry.addData("QR String", qr.getText());
