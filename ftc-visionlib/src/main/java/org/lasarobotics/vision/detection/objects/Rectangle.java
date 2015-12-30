@@ -11,6 +11,10 @@ import org.opencv.core.Size;
 public class Rectangle extends Detectable {
     RotatedRect rect = new RotatedRect();
 
+    public Rectangle() {
+        this.rect = new RotatedRect();
+    }
+
     public Rectangle(RotatedRect rect) {
         this.rect = rect;
     }
