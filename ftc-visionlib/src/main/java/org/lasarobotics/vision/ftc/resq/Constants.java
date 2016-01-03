@@ -9,16 +9,16 @@ public abstract class Constants {
     public static final double BEACON_WH_RATIO = BEACON_WIDTH / BEACON_HEIGHT; //entire beacon ratio
 
     static final double DETECTION_MIN_DISTANCE = 0.05;
-    static final double CONFIDENCE_DIVISOR = 30;
+    static final double CONFIDENCE_DIVISOR = 500;
 
     static final double CONTOUR_RATIO_BEST = BEACON_WH_RATIO; //best ratio for 100% score
-    static final double CONTOUR_RATIO_BIAS = 1.5; //points given at best ratio
     static final double CONTOUR_RATIO_NORM = 0.2; //normal distribution variance for ratio
+    static final double CONTOUR_RATIO_BIAS = 3.0; //points given at best ratio
 
     static final double CONTOUR_AREA_MIN = Math.log10(0.01);
-    static final double CONTOUR_AREA_MAX = Math.log10(1.00);
-    static final double CONTOUR_AREA_NORM = 0.2;
-    static final double CONTOUR_AREA_BIAS = 5.0;
+    static final double CONTOUR_AREA_MAX = Math.log10(25.00);
+    static final double CONTOUR_AREA_NORM = 0.4;
+    static final double CONTOUR_AREA_BIAS = 6.0;
 
     static final double CONTOUR_SCORE_MIN = 1;
 
@@ -37,7 +37,7 @@ public abstract class Constants {
 
     static final double ELLIPSE_SCORE_MIN = 1; //minimum score to keep the ellipse - theoretically, should be 1
 
-    static final double ASSOCIATION_MAX_DISTANCE = 0.20; //as fraction of screen
-    static final double ASSOCIATION_NO_ELLIPSE_FACTOR = 0.75;
-    static final double ASSOCIATION_ELLIPSE_SCORE_MULTIPLIER = 0.25;
+    static final double ASSOCIATION_MAX_DISTANCE = 0.10; //as fraction of screen
+    static final double ASSOCIATION_NO_ELLIPSE_FACTOR = 0.50;
+    static final double ASSOCIATION_ELLIPSE_SCORE_MULTIPLIER = 0.75;
 }
