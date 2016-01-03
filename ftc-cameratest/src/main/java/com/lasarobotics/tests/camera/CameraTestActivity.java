@@ -170,7 +170,7 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
         mGray = inputFrame.gray();
         //Size originalSize = mRgba.size();
 
-        double angle = sensors.getScreenOrientationCompensation();
+        double angle = -sensors.getScreenOrientationCompensation();
         Log.w("Rotation", Double.toString(angle));
         Transform.rotate(mRgba, angle);
         Transform.rotate(mGray, angle);

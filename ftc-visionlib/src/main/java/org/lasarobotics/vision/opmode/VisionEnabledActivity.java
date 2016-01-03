@@ -18,6 +18,7 @@ import org.opencv.core.Size;
 /**
  * Initiates a VisionEnabledActivity
  */
+@Deprecated
 public abstract class VisionEnabledActivity extends Activity {
     public static CameraBridgeViewBase openCVCamera;
 
