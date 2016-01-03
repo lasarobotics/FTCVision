@@ -51,6 +51,7 @@ public abstract class VisionEnabledActivity extends Activity implements CameraBr
 
         opMode.sensors = new Sensors();
         opMode.fps = new FPS();
+        //FIXME this is the line that causes glitchiness
         TestableVisionOpMode.openCVCamera = (JavaCameraView) openCVCamera;
     }
 
