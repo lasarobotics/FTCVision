@@ -31,6 +31,8 @@ import java.util.List;
 
 public class CameraTestActivity extends Activity implements CvCameraViewListener2 {
 
+    private static final Cameras CAMERA = Cameras.SECONDARY;
+
     private static final ColorHSV colorRadius = new ColorHSV(50, 75, 127);
     private final ColorHSV lowerBoundRed = new ColorHSV((int) (305 / 360.0 * 255.0), (int) (0.100 * 255.0), (int) (0.300 * 255.0));
     private final ColorHSV upperBoundRed = new ColorHSV((int) ((360.0 + 5.0) / 360.0 * 255.0), 255, 255);
@@ -118,6 +120,7 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
 
         mOpenCvCameraView = (CameraBridgeViewBase) findViewById(R.id.surfaceView);
         mOpenCvCameraView.setCvCameraViewListener(this);
+        mOpenCvCameraView.setCameraIndex(CAMERA.getID());
     }
 
     @Override
@@ -167,7 +170,7 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
         mGray = inputFrame.gray();
         //Size originalSize = mRgba.size();
 
-        double angle = sensors.getScreenOrientationCompensation();
+        double angle = -sensors.getScreenOrientationCompensation();
         Log.w("Rotation", Double.toString(angle));
         Transform.rotate(mRgba, angle);
         Transform.rotate(mGray, angle);
