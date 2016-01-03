@@ -8,7 +8,7 @@ import org.lasarobotics.vision.opmode.VisionEnabledActivity;
 public class CameraTestActivity extends VisionEnabledActivity {
 
     public CameraTestActivity() {
-        super(new CameraTestVisionOpMode());
+        super();
     }
 
     /**
@@ -21,6 +21,6 @@ public class CameraTestActivity extends VisionEnabledActivity {
 
         setContentView(R.layout.activity_cameratest);
 
-        initializeVision(R.id.surfaceView);
+        initializeVision(R.id.surfaceView, new CameraTestVisionOpMode());
     }
 }

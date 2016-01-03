@@ -9,6 +9,7 @@ import org.lasarobotics.vision.android.Sensors;
 import org.lasarobotics.vision.util.FPS;
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase;
+import org.opencv.android.JavaCameraView;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.core.Mat;
@@ -37,17 +38,20 @@ public abstract class VisionEnabledActivity extends Activity implements CameraBr
         }
     };
 
-    protected VisionEnabledActivity(TestableVisionOpMode opMode) {
+    protected VisionEnabledActivity() {
+
+    }
+
+    protected final void initializeVision(int framePreview, TestableVisionOpMode opMode) {
+        openCVCamera = (CameraBridgeViewBase) findViewById(framePreview);
+        openCVCamera.setVisibility(SurfaceView.VISIBLE);
+        openCVCamera.setCvCameraViewListener(this);
+
         this.opMode = opMode;
 
         opMode.sensors = new Sensors();
         opMode.fps = new FPS();
-    }
-
-    protected final void initializeVision(int framePreview) {
-        openCVCamera = (CameraBridgeViewBase) findViewById(framePreview);
-        openCVCamera.setVisibility(SurfaceView.VISIBLE);
-        openCVCamera.setCvCameraViewListener(this);
+        TestableVisionOpMode.openCVCamera = (JavaCameraView) openCVCamera;
     }
 
     @Override
@@ -92,6 +96,9 @@ public abstract class VisionEnabledActivity extends Activity implements CameraBr
     @Override
     protected void onResume() {
         super.onResume();
+
+        if (opMode == null)
+            return;
 
         if (!OpenCVLoader.initDebug()) {
             Log.d("OpenCV", "Internal OpenCV library not found. Using OpenCV Manager for initialization");

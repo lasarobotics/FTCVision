@@ -32,7 +32,7 @@ public class CameraTestVisionOpMode extends TestableVisionOpMode {
 
         //Enable extensions. Use what you need.
         enableExtension(VisionOpMode.Extensions.BEACON);     //Beacon detection
-        //enableExtension(VisionOpMode.Extensions.QR);         //QR Code detection
+        enableExtension(VisionOpMode.Extensions.QR);         //QR Code detection
         enableExtension(VisionOpMode.Extensions.ROTATION);   //Automatic screen rotation correction
 
         //You can do this for certain phones which switch red and blue

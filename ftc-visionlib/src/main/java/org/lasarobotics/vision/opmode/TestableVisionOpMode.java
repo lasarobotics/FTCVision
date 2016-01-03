@@ -11,7 +11,7 @@ public abstract class TestableVisionOpMode extends VisionOpMode {
      */
     public TestableVisionOpMode() {
         super(false); //disable OpenCV core functions
-        openCVCamera = null;
+        //openCVCamera = cameraView;
     }
 
     @Override

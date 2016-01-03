@@ -49,7 +49,7 @@ abstract class VisionOpModeCore extends OpMode implements CameraBridgeViewBase.C
     public FPS fps;
     public Sensors sensors;
 
-    public final void setCamera(Cameras camera) {
+    public void setCamera(Cameras camera) {
         if (openCVCamera == null)
             return;
         openCVCamera.disconnectCamera();
@@ -57,7 +57,7 @@ abstract class VisionOpModeCore extends OpMode implements CameraBridgeViewBase.C
         openCVCamera.connectCamera(width, height);
     }
 
-    public final void setFrameSize(Size frameSize) {
+    public void setFrameSize(Size frameSize) {
         if (openCVCamera == null)
             return;
         openCVCamera.setMaxFrameSize((int) frameSize.width, (int) frameSize.height);
