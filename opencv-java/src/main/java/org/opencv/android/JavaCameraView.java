@@ -1,7 +1,5 @@
 package org.opencv.android;
 
-import java.util.List;
-
 import android.content.Context;
 import android.graphics.ImageFormat;
 import android.graphics.SurfaceTexture;
@@ -17,6 +15,8 @@ import org.opencv.core.Mat;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
+import java.util.List;
+
 /**
  * This class is an implementation of the Bridge View between OpenCV and Java Camera.
  * This class relays on the functionality available in base class and only implements
@@ -30,41 +30,15 @@ public class JavaCameraView extends CameraBridgeViewBase implements PreviewCallb
 
     private static final int MAGIC_TEXTURE_ID = 10;
     private static final String TAG = "JavaCameraView";
-
+    protected Camera mCamera;
+    protected JavaCameraFrame[] mCameraFrame;
     private byte mBuffer[];
     private Mat[] mFrameChain;
     private int mChainIdx = 0;
     private Thread mThread;
     private boolean mStopThread;
-
-    protected Camera mCamera;
-    protected JavaCameraFrame[] mCameraFrame;
     private SurfaceTexture mSurfaceTexture;
-
-    public int getFrameWidth()
-    {
-        return mFrameWidth;
-    }
-
-    public int getFrameHeight()
-    {
-        return mFrameHeight;
-    }
-
-    public static class JavaCameraSizeAccessor implements ListItemAccessor {
-
-        @Override
-        public int getWidth(Object obj) {
-            Camera.Size size = (Camera.Size) obj;
-            return size.width;
-        }
-
-        @Override
-        public int getHeight(Object obj) {
-            Camera.Size size = (Camera.Size) obj;
-            return size.height;
-        }
-    }
+    private boolean mCameraFrameReady = false;
 
     public JavaCameraView(Context context, int cameraId) {
         super(context, cameraId);
@@ -240,8 +214,6 @@ public class JavaCameraView extends CameraBridgeViewBase implements PreviewCallb
         }
     }
 
-    private boolean mCameraFrameReady = false;
-
     @Override
     public boolean connectCamera(int width, int height) {
 
@@ -282,7 +254,7 @@ public class JavaCameraView extends CameraBridgeViewBase implements PreviewCallb
         } catch (InterruptedException e) {
             e.printStackTrace();
         } finally {
-            mThread =  null;
+            mThread = null;
         }
 
         /* Now release camera */
@@ -303,7 +275,35 @@ public class JavaCameraView extends CameraBridgeViewBase implements PreviewCallb
             mCamera.addCallbackBuffer(mBuffer);
     }
 
+    public static class JavaCameraSizeAccessor implements ListItemAccessor {
+
+        @Override
+        public int getWidth(Object obj) {
+            Camera.Size size = (Camera.Size) obj;
+            return size.width;
+        }
+
+        @Override
+        public int getHeight(Object obj) {
+            Camera.Size size = (Camera.Size) obj;
+            return size.height;
+        }
+    }
+
     private class JavaCameraFrame implements CvCameraViewFrame {
+        private Mat mYuvFrameData;
+        private Mat mRgba;
+        private int mWidth;
+        private int mHeight;
+
+        public JavaCameraFrame(Mat Yuv420sp, int width, int height) {
+            super();
+            mWidth = width;
+            mHeight = height;
+            mYuvFrameData = Yuv420sp;
+            mRgba = new Mat();
+        }
+
         @Override
         public Mat gray() {
             return mYuvFrameData.submat(0, mHeight, 0, mWidth);
@@ -315,29 +315,17 @@ public class JavaCameraView extends CameraBridgeViewBase implements PreviewCallb
             return mRgba;
         }
 
-        public JavaCameraFrame(Mat Yuv420sp, int width, int height) {
-            super();
-            mWidth = width;
-            mHeight = height;
-            mYuvFrameData = Yuv420sp;
-            mRgba = new Mat();
-        }
-
         public void release() {
             mRgba.release();
         }
-
-        private Mat mYuvFrameData;
-        private Mat mRgba;
-        private int mWidth;
-        private int mHeight;
-    };
+    }
 
     private class CameraWorker implements Runnable {
 
         @Override
         public void run() {
             do {
+                boolean hasFrame = false;
                 synchronized (JavaCameraView.this) {
                     try {
                         while (!mCameraFrameReady && !mStopThread) {
@@ -346,12 +334,14 @@ public class JavaCameraView extends CameraBridgeViewBase implements PreviewCallb
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                    if (mCameraFrameReady)
+                    if (mCameraFrameReady) {
                         mChainIdx = 1 - mChainIdx;
+                        mCameraFrameReady = false;
+                        hasFrame = true;
+                    }
                 }
 
-                if (!mStopThread && mCameraFrameReady) {
-                    mCameraFrameReady = false;
+                if (!mStopThread && hasFrame) {
                     if (!mFrameChain[1 - mChainIdx].empty())
                         deliverAndDrawFrame(mCameraFrame[1 - mChainIdx]);
                 }
