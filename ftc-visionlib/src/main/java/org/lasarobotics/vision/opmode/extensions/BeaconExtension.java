@@ -51,7 +51,7 @@ public class BeaconExtension implements VisionExtension {
 
             //Get color analysis
             Beacon beacon = new Beacon();
-            this.analysis = beacon.analyzeColor(contoursRed, contoursBlue, rgba, gray);
+            this.analysis = beacon.analyzeColor(contoursRed, contoursBlue, rgba, gray, analysis);
 
         } catch (Exception e) {
             e.printStackTrace();

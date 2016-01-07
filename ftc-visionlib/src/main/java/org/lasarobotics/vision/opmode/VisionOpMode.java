@@ -96,4 +96,12 @@ public abstract class VisionOpMode extends VisionOpModeCore {
             this.instance = instance;
         }
     }
+
+    public double getFPS() {
+        return fps.getFPS();
+    }
+
+    public BeaconExtension getBeaconState() {
+        return beacon;
+    }
 }

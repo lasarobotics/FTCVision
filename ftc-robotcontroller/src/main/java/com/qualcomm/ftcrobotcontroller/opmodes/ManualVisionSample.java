@@ -57,7 +57,7 @@ public class ManualVisionSample extends ManualVisionOpMode {
     private static final ColorHSV upperBoundRed = new ColorHSV((int) ((360.0 + 5.0) / 360.0 * 255.0), 255, 255);
     private static final ColorHSV lowerBoundBlue = new ColorHSV((int) (170.0 / 360.0 * 255.0), (int) (0.200 * 255.0), (int) (0.750 * 255.0));
     private static final ColorHSV upperBoundBlue = new ColorHSV((int) (227.0 / 360.0 * 255.0), 255, 255);
-    private Beacon.BeaconAnalysis colorAnalysis = new Beacon.BeaconAnalysis();
+    private Beacon.BeaconAnalysis colorAnalysis = new Beacon.BeaconAnalysis(new Size());
     private ColorBlobDetector detectorRed;
     private ColorBlobDetector detectorBlue;
     private boolean noError = true;
@@ -103,7 +103,7 @@ public class ManualVisionSample extends ManualVisionOpMode {
 
             //Get color analysis
             Beacon beacon = new Beacon();
-            colorAnalysis = beacon.analyzeColor(contoursRed, contoursBlue, rgba, gray);
+            colorAnalysis = beacon.analyzeColor(contoursRed, contoursBlue, rgba, gray, colorAnalysis);
 
             //Draw red and blue contours
             Drawing.drawContours(rgba, contoursRed, new ColorRGBA(255, 0, 0), 2);

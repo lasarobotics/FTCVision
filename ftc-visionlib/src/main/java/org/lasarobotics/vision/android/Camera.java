@@ -18,6 +18,10 @@ public class Camera {
     public Camera(Cameras camera) {
         makeCamera(camera.getID());
     }
+    public Camera(int cameraID)
+    {
+        makeCamera(cameraID);
+    }
 
     public static boolean isHardwareAvailable() {
         return Util.getContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA);

@@ -11,6 +11,7 @@ import org.lasarobotics.vision.android.Sensors;
 import org.lasarobotics.vision.detection.ColorBlobDetector;
 import org.lasarobotics.vision.detection.objects.Contour;
 import org.lasarobotics.vision.ftc.resq.Beacon;
+import org.lasarobotics.vision.ftc.resq.Constants;
 import org.lasarobotics.vision.image.Drawing;
 import org.lasarobotics.vision.image.Transform;
 import org.lasarobotics.vision.util.FPS;
@@ -26,6 +27,7 @@ import org.opencv.android.OpenCVLoader;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
+import org.opencv.core.Size;
 
 import java.util.List;
 
@@ -76,6 +78,8 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
         //GET CAMERA PROPERTIES
         Camera cam = Cameras.PRIMARY.createCamera();
         android.hardware.Camera.Parameters pam = cam.getCamera().getParameters();
+        Constants.CAMERA_HOR_VANGLE = pam.getHorizontalViewAngle() * Math.PI/180.0;
+        Constants.CAMERA_VERT_VANGLE = pam.getVerticalViewAngle() * Math.PI/180.0;
         focalLength = pam.getFocalLength();
         cam.release();
 
@@ -164,11 +168,16 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
         mGray.release();
     }
 
+    Beacon.BeaconAnalysis colorAnalysis = new Beacon.BeaconAnalysis(new Size());
+
     public Mat onCameraFrame(CvCameraViewFrame inputFrame) {
         // input frame has RGBA format
         mRgba = inputFrame.rgba();
         mGray = inputFrame.gray();
         //Size originalSize = mRgba.size();
+
+        fpsCounter.update();
+        Constants.DIST_CHANGE_THRESHOLD = 4*Constants.MAX_DIST_CHANGE/fpsCounter.getFPS();
 
         double angle = -sensors.getScreenOrientationCompensation();
         Log.w("Rotation", Double.toString(angle));
@@ -194,7 +203,7 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
 
             //Get color analysis
             Beacon beacon = new Beacon();
-            Beacon.BeaconAnalysis colorAnalysis = beacon.analyzeColor(contoursRed, contoursBlue, mRgba, mGray);
+            colorAnalysis = beacon.analyzeColor(contoursRed, contoursBlue, mRgba, mGray, colorAnalysis);
 
 
             //DEBUG confidence output
