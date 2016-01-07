@@ -192,6 +192,7 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
     }
 
     public Mat onCameraFrame(CvCameraViewFrame inputFrame) {
+        Log.d("AAAAAAAAAAAAAAAAAA", "EEEEEEEEEEEEEEEEEEE");
         // input frame has RGBA format
         mRgba = inputFrame.rgba();
         mGray = inputFrame.gray();
@@ -212,6 +213,7 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
                 qre.setShouldColorCorrect(true);
                 qre.setShouldRotate(false);
                 qre.setDebugInfo(true);
+                qre.setStopOnFTCQRCode(false);
             }
             qre.frame(null, mRgba, mGray);
             QRExtension.FTCQRCodeInfo ftcqrci = qre.getCodeInfo();
