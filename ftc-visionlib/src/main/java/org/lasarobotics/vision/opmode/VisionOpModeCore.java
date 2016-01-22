@@ -9,6 +9,7 @@ import android.widget.LinearLayout;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.lasarobotics.vision.android.Cameras;
+import org.lasarobotics.vision.android.Sensors;
 import org.lasarobotics.vision.util.FPS;
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase;
@@ -23,10 +24,10 @@ import org.opencv.core.Size;
  */
 abstract class VisionOpModeCore extends OpMode implements CameraBridgeViewBase.CvCameraViewListener2 {
     private static final int initialMaxSize = 1200;
-    private static JavaCameraView openCVCamera;
+    protected static JavaCameraView openCVCamera;
     private static boolean initialized = false;
     private static boolean openCVInitialized = false;
-    private final BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(hardwareMap.appContext) {
+    protected final BaseLoaderCallback openCVLoaderCallback = new BaseLoaderCallback(hardwareMap.appContext) {
         @Override
         public void onManagerConnected(int status) {
             switch (status) {
@@ -45,15 +46,20 @@ abstract class VisionOpModeCore extends OpMode implements CameraBridgeViewBase.C
     };
 
     public int width, height;
-    protected FPS fps;
+    public FPS fps;
+    public Sensors sensors;
 
-    public final void setCamera(Cameras camera) {
+    public void setCamera(Cameras camera) {
+        if (openCVCamera == null)
+            return;
         openCVCamera.disconnectCamera();
         openCVCamera.setCameraIndex(camera.getID());
         openCVCamera.connectCamera(width, height);
     }
 
-    public final void setFrameSize(Size frameSize) {
+    public void setFrameSize(Size frameSize) {
+        if (openCVCamera == null)
+            return;
         openCVCamera.setMaxFrameSize((int) frameSize.width, (int) frameSize.height);
 
         openCVCamera.disconnectCamera();
@@ -71,14 +77,14 @@ abstract class VisionOpModeCore extends OpMode implements CameraBridgeViewBase.C
 
         if (!OpenCVLoader.initDebug()) {
             Log.d("OpenCV", "Internal OpenCV library not found. Using OpenCV Manager for initialization");
-            boolean success = OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_0_0, hardwareMap.appContext, mLoaderCallback);
+            boolean success = OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_0_0, hardwareMap.appContext, openCVLoaderCallback);
             if (!success)
                 Log.e("OpenCV", "Asynchronous initialization failed!");
             else
                 Log.d("OpenCV", "Asynchronous initialization succeeded!");
         } else {
             Log.d("OpenCV", "OpenCV library found inside package. Using it!");
-            mLoaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
+            openCVLoaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
         }
 
         while (!openCVInitialized) {
@@ -109,8 +115,9 @@ abstract class VisionOpModeCore extends OpMode implements CameraBridgeViewBase.C
                 openCVCamera.enableView();
                 openCVCamera.connectCamera(initialMaxSize, initialMaxSize);
 
-                //Initialize FPS counter
+                //Initialize FPS counter and sensors
                 fps = new FPS();
+                sensors = new Sensors();
 
                 //Done!
                 width = openCVCamera.getFrameWidth();

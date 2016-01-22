@@ -15,14 +15,28 @@ public abstract class VisionOpMode extends VisionOpModeCore {
 
     /***
      * CUSTOM EXTENSION INITIALIZATION
-     * <p/>
+     *
      * Add your extension here and in the Extensions class below!
      */
     protected static BeaconExtension beacon = new BeaconExtension();
     protected static QRExtension qr = new QRExtension();
     protected static ImageRotationExtension rotation = new ImageRotationExtension();
+    private boolean enableOpenCV = true;
+    /**
+     * END OF CUSTOM EXTENSION INITIALIZATION
+     */
+
     private int extensions = 0;
     private boolean initialized = false;
+
+    public VisionOpMode() {
+        super();
+    }
+
+    protected VisionOpMode(boolean enableOpenCV) {
+        super();
+        this.enableOpenCV = enableOpenCV;
+    }
 
     protected boolean isEnabled(Extensions extension) {
         return (extensions & extension.id) > 0;
@@ -44,7 +58,7 @@ public abstract class VisionOpMode extends VisionOpModeCore {
 
     @Override
     public void init() {
-        super.init();
+        if (enableOpenCV) super.init();
 
         for (Extensions extension : Extensions.values())
             if (isEnabled(extension))
@@ -55,7 +69,7 @@ public abstract class VisionOpMode extends VisionOpModeCore {
 
     @Override
     public void loop() {
-        super.loop();
+        if (enableOpenCV) super.loop();
 
         for (Extensions extension : Extensions.values())
             if (isEnabled(extension))
@@ -76,7 +90,7 @@ public abstract class VisionOpMode extends VisionOpModeCore {
 
     @Override
     public void stop() {
-        super.stop();
+        if (enableOpenCV) super.stop();
 
         for (Extensions extension : Extensions.values())
             if (isEnabled(extension))
@@ -85,8 +99,8 @@ public abstract class VisionOpMode extends VisionOpModeCore {
 
     public enum Extensions {
         BEACON(2, beacon),
-        QR(4, qr),
-        ROTATION(1, rotation); //high priority
+        QR(4, qr),             //low priority
+        ROTATION(1, rotation); //high priority - image must rotate prior to analysis
 
         final int id;
         VisionExtension instance;
