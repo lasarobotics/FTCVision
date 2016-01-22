@@ -60,6 +60,10 @@ public class BasicVisionSample extends VisionOpMode {
         //You can do this for certain phones which switch red and blue
         //It will rotate the display and detection by 180 degrees, making it upright
         //rotation.setUnbiasedOrientation(ScreenOrientation.LANDSCAPE_WEST);
+
+        //You can also do this when using the secondary camera
+        //Sometimes it is necessary to ensure upright rotation
+        rotation.setRotationInversion(true);
     }
 
     @Override

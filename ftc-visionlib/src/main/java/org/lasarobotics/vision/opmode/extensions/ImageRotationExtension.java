@@ -13,6 +13,7 @@ public class ImageRotationExtension implements VisionExtension {
 
     private Sensors sensors = new Sensors();
     private ScreenOrientation unbiasedOrientation = ScreenOrientation.LANDSCAPE;
+    private boolean isInverted = false;
     public ScreenOrientation getScreenOrientationDisplay() {
         return sensors.getActivityScreenOrientation();
     }
@@ -25,9 +26,29 @@ public class ImageRotationExtension implements VisionExtension {
     }
     public double getRotationAngle()
     {
-        return ScreenOrientation.getFromAngle(sensors.getScreenOrientationCompensation() +
+        return (isInverted ? -1 : 1) * ScreenOrientation.getFromAngle(sensors.getScreenOrientationCompensation() +
                 unbiasedOrientation.getAngle()).getAngle();
     }
+
+    /**
+     * Set whether the direction of rotation should be inverted.
+     * This may be necessary when using the inner camera
+     *
+     * @param inverted True to rotate counterclockwise, false for clockwise
+     */
+    public void setRotationInversion(boolean inverted) {
+        isInverted = inverted;
+    }
+
+    /**
+     * Returns whether rotation is inverted
+     *
+     * @return True is rotating counterclockwise, false otherwise
+     */
+    public boolean isRotationInverted() {
+        return isInverted;
+    }
+
 
     @Override
     public void init(VisionOpMode opmode) {
