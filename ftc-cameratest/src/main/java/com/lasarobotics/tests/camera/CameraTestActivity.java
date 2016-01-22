@@ -11,6 +11,7 @@ import org.lasarobotics.vision.android.Sensors;
 import org.lasarobotics.vision.detection.ColorBlobDetector;
 import org.lasarobotics.vision.detection.objects.Contour;
 import org.lasarobotics.vision.ftc.resq.Beacon;
+import org.lasarobotics.vision.ftc.resq.Constants;
 import org.lasarobotics.vision.image.Drawing;
 import org.lasarobotics.vision.image.Transform;
 import org.lasarobotics.vision.util.FPS;
@@ -31,13 +32,9 @@ import java.util.List;
 
 public class CameraTestActivity extends Activity implements CvCameraViewListener2 {
 
-    private static final Cameras CAMERA = Cameras.SECONDARY;
+    private static final Cameras CAMERA = Cameras.PRIMARY;
 
     private static final ColorHSV colorRadius = new ColorHSV(50, 75, 127);
-    private final ColorHSV lowerBoundRed = new ColorHSV((int) (305 / 360.0 * 255.0), (int) (0.100 * 255.0), (int) (0.300 * 255.0));
-    private final ColorHSV upperBoundRed = new ColorHSV((int) ((360.0 + 5.0) / 360.0 * 255.0), 255, 255);
-    private final ColorHSV lowerBoundBlue = new ColorHSV((int) (170.0 / 360.0 * 255.0), (int) (0.100 * 255.0), (int) (0.300 * 255.0));
-    private final ColorHSV upperBoundBlue = new ColorHSV((int) (227.0 / 360.0 * 255.0), 255, 255);
     Sensors sensors = new Sensors();
     private Mat mRgba; //RGBA scene image
     private Mat mGray; //Grayscale scene image
@@ -155,8 +152,8 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
         mGray = new Mat(height, width, CvType.CV_8UC1);
 
         //Initialize all detectors here
-        detectorRed = new ColorBlobDetector(lowerBoundRed, upperBoundRed);
-        detectorBlue = new ColorBlobDetector(lowerBoundBlue, upperBoundBlue);
+        detectorRed = new ColorBlobDetector(Constants.COLOR_RED_LOWER, Constants.COLOR_RED_UPPER);
+        detectorBlue = new ColorBlobDetector(Constants.COLOR_BLUE_LOWER, Constants.COLOR_BLUE_UPPER);
     }
 
     public void onCameraViewStopped() {
@@ -172,11 +169,11 @@ public class CameraTestActivity extends Activity implements CvCameraViewListener
 
         double angle = -sensors.getScreenOrientationCompensation();
         Log.w("Rotation", Double.toString(angle));
-        Transform.rotate(mRgba, angle);
-        Transform.rotate(mGray, angle);
+        //Transform.rotate(mRgba, angle);
+        //Transform.rotate(mGray, angle);
 
-        //Transform.flip(mRgba, Transform.FlipType.FLIP_BOTH);
-        //Transform.flip(mGray, Transform.FlipType.FLIP_BOTH);
+        Transform.flip(mRgba, Transform.FlipType.FLIP_BOTH);
+        Transform.flip(mGray, Transform.FlipType.FLIP_BOTH);
 
         //Transform.shrink(mRgba, new Size(480, 480), true);
         //Transform.shrink(mGray, new Size(480, 480), true);

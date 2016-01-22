@@ -3,8 +3,8 @@ package org.lasarobotics.vision.opmode.extensions;
 import org.lasarobotics.vision.detection.ColorBlobDetector;
 import org.lasarobotics.vision.detection.objects.Contour;
 import org.lasarobotics.vision.ftc.resq.Beacon;
+import org.lasarobotics.vision.ftc.resq.Constants;
 import org.lasarobotics.vision.opmode.VisionOpMode;
-import org.lasarobotics.vision.util.color.ColorHSV;
 import org.opencv.core.Mat;
 
 import java.util.List;
@@ -13,10 +13,6 @@ import java.util.List;
  * Extension that supports finding and reading beacon color data
  */
 public class BeaconExtension implements VisionExtension {
-    private final ColorHSV lowerBoundRed = new ColorHSV((int) (305 / 360.0 * 255.0), (int) (0.100 * 255.0), (int) (0.300 * 255.0));
-    private final ColorHSV upperBoundRed = new ColorHSV((int) ((360.0 + 5.0) / 360.0 * 255.0), 255, 255);
-    private final ColorHSV lowerBoundBlue = new ColorHSV((int) (170.0 / 360.0 * 255.0), (int) (0.100 * 255.0), (int) (0.300 * 255.0));
-    private final ColorHSV upperBoundBlue = new ColorHSV((int) (227.0 / 360.0 * 255.0), 255, 255);
     private ColorBlobDetector detectorRed;
     private ColorBlobDetector detectorBlue;
 
@@ -28,8 +24,8 @@ public class BeaconExtension implements VisionExtension {
 
     public void init(VisionOpMode opmode) {
         //Initialize all detectors here
-        detectorRed = new ColorBlobDetector(lowerBoundRed, upperBoundRed);
-        detectorBlue = new ColorBlobDetector(lowerBoundBlue, upperBoundBlue);
+        detectorRed = new ColorBlobDetector(Constants.COLOR_RED_LOWER, Constants.COLOR_RED_UPPER);
+        detectorBlue = new ColorBlobDetector(Constants.COLOR_BLUE_LOWER, Constants.COLOR_BLUE_UPPER);
 
         //opmode.setCamera(Cameras.PRIMARY);
         //opmode.setFrameSize(new Size(900, 900));
