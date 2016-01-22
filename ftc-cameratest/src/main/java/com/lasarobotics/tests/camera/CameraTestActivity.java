@@ -32,7 +32,7 @@ import java.util.List;
 
 public class CameraTestActivity extends Activity implements CvCameraViewListener2 {
 
-    private static final Cameras CAMERA = Cameras.SECONDARY;
+    private static final Cameras CAMERA = Cameras.PRIMARY;
 
     private static final ColorHSV colorRadius = new ColorHSV(50, 75, 127);
     Sensors sensors = new Sensors();
