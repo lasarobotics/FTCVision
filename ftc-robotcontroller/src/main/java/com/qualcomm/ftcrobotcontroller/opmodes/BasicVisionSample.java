@@ -47,7 +47,7 @@ public class BasicVisionSample extends VisionOpMode {
         super.init();
 
         //Set the camera used for detection
-        this.setCamera(Cameras.PRIMARY);
+        this.setCamera(Cameras.SECONDARY);
         //Set the frame size
         //Larger = sometimes more accurate, but also much slower
         this.setFrameSize(new Size(900, 900));

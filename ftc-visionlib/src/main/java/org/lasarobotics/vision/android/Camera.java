@@ -36,7 +36,8 @@ public class Camera {
         try {
             this.c = android.hardware.Camera.open(id);
         } catch (Exception e) {
-            this.c = null;
+            throw e;
+            //this.c = null;
         }
     }
 
