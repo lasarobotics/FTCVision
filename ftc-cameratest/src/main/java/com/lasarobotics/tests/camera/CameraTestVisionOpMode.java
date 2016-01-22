@@ -14,11 +14,10 @@ import org.opencv.imgproc.Imgproc;
 
 /**
  * Vision OpMode run by the Camera Test Activity
- * This OpMode should NOT be used for the robot controller OpModes
+ * Use TestableVisionOpModes in testing apps ONLY (but you can easily convert between opmodes just by changingt t
  */
 public class CameraTestVisionOpMode extends TestableVisionOpMode {
 
-    //This is a special override method ONLY for testing activity
     @Override
     public void init() {
         super.init();
@@ -27,7 +26,7 @@ public class CameraTestVisionOpMode extends TestableVisionOpMode {
         this.setCamera(Cameras.SECONDARY);
         //Set the frame size
         //Larger = sometimes more accurate, but also much slower
-        //For Testable OpModes, this works
+        //For Testable OpModes, this might make the image appear small - it might be best not to use this
         //this.setFrameSize(new Size(900, 900));
 
         //Enable extensions. Use what you need.
