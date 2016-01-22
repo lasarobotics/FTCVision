@@ -57,6 +57,5 @@ public class FtcOpModeRegister implements OpModeRegister {
         manager.register("NullOp", NullOp.class);
         manager.register("Basic Vision Sample", BasicVisionSample.class);
         manager.register("Manual Vision Sample", ManualVisionSample.class);
-        manager.register("Move to Beacon Sample", MoveToBeaconVisionSample.class);
     }
 }
