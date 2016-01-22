@@ -29,6 +29,7 @@ public enum ScreenOrientation {
 
         switch (angle) {
             case 0:
+            case 360:
                 return LANDSCAPE;
             case 90:
                 return PORTRAIT;

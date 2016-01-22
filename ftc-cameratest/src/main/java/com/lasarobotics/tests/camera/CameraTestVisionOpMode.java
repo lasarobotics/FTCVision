@@ -10,7 +10,6 @@ import org.lasarobotics.vision.util.color.ColorGRAY;
 import org.lasarobotics.vision.util.color.ColorRGBA;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
-import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
 /**
@@ -25,14 +24,15 @@ public class CameraTestVisionOpMode extends TestableVisionOpMode {
         super.init();
 
         //Set the camera used for detection
-        this.setCamera(Cameras.PRIMARY);
+        this.setCamera(Cameras.SECONDARY);
         //Set the frame size
         //Larger = sometimes more accurate, but also much slower
-        this.setFrameSize(new Size(900, 900));
+        //For Testable OpModes, this works
+        //this.setFrameSize(new Size(900, 900));
 
         //Enable extensions. Use what you need.
         enableExtension(VisionOpMode.Extensions.BEACON);     //Beacon detection
-        enableExtension(VisionOpMode.Extensions.QR);         //QR Code detection
+        //enableExtension(VisionOpMode.Extensions.QR);         //QR Code detection
         enableExtension(VisionOpMode.Extensions.ROTATION);   //Automatic screen rotation correction
 
         //You can do this for certain phones which switch red and blue
@@ -44,6 +44,7 @@ public class CameraTestVisionOpMode extends TestableVisionOpMode {
     public void loop() {
         super.loop();
 
+        //Telemetry won't work here
         /*telemetry.addData("Beacon Color", beacon.getAnalysis().getColorString());
         telemetry.addData("Beacon Location (Center)", beacon.getAnalysis().getLocationString());
         telemetry.addData("Beacon Confidence", beacon.getAnalysis().getConfidenceString());
