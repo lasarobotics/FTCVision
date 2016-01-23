@@ -24,11 +24,11 @@ public class CameraTestVisionOpMode extends TestableVisionOpMode {
         super.init();
 
         //Set the camera used for detection
-        this.setCamera(Cameras.SECONDARY);
+        this.setCamera(Cameras.PRIMARY);
         //Set the frame size
         //Larger = sometimes more accurate, but also much slower
         //For Testable OpModes, this might make the image appear small - it might be best not to use this
-        this.setFrameSize(new Size(200, 200));
+        this.setFrameSize(new Size(1200, 1200));
 
         //Enable extensions. Use what you need.
         enableExtension(VisionOpMode.Extensions.BEACON);     //Beacon detection
