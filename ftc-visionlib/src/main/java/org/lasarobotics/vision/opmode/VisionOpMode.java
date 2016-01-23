@@ -18,9 +18,10 @@ public abstract class VisionOpMode extends VisionOpModeCore {
      *
      * Add your extension here and in the Extensions class below!
      */
-    protected static BeaconExtension beacon = new BeaconExtension();
-    protected static QRExtension qr = new QRExtension();
-    protected static ImageRotationExtension rotation = new ImageRotationExtension();
+    public static BeaconExtension beacon = new BeaconExtension();
+    public static QRExtension qr = new QRExtension();
+    public static ImageRotationExtension rotation = new ImageRotationExtension();
+
     private boolean enableOpenCV = true;
     /**
      * END OF CUSTOM EXTENSION INITIALIZATION

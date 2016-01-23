@@ -1,11 +1,14 @@
 package org.lasarobotics.vision.ftc.resq;
 
+import android.util.Log;
+
 import org.lasarobotics.vision.detection.PrimitiveDetection;
 import org.lasarobotics.vision.detection.objects.Contour;
 import org.lasarobotics.vision.detection.objects.Ellipse;
 import org.lasarobotics.vision.detection.objects.Rectangle;
 import org.lasarobotics.vision.image.Drawing;
 import org.lasarobotics.vision.util.MathUtil;
+import org.lasarobotics.vision.util.ScreenOrientation;
 import org.lasarobotics.vision.util.color.ColorRGBA;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -21,6 +24,10 @@ import java.util.List;
 public final class Beacon {
 
     public BeaconAnalysis analyzeColor(List<Contour> contoursRed, List<Contour> contoursBlue, Mat img, Mat gray) {
+        return analyzeColor(contoursRed, contoursBlue, img, gray, ScreenOrientation.LANDSCAPE);
+    }
+
+    public BeaconAnalysis analyzeColor(List<Contour> contoursRed, List<Contour> contoursBlue, Mat img, Mat gray, ScreenOrientation orientation) {
         //The idea behind the SmartScoring algorithm is that the largest score in each contour/ellipse set will become the best
         //DONE First, ellipses and contours are are detected and pre-filtered to remove eccentricities
         //Second, ellipses, and contours are scored independently based on size and color ... higher score is better
@@ -124,29 +131,70 @@ public final class Beacon {
         //Check to see if the largest red contour is more left-most than the largest right contour
         //If it is, then we know that the left beacon is red and the other blue, and vice versa
 
-        Point largestRedCenter = bestRed.center();
-        Point largestBlueCenter = bestBlue.center();
+        Point bestRedCenter = bestRed.center();
+        Point bestBlueCenter = bestBlue.center();
 
         //DEBUG R/B text
-        Drawing.drawText(img, "R", largestRedCenter, 1.0f, new ColorRGBA(255, 0, 0));
-        Drawing.drawText(img, "B", largestBlueCenter, 1.0f, new ColorRGBA(0, 0, 255));
+        Drawing.drawText(img, "R", bestRedCenter, 1.0f, new ColorRGBA(255, 0, 0));
+        Drawing.drawText(img, "B", bestBlueCenter, 1.0f, new ColorRGBA(0, 0, 255));
 
         //Test which side is red and blue
         //If the distance between the sides is smaller than a value, then return unknown
-        final int xMinDistance = (int) (Constants.DETECTION_MIN_DISTANCE * beaconSize.width); //percent of beacon width
+        final int minDistance = (int) (Constants.DETECTION_MIN_DISTANCE * beaconSize.width); //percent of beacon width
+        //Figure out which way to read the image
+        double orientationAngle = orientation.getAngle();
+        boolean swapLeftRight = orientationAngle >= 180; //swap if LANDSCAPE_WEST or PORTRAIT_REVERSE
+        boolean readOppositeAxis = orientation == ScreenOrientation.PORTRAIT ||
+                orientation == ScreenOrientation.PORTRAIT_REVERSE; //read other axis if any kind of portrait
+
         boolean leftIsRed;
-        if (largestRedCenter.x + xMinDistance < largestBlueCenter.x) {
-            leftIsRed = true;
-        } else if (largestBlueCenter.y + xMinDistance < largestRedCenter.x) {
-            leftIsRed = false;
+        Contour leftMostContour, rightMostContour;
+        if (readOppositeAxis) {
+            if (bestRedCenter.y + minDistance < bestBlueCenter.y) {
+                leftIsRed = true;
+            } else if (bestBlueCenter.y + minDistance < bestRedCenter.y) {
+                leftIsRed = false;
+            } else {
+                return new BeaconAnalysis();
+            }
         } else {
-            return new BeaconAnalysis();
+            if (bestRedCenter.x + minDistance < bestBlueCenter.x) {
+                leftIsRed = true;
+            } else if (bestBlueCenter.x + minDistance < bestRedCenter.x) {
+                leftIsRed = false;
+            } else {
+                return new BeaconAnalysis();
+            }
         }
 
-        //Get the left-most best contour
-        Contour leftMostContour = ((bestRed.topLeft().x) < (bestBlue.topLeft().x)) ? bestRed : bestBlue;
-        //Get the right-most best contour
-        Contour rightMostContour = ((bestRed.topLeft().x) < (bestBlue.topLeft().x)) ? bestBlue : bestRed;
+        //Swap left and right if necessary
+        leftIsRed = swapLeftRight != leftIsRed;
+
+        //Get the left-most best contour (or top-most if axis swapped) (or right-most if L/R swapped)
+        if (readOppositeAxis) {
+            //Get top-most best contour
+            leftMostContour = ((bestRed.topLeft().y) < (bestBlue.topLeft().y)) ? bestRed : bestBlue;
+            //Get bottom-most best contour
+            rightMostContour = ((bestRed.topLeft().y) < (bestBlue.topLeft().y)) ? bestBlue : bestRed;
+        } else {
+            //Get left-most best contour
+            leftMostContour = ((bestRed.topLeft().y) < (bestBlue.topLeft().y)) ? bestRed : bestBlue;
+            //Get the right-most best contour
+            rightMostContour = ((bestRed.topLeft().y) < (bestBlue.topLeft().y)) ? bestBlue : bestRed;
+        }
+
+
+        //DEBUG Logging
+        Log.d("Beacon", "Orientation: " + orientation + "Angle: " + orientationAngle + " Swap Axis: " + readOppositeAxis +
+                " Swap Direction: " + swapLeftRight);
+
+        //Swap left and right if necessary
+        //BUGFIX: invert when we swap
+        if (swapLeftRight) {
+            Contour temp = leftMostContour;
+            leftMostContour = rightMostContour;
+            rightMostContour = temp;
+        }
 
         //Draw the box surrounding both contours
         //Get the width of the contours
@@ -165,6 +213,11 @@ public final class Beacon {
 
         //Define size of bounding box by scaling the actual beacon size
         Size beaconSizeFinal = new Size(beaconActualWidth * scale, beaconActualHeight * scale);
+
+        //Swap x and y if we rotated the view
+        if (readOppositeAxis) {
+            beaconSizeFinal = new Size(beaconSizeFinal.height, beaconSizeFinal.width);
+        }
 
         //Get points of the bounding box
         Point beaconTopLeft = new Point(center.x - (beaconSizeFinal.width / 2),

@@ -5,6 +5,7 @@ import org.lasarobotics.vision.detection.objects.Contour;
 import org.lasarobotics.vision.ftc.resq.Beacon;
 import org.lasarobotics.vision.ftc.resq.Constants;
 import org.lasarobotics.vision.opmode.VisionOpMode;
+import org.lasarobotics.vision.util.ScreenOrientation;
 import org.opencv.core.Mat;
 
 import java.util.List;
@@ -45,9 +46,12 @@ public class BeaconExtension implements VisionExtension {
             List<Contour> contoursRed = detectorRed.getContours();
             List<Contour> contoursBlue = detectorBlue.getContours();
 
+            //Get screen orientation data
+            ScreenOrientation orientation = VisionOpMode.rotation.getRotationCompensation();
+
             //Get color analysis
             Beacon beacon = new Beacon();
-            this.analysis = beacon.analyzeColor(contoursRed, contoursBlue, rgba, gray);
+            this.analysis = beacon.analyzeColor(contoursRed, contoursBlue, rgba, gray, orientation);
 
         } catch (Exception e) {
             e.printStackTrace();

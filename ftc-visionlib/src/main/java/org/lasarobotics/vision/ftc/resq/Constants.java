@@ -9,7 +9,7 @@ public abstract class Constants {
     public static final double BEACON_WIDTH = 21.8;     //entire beacon width
     public static final double BEACON_HEIGHT = 14.5;    //entire beacon height
     public static final double BEACON_WH_RATIO = BEACON_WIDTH / BEACON_HEIGHT; //entire beacon ratio
-    public static final ColorHSV COLOR_RED_LOWER = new ColorHSV((int) (190.0 / 360.0 * 255.0), (int) (0.200 * 255.0), (int) (0.300 * 255.0));
+    public static final ColorHSV COLOR_RED_LOWER = new ColorHSV((int) (305.0 / 360.0 * 255.0), (int) (0.200 * 255.0), (int) (0.300 * 255.0));
     public static final ColorHSV COLOR_RED_UPPER = new ColorHSV((int) (365.0 / 360.0 * 255.0), 255, 255);
     public static final ColorHSV COLOR_BLUE_LOWER = new ColorHSV((int) (170.0 / 360.0 * 255.0), (int) (0.200 * 255.0), (int) (0.300 * 255.0));
     public static final ColorHSV COLOR_BLUE_UPPER = new ColorHSV((int) (230.0 / 360.0 * 255.0), 255, 255);

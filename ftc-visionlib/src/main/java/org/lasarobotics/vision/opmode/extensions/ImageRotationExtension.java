@@ -1,7 +1,6 @@
 package org.lasarobotics.vision.opmode.extensions;
 
 import org.lasarobotics.vision.android.Sensors;
-import org.lasarobotics.vision.image.Transform;
 import org.lasarobotics.vision.opmode.VisionOpMode;
 import org.lasarobotics.vision.util.ScreenOrientation;
 import org.opencv.core.Mat;
@@ -24,10 +23,15 @@ public class ImageRotationExtension implements VisionExtension {
     public ScreenOrientation getScreenOrientationActual() {
         return sensors.getScreenOrientation();
     }
-    public double getRotationAngle()
+
+    public double getRotationCompensationAngle()
     {
         return (isInverted ? -1 : 1) * ScreenOrientation.getFromAngle(sensors.getScreenOrientationCompensation() +
                 unbiasedOrientation.getAngle()).getAngle();
+    }
+
+    public ScreenOrientation getRotationCompensation() {
+        return ScreenOrientation.getFromAngle(getRotationCompensationAngle());
     }
 
     /**
@@ -62,10 +66,10 @@ public class ImageRotationExtension implements VisionExtension {
 
     @Override
     public Mat frame(VisionOpMode opmode, Mat rgba, Mat gray) {
-        double angle = getRotationAngle();
+        /*double angle = getRotationCompensationAngle();
         Transform.rotate(rgba, angle);
         opmode.width = rgba.width();
-        opmode.height = rgba.height();
+        opmode.height = rgba.height();*/
         return rgba;
     }
 

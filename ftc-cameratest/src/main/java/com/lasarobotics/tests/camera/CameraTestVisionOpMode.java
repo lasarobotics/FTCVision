@@ -5,7 +5,6 @@ import org.lasarobotics.vision.ftc.resq.Beacon;
 import org.lasarobotics.vision.image.Drawing;
 import org.lasarobotics.vision.opmode.TestableVisionOpMode;
 import org.lasarobotics.vision.opmode.VisionOpMode;
-import org.lasarobotics.vision.util.ScreenOrientation;
 import org.lasarobotics.vision.util.color.ColorGRAY;
 import org.lasarobotics.vision.util.color.ColorRGBA;
 import org.opencv.core.Mat;
@@ -37,11 +36,11 @@ public class CameraTestVisionOpMode extends TestableVisionOpMode {
 
         //You can do this for certain phones which switch red and blue
         //It will rotate the display and detection by 180 degrees, making it upright
-        rotation.setUnbiasedOrientation(ScreenOrientation.LANDSCAPE_WEST);
+        //rotation.setUnbiasedOrientation(ScreenOrientation.LANDSCAPE_WEST);
 
         //You can also do this when using the secondary camera
         //Sometimes it is necessary to ensure upright rotation
-        rotation.setRotationInversion(true);
+        //rotation.setRotationInversion(true);
     }
 
     @Override
@@ -54,7 +53,7 @@ public class CameraTestVisionOpMode extends TestableVisionOpMode {
         telemetry.addData("Beacon Confidence", beacon.getAnalysis().getConfidenceString());
         telemetry.addData("QR Error", qr.getErrorReason());
         telemetry.addData("QR String", qr.getText());
-        telemetry.addData("Rotation Compensation", rotation.getRotationAngle());
+        telemetry.addData("Rotation Compensation", rotation.getRotationCompensationAngle());
         telemetry.addData("Frame Rate", fps.getFPSString() + " FPS");
         telemetry.addData("Frame Size", "Width: " + width + " Height: " + height);*/
     }
