@@ -55,7 +55,7 @@ public class LinearVisionSample extends LinearVisionOpMode {
 
         //Enable extensions. Use what you need.
         enableExtension(Extensions.BEACON);     //Beacon detection
-        enableExtension(Extensions.QR);         //QR Code detection
+        //enableExtension(Extensions.QR);         //QR Code detection
         enableExtension(Extensions.ROTATION);   //Automatic screen rotation correction
 
         //You can do this for certain phones which switch red and blue
@@ -83,7 +83,7 @@ public class LinearVisionSample extends LinearVisionOpMode {
             telemetry.addData("Frame Rate", fps.getFPSString() + " FPS");
             telemetry.addData("Frame Size", "Width: " + width + " Height: " + height);
 
-            // Wait for Threader hardware cycle to allow other processes to run
+            // Wait for a hardware cycle to allow other processes to run
             waitOneFullHardwareCycle();
         }
     }

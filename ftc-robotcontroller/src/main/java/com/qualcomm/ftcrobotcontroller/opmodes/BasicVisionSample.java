@@ -54,7 +54,7 @@ public class BasicVisionSample extends VisionOpMode {
 
         //Enable extensions. Use what you need.
         enableExtension(Extensions.BEACON);     //Beacon detection
-        enableExtension(Extensions.QR);         //QR Code detection
+        //enableExtension(Extensions.QR);         //QR Code detection
         enableExtension(Extensions.ROTATION);   //Automatic screen rotation correction
 
         //You can do this for certain phones which switch red and blue
