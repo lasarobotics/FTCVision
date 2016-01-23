@@ -32,7 +32,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 package com.qualcomm.ftcrobotcontroller.opmodes;
 
 import org.lasarobotics.vision.android.Cameras;
-import org.lasarobotics.vision.opmode.VisionOpMode;
+import org.lasarobotics.vision.opmode.LinearVisionOpMode;
 import org.opencv.core.Size;
 
 /**
@@ -40,11 +40,12 @@ import org.opencv.core.Size;
  * <p/>
  * Enables control of the robot via the gamepad
  */
-public class BasicVisionSample extends VisionOpMode {
+public class LinearVisionSample extends LinearVisionOpMode {
 
     @Override
-    public void init() {
-        super.init();
+    public void runOpMode() throws InterruptedException {
+        //Wait for vision to initialize - this should be the first thing you do
+        waitForVisionStart();
 
         //Set the camera used for detection
         this.setCamera(Cameras.SECONDARY);
@@ -64,24 +65,26 @@ public class BasicVisionSample extends VisionOpMode {
         //You can also do this when using the secondary camera
         //Sometimes it is necessary to ensure upright rotation
         rotation.setRotationInversion(true);
-    }
 
-    @Override
-    public void loop() {
-        super.loop();
+        //Wait for the match to begin
+        waitForStart();
 
-        telemetry.addData("Beacon Color", beacon.getAnalysis().getColorString());
-        telemetry.addData("Beacon Location (Center)", beacon.getAnalysis().getLocationString());
-        telemetry.addData("Beacon Confidence", beacon.getAnalysis().getConfidenceString());
-        telemetry.addData("QR Error", qr.getErrorReason());
-        telemetry.addData("QR String", qr.getText());
-        telemetry.addData("Rotation Compensation", rotation.getRotationAngle());
-        telemetry.addData("Frame Rate", fps.getFPSString() + " FPS");
-        telemetry.addData("Frame Size", "Width: " + width + " Height: " + height);
-    }
+        //Main loop
+        //Camera frames and OpenCV analysis will be delivered to this method as quickly as possible
+        //This loop will exit once the opmode is closed
+        while (opModeIsActive()) {
+            //Log a few things
+            telemetry.addData("Beacon Color", beacon.getAnalysis().getColorString());
+            telemetry.addData("Beacon Location (Center)", beacon.getAnalysis().getLocationString());
+            telemetry.addData("Beacon Confidence", beacon.getAnalysis().getConfidenceString());
+            telemetry.addData("QR Error", qr.getErrorReason());
+            telemetry.addData("QR String", qr.getText());
+            telemetry.addData("Rotation Compensation", rotation.getRotationAngle());
+            telemetry.addData("Frame Rate", fps.getFPSString() + " FPS");
+            telemetry.addData("Frame Size", "Width: " + width + " Height: " + height);
 
-    @Override
-    public void stop() {
-        super.stop();
+            // Wait for a hardware cycle to allow other processes to run
+            waitOneFullHardwareCycle();
+        }
     }
 }

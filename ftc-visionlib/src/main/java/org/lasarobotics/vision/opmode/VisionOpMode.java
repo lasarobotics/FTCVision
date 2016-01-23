@@ -27,7 +27,7 @@ public abstract class VisionOpMode extends VisionOpModeCore {
      */
 
     private int extensions = 0;
-    private boolean initialized = false;
+    private boolean extensionsInitialized = false;
 
     public VisionOpMode() {
         super();
@@ -44,7 +44,7 @@ public abstract class VisionOpMode extends VisionOpModeCore {
 
     protected void enableExtension(Extensions extension) {
         //Don't initialize extension if we haven't ever called init() yet
-        if (initialized)
+        if (extensionsInitialized)
             extension.instance.init(this);
 
         extensions = extensions | extension.id;
@@ -64,7 +64,7 @@ public abstract class VisionOpMode extends VisionOpModeCore {
             if (isEnabled(extension))
                 extension.instance.init(this);
 
-        initialized = true;
+        extensionsInitialized = true;
     }
 
     @Override
