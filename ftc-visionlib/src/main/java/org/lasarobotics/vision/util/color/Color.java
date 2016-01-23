@@ -26,6 +26,20 @@ public abstract class Color {
         }
     }
 
+    public static Mat createMatRGBA(int width, int height) {
+        return new Mat(height, width, CvType.CV_8UC4);
+    }
+
+    public static Mat createMatGRAY(int width, int height) {
+        return new Mat(height, width, CvType.CV_8UC1);
+    }
+
+    public static Mat rapidConvertRGBAToGRAY(Mat rgba) {
+        Mat gray = new Mat(rgba.rows(), rgba.cols(), CvType.CV_8UC1);
+        Imgproc.cvtColor(rgba, gray, Imgproc.COLOR_RGBA2GRAY);
+        return gray;
+    }
+
     public static Mat convertColorMat(Mat in, ColorSpace spaceIn, ColorSpace spaceOut) {
         if (spaceIn == spaceOut)
             return in;

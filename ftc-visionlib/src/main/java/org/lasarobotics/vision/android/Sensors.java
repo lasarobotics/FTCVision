@@ -82,7 +82,7 @@ public final class Sensors implements SensorEventListener {
         double roll = orientation[2] / 2 / Math.PI * 360.0;
         double azimuth = orientation[0] / 2 / Math.PI * 360.0;
 
-        Log.w("Rotation", pitch + ", " + roll + ", " + azimuth);
+        Log.d("Rotation", pitch + ", " + roll + ", " + azimuth);
 
         //If the phone is too close to the ground, don't update
         if (Math.abs(roll) <= ROLL_MINIMUM)
