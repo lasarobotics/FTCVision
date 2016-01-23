@@ -50,6 +50,7 @@ public class BasicVisionSample extends VisionOpMode {
         this.setCamera(Cameras.SECONDARY);
         //Set the frame size
         //Larger = sometimes more accurate, but also much slower
+        //For Testable OpModes, this might make the image appear small - it might be best not to use this
         this.setFrameSize(new Size(900, 900));
 
         //Enable extensions. Use what you need.
@@ -57,13 +58,13 @@ public class BasicVisionSample extends VisionOpMode {
         //enableExtension(Extensions.QR);         //QR Code detection
         enableExtension(Extensions.ROTATION);   //Automatic screen rotation correction
 
+        //UNCOMMENT THIS IF you're using a SECONDARY (facing toward screen) camera
+        //or when you rotate the phone, sometimes the colors swap
+        rotation.setRotationInversion(true);
+
         //You can do this for certain phones which switch red and blue
         //It will rotate the display and detection by 180 degrees, making it upright
         //rotation.setUnbiasedOrientation(ScreenOrientation.LANDSCAPE_WEST);
-
-        //You can also do this when using the secondary camera
-        //Sometimes it is necessary to ensure upright rotation
-        rotation.setRotationInversion(true);
     }
 
     @Override

@@ -27,9 +27,6 @@ public class BeaconExtension implements VisionExtension {
         //Initialize all detectors here
         detectorRed = new ColorBlobDetector(Constants.COLOR_RED_LOWER, Constants.COLOR_RED_UPPER);
         detectorBlue = new ColorBlobDetector(Constants.COLOR_BLUE_LOWER, Constants.COLOR_BLUE_UPPER);
-
-        //opmode.setCamera(Cameras.PRIMARY);
-        //opmode.setFrameSize(new Size(900, 900));
     }
 
     public void loop(VisionOpMode opmode) {
@@ -47,7 +44,8 @@ public class BeaconExtension implements VisionExtension {
             List<Contour> contoursBlue = detectorBlue.getContours();
 
             //Get screen orientation data
-            ScreenOrientation orientation = VisionOpMode.rotation.getRotationCompensation();
+            ScreenOrientation orientation = ScreenOrientation.getFromAngle(
+                    VisionOpMode.rotation.getRotationCompensationAngleBiased());
 
             //Get color analysis
             Beacon beacon = new Beacon();
