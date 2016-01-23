@@ -17,7 +17,7 @@ public final class Sensors implements SensorEventListener {
 
     private static final float PITCH_TOLERANCE = 20.0f;
     private static final float PITCH_TOLERANCE_HIGH = 45.0f;
-    private static final float ROLL_MINIMUM = 10.0f;
+    private static final float ROLL_MINIMUM = 0.0f;
     private static final int READ_SPEED = SensorManager.SENSOR_DELAY_NORMAL;
     static float[] gravity = new float[3];
     static float[] linear_acceleration = new float[3];
