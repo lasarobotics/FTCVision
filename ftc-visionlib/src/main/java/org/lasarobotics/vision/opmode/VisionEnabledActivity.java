@@ -70,7 +70,7 @@ public abstract class VisionEnabledActivity extends Activity implements CameraBr
 
     @Override
     public void onCameraViewStopped() {
-
+        openCVCamera.disableView();
     }
 
     @Override
@@ -92,6 +92,7 @@ public abstract class VisionEnabledActivity extends Activity implements CameraBr
         if (openCVCamera != null)
             openCVCamera.disableView();
         opMode.sensors.stop();
+        this.finish();
     }
 
     @Override

@@ -10,6 +10,7 @@ import org.lasarobotics.vision.util.color.ColorGRAY;
 import org.lasarobotics.vision.util.color.ColorRGBA;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
+import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
 /**
@@ -23,11 +24,11 @@ public class CameraTestVisionOpMode extends TestableVisionOpMode {
         super.init();
 
         //Set the camera used for detection
-        this.setCamera(Cameras.SECONDARY);
+        this.setCamera(Cameras.PRIMARY);
         //Set the frame size
         //Larger = sometimes more accurate, but also much slower
         //For Testable OpModes, this might make the image appear small - it might be best not to use this
-        //this.setFrameSize(new Size(900, 900));
+        this.setFrameSize(new Size(1200, 1200));
 
         //Enable extensions. Use what you need.
         enableExtension(VisionOpMode.Extensions.BEACON);     //Beacon detection
@@ -37,6 +38,10 @@ public class CameraTestVisionOpMode extends TestableVisionOpMode {
         //You can do this for certain phones which switch red and blue
         //It will rotate the display and detection by 180 degrees, making it upright
         rotation.setUnbiasedOrientation(ScreenOrientation.LANDSCAPE_WEST);
+
+        //You can also do this when using the secondary camera
+        //Sometimes it is necessary to ensure upright rotation
+        rotation.setRotationInversion(true);
     }
 
     @Override

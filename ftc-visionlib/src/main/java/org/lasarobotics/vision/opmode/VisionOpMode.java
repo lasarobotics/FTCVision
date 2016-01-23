@@ -90,7 +90,7 @@ public abstract class VisionOpMode extends VisionOpModeCore {
 
     @Override
     public void stop() {
-        if (enableOpenCV) super.stop();
+        super.stop();
 
         for (Extensions extension : Extensions.values())
             if (isEnabled(extension))
