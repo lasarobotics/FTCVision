@@ -17,17 +17,32 @@ public class ImageRotationExtension implements VisionExtension {
     public ScreenOrientation getScreenOrientationDisplay() {
         return sensors.getActivityScreenOrientation();
     }
+
+    public ScreenOrientation getUnbiasedOrientation() {
+        return ScreenOrientation.getFromAngle((isInverted ? -1 : 1) * unbiasedOrientation.getAngle());
+    }
+
     public void setUnbiasedOrientation(ScreenOrientation orientation)
     {
         this.unbiasedOrientation = orientation;
     }
+
     public ScreenOrientation getScreenOrientationActual() {
         return sensors.getScreenOrientation();
     }
-    public double getRotationAngle()
+
+    public double getRotationCompensationAngle()
     {
-        return (isInverted ? -1 : 1) * ScreenOrientation.getFromAngle(sensors.getScreenOrientationCompensation() +
-                unbiasedOrientation.getAngle()).getAngle();
+        return (isInverted ? -1 : 1) * sensors.getScreenOrientationCompensation();
+    }
+
+    public double getRotationCompensationAngleBiased() {
+        return (isInverted ? -1 : 1) * ScreenOrientation.getFromAngle(sensors.getScreenOrientationCompensation()
+                + unbiasedOrientation.getAngle()).getAngle();
+    }
+
+    public ScreenOrientation getRotationCompensation() {
+        return ScreenOrientation.getFromAngle(getRotationCompensationAngle());
     }
 
     /**
@@ -62,10 +77,12 @@ public class ImageRotationExtension implements VisionExtension {
 
     @Override
     public Mat frame(VisionOpMode opmode, Mat rgba, Mat gray) {
-        double angle = getRotationAngle();
-        Transform.rotate(rgba, angle);
-        opmode.width = rgba.width();
-        opmode.height = rgba.height();
+        double angle = getUnbiasedOrientation().getAngle();
+        if (angle != 0) {
+            Transform.rotate(rgba, angle);
+            opmode.width = rgba.width();
+            opmode.height = rgba.height();
+        }
         return rgba;
     }
 

@@ -5,6 +5,7 @@ import org.lasarobotics.vision.detection.objects.Contour;
 import org.lasarobotics.vision.ftc.resq.Beacon;
 import org.lasarobotics.vision.ftc.resq.Constants;
 import org.lasarobotics.vision.opmode.VisionOpMode;
+import org.lasarobotics.vision.util.ScreenOrientation;
 import org.opencv.core.Mat;
 
 import java.util.List;
@@ -26,9 +27,6 @@ public class BeaconExtension implements VisionExtension {
         //Initialize all detectors here
         detectorRed = new ColorBlobDetector(Constants.COLOR_RED_LOWER, Constants.COLOR_RED_UPPER);
         detectorBlue = new ColorBlobDetector(Constants.COLOR_BLUE_LOWER, Constants.COLOR_BLUE_UPPER);
-
-        //opmode.setCamera(Cameras.PRIMARY);
-        //opmode.setFrameSize(new Size(900, 900));
     }
 
     public void loop(VisionOpMode opmode) {
@@ -45,9 +43,13 @@ public class BeaconExtension implements VisionExtension {
             List<Contour> contoursRed = detectorRed.getContours();
             List<Contour> contoursBlue = detectorBlue.getContours();
 
+            //Get screen orientation data
+            ScreenOrientation orientation = ScreenOrientation.getFromAngle(
+                    VisionOpMode.rotation.getRotationCompensationAngleBiased());
+
             //Get color analysis
             Beacon beacon = new Beacon();
-            this.analysis = beacon.analyzeColor(contoursRed, contoursBlue, rgba, gray);
+            this.analysis = beacon.analyzeColor(contoursRed, contoursBlue, rgba, gray, orientation);
 
         } catch (Exception e) {
             e.printStackTrace();

@@ -4,8 +4,6 @@ import org.lasarobotics.vision.android.Cameras;
 import org.lasarobotics.vision.ftc.resq.Beacon;
 import org.lasarobotics.vision.image.Drawing;
 import org.lasarobotics.vision.opmode.TestableVisionOpMode;
-import org.lasarobotics.vision.opmode.VisionOpMode;
-import org.lasarobotics.vision.util.ScreenOrientation;
 import org.lasarobotics.vision.util.color.ColorGRAY;
 import org.lasarobotics.vision.util.color.ColorRGBA;
 import org.opencv.core.Mat;
@@ -28,20 +26,20 @@ public class CameraTestVisionOpMode extends TestableVisionOpMode {
         //Set the frame size
         //Larger = sometimes more accurate, but also much slower
         //For Testable OpModes, this might make the image appear small - it might be best not to use this
-        this.setFrameSize(new Size(1200, 1200));
+        this.setFrameSize(new Size(900, 900));
 
         //Enable extensions. Use what you need.
-        enableExtension(VisionOpMode.Extensions.BEACON);     //Beacon detection
-        //enableExtension(VisionOpMode.Extensions.QR);         //QR Code detection
-        enableExtension(VisionOpMode.Extensions.ROTATION);   //Automatic screen rotation correction
+        enableExtension(Extensions.BEACON);     //Beacon detection
+        //enableExtension(Extensions.QR);         //QR Code detection
+        enableExtension(Extensions.ROTATION);   //Automatic screen rotation correction
+
+        //UNCOMMENT THIS IF you're using a SECONDARY (facing toward screen) camera
+        //or when you rotate the phone, sometimes the colors swap
+        //rotation.setRotationInversion(true);
 
         //You can do this for certain phones which switch red and blue
         //It will rotate the display and detection by 180 degrees, making it upright
-        rotation.setUnbiasedOrientation(ScreenOrientation.LANDSCAPE_WEST);
-
-        //You can also do this when using the secondary camera
-        //Sometimes it is necessary to ensure upright rotation
-        rotation.setRotationInversion(true);
+        //rotation.setUnbiasedOrientation(ScreenOrientation.LANDSCAPE_WEST);
     }
 
     @Override
@@ -54,7 +52,7 @@ public class CameraTestVisionOpMode extends TestableVisionOpMode {
         telemetry.addData("Beacon Confidence", beacon.getAnalysis().getConfidenceString());
         telemetry.addData("QR Error", qr.getErrorReason());
         telemetry.addData("QR String", qr.getText());
-        telemetry.addData("Rotation Compensation", rotation.getRotationAngle());
+        telemetry.addData("Rotation Compensation", rotation.getRotationCompensationAngle());
         telemetry.addData("Frame Rate", fps.getFPSString() + " FPS");
         telemetry.addData("Frame Size", "Width: " + width + " Height: " + height);*/
     }
