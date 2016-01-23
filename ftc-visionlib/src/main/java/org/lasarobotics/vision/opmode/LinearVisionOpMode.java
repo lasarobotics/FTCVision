@@ -3,6 +3,10 @@ package org.lasarobotics.vision.opmode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
 
+import org.lasarobotics.vision.util.color.Color;
+import org.opencv.core.Mat;
+import org.opencv.imgproc.Imgproc;
+
 /**
  * Linear version of the Vision OpMode
  * This includes code from the FIRST library (C) Qualcomm as of 1/23/2016
@@ -12,9 +16,37 @@ public abstract class LinearVisionOpMode extends VisionOpMode {
     private Thread thread = null;
     private ElapsedTime timer = new ElapsedTime();
     private volatile boolean opModeStarted = false;
+    private Mat rgba;
+    private Mat gray;
+    private boolean hasNewFrame = false;
 
     public LinearVisionOpMode() {
 
+    }
+
+    @Override
+    public final Mat frame(Mat rgba, Mat gray) {
+        if (!opModeStarted) return rgba;
+        this.rgba = super.frame(rgba, gray);
+        Imgproc.cvtColor(rgba, this.gray, Imgproc.COLOR_RGBA2GRAY);
+        hasNewFrame = true;
+        return rgba;
+    }
+
+    public final Mat getFrameRgba() {
+        return rgba;
+    }
+
+    public final Mat getFrameGray() {
+        return gray;
+    }
+
+    public boolean hasNewFrame() {
+        return hasNewFrame;
+    }
+
+    public void discardFrame() {
+        hasNewFrame = false;
     }
 
     public abstract void runOpMode() throws InterruptedException;
@@ -58,6 +90,9 @@ public abstract class LinearVisionOpMode extends VisionOpMode {
     @Override
     public final void init() {
         super.init();
+        hasNewFrame = false;
+        this.rgba = Color.createMatRGBA(width, height);
+        this.gray = Color.createMatGRAY(width, height);
         this.threader = new Threader(this);
         this.thread = new Thread(this.threader, "Linear OpMode Helper");
         this.thread.start();
@@ -86,6 +121,9 @@ public abstract class LinearVisionOpMode extends VisionOpMode {
     public final void stop() {
         super.stop();
         this.opModeStarted = false;
+        this.rgba.release();
+        this.gray.release();
+
         if (!this.threader.isReady()) {
             this.thread.interrupt();
         }
