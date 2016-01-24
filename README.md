@@ -46,6 +46,9 @@ This library is currently under insanely active development. We're in the **Beta
 #### Distance Test
 ![A test from 8 feet away](https://raw.githubusercontent.com/lasarobotics/ftcvision/img/test1.png)
 
+#### Ambient Analysis (Color and Rotation Detection) Test
+![A test from 8 feet away](https://raw.githubusercontent.com/lasarobotics/ftcvision/img/test3.gif)
+
 ## Goals
 - Locate the lit target (the thing with two buttons) within the camera viewfield
 - Move the robot to the lit target, while identifying the color status of the target
