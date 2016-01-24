@@ -13,7 +13,7 @@ import java.util.Scanner;
 /**
  * File Input/Output operations
  */
-public class IO {
+class IO {
     /**
      * Write a text file on the device
      *

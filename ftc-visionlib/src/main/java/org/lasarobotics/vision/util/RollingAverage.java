@@ -6,7 +6,7 @@ import java.util.LinkedList;
  * Structure that performs a continuous rolling average on values
  * Uses doubles as internal structures
  */
-public class RollingAverage<T extends Number> {
+class RollingAverage<T extends Number> {
     private final LinkedList<T> list;
     private int capacity;
     private double total;

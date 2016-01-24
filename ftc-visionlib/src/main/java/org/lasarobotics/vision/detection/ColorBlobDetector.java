@@ -51,7 +51,7 @@ public class ColorBlobDetector {
         setColorRadius(colorMinimum, colorMaximum);
     }
 
-    public void setColor(Color color) {
+    private void setColor(Color color) {
         if (color == null)
             throw new IllegalArgumentException("Color must not be null!");
 
@@ -84,7 +84,7 @@ public class ColorBlobDetector {
         upperBound = new ColorHSV(upperBoundScalar);
     }
 
-    public void setColorRadius(Color lowerBound, Color upperBound) {
+    private void setColorRadius(Color lowerBound, Color upperBound) {
         isRadiusSet = false;
         Scalar lower = lowerBound.convertColorScalar(ColorSpace.HSV);
         Scalar upper = upperBound.convertColorScalar(ColorSpace.HSV);

@@ -90,7 +90,7 @@ public final class MathUtil {
         return (value < max) && (value > min);
     }
 
-    public static double distance(double deltaX, double deltaY) {
+    private static double distance(double deltaX, double deltaY) {
         return Math.sqrt((deltaX * deltaX) + (deltaY * deltaY));
     }
 

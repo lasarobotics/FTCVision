@@ -25,9 +25,9 @@ import java.util.List;
  * Designed to detect a single object at a time in an image
  */
 public class ObjectDetection {
-    FeatureDetector detector;
-    DescriptorExtractor extractor;
-    DescriptorMatcher matcher;
+    private final FeatureDetector detector;
+    private final DescriptorExtractor extractor;
+    private final DescriptorMatcher matcher;
 
     public ObjectDetection() {
         detector = FeatureDetector.create(FeatureDetectorType.FAST.val());
@@ -272,9 +272,9 @@ public class ObjectDetection {
     }
 
     public final class ObjectAnalysis {
-        MatOfKeyPoint keypoints;
-        Mat descriptors;
-        Mat object;
+        final MatOfKeyPoint keypoints;
+        final Mat descriptors;
+        final Mat object;
 
         ObjectAnalysis(MatOfKeyPoint keypoints, Mat descriptors, Mat object) {
             this.keypoints = keypoints;
@@ -284,10 +284,10 @@ public class ObjectDetection {
     }
 
     public final class SceneAnalysis {
-        MatOfKeyPoint keypoints;
-        Mat descriptors;
-        MatOfDMatch matches;
-        Mat scene;
+        final MatOfKeyPoint keypoints;
+        final Mat descriptors;
+        final MatOfDMatch matches;
+        final Mat scene;
 
         SceneAnalysis(MatOfKeyPoint keypoints, Mat descriptors, MatOfDMatch matches, Mat scene) {
             this.keypoints = keypoints;

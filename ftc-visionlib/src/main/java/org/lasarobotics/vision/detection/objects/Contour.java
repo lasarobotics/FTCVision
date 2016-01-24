@@ -12,7 +12,7 @@ import org.opencv.imgproc.Imgproc;
  */
 public class Contour extends Detectable {
 
-    MatOfPoint mat;
+    private final MatOfPoint mat;
 
     public Contour(MatOfPoint data) {
         this.mat = data;
@@ -26,7 +26,7 @@ public class Contour extends Detectable {
         return mat;
     }
 
-    public MatOfPoint2f getFloatData() {
+    private MatOfPoint2f getFloatData() {
         return new MatOfPoint2f(mat.toArray());
     }
 
@@ -136,7 +136,7 @@ public class Contour extends Detectable {
         return Imgproc.arcLength(getFloatData(), closed);
     }
 
-    public Point[] getPoints() {
+    private Point[] getPoints() {
         return mat.toArray();
     }
 }

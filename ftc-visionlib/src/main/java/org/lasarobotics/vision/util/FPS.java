@@ -35,7 +35,7 @@ public class FPS {
      *
      * @return The FPS, as a double in frames/second.
      */
-    public double getFPS() {
+    private double getFPS() {
         double period = rollingAverage.getAverage() / 1000000000.0; //period: s
         return 1.0 / period; //frequency = 1/s
     }

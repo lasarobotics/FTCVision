@@ -12,8 +12,8 @@ import java.util.List;
  */
 @SuppressWarnings("deprecation")
 public class Camera {
-    android.hardware.Camera c;
-    int id;
+    private android.hardware.Camera c;
+    private int id;
 
     public Camera(Cameras camera) {
         makeCamera(camera.getID());
@@ -33,12 +33,7 @@ public class Camera {
 
     private void makeCamera(int id) {
         this.id = id;
-        try {
-            this.c = android.hardware.Camera.open(id);
-        } catch (Exception e) {
-            throw e;
-            //this.c = null;
-        }
+        this.c = android.hardware.Camera.open(id);
     }
 
     public void unlock() {

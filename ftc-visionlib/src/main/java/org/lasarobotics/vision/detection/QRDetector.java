@@ -20,7 +20,7 @@ import org.opencv.core.Mat;
  * Uses Google's ZXing library to detect QR codes
  */
 public class QRDetector {
-    private QRCodeReader qrc;
+    private final QRCodeReader qrc;
 
     public QRDetector() {
         qrc = new QRCodeReader();
@@ -68,7 +68,7 @@ public class QRDetector {
         return detectFromBitmap(bMap);
     }
 
-    public Result detectFromBitmap(Bitmap bMap) throws FormatException, ChecksumException, NotFoundException {
+    private Result detectFromBitmap(Bitmap bMap) throws FormatException, ChecksumException, NotFoundException {
         //Convert Bitmap into BinaryBitmap
         int[] intArray = new int[bMap.getWidth() * bMap.getHeight()];
         //Copy pixel data from the Bitmap into the 'intArray' array
@@ -80,7 +80,7 @@ public class QRDetector {
         return detectFromBinaryBitmap(bitmap);
     }
 
-    public Result detectFromBinaryBitmap(BinaryBitmap map) throws NotFoundException, ChecksumException, FormatException {
+    private Result detectFromBinaryBitmap(BinaryBitmap map) throws NotFoundException, ChecksumException, FormatException {
         //Read QR data from BinaryBitmap
         return qrc.decode(map);
     }
@@ -95,7 +95,7 @@ public class QRDetector {
         LEFT("Left"), //Code has been rotated left
         RIGHT("Right"); //Code has been rotated right
 
-        private String s;
+        private final String s;
 
         Orientation(String s) {
             this.s = s;

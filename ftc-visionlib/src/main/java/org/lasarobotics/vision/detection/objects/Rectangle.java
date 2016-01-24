@@ -9,7 +9,7 @@ import org.opencv.core.Size;
  * Implements a single rectangle object with advanced measurement capabilities
  */
 public class Rectangle extends Detectable {
-    RotatedRect rect = new RotatedRect();
+    private RotatedRect rect = new RotatedRect();
 
     public Rectangle() {
         this.rect = new RotatedRect();
@@ -57,7 +57,7 @@ public class Rectangle extends Detectable {
         return rect.boundingRect();
     }
 
-    public Size size() {
+    private Size size() {
         return rect.size;
     }
 

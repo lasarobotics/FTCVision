@@ -64,19 +64,19 @@ public class Ellipse extends Detectable implements Comparable<Ellipse> {
         return semiMajorAxis() * semiMinorAxis() * Math.PI;
     }
 
-    public double majorAxis() {
+    private double majorAxis() {
         return Math.max(height(), width());
     }
 
-    public double minorAxis() {
+    private double minorAxis() {
         return Math.min(height(), width());
     }
 
-    public double semiMajorAxis() {
+    private double semiMajorAxis() {
         return majorAxis() / 2;
     }
 
-    public double semiMinorAxis() {
+    private double semiMinorAxis() {
         return minorAxis() / 2;
     }
 

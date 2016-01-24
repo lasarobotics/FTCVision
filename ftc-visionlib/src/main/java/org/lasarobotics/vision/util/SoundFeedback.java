@@ -8,7 +8,7 @@ import android.media.ToneGenerator;
 import android.net.Uri;
 
 /**
- * Created by Russell on 11/26/2015.
+ * Sound feedback via phone's speakers
  */
 public class SoundFeedback {
     private SoundFeedback() {
@@ -24,12 +24,12 @@ public class SoundFeedback {
         }
     }
 
-    public static void playBeep(Stream s) {
+    private static void playBeep(Stream s) {
         ToneGenerator toneGen1 = new ToneGenerator(s.val, 100);
         toneGen1.startTone(ToneGenerator.TONE_CDMA_PIP, 150);
     }
 
-    public static void maximizeVolume(Context context, Stream s) {
+    private static void maximizeVolume(Context context, Stream s) {
         AudioManager am =
                 (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
 
@@ -52,7 +52,7 @@ public class SoundFeedback {
         ALARM(4),
         NOTIFICATION(5);
 
-        private int val;
+        private final int val;
 
         Stream(int val) {
             this.val = val;

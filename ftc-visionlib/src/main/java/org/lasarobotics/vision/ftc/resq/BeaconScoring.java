@@ -20,7 +20,7 @@ import java.util.List;
  */
 class BeaconScoring {
 
-    Size imgSize;
+    private final Size imgSize;
 
     BeaconScoring(Size imgSize) {
         this.imgSize = imgSize;
@@ -118,7 +118,7 @@ class BeaconScoring {
         return (List<ScoredEllipse>) Scorable.sort(scores);
     }
 
-    List<AssociatedContour> associate(List<ScoredContour> contours, List<ScoredEllipse> ellipses) {
+    private List<AssociatedContour> associate(List<ScoredContour> contours, List<ScoredEllipse> ellipses) {
         //Ellipses with nearby/contained contours associate themselves with the contour
         //Ellipses without nearby/contained contours are removed
 
@@ -164,7 +164,7 @@ class BeaconScoring {
     static class Scorable implements Comparable<Scorable> {
         double score;
 
-        protected Scorable(double score) {
+        Scorable(double score) {
             this.score = score;
         }
 
@@ -183,7 +183,7 @@ class BeaconScoring {
     }
 
     static class ScoredEllipse extends Scorable {
-        Ellipse ellipse;
+        final Ellipse ellipse;
 
         ScoredEllipse(Ellipse ellipse, double score) {
             super(score);
@@ -199,7 +199,7 @@ class BeaconScoring {
     }
 
     static class ScoredContour extends Scorable {
-        Contour contour;
+        final Contour contour;
 
         ScoredContour(Contour contour, double score) {
             super(score);
@@ -215,8 +215,8 @@ class BeaconScoring {
     }
 
     static class AssociatedContour extends Scorable {
-        ScoredContour contour;
-        List<ScoredEllipse> ellipses;
+        final ScoredContour contour;
+        final List<ScoredEllipse> ellipses;
 
         AssociatedContour(ScoredContour contour, List<ScoredEllipse> ellipses) {
             super(score(contour, ellipses));
@@ -241,8 +241,8 @@ class BeaconScoring {
     }
 
     static class MultiAssociatedContours {
-        List<AssociatedContour> redContours;
-        List<AssociatedContour> blueContours;
+        final List<AssociatedContour> redContours;
+        final List<AssociatedContour> blueContours;
 
         MultiAssociatedContours(List<AssociatedContour> redContours, List<AssociatedContour> blueContours) {
             this.redContours = redContours;

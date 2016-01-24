@@ -11,13 +11,13 @@ import org.opencv.core.Point;
  * A detectable object
  */
 public abstract class Detectable {
-    public abstract double left();
+    protected abstract double left();
 
-    public abstract double right();
+    protected abstract double right();
 
-    public abstract double top();
+    protected abstract double top();
 
-    public abstract double bottom();
+    protected abstract double bottom();
 
     public abstract double width();
 

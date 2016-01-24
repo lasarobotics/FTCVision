@@ -10,7 +10,7 @@ import org.opencv.imgproc.Imgproc;
  */
 public abstract class Color {
 
-    protected Scalar scalar;
+    Scalar scalar;
 
     Color(Scalar s) {
         setScalar(s);
@@ -67,7 +67,7 @@ public abstract class Color {
         return scalar;
     }
 
-    public void setScalar(Scalar s) {
+    private void setScalar(Scalar s) {
         this.scalar = parseScalar(s);
     }
 
@@ -75,7 +75,7 @@ public abstract class Color {
         return convertColorScalar(ColorSpace.RGBA);
     }
 
-    public abstract ColorSpace getColorSpace();
+    protected abstract ColorSpace getColorSpace();
 
     protected abstract Scalar parseScalar(Scalar s);
 

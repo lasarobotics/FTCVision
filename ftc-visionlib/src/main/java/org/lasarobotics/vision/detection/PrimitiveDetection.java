@@ -125,8 +125,8 @@ public class PrimitiveDetection {
     }
 
     public class RectangleLocationResult {
-        List<Contour> contours;
-        List<Rectangle> ellipses;
+        final List<Contour> contours;
+        final List<Rectangle> ellipses;
 
         RectangleLocationResult(List<Contour> contours, List<Rectangle> ellipses) {
             this.contours = contours;
@@ -143,8 +143,8 @@ public class PrimitiveDetection {
     }
 
     public class EllipseLocationResult {
-        List<Contour> contours;
-        List<Ellipse> ellipses;
+        final List<Contour> contours;
+        final List<Ellipse> ellipses;
 
         EllipseLocationResult(List<Contour> contours, List<Ellipse> ellipses) {
             this.contours = contours;

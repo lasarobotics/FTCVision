@@ -45,7 +45,7 @@ public class Transform {
      * @param factor The scale factor. If greater than 1, image will dilate. Otherwise,
      *               image will constrict.
      */
-    public static void scale(Mat img, double factor) {
+    private static void scale(Mat img, double factor) {
         resize(img, new Size(img.size().width * factor, img.size().height * factor));
     }
 
@@ -75,7 +75,7 @@ public class Transform {
      * @param integerScale If true (default), then only integer scale factors would be used.
      *                     Otherwise, any scale factor can be used.
      */
-    public static void scale(Mat img, Size approxSize, boolean maximize, boolean integerScale) {
+    private static void scale(Mat img, Size approxSize, boolean maximize, boolean integerScale) {
         double scale = makeScale(img, approxSize, maximize, integerScale);
         scale(img, scale);
     }
@@ -117,7 +117,7 @@ public class Transform {
      * @param integerScale If true (default), then only integer scale factors would be used.
      *                     Otherwise, any scale factor can be used.
      */
-    public static void enlarge(Mat img, Size approxSize, boolean integerScale) {
+    private static void enlarge(Mat img, Size approxSize, boolean integerScale) {
         double scale = makeScale(img, approxSize, true, integerScale);
         if (MathUtil.equal(scale, 1) || scale < 1) {
             return;
@@ -136,7 +136,7 @@ public class Transform {
      * @param integerScale If true (default), then only integer scale factors would be used.
      *                     Otherwise, any scale factor can be used.
      */
-    public static void shrink(Mat img, Size approxSize, boolean integerScale) {
+    private static void shrink(Mat img, Size approxSize, boolean integerScale) {
         double scale = makeScale(img, approxSize, false, integerScale);
         if (MathUtil.equal(scale, 1) || scale > 1) {
             return;
@@ -177,7 +177,7 @@ public class Transform {
         }
     }
 
-    public static void resize(Mat img, Size size) {
+    private static void resize(Mat img, Size size) {
         int interpolation;
         if (MathUtil.equal(size.area(), img.size().area()))
             return;

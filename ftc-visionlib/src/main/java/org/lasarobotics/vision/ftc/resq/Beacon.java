@@ -15,7 +15,7 @@ import java.util.List;
  */
 public final class Beacon {
 
-    private AnalysisMethod method;
+    private final AnalysisMethod method;
 
     public Beacon() {
         method = AnalysisMethod.FAST;
@@ -89,9 +89,9 @@ public final class Beacon {
 
     public static class BeaconAnalysis {
         private final double confidence;
-        private BeaconColor left;
-        private BeaconColor right;
-        private Rectangle location;
+        private final BeaconColor left;
+        private final BeaconColor right;
+        private final Rectangle location;
 
         //TODO Color and CONFIDENCE should make up the results
 

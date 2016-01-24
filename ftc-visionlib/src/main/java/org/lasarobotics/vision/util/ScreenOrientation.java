@@ -22,7 +22,7 @@ public enum ScreenOrientation {
         return getFromAngle((int) angle);
     }
 
-    public static ScreenOrientation getFromAngle(int angle) {
+    private static ScreenOrientation getFromAngle(int angle) {
         while (angle > 360)
             angle -= 360;
         while (angle < 0)
