@@ -4,6 +4,7 @@ import org.lasarobotics.vision.android.Cameras;
 import org.lasarobotics.vision.ftc.resq.Beacon;
 import org.lasarobotics.vision.image.Drawing;
 import org.lasarobotics.vision.opmode.TestableVisionOpMode;
+import org.lasarobotics.vision.util.ScreenOrientation;
 import org.lasarobotics.vision.util.color.ColorGRAY;
 import org.lasarobotics.vision.util.color.ColorRGBA;
 import org.opencv.core.Mat;
@@ -39,7 +40,11 @@ public class CameraTestVisionOpMode extends TestableVisionOpMode {
 
         //You can do this for certain phones which switch red and blue
         //It will rotate the display and detection by 180 degrees, making it upright
-        //rotation.setUnbiasedOrientation(ScreenOrientation.LANDSCAPE_WEST);
+        rotation.setUnbiasedOrientation(ScreenOrientation.LANDSCAPE_WEST);
+
+        //Set the beacon analysis method
+        //Try them all and see what works!
+        beacon.setAnalysisMethod(Beacon.AnalysisMethod.FAST);
     }
 
     @Override
@@ -76,6 +81,10 @@ public class CameraTestVisionOpMode extends TestableVisionOpMode {
 
         //Display FPS
         Drawing.drawText(rgba, "FPS: " + fps.getFPSString(), new Point(0, 24), 1.0f, new ColorRGBA("#ffffff")); //"#2196F3"
+
+        //Display analysis method
+        Drawing.drawText(rgba, beacon.getAnalysisMethod().toString() + " Analysis",
+                new Point(width - 300, 40), 1.0f, new ColorRGBA("#FFC107"));
 
         //Display rotation sensor compensation
         Drawing.drawText(rgba, "Rot: " + sensors.getScreenOrientationCompensation() + "("

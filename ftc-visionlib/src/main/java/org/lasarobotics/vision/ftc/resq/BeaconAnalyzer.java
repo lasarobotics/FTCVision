@@ -14,12 +14,192 @@ import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Size;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Static beacon analysis methods
  */
 class BeaconAnalyzer {
+    static Beacon.BeaconAnalysis analyze_FAST(List<Contour> contoursR, List<Contour> contoursB,
+                                              Mat img, Mat gray, ScreenOrientation orientation) {
+        //DEBUG Draw contours before filtering
+        Drawing.drawContours(img, contoursR, new ColorRGBA("#FF0000"), 2);
+        Drawing.drawContours(img, contoursB, new ColorRGBA("#0000FF"), 2);
+
+        List<Contour> contoursRed = new ArrayList<>(contoursR);
+        List<Contour> contoursBlue = new ArrayList<>(contoursB);
+
+        //Get the largest contour in each - we're calling this one the main light
+        int largestIndexRed = findLargestIndex(contoursRed);
+        int largestIndexBlue = findLargestIndex(contoursBlue);
+        Contour largestRed = (largestIndexRed != -1) ? contoursRed.get(largestIndexRed) : null;
+        Contour largestBlue = (largestIndexBlue != -1) ? contoursBlue.get(largestIndexBlue) : null;
+
+        //If we don't have a main light for one of the colors, we know both colors are the same
+        //TODO we should re-filter the contours by size to ensure that we get at least a decent size
+        if (largestRed == null && largestBlue == null)
+            return new Beacon.BeaconAnalysis();
+
+        //INFO The best contour from each color (if available) is selected as red and blue
+        //INFO The two best contours are then used to calculate the location of the beacon
+
+        //If we don't have a main light for one of the colors, we know both colors are the same
+        //TODO we should re-filter the contours by size to ensure that we get at least a decent size
+
+        //The height of the beacon on screen is the height of the best contour
+        Contour largestHeight = ((largestRed != null ? largestRed.size().height : 0) >
+                (largestBlue != null ? largestBlue.size().height : 0)) ? largestRed : largestBlue;
+        assert largestHeight != null;
+        double beaconHeight = largestHeight.size().height;
+
+        //Get beacon width on screen by extrapolating from height
+        final double beaconActualHeight = Constants.BEACON_HEIGHT; //cm, only the lit up portion - 14.0 for entire
+        final double beaconActualWidth = Constants.BEACON_WIDTH; //cm
+        final double beaconWidthHeightRatio = Constants.BEACON_WH_RATIO;
+        double beaconWidth = beaconHeight * beaconWidthHeightRatio;
+        Size beaconSize = new Size(beaconWidth, beaconHeight);
+
+        //If the largest part of the non-null color is wider than a certain distance, then both are bright
+        //Otherwise, only one may be lit
+        //If only one is lit, and is wider than a certain distance, it is bright
+        //TODO We are currently assuming that the beacon cannot be in a "bright" state
+        if (largestRed == null)
+            return new Beacon.BeaconAnalysis();
+        else if (largestBlue == null)
+            return new Beacon.BeaconAnalysis();
+
+        //Look at the locations of the largest contours
+        //Check to see if the largest red contour is more left-most than the largest right contour
+        //If it is, then we know that the left beacon is red and the other blue, and vice versa
+
+        Point bestRedCenter = largestRed.center();
+        Point bestBlueCenter = largestBlue.center();
+
+        //DEBUG R/B text
+        Drawing.drawText(img, "R", bestRedCenter, 1.0f, new ColorRGBA(255, 0, 0));
+        Drawing.drawText(img, "B", bestBlueCenter, 1.0f, new ColorRGBA(0, 0, 255));
+
+        //Test which side is red and blue
+        //If the distance between the sides is smaller than a value, then return unknown
+        final int minDistance = (int) (Constants.DETECTION_MIN_DISTANCE * beaconSize.width); //percent of beacon width
+        //Figure out which way to read the image
+        double orientationAngle = orientation.getAngle();
+        boolean swapLeftRight = orientationAngle >= 180; //swap if LANDSCAPE_WEST or PORTRAIT_REVERSE
+        boolean readOppositeAxis = orientation == ScreenOrientation.PORTRAIT ||
+                orientation == ScreenOrientation.PORTRAIT_REVERSE; //read other axis if any kind of portrait
+
+        boolean leftIsRed;
+        Contour leftMostContour, rightMostContour;
+        if (readOppositeAxis) {
+            if (bestRedCenter.y + minDistance < bestBlueCenter.y) {
+                leftIsRed = true;
+            } else if (bestBlueCenter.y + minDistance < bestRedCenter.y) {
+                leftIsRed = false;
+            } else {
+                return new Beacon.BeaconAnalysis();
+            }
+        } else {
+            if (bestRedCenter.x + minDistance < bestBlueCenter.x) {
+                leftIsRed = true;
+            } else if (bestBlueCenter.x + minDistance < bestRedCenter.x) {
+                leftIsRed = false;
+            } else {
+                return new Beacon.BeaconAnalysis();
+            }
+        }
+
+        //Swap left and right if necessary
+        leftIsRed = swapLeftRight != leftIsRed;
+
+        //Get the left-most best contour (or top-most if axis swapped) (or right-most if L/R swapped)
+        if (readOppositeAxis) {
+            //Get top-most best contour
+            leftMostContour = ((largestRed.topLeft().y) < (largestBlue.topLeft().y)) ? largestRed : largestBlue;
+            //Get bottom-most best contour
+            rightMostContour = ((largestRed.topLeft().y) < (largestBlue.topLeft().y)) ? largestBlue : largestRed;
+        } else {
+            //Get left-most best contour
+            leftMostContour = ((largestRed.topLeft().y) < (largestBlue.topLeft().y)) ? largestRed : largestBlue;
+            //Get the right-most best contour
+            rightMostContour = ((largestRed.topLeft().y) < (largestBlue.topLeft().y)) ? largestBlue : largestRed;
+        }
+
+        //DEBUG Logging
+        Log.d("Beacon", "Orientation: " + orientation + "Angle: " + orientationAngle + " Swap Axis: " + readOppositeAxis +
+                " Swap Direction: " + swapLeftRight);
+
+        //Swap left and right if necessary
+        //BUGFIX: invert when we swap
+        if (swapLeftRight) {
+            Contour temp = leftMostContour;
+            leftMostContour = rightMostContour;
+            rightMostContour = temp;
+        }
+
+        //Draw the box surrounding both contours
+        //Get the width of the contours
+        double widthBeacon = rightMostContour.right() - leftMostContour.left();
+
+        //Center of contours is the average of centers of the contours
+        Point center = new Point((leftMostContour.center().x + rightMostContour.center().x) / 2,
+                (leftMostContour.center().y + rightMostContour.center().y) / 2);
+
+        //Get the combined height of the contours
+        double heightContours = Math.max(leftMostContour.bottom(), rightMostContour.bottom()) -
+                Math.min(leftMostContour.top(), rightMostContour.top());
+
+        //The largest size ratio of tested over actual is the scale ratio
+        double scale = Math.max(widthBeacon / beaconActualWidth, heightContours / beaconActualHeight);
+
+        //Define size of bounding box by scaling the actual beacon size
+        Size beaconSizeFinal = new Size(beaconActualWidth * scale, beaconActualHeight * scale);
+
+        //Swap x and y if we rotated the view
+        if (readOppositeAxis) {
+            beaconSizeFinal = new Size(beaconSizeFinal.height, beaconSizeFinal.width);
+        }
+
+        //Get points of the bounding box
+        Point beaconTopLeft = new Point(center.x - (beaconSizeFinal.width / 2),
+                center.y - (beaconSizeFinal.height / 2));
+        Point beaconBottomRight = new Point(center.x + (beaconSizeFinal.width / 2),
+                center.y + (beaconSizeFinal.height / 2));
+        Rectangle boundingBox = new Rectangle(new Rect(beaconTopLeft, beaconBottomRight));
+
+        //Draw the rectangle containing the beacon
+        Drawing.drawRectangle(img, boundingBox, new ColorRGBA(0, 255, 0), 4);
+
+        //Tell us the height of the beacon
+        //TODO later we can get the distance away from the beacon based on its height and position
+
+        //Remove the largest index and look for the next largest
+        //If the next largest is (mostly) within the area of the box, then merge it in with the largest
+        //Check if the size of the largest contour(s) is about twice the size of the other
+        //This would indicate one is brightly lit and the other is not
+        //If this is not true, then neither part of the beacon is highly lit
+
+        if (leftIsRed)
+            return new Beacon.BeaconAnalysis(Beacon.BeaconColor.RED, Beacon.BeaconColor.BLUE, boundingBox, Double.NaN);
+        else
+            return new Beacon.BeaconAnalysis(Beacon.BeaconColor.BLUE, Beacon.BeaconColor.RED, boundingBox, Double.NaN);
+    }
+
+    private static int findLargestIndex(List<Contour> contours) {
+        if (contours.size() < 1)
+            return -1;
+        int largestIndex = 0;
+        double maxArea = 0.0f;
+        for (int i = 0; i < contours.size(); i++) {
+            Contour c = contours.get(i);
+            if (c.area() > maxArea) {
+                largestIndex = i;
+                maxArea = c.area();
+            }
+        }
+        return largestIndex;
+    }
+
     static Beacon.BeaconAnalysis analyze_COMPLEX(List<Contour> contoursRed, List<Contour> contoursBlue, Mat img, Mat gray, ScreenOrientation orientation) {
         //The idea behind the SmartScoring algorithm is that the largest score in each contour/ellipse set will become the best
         //DONE First, ellipses and contours are are detected and pre-filtered to remove eccentricities
@@ -175,7 +355,6 @@ class BeaconAnalyzer {
             //Get the right-most best contour
             rightMostContour = ((bestRed.topLeft().y) < (bestBlue.topLeft().y)) ? bestBlue : bestRed;
         }
-
 
         //DEBUG Logging
         Log.d("Beacon", "Orientation: " + orientation + "Angle: " + orientationAngle + " Swap Axis: " + readOppositeAxis +

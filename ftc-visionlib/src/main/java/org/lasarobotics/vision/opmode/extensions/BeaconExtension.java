@@ -24,6 +24,10 @@ public class BeaconExtension implements VisionExtension {
         return analysis;
     }
 
+    public Beacon.AnalysisMethod getAnalysisMethod() {
+        return analysisMethod;
+    }
+
     public void setAnalysisMethod(Beacon.AnalysisMethod method) {
         this.analysisMethod = method;
     }

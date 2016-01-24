@@ -36,16 +36,30 @@ public final class Beacon {
             case FAST:
             case DEFAULT:
             default:
-                return BeaconAnalyzer.analyze_COMPLEX(contoursRed, contoursBlue, img, gray, orientation);
+                return BeaconAnalyzer.analyze_FAST(contoursRed, contoursBlue, img, gray, orientation);
             case COMPLEX:
                 return BeaconAnalyzer.analyze_COMPLEX(contoursRed, contoursBlue, img, gray, orientation);
         }
     }
 
     public enum AnalysisMethod {
+        //Default method
         DEFAULT,
+        //Fastest method - picks the two largest contours without concern
         FAST,
-        COMPLEX
+        //Slower and complex method - picks contours based on statistical analysis
+        COMPLEX;
+
+        public String toString() {
+            switch (this) {
+                case DEFAULT:
+                case FAST:
+                default:
+                    return "FAST";
+                case COMPLEX:
+                    return "COMPLEX";
+            }
+        }
     }
 
     public enum BeaconColor {
@@ -129,12 +143,12 @@ public final class Beacon {
         }
 
         public double getConfidence() {
-            return MathUtil.coerce(0, 1, confidence);
+            return !Double.isNaN(confidence) ? MathUtil.coerce(0, 1, confidence) : 0.0;
         }
 
         public String getConfidenceString() {
             final DecimalFormat format = new DecimalFormat("0.000");
-            return format.format(getConfidence() * 100.0f) + "%";
+            return !Double.isNaN(confidence) ? format.format(MathUtil.coerce(0, 1, getConfidence()) * 100.0f) + "%" : "n/a";
         }
 
         public boolean isLeftKnown() {

@@ -106,7 +106,7 @@ public class ManualVisionSample extends ManualVisionOpMode {
             List<Contour> contoursBlue = detectorBlue.getContours();
 
             //Get color analysis
-            Beacon beacon = new Beacon();
+            Beacon beacon = new Beacon(Beacon.AnalysisMethod.DEFAULT);
             colorAnalysis = beacon.analyzeFrame(contoursRed, contoursBlue, rgba, gray);
 
             //Draw red and blue contours
