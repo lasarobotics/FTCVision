@@ -18,9 +18,14 @@ public class BeaconExtension implements VisionExtension {
     private ColorBlobDetector detectorBlue;
 
     private Beacon.BeaconAnalysis analysis = new Beacon.BeaconAnalysis();
+    private Beacon.AnalysisMethod analysisMethod = Beacon.AnalysisMethod.DEFAULT;
 
     public Beacon.BeaconAnalysis getAnalysis() {
         return analysis;
+    }
+
+    public void setAnalysisMethod(Beacon.AnalysisMethod method) {
+        this.analysisMethod = method;
     }
 
     public void init(VisionOpMode opmode) {
@@ -48,8 +53,8 @@ public class BeaconExtension implements VisionExtension {
                     VisionOpMode.rotation.getRotationCompensationAngleBiased());
 
             //Get color analysis
-            Beacon beacon = new Beacon();
-            this.analysis = beacon.analyzeColor(contoursRed, contoursBlue, rgba, gray, orientation);
+            Beacon beacon = new Beacon(analysisMethod);
+            this.analysis = beacon.analyzeFrame(contoursRed, contoursBlue, rgba, gray, orientation);
 
         } catch (Exception e) {
             e.printStackTrace();
