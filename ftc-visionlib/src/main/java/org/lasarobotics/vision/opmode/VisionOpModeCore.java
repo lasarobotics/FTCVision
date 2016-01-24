@@ -8,8 +8,10 @@ import android.widget.LinearLayout;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
+import org.lasarobotics.vision.android.Camera;
 import org.lasarobotics.vision.android.Cameras;
 import org.lasarobotics.vision.android.Sensors;
+import org.lasarobotics.vision.ftc.resq.Constants;
 import org.lasarobotics.vision.util.FPS;
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase;
@@ -58,6 +60,7 @@ abstract class VisionOpModeCore extends OpMode implements CameraBridgeViewBase.C
         openCVCamera.disableView();
         if (initialized) openCVCamera.disconnectCamera();
         openCVCamera.setCameraIndex(camera.getID());
+        setCameraInfo(camera.getID());
         if (initialized) openCVCamera.connectCamera(width, height);
         openCVCamera.enableView();
     }
@@ -76,11 +79,26 @@ abstract class VisionOpModeCore extends OpMode implements CameraBridgeViewBase.C
         height = openCVCamera.getFrameHeight();
     }
 
+    private void setCameraInfo(int cameraID)
+    {
+        //Prepare camera information
+        Camera c = new Camera(cameraID);
+        android.hardware.Camera.Parameters pam = c.getCamera().getParameters();
+        Constants.CAMERA_HOR_VANGLE = pam.getHorizontalViewAngle() * Math.PI/180.0;
+        Constants.CAMERA_VERT_VANGLE = pam.getVerticalViewAngle() * Math.PI/180.0;
+
+        //Release the camera for later use
+        c.unlock();
+        c.release();
+    }
+
     @Override
     public void init() {
         //Initialize camera view
         final Activity activity = (Activity) hardwareMap.appContext;
         final VisionOpModeCore t = this;
+
+        setCameraInfo(0);
 
         if (!OpenCVLoader.initDebug()) {
             Log.d("OpenCV", "Internal OpenCV library not found. Using OpenCV Manager for initialization");

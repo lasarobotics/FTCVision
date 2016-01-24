@@ -18,6 +18,10 @@ public class Camera {
     public Camera(Cameras camera) {
         makeCamera(camera.getID());
     }
+    public Camera(int cameraID)
+    {
+        makeCamera(cameraID);
+    }
 
     public static boolean isHardwareAvailable() {
         return Util.getContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA);
@@ -33,12 +37,7 @@ public class Camera {
 
     private void makeCamera(int id) {
         this.id = id;
-        try {
-            this.c = android.hardware.Camera.open(id);
-        } catch (Exception e) {
-            throw e;
-            //this.c = null;
-        }
+        this.c = android.hardware.Camera.open(id);
     }
 
     public void unlock() {

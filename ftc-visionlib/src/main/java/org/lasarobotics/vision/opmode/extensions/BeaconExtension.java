@@ -14,10 +14,9 @@ import java.util.List;
  * Extension that supports finding and reading beacon color data
  */
 public class BeaconExtension implements VisionExtension {
+    Beacon.BeaconAnalysis analysis = new Beacon.BeaconAnalysis();
     private ColorBlobDetector detectorRed;
     private ColorBlobDetector detectorBlue;
-
-    private Beacon.BeaconAnalysis analysis = new Beacon.BeaconAnalysis();
     private Beacon.AnalysisMethod analysisMethod = Beacon.AnalysisMethod.DEFAULT;
 
     public Beacon.BeaconAnalysis getAnalysis() {
@@ -58,7 +57,7 @@ public class BeaconExtension implements VisionExtension {
 
             //Get color analysis
             Beacon beacon = new Beacon(analysisMethod);
-            this.analysis = beacon.analyzeFrame(contoursRed, contoursBlue, rgba, gray, orientation);
+            this.analysis = beacon.analyzeFrame(contoursRed, contoursBlue, rgba, gray, analysis, orientation);
 
         } catch (Exception e) {
             e.printStackTrace();

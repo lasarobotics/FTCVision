@@ -1,6 +1,7 @@
 package org.lasarobotics.vision.opmode;
 
 import org.lasarobotics.vision.opmode.extensions.BeaconExtension;
+import org.lasarobotics.vision.opmode.extensions.DistanceLinearizationExtension;
 import org.lasarobotics.vision.opmode.extensions.ImageRotationExtension;
 import org.lasarobotics.vision.opmode.extensions.QRExtension;
 import org.lasarobotics.vision.opmode.extensions.VisionExtension;
@@ -21,6 +22,7 @@ public abstract class VisionOpMode extends VisionOpModeCore {
     public static BeaconExtension beacon = new BeaconExtension();
     public static QRExtension qr = new QRExtension();
     public static ImageRotationExtension rotation = new ImageRotationExtension();
+    public static DistanceLinearizationExtension distance = new DistanceLinearizationExtension();
 
     private boolean enableOpenCV = true;
     /**
@@ -98,9 +100,18 @@ public abstract class VisionOpMode extends VisionOpModeCore {
                 disableExtension(extension); //disable and stop
     }
 
+    public double getFPS() {
+        return fps.getFPS();
+    }
+
+    public BeaconExtension getBeaconState() {
+        return beacon;
+    }
+
     public enum Extensions {
         BEACON(2, beacon),
-        QR(4, qr),             //low priority
+        DISTANCE(4, distance),
+        QR(8, qr),             //low priority
         ROTATION(1, rotation); //high priority - image must rotate prior to analysis
 
         final int id;

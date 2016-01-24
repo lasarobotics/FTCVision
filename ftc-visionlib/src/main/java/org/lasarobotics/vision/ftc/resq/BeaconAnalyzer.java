@@ -22,7 +22,7 @@ import java.util.List;
  */
 class BeaconAnalyzer {
     static Beacon.BeaconAnalysis analyze_FAST(List<Contour> contoursR, List<Contour> contoursB,
-                                              Mat img, Mat gray, ScreenOrientation orientation) {
+                                              Mat img, Mat gray, Beacon.BeaconAnalysis prevAnalysis, ScreenOrientation orientation) {
         //DEBUG Draw contours before filtering
         Drawing.drawContours(img, contoursR, new ColorRGBA("#FF0000"), 2);
         Drawing.drawContours(img, contoursB, new ColorRGBA("#0000FF"), 2);
@@ -200,7 +200,8 @@ class BeaconAnalyzer {
         return largestIndex;
     }
 
-    static Beacon.BeaconAnalysis analyze_COMPLEX(List<Contour> contoursRed, List<Contour> contoursBlue, Mat img, Mat gray, ScreenOrientation orientation) {
+    static Beacon.BeaconAnalysis analyze_COMPLEX(List<Contour> contoursRed, List<Contour> contoursBlue,
+                                                 Mat img, Mat gray, Beacon.BeaconAnalysis prevAnalysis, ScreenOrientation orientation) {
         //The idea behind the SmartScoring algorithm is that the largest score in each contour/ellipse set will become the best
         //DONE First, ellipses and contours are are detected and pre-filtered to remove eccentricities
         //Second, ellipses, and contours are scored independently based on size and color ... higher score is better
