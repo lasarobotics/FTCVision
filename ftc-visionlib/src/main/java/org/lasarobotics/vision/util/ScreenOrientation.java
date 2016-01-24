@@ -7,6 +7,7 @@ import android.view.Surface;
  */
 public enum ScreenOrientation {
     LANDSCAPE(0),
+    DEFAULT(0),
     PORTRAIT(90),
     LANDSCAPE_WEST(180),
     PORTRAIT_REVERSE(270);

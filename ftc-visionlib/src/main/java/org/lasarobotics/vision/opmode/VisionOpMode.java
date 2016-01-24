@@ -1,6 +1,7 @@
 package org.lasarobotics.vision.opmode;
 
 import org.lasarobotics.vision.opmode.extensions.BeaconExtension;
+import org.lasarobotics.vision.opmode.extensions.DistanceLinearizationExtension;
 import org.lasarobotics.vision.opmode.extensions.ImageRotationExtension;
 import org.lasarobotics.vision.opmode.extensions.QRExtension;
 import org.lasarobotics.vision.opmode.extensions.VisionExtension;
@@ -15,14 +16,30 @@ public abstract class VisionOpMode extends VisionOpModeCore {
 
     /***
      * CUSTOM EXTENSION INITIALIZATION
-     * <p/>
+     *
      * Add your extension here and in the Extensions class below!
      */
-    protected static BeaconExtension beacon = new BeaconExtension();
-    protected static QRExtension qr = new QRExtension();
-    protected static ImageRotationExtension rotation = new ImageRotationExtension();
+    public static BeaconExtension beacon = new BeaconExtension();
+    public static QRExtension qr = new QRExtension();
+    public static ImageRotationExtension rotation = new ImageRotationExtension();
+    public static DistanceLinearizationExtension distance = new DistanceLinearizationExtension();
+
+    private boolean enableOpenCV = true;
+    /**
+     * END OF CUSTOM EXTENSION INITIALIZATION
+     */
+
     private int extensions = 0;
-    private boolean initialized = false;
+    private boolean extensionsInitialized = false;
+
+    public VisionOpMode() {
+        super();
+    }
+
+    protected VisionOpMode(boolean enableOpenCV) {
+        super();
+        this.enableOpenCV = enableOpenCV;
+    }
 
     protected boolean isEnabled(Extensions extension) {
         return (extensions & extension.id) > 0;
@@ -30,7 +47,7 @@ public abstract class VisionOpMode extends VisionOpModeCore {
 
     protected void enableExtension(Extensions extension) {
         //Don't initialize extension if we haven't ever called init() yet
-        if (initialized)
+        if (extensionsInitialized)
             extension.instance.init(this);
 
         extensions = extensions | extension.id;
@@ -44,18 +61,18 @@ public abstract class VisionOpMode extends VisionOpModeCore {
 
     @Override
     public void init() {
-        super.init();
+        if (enableOpenCV) super.init();
 
         for (Extensions extension : Extensions.values())
             if (isEnabled(extension))
                 extension.instance.init(this);
 
-        initialized = true;
+        extensionsInitialized = true;
     }
 
     @Override
     public void loop() {
-        super.loop();
+        if (enableOpenCV) super.loop();
 
         for (Extensions extension : Extensions.values())
             if (isEnabled(extension))
@@ -83,10 +100,19 @@ public abstract class VisionOpMode extends VisionOpModeCore {
                 disableExtension(extension); //disable and stop
     }
 
+    public double getFPS() {
+        return fps.getFPS();
+    }
+
+    public BeaconExtension getBeaconState() {
+        return beacon;
+    }
+
     public enum Extensions {
         BEACON(2, beacon),
-        QR(4, qr),
-        ROTATION(1, rotation); //high priority
+        DISTANCE(4, distance),
+        QR(8, qr),             //low priority
+        ROTATION(1, rotation); //high priority - image must rotate prior to analysis
 
         final int id;
         VisionExtension instance;
@@ -95,13 +121,5 @@ public abstract class VisionOpMode extends VisionOpModeCore {
             this.id = id;
             this.instance = instance;
         }
-    }
-
-    public double getFPS() {
-        return fps.getFPS();
-    }
-
-    public BeaconExtension getBeaconState() {
-        return beacon;
     }
 }

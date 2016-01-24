@@ -3,8 +3,9 @@ package org.lasarobotics.vision.opmode.extensions;
 import org.lasarobotics.vision.detection.ColorBlobDetector;
 import org.lasarobotics.vision.detection.objects.Contour;
 import org.lasarobotics.vision.ftc.resq.Beacon;
+import org.lasarobotics.vision.ftc.resq.Constants;
 import org.lasarobotics.vision.opmode.VisionOpMode;
-import org.lasarobotics.vision.util.color.ColorHSV;
+import org.lasarobotics.vision.util.ScreenOrientation;
 import org.opencv.core.Mat;
 
 import java.util.List;
@@ -13,26 +14,27 @@ import java.util.List;
  * Extension that supports finding and reading beacon color data
  */
 public class BeaconExtension implements VisionExtension {
-    private final ColorHSV lowerBoundRed = new ColorHSV((int) (305 / 360.0 * 255.0), (int) (0.100 * 255.0), (int) (0.300 * 255.0));
-    private final ColorHSV upperBoundRed = new ColorHSV((int) ((360.0 + 5.0) / 360.0 * 255.0), 255, 255);
-    private final ColorHSV lowerBoundBlue = new ColorHSV((int) (170.0 / 360.0 * 255.0), (int) (0.100 * 255.0), (int) (0.300 * 255.0));
-    private final ColorHSV upperBoundBlue = new ColorHSV((int) (227.0 / 360.0 * 255.0), 255, 255);
+    Beacon.BeaconAnalysis analysis = new Beacon.BeaconAnalysis();
     private ColorBlobDetector detectorRed;
     private ColorBlobDetector detectorBlue;
-
-    private Beacon.BeaconAnalysis analysis = new Beacon.BeaconAnalysis();
+    private Beacon.AnalysisMethod analysisMethod = Beacon.AnalysisMethod.DEFAULT;
 
     public Beacon.BeaconAnalysis getAnalysis() {
         return analysis;
     }
 
+    public Beacon.AnalysisMethod getAnalysisMethod() {
+        return analysisMethod;
+    }
+
+    public void setAnalysisMethod(Beacon.AnalysisMethod method) {
+        this.analysisMethod = method;
+    }
+
     public void init(VisionOpMode opmode) {
         //Initialize all detectors here
-        detectorRed = new ColorBlobDetector(lowerBoundRed, upperBoundRed);
-        detectorBlue = new ColorBlobDetector(lowerBoundBlue, upperBoundBlue);
-
-        //opmode.setCamera(Cameras.PRIMARY);
-        //opmode.setFrameSize(new Size(900, 900));
+        detectorRed = new ColorBlobDetector(Constants.COLOR_RED_LOWER, Constants.COLOR_RED_UPPER);
+        detectorBlue = new ColorBlobDetector(Constants.COLOR_BLUE_LOWER, Constants.COLOR_BLUE_UPPER);
     }
 
     public void loop(VisionOpMode opmode) {
@@ -49,9 +51,13 @@ public class BeaconExtension implements VisionExtension {
             List<Contour> contoursRed = detectorRed.getContours();
             List<Contour> contoursBlue = detectorBlue.getContours();
 
+            //Get screen orientation data
+            ScreenOrientation orientation = ScreenOrientation.getFromAngle(
+                    VisionOpMode.rotation.getRotationCompensationAngleBiased());
+
             //Get color analysis
-            Beacon beacon = new Beacon();
-            this.analysis = beacon.analyzeColor(contoursRed, contoursBlue, rgba, gray, analysis);
+            Beacon beacon = new Beacon(analysisMethod);
+            this.analysis = beacon.analyzeFrame(contoursRed, contoursBlue, rgba, gray, analysis, orientation);
 
         } catch (Exception e) {
             e.printStackTrace();

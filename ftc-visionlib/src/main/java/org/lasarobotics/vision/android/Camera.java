@@ -37,11 +37,7 @@ public class Camera {
 
     private void makeCamera(int id) {
         this.id = id;
-        try {
-            this.c = android.hardware.Camera.open(id);
-        } catch (Exception e) {
-            this.c = null;
-        }
+        this.c = android.hardware.Camera.open(id);
     }
 
     public void unlock() {

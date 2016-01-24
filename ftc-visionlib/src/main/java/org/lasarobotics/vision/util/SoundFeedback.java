@@ -8,7 +8,7 @@ import android.media.ToneGenerator;
 import android.net.Uri;
 
 /**
- * Created by Russell on 11/26/2015.
+ * Sound feedback class
  */
 public class SoundFeedback {
     private SoundFeedback() {

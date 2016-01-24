@@ -1,9 +1,8 @@
 package org.lasarobotics.vision.opmode.extensions;
 
-import android.hardware.SensorManager;
-
+import org.lasarobotics.vision.android.Sensors;
+import org.lasarobotics.vision.ftc.resq.Beacon;
 import org.lasarobotics.vision.opmode.VisionOpMode;
-import org.lasarobotics.vision.util.Accelerometer;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 
@@ -13,40 +12,36 @@ import java.util.List;
 /**
  * If car is not accelerating, apply linear fitting to the distance values to reduce noise.
  */
-public class DistanceLinearization implements VisionExtension {
+public class DistanceLinearizationExtension implements VisionExtension {
 
     private static final int VALUES_HEAP_SIZE = 5; //How many points should be stored at a time for linearization
-    private static final int MAIN_AXIS = SensorManager.AXIS_Z - 1; //Plug in the axis that is horizontal relative
-    //to the beacon
+    private static final Sensors.Axis MAIN_AXIS = Sensors.Axis.Z; //Plug in the axis that is horizontal relative to the beacon
 
-    private Accelerometer accelerometer;
     private List<Point> previousValues;
 
     private double currentTime = 0;
 
     public void init(VisionOpMode opmode) {
-        accelerometer = new Accelerometer();
         previousValues = new ArrayList<>();
     }
 
-    public void loop(VisionOpMode visionOpMode) {
+    public void loop(VisionOpMode opmode) {
 
     }
 
     public Mat frame(VisionOpMode opmode, Mat rgba, Mat gray) {
-        if(VALUES_HEAP_SIZE < 1)
-            return rgba;
-        if(accelerometer.isAccelerating(MAIN_AXIS)) {
+        if (opmode.sensors.isAccelerating(MAIN_AXIS)) {
             currentTime = 0;
             previousValues = new ArrayList<>();
             return rgba;
         }
         currentTime += 1.0/opmode.getFPS();
-        previousValues.add(new Point(currentTime, opmode.getBeaconState().getAnalysis().getRadius()));
+        previousValues.add(new Point(currentTime, opmode.getBeaconState().getAnalysis().getDistance()));
         if(previousValues.size() > VALUES_HEAP_SIZE)
             previousValues.remove(0);
         if(previousValues.size() > 1)
-            opmode.getBeaconState().getAnalysis().setRadius(linearEstimate(opmode.getBeaconState().getAnalysis().getRadius()));
+            VisionOpMode.beacon.analysis = new Beacon.BeaconAnalysis(VisionOpMode.beacon.analysis,
+                    linearEstimate(opmode.getBeaconState().getAnalysis().getDistance()));
         return rgba;
     }
 
@@ -72,7 +67,7 @@ public class DistanceLinearization implements VisionExtension {
         return slope * currentTime + yInt;
     }
 
-    public void stop(VisionOpMode opMode) {
-        accelerometer = null;
+    public void stop(VisionOpMode opmode) {
+
     }
 }

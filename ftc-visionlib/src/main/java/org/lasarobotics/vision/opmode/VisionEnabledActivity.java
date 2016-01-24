@@ -1,35 +1,33 @@
 package org.lasarobotics.vision.opmode;
 
 import android.app.Activity;
+import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.widget.LinearLayout;
+import android.view.SurfaceView;
 
-import org.jetbrains.annotations.Nullable;
-import org.lasarobotics.vision.android.Camera;
-import org.lasarobotics.vision.android.Cameras;
-import org.lasarobotics.vision.ftc.resq.Constants;
+import org.lasarobotics.vision.android.Sensors;
+import org.lasarobotics.vision.util.FPS;
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.JavaCameraView;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
-import org.opencv.core.Size;
+import org.opencv.core.Mat;
 
 /**
  * Initiates a VisionEnabledActivity
  */
-@Deprecated
-public abstract class VisionEnabledActivity extends Activity {
+public abstract class VisionEnabledActivity extends Activity implements CameraBridgeViewBase.CvCameraViewListener2 {
     public static CameraBridgeViewBase openCVCamera;
-
-    protected BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
+    TestableVisionOpMode opMode;
+    protected BaseLoaderCallback openCVLoaderCallback = new BaseLoaderCallback(this) {
         @Override
         public void onManagerConnected(int status) {
             switch (status) {
                 case LoaderCallbackInterface.SUCCESS: {
                     //Woohoo!
-
+                    openCVCamera.enableView();
+                    opMode.init();
                 }
                 break;
                 default: {
@@ -40,90 +38,82 @@ public abstract class VisionEnabledActivity extends Activity {
         }
     };
 
-    /**
-     * Initialize vision
-     * Call this method from the onCreate() method after the super()
-     *
-     * @param layoutID  The ID of the primary layout (e.g. R.id.layout_robotcontroller)
-     * @param camera    The camera to use in vision processing
-     * @param frameSize The target frame size. If null, it will get the optimal size.
-     */
-    protected final void initializeVision(int layoutID, Cameras camera, @Nullable Size frameSize) {
-        LinearLayout layout = new LinearLayout(this);
-        layout.setOrientation(LinearLayout.VERTICAL);
+    protected VisionEnabledActivity() {
 
-        if (frameSize == null) {
-            Camera c = camera.createCamera();
-            android.hardware.Camera.Parameters pam = c.getCamera().getParameters();
-            Constants.CAMERA_HOR_VANGLE = pam.getHorizontalViewAngle() * Math.PI/180.0;
-            Constants.CAMERA_VERT_VANGLE = pam.getVerticalViewAngle() * Math.PI/180.0;
-            if (c.doesExist()) {
-                frameSize = c.getBestFrameSize();
-                c.unlock();
-                c.release();
-            } else {
-                //get some kind of default
-                frameSize = new Size(900, 900);
-            }
-        }
-
-        layout.setLayoutParams(new LinearLayout.LayoutParams(
-                (int) frameSize.width, (int) frameSize.height));
-
-        JavaCameraView cameraView = new JavaCameraView(this, camera.getID());
-        cameraView.setVisibility(View.VISIBLE);
-
-        layout.addView(cameraView);
-        layout.setVisibility(View.VISIBLE);
-
-        openCVCamera = cameraView;
-
-        LinearLayout primaryLayout = (LinearLayout) this.findViewById(layoutID);
-        primaryLayout.addView(layout);
     }
 
-    /**
-     * Initialize vision
-     * Call this method from the onCreate() method after the super()
-     *
-     * @param layoutID The ID of the primary layout (e.g. R.id.layout_robotcontroller)
-     * @param camera   The camera to use in vision processing
-     */
-    protected final void initializeVision(int layoutID, Cameras camera) {
-        initializeVision(layoutID, camera, null);
-    }
-
-    /**
-     * Initialize vision
-     * Call this method from the onCreate() method after the super()
-     *
-     * @param layoutID The ID of the primary layout (e.g. R.id.layout_robotcontroller)
-     */
-    protected final void initializeVision(int layoutID) {
-        initializeVision(layoutID, Cameras.PRIMARY);
-    }
-
-    /*protected final void initializeVision(int framePreview) {
+    protected final void initializeVision(int framePreview, TestableVisionOpMode opMode) {
         openCVCamera = (CameraBridgeViewBase) findViewById(framePreview);
         openCVCamera.setVisibility(SurfaceView.VISIBLE);
-    }*/
+        openCVCamera.setCvCameraViewListener(this);
 
+        this.opMode = opMode;
+
+        opMode.sensors = new Sensors();
+        opMode.fps = new FPS();
+        //FIXME this is the line that causes glitchiness
+        TestableVisionOpMode.openCVCamera = (JavaCameraView) openCVCamera;
+    }
+
+    @Override
+    public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
+        opMode.loop();
+        opMode.fps.update();
+        return opMode.frame(inputFrame.rgba(), inputFrame.gray());
+    }
+
+    @Override
+    public void onCameraViewStarted(int width, int height) {
+        opMode.width = width;
+        opMode.height = height;
+    }
+
+    @Override
+    public void onCameraViewStopped() {
+        openCVCamera.disableView();
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (openCVCamera != null)
+            openCVCamera.disableView();
+        opMode.sensors.stop();
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
         if (openCVCamera != null)
             openCVCamera.disableView();
+        opMode.sensors.stop();
+        this.finish();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
 
+        if (opMode == null)
+            return;
+
         if (!OpenCVLoader.initDebug()) {
             Log.d("OpenCV", "Internal OpenCV library not found. Using OpenCV Manager for initialization");
-            OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_0_0, this, mLoaderCallback);
+            boolean success = OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_0_0, this, openCVLoaderCallback);
+            if (!success)
+                Log.e("OpenCV", "Asynchronous initialization failed!");
+            else
+                Log.d("OpenCV", "Asynchronous initialization succeeded!");
         } else {
             Log.d("OpenCV", "OpenCV library found inside package. Using it!");
-            mLoaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
+            openCVLoaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
         }
+
+        opMode.sensors.resume();
     }
 }

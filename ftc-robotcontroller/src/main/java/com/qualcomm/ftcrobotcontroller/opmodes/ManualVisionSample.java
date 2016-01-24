@@ -70,7 +70,11 @@ public class ManualVisionSample extends ManualVisionOpMode {
         detectorRed = new ColorBlobDetector(lowerBoundRed, upperBoundRed);
         detectorBlue = new ColorBlobDetector(lowerBoundBlue, upperBoundBlue);
 
-        this.setCamera(Cameras.PRIMARY);
+        //Set the camera used for detection
+        this.setCamera(Cameras.SECONDARY);
+        //Set the frame size
+        //Larger = sometimes more accurate, but also much slower
+        //For Testable OpModes, this might make the image appear small - it might be best not to use this
         this.setFrameSize(new Size(900, 900));
     }
 
@@ -103,7 +107,7 @@ public class ManualVisionSample extends ManualVisionOpMode {
 
             //Get color analysis
             Beacon beacon = new Beacon();
-            colorAnalysis = beacon.analyzeColor(contoursRed, contoursBlue, rgba, gray, colorAnalysis);
+            colorAnalysis = beacon.analyzeFrame(contoursRed, contoursBlue, rgba, gray, colorAnalysis);
 
             //Draw red and blue contours
             Drawing.drawContours(rgba, contoursRed, new ColorRGBA(255, 0, 0), 2);

@@ -231,7 +231,7 @@ class BeaconScoring {
                 ellipseBest = Math.max(ellipseBest, ellipse.score);
 
             //Finally, a fraction of the ellipse value is added to the value of the contour
-            return contour.score + (Constants.ASSOCIATION_ELLIPSE_SCORE_MULTIPLIER * ellipseBest);
+            return contour.score * (Constants.ASSOCIATION_ELLIPSE_SCORE_MULTIPLIER * ellipseBest);
         }
 
         double updateScore() {
