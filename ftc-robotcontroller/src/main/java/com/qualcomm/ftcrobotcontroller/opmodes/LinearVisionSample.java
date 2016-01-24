@@ -32,6 +32,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 package com.qualcomm.ftcrobotcontroller.opmodes;
 
 import org.lasarobotics.vision.android.Cameras;
+import org.lasarobotics.vision.ftc.resq.Beacon;
 import org.lasarobotics.vision.opmode.LinearVisionOpMode;
 import org.opencv.core.Mat;
 import org.opencv.core.Size;
@@ -70,6 +71,10 @@ public class LinearVisionSample extends LinearVisionOpMode {
         //You can do this for certain phones which switch red and blue
         //It will rotate the display and detection by 180 degrees, making it upright
         //rotation.setUnbiasedOrientation(ScreenOrientation.LANDSCAPE_WEST);
+
+        //Set the beacon analysis method
+        //Try them all and see what works!
+        beacon.setAnalysisMethod(Beacon.AnalysisMethod.FAST);
 
         //Wait for the match to begin
         waitForStart();
