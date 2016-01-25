@@ -11,14 +11,27 @@ import org.opencv.core.Size;
 public class Ellipse extends Detectable implements Comparable<Ellipse> {
     private final RotatedRect rect;
 
+    /**
+     * Create an ellipse based on an OpenCV rotated rectangle
+     *
+     * @param rect OpenCV rotated rectangle which bounds the ellipse
+     */
     public Ellipse(RotatedRect rect) {
         this.rect = rect;
     }
 
+    /**
+     * Get the OpenCV rectangle which circumscribes the ellipse
+     * @return OpenCV rectange
+     */
     public RotatedRect getRect() {
         return rect;
     }
 
+    /**
+     * Get the size of the ellipse (ignoring inclination)
+     * @return Size of the ellipse
+     */
     public Size size() {
         return rect.size;
     }
@@ -31,10 +44,18 @@ public class Ellipse extends Detectable implements Comparable<Ellipse> {
         return size().width;
     }
 
+    /**
+     * Get the angle of inclination of the ellipse
+     * @return Angle of inclination
+     */
     public double angle() {
         return rect.angle;
     }
 
+    /**
+     * Get the center of the ellipse
+     * @return Center of the ellipse as a point
+     */
     public Point center() {
         return rect.center;
     }
@@ -64,18 +85,34 @@ public class Ellipse extends Detectable implements Comparable<Ellipse> {
         return semiMajorAxis() * semiMinorAxis() * Math.PI;
     }
 
+    /**
+     * Get the major axis of the ellipse
+     * @return 2a
+     */
     private double majorAxis() {
         return Math.max(height(), width());
     }
 
+    /**
+     * Get the minor axis of the ellipse
+     * @return 2b
+     */
     private double minorAxis() {
         return Math.min(height(), width());
     }
 
+    /**
+     * Get the semi-major axis of the ellipse
+     * @return a
+     */
     private double semiMajorAxis() {
         return majorAxis() / 2;
     }
 
+    /**
+     * Get the semi-minor axis of the ellipse
+     * @return b
+     */
     private double semiMinorAxis() {
         return minorAxis() / 2;
     }

@@ -166,6 +166,11 @@ public class Contour extends Detectable {
         return topLeft().x + size().width;
     }
 
+    /**
+     * Get a bounding rectangle surrounding the contour
+     *
+     * @return Returns an OpenCV rectangle
+     */
     public Rect getBoundingRect() {
         return new Rect((int) top(), (int) left(), (int) width(), (int) height());
     }
@@ -196,6 +201,10 @@ public class Contour extends Detectable {
         return new Point(minX, minY);
     }
 
+    /**
+     * Get the size of the contour i.e. a width and height
+     * @return Size as (width, height)
+     */
     public Size size() {
         double minX = Double.MAX_VALUE;
         double maxX = Double.MIN_VALUE;
@@ -221,10 +230,19 @@ public class Contour extends Detectable {
         return new Size(maxX - minX, maxY - minY);
     }
 
+    /**
+     * Get the arc length of the contour
+     * @param closed True if the contour should be calculated as closed
+     * @return Arc length
+     */
     public double arcLength(boolean closed) {
         return Imgproc.arcLength(getDoubleData(), closed);
     }
 
+    /**
+     * Get the point array of the contour
+     * @return Point array of contour
+     */
     private Point[] getPoints() {
         return mat.toArray();
     }
