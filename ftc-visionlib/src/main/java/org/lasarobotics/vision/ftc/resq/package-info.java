@@ -23,8 +23,6 @@
  */
 
 /**
- * FTC Robot Controller. Used to control an FTC Robot.
- * <p>
- * The quickest way to get started is to look at {@link com.qualcomm.ftcrobotcontroller.opmodes}
+ * FIRST Tech Challenge Res-Q game-specific vision code
  */
-package com.qualcomm.ftcrobotcontroller;
+package org.lasarobotics.vision.ftc.resq;

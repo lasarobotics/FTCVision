@@ -9,6 +9,8 @@
 bin/
 gen/
 jniLibs/
+doxygen/
+docs/
 
 # Local configuration file (sdk path, etc)
 local.properties

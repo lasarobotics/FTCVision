@@ -44,10 +44,19 @@ compile project(':opencv-java')
 This library is currently under insanely active development. We're in the **Beta** phase right now. If you have any questions or would like to help, send a note to `smo-key` (contact info on profile). Thank you!
 
 #### Accuracy Test
-![A test from 8 feet away](https://raw.githubusercontent.com/lasarobotics/ftcvision/img/test2.png)
+![Can it detect the beacon?](https://raw.githubusercontent.com/lasarobotics/ftcvision/img/test2.png)
 
 #### Distance Test
 ![A test from 8 feet away](https://raw.githubusercontent.com/lasarobotics/ftcvision/img/test1.png)
+
+#### Basic Analysis Demo
+![FAST isn't the greatest](https://raw.githubusercontent.com/lasarobotics/ftcvision/img/analysisdemo.gif)
+
+#### Ambient Analysis (Color and Rotation Detection) Test
+![A test from 8 feet away](https://raw.githubusercontent.com/lasarobotics/ftcvision/img/test3.gif)
+
+#### Analysis Methods
+![FAST vs. COMPLEX](https://raw.githubusercontent.com/lasarobotics/ftcvision/img/methods.png)
 
 ## Goals
 - Locate the lit target (the thing with two buttons) within the camera viewfield
@@ -55,6 +64,6 @@ This library is currently under insanely active development. We're in the **Beta
 - Locate the button of the target color and activate it
 
 ## Progress
-- Beacon located successfully in multiple environments. Now, we are tuning detection so that it is (virtually) fail- and competition-proof.
+- Beacon located successfully with automated environmental and orientation tuning.
 - A competition-proof `OpMode` scheme created so that the robot controller does not need to be modified to use the app.
 - Now supports nearly every phone since Android 4.2, including both the ZTE Speed and Moto G.
