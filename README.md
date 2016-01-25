@@ -2,7 +2,7 @@
   <img src="https://raw.githubusercontent.com/lasarobotics/ftcvision/img/logo.png?raw=true" alt="FTC-Sees!"/>
 </p>
 
-# FTC Vision Library [![Build Status](https://travis-ci.org/lasarobotics/FTCVision.svg?branch=master)](https://travis-ci.org/lasarobotics/FTCVision)
+# FTC Vision Library [![Build Status](https://travis-ci.org/lasarobotics/FTCVision.svg?branch=master)](https://travis-ci.org/lasarobotics/FTCVision) [![Documentation Status](https://img.shields.io/badge/documentation-0.9.0%20(up%20to%20date)-blue.svg)](http://ftcvision.lasarobotics.org)
 Computer Vision library for FTC based on OpenCV, featuring **beacon color and position detection**, as well as an easy-to-use `VisionOpMode` format and many additional detection features planned in the future.
 
 ## Installing from Scratch
@@ -43,6 +43,14 @@ compile project(':opencv-java')
 ## Status
 This library is currently under insanely active development. We're in the **Beta** phase right now. If you have any questions or would like to help, send a note to `smo-key` (contact info on profile). Thank you!
 
+## Documentation [![Documentation Status](https://img.shields.io/badge/documentation-0.9.0%20(up%20to%20date)-blue.svg)](http://ftcvision.lasarobotics.org)
+
+Documentation for the stable library is available at http://ftcvision.lasarobotics.org.
+
+## Does it work?
+
+**Yes!** FTCVision can detect a beacon 0.5-4 feet away with 65% accuracy in 0.3 seconds. Here are some pictures. :smiley:
+
 #### Accuracy Test
 ![Can it detect the beacon?](https://raw.githubusercontent.com/lasarobotics/ftcvision/img/test2.png)
 
@@ -67,3 +75,4 @@ This library is currently under insanely active development. We're in the **Beta
 - Beacon located successfully with automated environmental and orientation tuning.
 - A competition-proof `OpMode` scheme created so that the robot controller does not need to be modified to use the app.
 - Now supports nearly every phone since Android 4.2, including both the ZTE Speed and Moto G.
+- All initial goals complete - now tweaking beacon detection and preparing for something more...
