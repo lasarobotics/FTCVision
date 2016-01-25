@@ -23,8 +23,6 @@
  */
 
 /**
- * LASA Robotics FIRST Tech Challenge Vision Library
- *
- * Based on OpenCV and written by FIRST teams for FIRST teams
+ * Colorspace transformations, allowing use and conversion of colors within multiple spaces
  */
-package org.lasarobotics.vision;
+package org.lasarobotics.vision.util.color;

@@ -1,6 +1,3 @@
-/**
- * Android sensors and utilities
- */
 package org.lasarobotics.vision.android;
 
 import android.content.pm.PackageManager;

@@ -23,8 +23,6 @@
  */
 
 /**
- * LASA Robotics FIRST Tech Challenge Vision Library
- *
- * Based on OpenCV and written by FIRST teams for FIRST teams
+ * Vision extensions supporting VisionOpMode, LinearVisionOpMode, and TestableVisionOpMode
  */
-package org.lasarobotics.vision;
+package org.lasarobotics.vision.opmode.extensions;

@@ -23,8 +23,6 @@
  */
 
 /**
- * LASA Robotics FIRST Tech Challenge Vision Library
- *
- * Based on OpenCV and written by FIRST teams for FIRST teams
+ * Android sensors and utilities
  */
-package org.lasarobotics.vision;
+package org.lasarobotics.vision.android;

@@ -23,8 +23,6 @@
  */
 
 /**
- * LASA Robotics FIRST Tech Challenge Vision Library
- *
- * Based on OpenCV and written by FIRST teams for FIRST teams
+ * Detectable and analyzable primitives
  */
-package org.lasarobotics.vision;
+package org.lasarobotics.vision.detection.objects;

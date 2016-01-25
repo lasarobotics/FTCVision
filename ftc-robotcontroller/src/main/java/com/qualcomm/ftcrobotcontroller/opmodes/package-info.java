@@ -22,9 +22,4 @@
  * SOFTWARE.
  */
 
-/**
- * LASA Robotics FIRST Tech Challenge Vision Library
- *
- * Based on OpenCV and written by FIRST teams for FIRST teams
- */
-package org.lasarobotics.vision;
+package com.qualcomm.ftcrobotcontroller.opmodes;

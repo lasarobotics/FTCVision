@@ -1,6 +1,3 @@
-/**
- * Low-level object detection algorithms powered by OpenCV
- */
 package org.lasarobotics.vision.detection;
 
 import org.lasarobotics.vision.detection.objects.Contour;
