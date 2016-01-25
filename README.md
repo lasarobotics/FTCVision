@@ -2,7 +2,6 @@
   <img src="https://raw.githubusercontent.com/lasarobotics/ftcvision/img/logo.png?raw=true" alt="FTC-Sees!"/>
 </p>
 
-
 # FTC Vision Library [![Build Status](https://travis-ci.org/lasarobotics/FTCVision.svg?branch=master)](https://travis-ci.org/lasarobotics/FTCVision)
 Computer Vision library for FTC based on OpenCV, featuring **beacon color and position detection**, as well as an easy-to-use `VisionOpMode` format and many additional detection features planned in the future.
 
@@ -11,7 +10,9 @@ Computer Vision library for FTC based on OpenCV, featuring **beacon color and po
 1. Clone FTCVision into a clean directory (outside your robot controller app) using the following command: `git clone --depth=1 https://github.com/lasarobotics/ftcvision`.
 2. Open the FTCVision project using Android Studio
 3. Copy your OpModes from your robot controller directory into the appropriate directory within `ftc-robotcontroller`. Then, modify the `FtcOpModeRegister` appropriately to add your custom OpModes.
-4. You can now write your own custom `VisionOpMode`!
+4. Before running the app for the first time, install the "OpenCV Manager" from the Google Play Store to enable Vision processing.
+5. Run and test the code! Let us know if you encounter any difficulties.
+6. You can now write your own `VisionOpMode`!
 
 ## Installing into Existing Project
 
@@ -35,6 +36,7 @@ compile project(':opencv-java')
 ```
 - Update Gradle configuration by pressing the green "Sync Project with Gradle Files" button in the header (this may take a minute)
 - Copy in Vision opmodes (those that end in `VisionSample.java`, located in `[vision-root]/ftc-robotcontroller/src/main/java/com/qualcomm/ftcrobotcontroller/opmodes`) from the FTCVision directory into your opmode directory.
+- Before running the app for the first time, install the "OpenCV Manager" from the Google Play Store to enable Vision processing.
 - Run and test the code! Let us know if you encounter any difficulties.
 - You can now write your custom `VisionOpMode`!
 
@@ -62,8 +64,6 @@ This library is currently under insanely active development. We're in the **Beta
 - Locate the button of the target color and activate it
 
 ## Progress
-- Beacon located successfully in multiple environments. Now, we are tuning detection so that it is (virtually) fail- and competition-proof.
+- Beacon located successfully with automated environmental and orientation tuning.
 - A competition-proof `OpMode` scheme created so that the robot controller does not need to be modified to use the app.
-
-## ZXing
-FTCVision uses the ZXing library for scanning QRCodes, and it uses an Apache 2.0 license. View the `ZXing_license` and `ZXing_notice` files for the appropriate information.
+- Now supports nearly every phone since Android 4.2, including both the ZTE Speed and Moto G.
