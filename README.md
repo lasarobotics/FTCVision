@@ -43,6 +43,8 @@ compile project(':opencv-java')
 ## Status
 This library is currently under insanely active development. We're in the **Beta** phase right now. If you have any questions or would like to help, send a note to `smo-key` (contact info on profile). Thank you!
 
+Here are some cool pictures of what FTCVision can do...
+
 #### Accuracy Test
 ![Can it detect the beacon?](https://raw.githubusercontent.com/lasarobotics/ftcvision/img/test2.png)
 
@@ -67,3 +69,4 @@ This library is currently under insanely active development. We're in the **Beta
 - Beacon located successfully with automated environmental and orientation tuning.
 - A competition-proof `OpMode` scheme created so that the robot controller does not need to be modified to use the app.
 - Now supports nearly every phone since Android 4.2, including both the ZTE Speed and Moto G.
+- All initial goals complete - now tweaking beacon detection and preparing for something more...
