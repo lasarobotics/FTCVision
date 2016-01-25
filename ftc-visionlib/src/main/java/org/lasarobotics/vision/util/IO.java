@@ -35,6 +35,13 @@ class IO {
         }
     }
 
+    /**
+     * Read an entire text file into a string
+     *
+     * @param directory Directory from which to read the file
+     * @param filename  Filename with extension(s)
+     * @return String containing the file - use getLines() to get the lines of the file
+     */
     public static String readTextFile(String directory, String filename) {
         File f = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + directory, filename);
         try {
@@ -49,6 +56,11 @@ class IO {
         }
     }
 
+    /**
+     * Seperate a string into lines split by line endings
+     * @param data Single string
+     * @return Lines
+     */
     public static String[] getLines(String data) {
         return data.split("\r?\n");
     }
