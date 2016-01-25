@@ -61,7 +61,6 @@ public class LinearVisionSample extends LinearVisionOpMode {
 
         //Enable extensions. Use what you need.
         enableExtension(Extensions.BEACON);     //Beacon detection
-        //enableExtension(Extensions.QR);         //QR Code detection
         enableExtension(Extensions.ROTATION);   //Automatic screen rotation correction
 
         //UNCOMMENT THIS IF you're using a SECONDARY (facing toward screen) camera
@@ -87,8 +86,6 @@ public class LinearVisionSample extends LinearVisionOpMode {
             telemetry.addData("Beacon Color", beacon.getAnalysis().getColorString());
             telemetry.addData("Beacon Location (Center)", beacon.getAnalysis().getLocationString());
             telemetry.addData("Beacon Confidence", beacon.getAnalysis().getConfidenceString());
-            telemetry.addData("QR Error", qr.getErrorReason());
-            telemetry.addData("QR String", qr.getText());
             telemetry.addData("Rotation Compensation", rotation.getRotationCompensationAngle());
             telemetry.addData("Frame Rate", fps.getFPSString() + " FPS");
             telemetry.addData("Frame Size", "Width: " + width + " Height: " + height);

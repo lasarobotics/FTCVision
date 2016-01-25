@@ -73,8 +73,8 @@ class BeaconAnalyzer {
         //Check to see if the largest red contour is more left-most than the largest right contour
         //If it is, then we know that the left beacon is red and the other blue, and vice versa
 
-        Point bestRedCenter = largestRed.center();
-        Point bestBlueCenter = largestBlue.center();
+        Point bestRedCenter = largestRed.centroid();
+        Point bestBlueCenter = largestBlue.centroid();
 
         //DEBUG R/B text
         Drawing.drawText(img, "R", bestRedCenter, 1.0f, new ColorRGBA(255, 0, 0));
@@ -142,8 +142,8 @@ class BeaconAnalyzer {
         double widthBeacon = rightMostContour.right() - leftMostContour.left();
 
         //Center of contours is the average of centers of the contours
-        Point center = new Point((leftMostContour.center().x + rightMostContour.center().x) / 2,
-                (leftMostContour.center().y + rightMostContour.center().y) / 2);
+        Point center = new Point((leftMostContour.centroid().x + rightMostContour.centroid().x) / 2,
+                (leftMostContour.centroid().y + rightMostContour.centroid().y) / 2);
 
         //Get the combined height of the contours
         double heightContours = Math.max(leftMostContour.bottom(), rightMostContour.bottom()) -
@@ -304,8 +304,8 @@ class BeaconAnalyzer {
         //Check to see if the largest red contour is more left-most than the largest right contour
         //If it is, then we know that the left beacon is red and the other blue, and vice versa
 
-        Point bestRedCenter = bestRed.center();
-        Point bestBlueCenter = bestBlue.center();
+        Point bestRedCenter = bestRed.centroid();
+        Point bestBlueCenter = bestBlue.centroid();
 
         //DEBUG R/B text
         Drawing.drawText(img, "R", bestRedCenter, 1.0f, new ColorRGBA(255, 0, 0));
@@ -373,8 +373,8 @@ class BeaconAnalyzer {
         double widthBeacon = rightMostContour.right() - leftMostContour.left();
 
         //Center of contours is the average of centers of the contours
-        Point center = new Point((leftMostContour.center().x + rightMostContour.center().x) / 2,
-                (leftMostContour.center().y + rightMostContour.center().y) / 2);
+        Point center = new Point((leftMostContour.centroid().x + rightMostContour.centroid().x) / 2,
+                (leftMostContour.centroid().y + rightMostContour.centroid().y) / 2);
 
         //Get the combined height of the contours
         double heightContours = Math.max(leftMostContour.bottom(), rightMostContour.bottom()) -

@@ -128,7 +128,7 @@ class BeaconScoring {
             AssociatedContour associatedContour = new AssociatedContour(contour, new ArrayList<ScoredEllipse>());
             for (ScoredEllipse ellipse : ellipses) {
                 if (ellipse.ellipse.isInside(contour.contour) ||
-                        (MathUtil.distance(ellipse.ellipse.center(), contour.contour.center()) <=
+                        (MathUtil.distance(ellipse.ellipse.center(), contour.contour.centroid()) <=
                                 Constants.ASSOCIATION_MAX_DISTANCE * imgSize.width))
                     associatedContour.ellipses.add(ellipse);
             }

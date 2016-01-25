@@ -2,7 +2,6 @@ package org.lasarobotics.vision.opmode;
 
 import org.lasarobotics.vision.opmode.extensions.BeaconExtension;
 import org.lasarobotics.vision.opmode.extensions.ImageRotationExtension;
-import org.lasarobotics.vision.opmode.extensions.QRExtension;
 import org.lasarobotics.vision.opmode.extensions.VisionExtension;
 import org.opencv.core.Mat;
 import org.opencv.imgproc.Imgproc;
@@ -19,7 +18,6 @@ public abstract class VisionOpMode extends VisionOpModeCore {
      * Add your extension here and in the Extensions class below!
      */
     public static final BeaconExtension beacon = new BeaconExtension();
-    public static final QRExtension qr = new QRExtension();
     public static final ImageRotationExtension rotation = new ImageRotationExtension();
 
     private boolean enableOpenCV = true;
@@ -99,9 +97,8 @@ public abstract class VisionOpMode extends VisionOpModeCore {
     }
 
     public enum Extensions {
-        BEACON(2, beacon),
-        QR(4, qr),             //low priority
-        ROTATION(1, rotation); //high priority - image must rotate prior to analysis
+        BEACON(2, beacon),      //low priority
+        ROTATION(1, rotation);  //high priority - image must rotate prior to analysis
 
         final int id;
         final VisionExtension instance;

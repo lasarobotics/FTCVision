@@ -1,3 +1,6 @@
+/**
+ * Detectable primitives which can be analyzed
+ */
 package org.lasarobotics.vision.detection.objects;
 
 import org.opencv.core.MatOfPoint;
@@ -14,22 +17,56 @@ public class Contour extends Detectable {
 
     private final MatOfPoint mat;
 
+    /**
+     * Instantiate a contour from an OpenCV matrix of points (float)
+     *
+     * @param data OpenCV matrix of points
+     */
     public Contour(MatOfPoint data) {
         this.mat = data;
     }
 
+    /**
+     * Instantiate a contour from an OpenCV matrix of points (double)
+     *
+     * @param data OpenCV matrix of points
+     */
     public Contour(MatOfPoint2f data) {
         this.mat = new MatOfPoint(data.toArray());
     }
 
+    /**
+     * Get data as a float
+     * @return OpenCV matrix of points
+     */
     public MatOfPoint getData() {
         return mat;
     }
 
-    private MatOfPoint2f getFloatData() {
+    /**
+     * Get data as a double
+     *
+     * @return OpenCV matrix of points
+     */
+    public MatOfPoint2f getDoubleData() {
         return new MatOfPoint2f(mat.toArray());
     }
 
+    /**
+     * Get the number of points
+     *
+     * @return Number of points, i.e. length
+     */
+    public int count() {
+        return getData().rows();
+    }
+
+    /**
+     * Get the area of the contour
+     *
+     * A highly precise method that integrates the contour with respect to its arc length.
+     * @return Area of the contour
+     */
     public double area() {
         return Imgproc.contourArea(mat);
     }
@@ -43,14 +80,66 @@ public class Contour extends Detectable {
         return Imgproc.isContourConvex(mat);
     }
 
-    public Point center() {
-        //TODO this is an UNWEIGHTED CENTER - which means that for unusual shapes, it can be inaccurate
-        Point sum = new Point(0, 0);
+    /**
+     * Get the centroid of the object (a weighted center)
+     *
+     * @return Centroid of the object as a point
+     */
+    public Point centroid() {
+        //C_{\mathrm x} = \frac{1}{6A}\sum_{i=0}^{n-1}(x_i+x_{i+1})(x_i\ y_{i+1} - x_{i+1}\ y_i)
+        //C_{\mathrm y} = \frac{1}{6A}\sum_{i=0}^{n-1}(y_i+y_{i+1})(x_i\ y_{i+1} - x_{i+1}\ y_i)
+
+        /*if (in.size() > 2) {
+            T doubleArea = 0;
+            cv::Point_<T> p(0,0);
+            cv::Point_<T> p0 = in->back();
+            for (const cv::Point_<T>& p1 : in) {//C++11
+                T a = p0.x * p1.y - p0.y * p1.x; //cross product, (signed) double area of triangle of vertices (origin,p0,p1)
+                p += (p0 + p1) * a;
+                doubleArea += a;
+                p0 = p1;
+            }
+
+            if (doubleArea != 0)
+                return p * (1 / (3 * doubleArea) ); //Operator / does not exist for cv::Point
+        }*/
+
+        if (count() < 2)
+            return center();
+
+        double xSum = 0.0;
+        double ySum = 0.0;
+        double area = 0.0;
         Point[] points = this.getPoints();
 
-        for (Point p : points)
-            sum = new Point(sum.x + p.x, sum.y + p.y);
-        return new Point(sum.x / points.length, sum.y / points.length);
+        for (int i = 0; i < points.length - 1; i++) {
+            double signedArea = (points[i].x * points[i + 1].y) - (points[i + 1].x * points[i].y);
+            xSum += (points[i].x + points[i + 1].x) * signedArea;
+            ySum += (points[i].y + points[i + 1].y) * signedArea;
+            area += signedArea;
+        }
+
+        if (area == 0)
+            return center();
+
+        double coefficient = 3 * area;
+        return new Point(xSum / coefficient, ySum / coefficient);
+    }
+
+    /**
+     * Get the center of the object
+     * @return Center of the object as a point
+     */
+    public Point center() {
+        double xSum = 0.0;
+        double ySum = 0.0;
+        Point[] points = this.getPoints();
+
+        for (Point p : points) {
+            xSum += p.x;
+            ySum += p.y;
+        }
+        return new Point(xSum / points.length, ySum / points.length);
     }
 
     public double height() {
@@ -133,7 +222,7 @@ public class Contour extends Detectable {
     }
 
     public double arcLength(boolean closed) {
-        return Imgproc.arcLength(getFloatData(), closed);
+        return Imgproc.arcLength(getDoubleData(), closed);
     }
 
     private Point[] getPoints() {
