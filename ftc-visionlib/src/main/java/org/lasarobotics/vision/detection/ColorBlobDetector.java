@@ -38,20 +38,36 @@ public class ColorBlobDetector {
     //True if radius is set, false if lower and upper bound is set
     private boolean isRadiusSet = true;
 
+    /**
+     * Create a blob detector that searches for a color (within an acceptable radius)
+     *
+     * @param color Color to search for
+     */
     public ColorBlobDetector(Color color) {
         setColor(color);
     }
 
+    /**
+     * Create a color blob detector with a target color and a color radius
+     *
+     * @param color       Color to search for
+     * @param colorRadius Color radius
+     */
     public ColorBlobDetector(Color color, Color colorRadius) {
         this.colorRadius = colorRadius.convertColorScalar(ColorSpace.HSV);
         setColor(color);
     }
 
+    /**
+     * Create a color blob detector searching for a color between two bounds
+     * @param colorMinimum Minimum bound in HSV
+     * @param colorMaximum Maximum bound in HSV
+     */
     public ColorBlobDetector(ColorHSV colorMinimum, ColorHSV colorMaximum) {
         setColorRadius(colorMinimum, colorMaximum);
     }
 
-    public void setColor(Color color) {
+    private void setColor(Color color) {
         if (color == null)
             throw new IllegalArgumentException("Color must not be null!");
 
@@ -84,7 +100,7 @@ public class ColorBlobDetector {
         upperBound = new ColorHSV(upperBoundScalar);
     }
 
-    public void setColorRadius(Color lowerBound, Color upperBound) {
+    private void setColorRadius(Color lowerBound, Color upperBound) {
         isRadiusSet = false;
         Scalar lower = lowerBound.convertColorScalar(ColorSpace.HSV);
         Scalar upper = upperBound.convertColorScalar(ColorSpace.HSV);
@@ -93,6 +109,10 @@ public class ColorBlobDetector {
         this.upperBound = new ColorHSV(upper);
     }
 
+    /**
+     * Set color radius to a new radius
+     * @param radius Color radius in HSV
+     */
     public void setColorRadius(ColorHSV radius) {
         isRadiusSet = true;
         this.colorRadius = radius.getScalar();
@@ -100,6 +120,10 @@ public class ColorBlobDetector {
         setColor(color);
     }
 
+    /**
+     * Process an rgba image. The results can be drawn on retrieved later.
+     * @param rgbaImage An RGBA image matrix
+     */
     public void process(Mat rgbaImage) {
         Imgproc.pyrDown(rgbaImage, mPyrDownMat);
         Imgproc.pyrDown(mPyrDownMat, mPyrDownMat);
@@ -143,14 +167,29 @@ public class ColorBlobDetector {
         }
     }
 
+    /**
+     * Draw contours matched by the blob detector
+     * @param img Image to draw on
+     * @param color Color to draw the contours in
+     */
     public void drawContours(Mat img, Color color) {
         Drawing.drawContours(img, contours, color);
     }
 
+    /**
+     * Draw contours matched by the blob detector
+     * @param img Image to draw on
+     * @param color Color to draw the contours in
+     * @param thickness Contour thickness
+     */
     public void drawContours(Mat img, Color color, int thickness) {
         Drawing.drawContours(img, contours, color, thickness);
     }
 
+    /**
+     * Get a list of contours after running process()
+     * @return Processed list of contours
+     */
     public List<Contour> getContours() {
         return contours;
     }

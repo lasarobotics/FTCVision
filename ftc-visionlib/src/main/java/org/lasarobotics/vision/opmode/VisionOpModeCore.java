@@ -24,10 +24,10 @@ import org.opencv.core.Size;
  */
 abstract class VisionOpModeCore extends OpMode implements CameraBridgeViewBase.CvCameraViewListener2 {
     private static final int initialMaxSize = 1200;
-    protected static JavaCameraView openCVCamera;
+    static JavaCameraView openCVCamera;
     private static boolean initialized = false;
     private static boolean openCVInitialized = false;
-    protected final BaseLoaderCallback openCVLoaderCallback = new BaseLoaderCallback(hardwareMap.appContext) {
+    private final BaseLoaderCallback openCVLoaderCallback = new BaseLoaderCallback(hardwareMap.appContext) {
         @Override
         public void onManagerConnected(int status) {
             switch (status) {
@@ -48,7 +48,7 @@ abstract class VisionOpModeCore extends OpMode implements CameraBridgeViewBase.C
     public FPS fps;
     public Sensors sensors;
 
-    protected boolean isInitialized() {
+    boolean isInitialized() {
         return initialized;
     }
 

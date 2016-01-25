@@ -22,19 +22,32 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Designed to detect a single object at a time in an image
+ * Object Detector - searches a scene for keypoints then can match keypoints in the object
+ * to keypoints in the scene, effectively locating an object within a scene
+ *
+ * This class is designed to detect a single object at a time in an image
  */
 public class ObjectDetection {
-    FeatureDetector detector;
-    DescriptorExtractor extractor;
-    DescriptorMatcher matcher;
+    private final FeatureDetector detector;
+    private final DescriptorExtractor extractor;
+    private final DescriptorMatcher matcher;
 
+    /**
+     * Instantiate an object detector based on the FAST, BRIEF, and BRUTEFORCE_HAMMING algorithms
+     */
     public ObjectDetection() {
         detector = FeatureDetector.create(FeatureDetectorType.FAST.val());
         extractor = DescriptorExtractor.create(DescriptorExtractorType.BRIEF.val());
         matcher = DescriptorMatcher.create(DescriptorMatcherType.BRUTEFORCE_HAMMING.val());
     }
 
+    /**
+     * Instantiate an object detector based on custom algorithms
+     *
+     * @param detector  Keypoint detection algorithm
+     * @param extractor Keypoint descriptor extractor
+     * @param matcher   Descriptor matcher
+     */
     public ObjectDetection(FeatureDetectorType detector, DescriptorExtractorType extractor, DescriptorMatcherType matcher) {
         this.detector = FeatureDetector.create(detector.val());
         this.extractor = DescriptorExtractor.create(extractor.val());
@@ -54,6 +67,13 @@ public class ObjectDetection {
         }
     }
 
+    /**
+     * Draw the object's location
+     *
+     * @param output         Image to draw on
+     * @param objectAnalysis Object analysis information
+     * @param sceneAnalysis  Scene analysis information
+     */
     public static void drawObjectLocation(Mat output, ObjectAnalysis objectAnalysis, SceneAnalysis sceneAnalysis) {
         List<Point> ptsObject = new ArrayList<>();
         List<Point> ptsScene = new ArrayList<>();
@@ -108,6 +128,11 @@ public class ObjectDetection {
                 new Point(cornersScene[0].x + objectAnalysis.object.cols(), cornersScene[0].y), lineColor, 5);
     }
 
+    /**
+     * Draw debug info onto screen
+     * @param output Image to draw on
+     * @param sceneAnalysis Scene analysis object
+     */
     public static void drawDebugInfo(Mat output, SceneAnalysis sceneAnalysis) {
         Transform.flip(output, Transform.FlipType.FLIP_ACROSS_Y);
         Drawing.drawText(output, "Keypoints: " + sceneAnalysis.keypoints.rows(), new Point(0, 8), 1.0f, new ColorRGBA(255, 255, 255), Drawing.Anchor.BOTTOMLEFT_UNFLIPPED_Y);
@@ -184,6 +209,12 @@ public class ObjectDetection {
         return new SceneAnalysis(keypointsScene, descriptorsScene, matches, scene);
     }
 
+    /**
+     * Feature detector types
+     *
+     * Feature detectors search the images for features - typically corners - that are then
+     * extracted and processed to locate an object in a scene.
+     */
     public enum FeatureDetectorType {
         FAST(1),
         STAR(2),
@@ -223,6 +254,13 @@ public class ObjectDetection {
         }
     }
 
+    /**
+     * Descriptor extractor types
+     *
+     * Descriptor extractors get information from the feature detector and analyze
+     * it in various ways - these descriptors are then stored in the object analysis
+     * to later search for the same descriptors in the scene.
+     */
     public enum DescriptorExtractorType {
         //SIFT(1),
         //SURF(2),
@@ -252,6 +290,12 @@ public class ObjectDetection {
         }
     }
 
+    /**
+     * Descriptor matcher types
+     *
+     * Descriptor matchers match descriptors found from the object
+     * to descriptors in an image - they effectively locate the object in the scene.
+     */
     public enum DescriptorMatcherType {
         FLANN(1),
         BRUTEFORCE(2),
@@ -271,10 +315,13 @@ public class ObjectDetection {
         }
     }
 
+    /**
+     * Object analysis class returned after analyzing an object
+     */
     public final class ObjectAnalysis {
-        MatOfKeyPoint keypoints;
-        Mat descriptors;
-        Mat object;
+        final MatOfKeyPoint keypoints;
+        final Mat descriptors;
+        final Mat object;
 
         ObjectAnalysis(MatOfKeyPoint keypoints, Mat descriptors, Mat object) {
             this.keypoints = keypoints;
@@ -283,11 +330,14 @@ public class ObjectDetection {
         }
     }
 
+    /**
+     * Scene analysis class returned after analyzing a scene
+     */
     public final class SceneAnalysis {
-        MatOfKeyPoint keypoints;
-        Mat descriptors;
-        MatOfDMatch matches;
-        Mat scene;
+        final MatOfKeyPoint keypoints;
+        final Mat descriptors;
+        final MatOfDMatch matches;
+        final Mat scene;
 
         SceneAnalysis(MatOfKeyPoint keypoints, Mat descriptors, MatOfDMatch matches, Mat scene) {
             this.keypoints = keypoints;

@@ -12,9 +12,9 @@ import org.opencv.imgproc.Imgproc;
  * This includes code from the FIRST library (C) Qualcomm as of 1/23/2016
  */
 public abstract class LinearVisionOpMode extends VisionOpMode {
+    private final ElapsedTime timer = new ElapsedTime();
     private Threader threader = null;
     private Thread thread = null;
-    private ElapsedTime timer = new ElapsedTime();
     private volatile boolean opModeStarted = false;
     private Mat rgba;
     private Mat gray;
@@ -73,7 +73,7 @@ public abstract class LinearVisionOpMode extends VisionOpMode {
         this.waitForNextHardwareCycle();
     }
 
-    public void waitForNextHardwareCycle() throws InterruptedException {
+    private void waitForNextHardwareCycle() throws InterruptedException {
         synchronized (this) {
             this.wait();
         }

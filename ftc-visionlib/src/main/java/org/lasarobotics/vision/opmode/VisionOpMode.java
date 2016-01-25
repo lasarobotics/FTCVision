@@ -2,7 +2,6 @@ package org.lasarobotics.vision.opmode;
 
 import org.lasarobotics.vision.opmode.extensions.BeaconExtension;
 import org.lasarobotics.vision.opmode.extensions.ImageRotationExtension;
-import org.lasarobotics.vision.opmode.extensions.QRExtension;
 import org.lasarobotics.vision.opmode.extensions.VisionExtension;
 import org.opencv.core.Mat;
 import org.opencv.imgproc.Imgproc;
@@ -15,12 +14,11 @@ public abstract class VisionOpMode extends VisionOpModeCore {
 
     /***
      * CUSTOM EXTENSION INITIALIZATION
-     *
+     * <p/>
      * Add your extension here and in the Extensions class below!
      */
-    public static BeaconExtension beacon = new BeaconExtension();
-    public static QRExtension qr = new QRExtension();
-    public static ImageRotationExtension rotation = new ImageRotationExtension();
+    public static final BeaconExtension beacon = new BeaconExtension();
+    public static final ImageRotationExtension rotation = new ImageRotationExtension();
 
     private boolean enableOpenCV = true;
     /**
@@ -34,12 +32,12 @@ public abstract class VisionOpMode extends VisionOpModeCore {
         super();
     }
 
-    protected VisionOpMode(boolean enableOpenCV) {
+    VisionOpMode(boolean enableOpenCV) {
         super();
         this.enableOpenCV = enableOpenCV;
     }
 
-    protected boolean isEnabled(Extensions extension) {
+    private boolean isEnabled(Extensions extension) {
         return (extensions & extension.id) > 0;
     }
 
@@ -51,7 +49,7 @@ public abstract class VisionOpMode extends VisionOpModeCore {
         extensions = extensions | extension.id;
     }
 
-    protected void disableExtension(Extensions extension) {
+    private void disableExtension(Extensions extension) {
         extensions -= extensions & extension.id;
 
         extension.instance.stop(this);
@@ -99,12 +97,11 @@ public abstract class VisionOpMode extends VisionOpModeCore {
     }
 
     public enum Extensions {
-        BEACON(2, beacon),
-        QR(4, qr),             //low priority
-        ROTATION(1, rotation); //high priority - image must rotate prior to analysis
+        BEACON(2, beacon),      //low priority
+        ROTATION(1, rotation);  //high priority - image must rotate prior to analysis
 
         final int id;
-        VisionExtension instance;
+        final VisionExtension instance;
 
         Extensions(int id, VisionExtension instance) {
             this.id = id;

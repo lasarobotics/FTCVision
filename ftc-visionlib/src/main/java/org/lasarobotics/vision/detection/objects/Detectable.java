@@ -11,22 +11,55 @@ import org.opencv.core.Point;
  * A detectable object
  */
 public abstract class Detectable {
-    public abstract double left();
+    /**
+     * Get the x-coordinate of the left side of the object
+     *
+     * @return Left side of the object
+     */
+    protected abstract double left();
 
-    public abstract double right();
+    /**
+     * Get the x-coordinate of the right side of the object
+     * @return Right side of the object
+     */
+    protected abstract double right();
 
-    public abstract double top();
+    /**
+     * Get the y-coordinate of the top side of the object
+     * @return Top side of the object
+     */
+    protected abstract double top();
 
-    public abstract double bottom();
+    /**
+     * Get the y-coordinate of the bottom side of the object
+     * @return Bottom side of the object
+     */
+    protected abstract double bottom();
 
+    /**
+     * Get the width of the object
+     * @return Width of the object
+     */
     public abstract double width();
 
+    /**
+     * Get the height of the object
+     * @return Height of the object
+     */
     public abstract double height();
 
+    /**
+     * Get the top-left point of the object
+     * @return Top-left point of the object
+     */
     public Point topLeft() {
         return new Point(left(), top());
     }
 
+    /**
+     * Get the bottom right point of the object
+     * @return Bottom right point of the object
+     */
     public Point bottomRight() {
         return new Point(right(), bottom());
     }

@@ -11,19 +11,19 @@ import org.opencv.core.Mat;
  */
 public class ImageRotationExtension implements VisionExtension {
 
-    private Sensors sensors = new Sensors();
+    private final Sensors sensors = new Sensors();
     private ScreenOrientation unbiasedOrientation = ScreenOrientation.LANDSCAPE;
     private boolean isInverted = false;
+
     public ScreenOrientation getScreenOrientationDisplay() {
         return sensors.getActivityScreenOrientation();
     }
 
-    public ScreenOrientation getUnbiasedOrientation() {
+    private ScreenOrientation getUnbiasedOrientation() {
         return ScreenOrientation.getFromAngle((isInverted ? -1 : 1) * unbiasedOrientation.getAngle());
     }
 
-    public void setUnbiasedOrientation(ScreenOrientation orientation)
-    {
+    public void setUnbiasedOrientation(ScreenOrientation orientation) {
         this.unbiasedOrientation = orientation;
     }
 
@@ -31,8 +31,7 @@ public class ImageRotationExtension implements VisionExtension {
         return sensors.getScreenOrientation();
     }
 
-    public double getRotationCompensationAngle()
-    {
+    public double getRotationCompensationAngle() {
         return (isInverted ? -1 : 1) * sensors.getScreenOrientationCompensation();
     }
 

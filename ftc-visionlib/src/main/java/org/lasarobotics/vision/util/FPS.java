@@ -12,6 +12,9 @@ public class FPS {
     private final RollingAverage<Long> rollingAverage;
     private long lastTime;
 
+    /**
+     * Instantiate a new fps counter
+     */
     public FPS() {
         rollingAverage = new RollingAverage<>(FRAME_BUFFER_LENGTH);
         lastTime = -1L;
@@ -32,18 +35,27 @@ public class FPS {
 
     /**
      * Get the frames per second count, as a double (prefer using getFPSString() instead).
-     *
      * @return The FPS, as a double in frames/second.
      */
-    public double getFPS() {
+    private double getFPS() {
         double period = rollingAverage.getAverage() / 1000000000.0; //period: s
         return 1.0 / period; //frequency = 1/s
     }
 
+    /**
+     * Get a string coercing the length of the FPS decimal
+     *
+     * @return 0.00 decimal form of getFPS()
+     */
     public String getFPSString() {
         return FPS_FORMAT.format(getFPS());
     }
 
+    /**
+     * Pause the FPS counter.
+     *
+     * Call this when you're not going to use it for a while
+     */
     public void pause() {
         //make sure we resample the FPS on next update()
         lastTime = -1L;

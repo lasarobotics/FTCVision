@@ -9,10 +9,21 @@ import org.opencv.imgproc.Imgproc;
  * Implements image filtering algorithms
  */
 public class Filter {
+    /**
+     * Blur the image using a Gaussian blur
+     *
+     * @param img    Image matrix
+     * @param amount Amount >= 0
+     */
     public static void blur(Mat img, int amount) {
         Imgproc.GaussianBlur(img, img, new Size(2 * amount + 1, 2 * amount + 1), 0, 0);
     }
 
+    /**
+     * Erode the image using morphological transformations
+     * @param img Image matrix
+     * @param amount Amount to erode = 0
+     */
     public static void erode(Mat img, int amount) {
         Mat kernel = Imgproc.getStructuringElement(Imgproc.CV_SHAPE_RECT,
                 new Size(2 * amount + 1, 2 * amount + 1),
@@ -20,6 +31,11 @@ public class Filter {
         Imgproc.erode(img, img, kernel);
     }
 
+    /**
+     * Dilate the image using morphological transformations
+     * @param img Image matrix
+     * @param amount Amount to dilate = 0
+     */
     public static void dilate(Mat img, int amount) {
         Mat kernel = Imgproc.getStructuringElement(Imgproc.CV_SHAPE_RECT,
                 new Size(2 * amount + 1, 2 * amount + 1),
@@ -29,7 +45,6 @@ public class Filter {
 
     /**
      * Downsample and blur an image (using a Gaussian pyramid kernel)
-     *
      * @param img   The image
      * @param scale The scale, a number greater than 1
      */
@@ -39,7 +54,6 @@ public class Filter {
 
     /**
      * Upsample and blur an image (using a Gaussian pyramid kernel)
-     *
      * @param img   The image
      * @param scale The scale, a number greater than 1
      */

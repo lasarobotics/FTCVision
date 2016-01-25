@@ -23,6 +23,12 @@ public class PrimitiveDetection {
     private static final double MAX_COSINE_VALUE = 0.5;
     private static final double EPLISON_APPROX_TOLERANCE_FACTOR = 0.02;
 
+    /**
+     * Locate rectangles in an image
+     *
+     * @param grayImage Grayscale image
+     * @return Rectangle locations
+     */
     public RectangleLocationResult locateRectangles(Mat grayImage) {
         Mat gray = grayImage.clone();
 
@@ -84,6 +90,12 @@ public class PrimitiveDetection {
     //TODO convert this to locatePolygons() with n sides
     //TODO see http://opencv-code.com/tutorials/detecting-simple-shapes-in-an-image/
 
+    /**
+     * Locate ellipses within an image
+     *
+     * @param grayImage Grayscale image
+     * @return Ellipse locations
+     */
     public EllipseLocationResult locateEllipses(Mat grayImage) {
         Mat gray = grayImage.clone();
 
@@ -124,37 +136,59 @@ public class PrimitiveDetection {
         return new EllipseLocationResult(contours, ellipses);
     }
 
+    /**
+     * Contains the list of rectangles retrieved from locateRectangles()
+     */
     public class RectangleLocationResult {
-        List<Contour> contours;
-        List<Rectangle> ellipses;
+        final List<Contour> contours;
+        final List<Rectangle> ellipses;
 
         RectangleLocationResult(List<Contour> contours, List<Rectangle> ellipses) {
             this.contours = contours;
             this.ellipses = ellipses;
         }
 
+        /**
+         * Gets list of contours in the image , as processed by Canny detection
+         * @return List of contours in the image
+         */
         public List<Contour> getContours() {
             return contours;
         }
 
+        /**
+         * Gets list of rectangles detected in the image
+         * @return List of rectangles detected in the image
+         */
         public List<Rectangle> getRectangles() {
             return ellipses;
         }
     }
 
+    /**
+     * Contains the list of ellipses retrieved from locateEllipses()
+     */
     public class EllipseLocationResult {
-        List<Contour> contours;
-        List<Ellipse> ellipses;
+        final List<Contour> contours;
+        final List<Ellipse> ellipses;
 
         EllipseLocationResult(List<Contour> contours, List<Ellipse> ellipses) {
             this.contours = contours;
             this.ellipses = ellipses;
         }
 
+        /**
+         * Gets list of contours in the image, as processed by Canny detection
+         * @return List of contours in the image
+         */
         public List<Contour> getContours() {
             return contours;
         }
 
+        /**
+         * Get list of ellipses located in the image
+         * @return List of ellipses detected in the image
+         */
         public List<Ellipse> getEllipses() {
             return ellipses;
         }

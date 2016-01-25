@@ -63,26 +63,38 @@ public final class Util {
         return Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getAbsolutePath();
     }
 
+    /**
+     * Create a blank file onthe device
+     *
+     * @param fileDirectory Directory the file will be placed in
+     * @param fileName      File name, including any extension
+     * @param overwrite     True to overwrite the file, if it already exists. False to return the file's instance instead.
+     * @return The file.
+     * @throws IOException Exception thrown if file cannot be created.
+     */
     public static File createFileOnDevice(String fileDirectory, String fileName, boolean overwrite) throws IOException {
         fileDirectory = Environment.getExternalStorageDirectory().getAbsolutePath() + fileDirectory;
         File dir = new File(fileDirectory);
 
         if (!dir.exists()) {
-            dir.mkdirs();
+            if (!dir.mkdirs())
+                throw new IOException("Cannot create directory containing the file!");
         }
         File file = new File(fileDirectory, fileName);
         // if file doesn't exists, then create it
         if (!file.exists() || overwrite) {
             if (file.exists() && overwrite)
-                file.delete();
-            file.createNewFile();
+                if (!file.delete()) throw new IOException("Cannot overwrite the file!");
+            if (!file.createNewFile())
+                throw new IOException("Cannot create new file on the device!");
         } else {
             int i = 0;
             while (file.exists()) {
                 file = new File(fileDirectory, fileName + "." + i);
                 i++;
             }
-            file.createNewFile();
+            if (!file.createNewFile())
+                throw new IOException("Cannot create the file on the device!");
         }
         return file;
     }

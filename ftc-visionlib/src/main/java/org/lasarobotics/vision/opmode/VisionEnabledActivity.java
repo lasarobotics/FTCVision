@@ -18,9 +18,9 @@ import org.opencv.core.Mat;
  * Initiates a VisionEnabledActivity
  */
 public abstract class VisionEnabledActivity extends Activity implements CameraBridgeViewBase.CvCameraViewListener2 {
-    public static CameraBridgeViewBase openCVCamera;
-    TestableVisionOpMode opMode;
-    protected BaseLoaderCallback openCVLoaderCallback = new BaseLoaderCallback(this) {
+    private static CameraBridgeViewBase openCVCamera;
+    private TestableVisionOpMode opMode;
+    private final BaseLoaderCallback openCVLoaderCallback = new BaseLoaderCallback(this) {
         @Override
         public void onManagerConnected(int status) {
             switch (status) {

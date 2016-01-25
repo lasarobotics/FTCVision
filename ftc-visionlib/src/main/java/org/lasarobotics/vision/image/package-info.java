@@ -23,8 +23,6 @@
  */
 
 /**
- * FTC Robot Controller. Used to control an FTC Robot.
- * <p>
- * The quickest way to get started is to look at {@link com.qualcomm.ftcrobotcontroller.opmodes}
+ * Matrix transformation, filtering, and drawing
  */
-package com.qualcomm.ftcrobotcontroller;
+package org.lasarobotics.vision.image;

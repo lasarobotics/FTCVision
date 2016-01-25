@@ -23,8 +23,6 @@
  */
 
 /**
- * FTC Robot Controller. Used to control an FTC Robot.
- * <p>
- * The quickest way to get started is to look at {@link com.qualcomm.ftcrobotcontroller.opmodes}
+ * Low-level object detection and analysis powered by OpenCV
  */
-package com.qualcomm.ftcrobotcontroller;
+package org.lasarobotics.vision.detection;

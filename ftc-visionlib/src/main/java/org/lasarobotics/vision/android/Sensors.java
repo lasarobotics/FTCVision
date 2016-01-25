@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.WindowManager;
 
 import org.lasarobotics.vision.util.ScreenOrientation;
+import org.lasarobotics.vision.util.Vector3;
 
 /**
  * Contains methods for reading Android native sensors, other than the camera
@@ -19,15 +20,19 @@ public final class Sensors implements SensorEventListener {
     private static final float PITCH_TOLERANCE_HIGH = 45.0f;
     private static final float ROLL_MINIMUM = 0.0f;
     private static final int READ_SPEED = SensorManager.SENSOR_DELAY_NORMAL;
-    static float[] gravity = new float[3];
-    static float[] linear_acceleration = new float[3];
-    static float[] geomagnetic = new float[3];
+    private static float[] gravity = new float[3];
+    private static float[] linear_acceleration = new float[3];
+    private static float[] acceleration = new float[3];
+    private static float[] geomagnetic = new float[3];
     private static boolean activated = false;
     private final SensorManager mSensorManager;
     private final Sensor mAccelerometer;
     private final Sensor mMagneticField;
     private ScreenOrientation screenOrientation = null;
 
+    /**
+     * Instantiate a sensor reader class
+     */
     public Sensors() {
         mSensorManager = (SensorManager) Util.getContext().getSystemService(Context.SENSOR_SERVICE);
         mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
@@ -36,6 +41,9 @@ public final class Sensors implements SensorEventListener {
         resume();
     }
 
+    /**
+     * Resume reading sensors after reading was stopped
+     */
     public void resume() {
         if (activated)
             return;
@@ -44,6 +52,9 @@ public final class Sensors implements SensorEventListener {
         activated = true;
     }
 
+    /**
+     * Pause sensor reading
+     */
     public void stop() {
         if (!activated)
             return;
@@ -51,20 +62,79 @@ public final class Sensors implements SensorEventListener {
         mSensorManager.unregisterListener(this);
     }
 
+    /**
+     * Get a gravity vector, which points towards the earth
+     *
+     * @return Gravity vector, the sum of which is roughly 9.81 m/s^2
+     */
+    public Vector3<Float> getGravityVector() {
+        return new Vector3<>(gravity[0], gravity[1], gravity[2]);
+    }
+
+    /**
+     * Get the current acceleration vector
+     * <p/>
+     * This vector includes the gravity vector; to eliminate gravitational noise,
+     * consider the Linear Acceleration vector
+     *
+     * @return Acceleration vector, in m/s^2
+     */
+    public Vector3<Float> getAccelerationVector() {
+        return new Vector3<>(acceleration[0], acceleration[1], acceleration[2]);
+    }
+
+    /**
+     * Get the current linear (gravity-excluded) acceleration vector
+     *
+     * @return Linear acceleration in m/s^2
+     */
+    public Vector3<Float> getLinearAccelerationVector() {
+        return new Vector3<>(linear_acceleration[0], linear_acceleration[1], linear_acceleration[2]);
+    }
+
+    /**
+     * Get the vector pointing toward the current geomagnetic field
+     *
+     * @return The geomagnetic vector
+     */
+    public Vector3<Float> getGeomagneticVector() {
+        return new Vector3<>(geomagnetic[0], geomagnetic[1], geomagnetic[2]);
+    }
+
+    /**
+     * Test if we have enough sensor data to calculate a screen orientation
+     *
+     * @return True if enough data exists, false otherwise
+     */
     public boolean hasOrientation() {
         return screenOrientation != null;
     }
 
+    /**
+     * Get the current actual screen orientation based on sensor data
+     * This is independent from the activity screen orientation, which is the current visible
+     * orientation. Even if the screen is locked, this orientation will be calculated.
+     *
+     * @return Actual, sensor-based screen orientation
+     */
     public ScreenOrientation getScreenOrientation() {
         return screenOrientation != null ? screenOrientation : ScreenOrientation.LANDSCAPE;
     }
 
+    /**
+     * Get the activity's screen orientation, which can be locked by the activity
+     * @return The activity's screen orietnation
+     */
     public ScreenOrientation getActivityScreenOrientation() {
         WindowManager windowManager = (WindowManager) Util.getContext().getSystemService(Context.WINDOW_SERVICE);
         int rotation = windowManager.getDefaultDisplay().getRotation();
         return ScreenOrientation.getFromSurface(rotation);
     }
 
+    /**
+     * Get the screen orientation compensation, in degrees, between the activity and the target screen orientation
+     * @return Sensor orientation - Activity orientation + Zero orientation (typically 90 degrees)
+     */
     public double getScreenOrientationCompensation() {
         return getScreenOrientation().getAngle() - getActivityScreenOrientation().getAngle() + ScreenOrientation.PORTRAIT.getAngle();
     }
@@ -104,6 +174,10 @@ public final class Sensors implements SensorEventListener {
         screenOrientation = current;
     }
 
+    /**
+     * Event that fires when sensor data is updated
+     * @param event Event data
+     */
     public void onSensorChanged(SensorEvent event) {
         switch (event.sensor.getType()) {
             case Sensor.TYPE_ACCELEROMETER:
@@ -112,6 +186,10 @@ public final class Sensors implements SensorEventListener {
                 // and dT, the event delivery rate
                 final float alpha = 0.8f;
 
+                acceleration[0] = event.values[0];
+                acceleration[1] = event.values[1];
+                acceleration[2] = event.values[2];
+
                 gravity[0] = alpha * gravity[0] + (1 - alpha) * event.values[0];
                 gravity[1] = alpha * gravity[1] + (1 - alpha) * event.values[1];
                 gravity[2] = alpha * gravity[2] + (1 - alpha) * event.values[2];
@@ -119,10 +197,13 @@ public final class Sensors implements SensorEventListener {
                 linear_acceleration[0] = event.values[0] - gravity[0];
                 linear_acceleration[1] = event.values[1] - gravity[1];
                 linear_acceleration[2] = event.values[2] - gravity[2];
+
                 updateScreenOrientation();
                 break;
             case Sensor.TYPE_MAGNETIC_FIELD:
-                geomagnetic = event.values;
+                geomagnetic[0] = event.values[0];
+                geomagnetic[1] = event.values[1];
+                geomagnetic[2] = event.values[2];
                 updateScreenOrientation();
                 break;
         }

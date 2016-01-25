@@ -23,8 +23,8 @@
  */
 
 /**
- * FTC Robot Controller. Used to control an FTC Robot.
- * <p>
- * The quickest way to get started is to look at {@link com.qualcomm.ftcrobotcontroller.opmodes}
+ * LASA Robotics FIRST Tech Challenge Vision Library
+ *
+ * Based on OpenCV and written by FIRST teams for FIRST teams
  */
-package com.qualcomm.ftcrobotcontroller;
+package org.lasarobotics.vision;

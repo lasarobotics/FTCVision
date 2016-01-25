@@ -21,7 +21,7 @@ public class Drawing {
         drawCircle(img, center, diameter, color, 2);
     }
 
-    public static void drawCircle(Mat img, Point center, int diameter, Color color, int thickness) {
+    private static void drawCircle(Mat img, Point center, int diameter, Color color, int thickness) {
         Imgproc.circle(img, center, diameter, color.getScalarRGBA(), thickness);
     }
 
@@ -29,7 +29,7 @@ public class Drawing {
         drawEllipse(img, ellipse, color, 2);
     }
 
-    public static void drawEllipse(Mat img, Ellipse ellipse, Color color, int thickness) {
+    private static void drawEllipse(Mat img, Ellipse ellipse, Color color, int thickness) {
         Imgproc.ellipse(img, ellipse.center(), ellipse.size(), ellipse.angle(), 0, 360, color.getScalarRGBA(), thickness);
     }
 
@@ -46,7 +46,7 @@ public class Drawing {
         drawArc(img, ellipse, color, angleDegrees, 2);
     }
 
-    public static void drawArc(Mat img, Ellipse ellipse, Color color, double angleDegrees, int thickness) {
+    private static void drawArc(Mat img, Ellipse ellipse, Color color, double angleDegrees, int thickness) {
         Imgproc.ellipse(img, ellipse.center(), ellipse.size(), ellipse.angle(), 0, angleDegrees, color.getScalarRGBA(), thickness);
     }
 
@@ -75,7 +75,7 @@ public class Drawing {
         drawContour(img, contour, color, 2);
     }
 
-    public static void drawContour(Mat img, Contour contour, Color color, int thickness) {
+    private static void drawContour(Mat img, Contour contour, Color color, int thickness) {
         List<MatOfPoint> contoursOut = new ArrayList<>();
         contoursOut.add(contour.getData());
         Imgproc.drawContours(img, contoursOut, -1, color.getScalarRGBA(), thickness);
@@ -114,7 +114,7 @@ public class Drawing {
         drawRectangle(img, topLeft, bottomRight, color, 2);
     }
 
-    public static void drawRectangle(Mat img, Point topLeft, Point bottomRight, Color color, int thickness) {
+    private static void drawRectangle(Mat img, Point topLeft, Point bottomRight, Color color, int thickness) {
         Imgproc.rectangle(img, topLeft, bottomRight, color.getScalarRGBA(), thickness);
     }
 
