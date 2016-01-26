@@ -33,8 +33,9 @@ public abstract class Constants {
     public static double BEACON_HEIGHT = 14.5;    //entire beacon height
     public static double BEACON_WH_RATIO = BEACON_WIDTH / BEACON_HEIGHT; //entire beacon ratio
     static final double CONTOUR_RATIO_BEST = BEACON_WH_RATIO; //best ratio for 100% score
-    public static ColorHSV COLOR_RED_LOWER = new ColorHSV((int) (305.0 / 360.0 * 255.0), (int) (0.200 * 255.0), (int) (0.700 * 255.0));
-    public static ColorHSV COLOR_RED_UPPER = new ColorHSV((int) (365.0 / 360.0 * 255.0), 255, 255);
-    public static ColorHSV COLOR_BLUE_LOWER = new ColorHSV((int) (170.0 / 360.0 * 255.0), (int) (0.200 * 255.0), (int) (0.700 * 255.0));
+    public static ColorHSV COLOR_RADIUS = new ColorHSV((int) (100.0 / 360.0 * 255.0), (int) (0.910 * 255.0), (int) (0.500 * 255.0));
+    public static ColorHSV COLOR_RED_LOWER = new ColorHSV((int) (300.0 / 360.0 * 255.0), (int) (0.090 * 255.0), (int) (0.500 * 255.0));
+    public static ColorHSV COLOR_RED_UPPER = new ColorHSV((int) (400.0 / 360.0 * 255.0), 255, 255);
+    public static ColorHSV COLOR_BLUE_LOWER = new ColorHSV((int) (170.0 / 360.0 * 255.0), (int) (0.090 * 255.0), (int) (0.500 * 255.0));
     public static ColorHSV COLOR_BLUE_UPPER = new ColorHSV((int) (270.0 / 360.0 * 255.0), 255, 255);
 }
