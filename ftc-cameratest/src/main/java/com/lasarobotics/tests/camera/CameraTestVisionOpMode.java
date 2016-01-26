@@ -23,7 +23,7 @@ public class CameraTestVisionOpMode extends TestableVisionOpMode {
         super.init();
 
         //Set the camera used for detection
-        this.setCamera(Cameras.PRIMARY);
+        this.setCamera(Cameras.SECONDARY);
         //Set the frame size
         //Larger = sometimes more accurate, but also much slower
         //For Testable OpModes, this might make the image appear small - it might be best not to use this
@@ -35,11 +35,11 @@ public class CameraTestVisionOpMode extends TestableVisionOpMode {
 
         //UNCOMMENT THIS IF you're using a SECONDARY (facing toward screen) camera
         //or when you rotate the phone, sometimes the colors swap
-        //rotation.setRotationInversion(true);
+        rotation.setRotationInversion(true);
 
         //You can do this for certain phones which switch red and blue
         //It will rotate the display and detection by 180 degrees, making it upright
-        rotation.setUnbiasedOrientation(ScreenOrientation.LANDSCAPE_WEST);
+        //rotation.setUnbiasedOrientation(ScreenOrientation.LANDSCAPE_WEST);
 
         //Set the beacon analysis method
         //Try them all and see what works!
