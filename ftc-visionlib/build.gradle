@@ -25,13 +25,8 @@ repositories {
 }
 
 dependencies {
-    compile files('libs/android-support-v4.jar')
+    //compile files('libs/android-support-v4.jar')
     compile(name: 'RobotCore-release', ext: 'aar')
-    compile(name: 'Hardware-release', ext: 'aar')
-    compile(name: 'FtcCommon-release', ext: 'aar')
-    compile(name: 'ModernRobotics-release', ext: 'aar')
-    compile(name: 'Analytics-release', ext: 'aar')
-    compile(name: 'WirelessP2p-release', ext: 'aar')
     compile project(':opencv-java')
     compile 'org.jetbrains:annotations:13.0'
     compile files('libs/zxing-core-3.2.1.jar')
