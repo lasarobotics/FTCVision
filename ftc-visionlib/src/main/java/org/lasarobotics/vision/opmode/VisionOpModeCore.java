@@ -27,26 +27,14 @@ abstract class VisionOpModeCore extends OpMode implements CameraBridgeViewBase.C
     static JavaCameraView openCVCamera;
     private static boolean initialized = false;
     private static boolean openCVInitialized = false;
-    private final BaseLoaderCallback openCVLoaderCallback = new BaseLoaderCallback(hardwareMap.appContext) {
-        @Override
-        public void onManagerConnected(int status) {
-            switch (status) {
-                case LoaderCallbackInterface.SUCCESS: {
-                    //Woohoo!
-                    Log.d("OpenCV", "OpenCV Manager connected!");
-                    openCVInitialized = true;
-                }
-                break;
-                default: {
-                    super.onManagerConnected(status);
-                }
-                break;
-            }
-        }
-    };
     public int width, height;
     public FPS fps;
     public Sensors sensors;
+    private BaseLoaderCallback openCVLoaderCallback;
+
+    public VisionOpModeCore() {
+
+    }
 
     boolean isInitialized() {
         return initialized;
@@ -79,6 +67,29 @@ abstract class VisionOpModeCore extends OpMode implements CameraBridgeViewBase.C
     @Override
     public void init() {
         //Initialize camera view
+
+        try {
+            openCVLoaderCallback = new BaseLoaderCallback(hardwareMap.appContext) {
+                @Override
+                public void onManagerConnected(int status) {
+                    switch (status) {
+                        case LoaderCallbackInterface.SUCCESS: {
+                            //Woohoo!
+                            Log.d("OpenCV", "OpenCV Manager connected!");
+                            openCVInitialized = true;
+                        }
+                        break;
+                        default: {
+                            super.onManagerConnected(status);
+                        }
+                        break;
+                    }
+                }
+            };
+        } catch (NullPointerException e) {
+            throw new RuntimeException("OpenCV Manager not found! Please install from the Google Play store!");
+        }
+
         final Activity activity = (Activity) hardwareMap.appContext;
         final VisionOpModeCore t = this;
 

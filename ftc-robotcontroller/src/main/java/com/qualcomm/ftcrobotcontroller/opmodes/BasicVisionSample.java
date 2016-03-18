@@ -48,7 +48,7 @@ public class BasicVisionSample extends VisionOpMode {
         super.init();
 
         //Set the camera used for detection
-        this.setCamera(Cameras.SECONDARY);
+        this.setCamera(Cameras.PRIMARY);
         //Set the frame size
         //Larger = sometimes more accurate, but also much slower
         //For Testable OpModes, this might make the image appear small - it might be best not to use this
@@ -60,7 +60,7 @@ public class BasicVisionSample extends VisionOpMode {
 
         //UNCOMMENT THIS IF you're using a SECONDARY (facing toward screen) camera
         //or when you rotate the phone, sometimes the colors swap
-        rotation.setRotationInversion(true);
+        //rotation.setRotationInversion(true);
 
         //You can do this for certain phones which switch red and blue
         //It will rotate the display and detection by 180 degrees, making it upright
