@@ -16,6 +16,7 @@ import java.util.List;
 public class BeaconExtension implements VisionExtension {
     private ColorBlobDetector detectorRed;
     private ColorBlobDetector detectorBlue;
+    private Beacon beacon;
 
     private Beacon.BeaconAnalysis analysis = new Beacon.BeaconAnalysis();
     private Beacon.AnalysisMethod analysisMethod = Beacon.AnalysisMethod.DEFAULT;
@@ -34,10 +35,19 @@ public class BeaconExtension implements VisionExtension {
 
     public void init(VisionOpMode opmode) {
         //Initialize all detectors here
+        beacon = new Beacon(analysisMethod);
         detectorRed = new ColorBlobDetector(Constants.COLOR_RED_LOWER, Constants.COLOR_RED_UPPER);
         detectorBlue = new ColorBlobDetector(Constants.COLOR_BLUE_LOWER, Constants.COLOR_BLUE_UPPER);
     }
 
+    public void setAnalysisHeightRadius(int radius)
+    {
+        beacon.setRadius(radius);
+    }
+    public void setBeaconHeight(int target_row)
+    {
+        beacon.setTarget_row(target_row);
+    }
     public void loop(VisionOpMode opmode) {
 
     }
@@ -57,7 +67,6 @@ public class BeaconExtension implements VisionExtension {
                     VisionOpMode.rotation.getRotationCompensationAngleBiased());
 
             //Get color analysis
-            Beacon beacon = new Beacon(analysisMethod);
             this.analysis = beacon.analyzeFrame(contoursRed, contoursBlue, rgba, gray, orientation);
 
         } catch (Exception e) {
