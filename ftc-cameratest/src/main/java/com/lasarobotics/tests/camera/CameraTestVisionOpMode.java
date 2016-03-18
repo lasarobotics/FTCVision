@@ -31,7 +31,7 @@ public class CameraTestVisionOpMode extends TestableVisionOpMode {
         this.setFrameSize(new Size(900, 900));
 
         //Enable extensions. Use what you need.
-        //enableExtension(Extensions.BEACON);     //Beacon detection
+        enableExtension(Extensions.BEACON);     //Beacon detection
         enableExtension(Extensions.ROTATION);   //Automatic screen rotation correction
 
         //UNCOMMENT THIS IF you're using a SECONDARY (facing toward screen) camera
@@ -40,11 +40,11 @@ public class CameraTestVisionOpMode extends TestableVisionOpMode {
 
         //You can do this for certain phones which switch red and blue
         //It will rotate the display and detection by 180 degrees, making it upright
-        //rotation.setUnbiasedOrientation(ScreenOrientation.PORTRAIT);
+        rotation.setUnbiasedOrientation(ScreenOrientation.LANDSCAPE_WEST);
 
         //Set the beacon analysis method
         //Try them all and see what works!
-        beacon.setAnalysisMethod(Beacon.AnalysisMethod.FAST);
+        beacon.setAnalysisMethod(Beacon.AnalysisMethod.ONEDIMENSIONAL);
     }
 
     @Override
