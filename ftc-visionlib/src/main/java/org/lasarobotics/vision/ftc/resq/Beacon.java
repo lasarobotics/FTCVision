@@ -16,6 +16,8 @@ import java.util.List;
 public final class Beacon {
 
     private final AnalysisMethod method;
+    private int radius = 10;
+    private int target_row = 400;
 
     /**
      * Instantiate a beacon that uses the default method
@@ -64,7 +66,17 @@ public final class Beacon {
                 return BeaconAnalyzer.analyze_FAST(contoursRed, contoursBlue, img, gray, orientation);
             case COMPLEX:
                 return BeaconAnalyzer.analyze_COMPLEX(contoursRed, contoursBlue, img, gray, orientation);
+            case ONEDIMENSIONAL:
+                return BeaconAnalyzer.analyze_1D(img, gray, orientation, radius, target_row);
         }
+    }
+    public void setRadius(int radius)
+    {
+        this.radius = radius;
+    }
+    public void setTarget_row(int target_row)
+    {
+        this.target_row = target_row;
     }
 
     /**
@@ -73,11 +85,12 @@ public final class Beacon {
     public enum AnalysisMethod {
         //Default method
         DEFAULT,
-        //Fastest method - picks the two largest contours without concern
+        //Faster method - picks the two largest contours without concern
         FAST,
         //Slower and complex method - picks contours based on statistical analysis
-        COMPLEX;
-
+        COMPLEX,
+        //Fastest method - runs
+        ONEDIMENSIONAL;
         public String toString() {
             switch (this) {
                 case DEFAULT:
@@ -86,6 +99,8 @@ public final class Beacon {
                     return "FAST";
                 case COMPLEX:
                     return "COMPLEX";
+                case ONEDIMENSIONAL:
+                    return "ONEDIMENSIONAL";
             }
         }
     }
