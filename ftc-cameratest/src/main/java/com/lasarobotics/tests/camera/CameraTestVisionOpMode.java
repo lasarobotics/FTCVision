@@ -1,6 +1,7 @@
 package com.lasarobotics.tests.camera;
 
 import org.lasarobotics.vision.android.Cameras;
+import org.lasarobotics.vision.detection.PrimitiveDetection;
 import org.lasarobotics.vision.ftc.resq.Beacon;
 import org.lasarobotics.vision.image.Drawing;
 import org.lasarobotics.vision.opmode.TestableVisionOpMode;
@@ -23,14 +24,14 @@ public class CameraTestVisionOpMode extends TestableVisionOpMode {
         super.init();
 
         //Set the camera used for detection
-        this.setCamera(Cameras.SECONDARY);
+        this.setCamera(Cameras.PRIMARY);
         //Set the frame size
         //Larger = sometimes more accurate, but also much slower
         //For Testable OpModes, this might make the image appear small - it might be best not to use this
         this.setFrameSize(new Size(900, 900));
 
         //Enable extensions. Use what you need.
-        enableExtension(Extensions.BEACON);     //Beacon detection
+        //enableExtension(Extensions.BEACON);     //Beacon detection
         enableExtension(Extensions.ROTATION);   //Automatic screen rotation correction
 
         //UNCOMMENT THIS IF you're using a SECONDARY (facing toward screen) camera
@@ -39,7 +40,7 @@ public class CameraTestVisionOpMode extends TestableVisionOpMode {
 
         //You can do this for certain phones which switch red and blue
         //It will rotate the display and detection by 180 degrees, making it upright
-        rotation.setUnbiasedOrientation(ScreenOrientation.PORTRAIT);
+        //rotation.setUnbiasedOrientation(ScreenOrientation.PORTRAIT);
 
         //Set the beacon analysis method
         //Try them all and see what works!
