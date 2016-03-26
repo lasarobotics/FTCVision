@@ -37,6 +37,7 @@ import org.lasarobotics.vision.detection.objects.Contour;
 import org.lasarobotics.vision.ftc.resq.Beacon;
 import org.lasarobotics.vision.image.Drawing;
 import org.lasarobotics.vision.opmode.ManualVisionOpMode;
+import org.lasarobotics.vision.util.ScreenOrientation;
 import org.lasarobotics.vision.util.color.ColorGRAY;
 import org.lasarobotics.vision.util.color.ColorHSV;
 import org.lasarobotics.vision.util.color.ColorRGBA;
@@ -107,7 +108,7 @@ public class ManualVisionSample extends ManualVisionOpMode {
 
             //Get color analysis
             Beacon beacon = new Beacon(Beacon.AnalysisMethod.DEFAULT);
-            colorAnalysis = beacon.analyzeFrame(contoursRed, contoursBlue, rgba, gray);
+            colorAnalysis = beacon.analyzeFrame(detectorRed, detectorBlue, rgba, gray, ScreenOrientation.DEFAULT);
 
             //Draw red and blue contours
             Drawing.drawContours(rgba, contoursRed, new ColorRGBA(255, 0, 0), 2);

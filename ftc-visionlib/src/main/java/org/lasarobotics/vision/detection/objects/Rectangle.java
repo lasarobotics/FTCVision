@@ -19,6 +19,29 @@ public class Rectangle extends Detectable {
     }
 
     /**
+     * Create a rectangle bounded by four positions
+     *
+     * @param top    Top-most Y value
+     * @param left   Left-most X value
+     * @param bottom Bottom-most Y value
+     * @param right  Right-most X value
+     */
+    public Rectangle(double top, double left, double bottom, double right) {
+        setRect(new Rect((int) top, (int) left, (int) Math.abs(right - left), (int) Math.abs(bottom - top)));
+    }
+
+    /**
+     * Create a rectangle based on a center and its size
+     *
+     * @param center Center of the rectangle
+     * @param width  Width of the rectangle
+     * @param height Height of the rectangle
+     */
+    public Rectangle(Point center, double width, double height) {
+        setRect(new Rect((int) (center.x - width / 2), (int) (center.y - height / 2), (int) width, (int) height));
+    }
+
+    /**
      * Create a rectangle based on an OpenCV rotated rectangle
      *
      * @param rect OpenCV rotated rectangle

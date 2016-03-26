@@ -1,11 +1,10 @@
 package com.lasarobotics.tests.camera;
 
 import org.lasarobotics.vision.android.Cameras;
-import org.lasarobotics.vision.detection.PrimitiveDetection;
+import org.lasarobotics.vision.detection.objects.Rectangle;
 import org.lasarobotics.vision.ftc.resq.Beacon;
 import org.lasarobotics.vision.image.Drawing;
 import org.lasarobotics.vision.opmode.TestableVisionOpMode;
-import org.lasarobotics.vision.util.ScreenOrientation;
 import org.lasarobotics.vision.util.color.ColorGRAY;
 import org.lasarobotics.vision.util.color.ColorRGBA;
 import org.opencv.core.Mat;
@@ -25,29 +24,41 @@ public class CameraTestVisionOpMode extends TestableVisionOpMode {
 
         //Set the camera used for detection
         this.setCamera(Cameras.PRIMARY);
+
         //Set the frame size
         //Larger = sometimes more accurate, but also much slower
         //For Testable OpModes, this might make the image appear small - it might be best not to use this
+        //After this method runs, it will set the "width" and "height" of the frame
         this.setFrameSize(new Size(900, 900));
 
         //Enable extensions. Use what you need.
         enableExtension(Extensions.BEACON);     //Beacon detection
         enableExtension(Extensions.ROTATION);   //Automatic screen rotation correction
 
-        beacon.setRadius(10);
-       beacon.setTarget_row();
-
         //UNCOMMENT THIS IF you're using a SECONDARY (facing toward screen) camera
         //or when you rotate the phone, sometimes the colors swap
         rotation.setRotationInversion(false);
 
-        //You can do this for certain phones which switch red and blue
+        //You can uncomment this for certain phones which switch red and blue
         //It will rotate the display and detection by 180 degrees, making it upright
-        rotation.setUnbiasedOrientation(ScreenOrientation.LANDSCAPE);
+        //rotation.setUnbiasedOrientation(ScreenOrientation.LANDSCAPE_WEST);
 
         //Set the beacon analysis method
         //Try them all and see what works!
-        beacon.setAnalysisMethod(Beacon.AnalysisMethod.ONEDIMENSIONAL);
+        beacon.setAnalysisMethod(Beacon.AnalysisMethod.FAST);
+
+        //Set analysis boundary
+        //You should comment this to use the entire screen and uncomment only if
+        //you want faster analysis at the cost of not using the entire frame.
+        //(This is also particularly useful if you know approximately where the beacon is
+        // as this will eliminate parts of the frame which may cause problems).
+        beacon.setAnalysisBounds(new Rectangle(new Point(width / 2, height / 2), width / 4, height / 4));
+        //beacon.resetAnalysisBounds(getFrameSize());
+
+        //Debug drawing
+        //Enable this only if you're running test app - otherwise, you should turn it off
+        //(Although it doesn't harm anything if you leave it on, only slows down processing a tad)
+        beacon.enableDebug();
     }
 
     @Override

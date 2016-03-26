@@ -1,14 +1,14 @@
 package org.lasarobotics.vision.ftc.resq;
 
-import org.lasarobotics.vision.detection.objects.Contour;
+import org.lasarobotics.vision.detection.ColorBlobDetector;
 import org.lasarobotics.vision.detection.objects.Rectangle;
 import org.lasarobotics.vision.util.MathUtil;
 import org.lasarobotics.vision.util.ScreenOrientation;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
+import org.opencv.core.Size;
 
 import java.text.DecimalFormat;
-import java.util.List;
 
 /**
  * Beacon location and analysis
@@ -16,8 +16,10 @@ import java.util.List;
 public final class Beacon {
 
     private final AnalysisMethod method;
-    private int radius = 10;
-    private int target_row = 400;
+    private Rectangle bounds;
+    private ColorBlobDetector blueDetector = new ColorBlobDetector(Constants.COLOR_BLUE_LOWER, Constants.COLOR_BLUE_UPPER);
+    private ColorBlobDetector redDetector = new ColorBlobDetector(Constants.COLOR_RED_LOWER, Constants.COLOR_RED_UPPER);
+    private boolean debug = false;
 
     /**
      * Instantiate a beacon that uses the default method
@@ -36,47 +38,74 @@ public final class Beacon {
     }
 
     /**
-     * Analyze the current frame using the selected analysis method
-     * @param contoursRed Red contours given by a blob detector
-     * @param contoursBlue Blue contours given by a blob detector
-     * @param img Image to analyze
-     * @param gray Grayscale image to analyze
-     * @return Beacon analysis class
+     * Instantiate a beacon that uses a specific analysis method
+     *
+     * @param method Analysis method
      */
-    public BeaconAnalysis analyzeFrame(List<Contour> contoursRed, List<Contour> contoursBlue,
-                                       Mat img, Mat gray) {
-        return analyzeFrame(contoursRed, contoursBlue, img, gray, ScreenOrientation.DEFAULT);
+    public Beacon(AnalysisMethod method, Rectangle bounds) {
+        this.method = method;
+        this.bounds = bounds;
     }
 
     /**
      * Analyze the current frame using the selected analysis method
-     * @param contoursRed Red contours given by a blob detector
-     * @param contoursBlue Blue contours given by a blob detector
+     * @param img Image to analyze
+     * @param gray Grayscale image to analyze
+     * @return Beacon analysis class
+     */
+    public BeaconAnalysis analyzeFrame(Mat img, Mat gray) {
+        return analyzeFrame(this.blueDetector, this.redDetector, img, gray, ScreenOrientation.DEFAULT);
+    }
+
+    /**
+     * Analyze the current frame using the selected analysis method
+     *
+     * @param img         Image to analyze
+     * @param gray        Grayscale image to analyze
+     * @param orientation Screen orientation compensation, given by the android.Sensors class
+     * @return Beacon analysis class
+     */
+    public BeaconAnalysis analyzeFrame(Mat img, Mat gray, ScreenOrientation orientation) {
+        return analyzeFrame(this.blueDetector, this.redDetector, img, gray, orientation);
+    }
+
+    /**
+     * Analyze the current frame using the selected analysis method, using custom color blob detectors
+     * @param blueDetector Blue color blob detector
+     * @param redDetector Red color blob detector
      * @param img Image to analyze
      * @param gray Grayscale image to analyze
      * @param orientation Screen orientation compensation, given by the android.Sensors class
      * @return Beacon analysis class
      */
-    public BeaconAnalysis analyzeFrame(List<Contour> contoursRed, List<Contour> contoursBlue,
-                                       Mat img, Mat gray, ScreenOrientation orientation) {
+    public BeaconAnalysis analyzeFrame(ColorBlobDetector blueDetector, ColorBlobDetector redDetector, Mat img, Mat gray, ScreenOrientation orientation) {
+        blueDetector.process(img);
+        redDetector.process(img);
+
         switch (method) {
             case FAST:
             case DEFAULT:
             default:
-                return BeaconAnalyzer.analyze_FAST(contoursRed, contoursBlue, img, gray, orientation);
+                return BeaconAnalyzer.analyze_FAST(redDetector.getContours(), blueDetector.getContours(), img, orientation, this.bounds, this.debug);
             case COMPLEX:
-                return BeaconAnalyzer.analyze_COMPLEX(contoursRed, contoursBlue, img, gray, orientation);
-            case ONEDIMENSIONAL:
-                return BeaconAnalyzer.analyze_1D(img, gray, orientation, radius, target_row);
+                return BeaconAnalyzer.analyze_COMPLEX(redDetector.getContours(), blueDetector.getContours(), img, gray, orientation, this.bounds, this.debug);
         }
     }
-    public void setRadius(int radius)
-    {
-        this.radius = radius;
+
+    public void setAnalysisBounds(Rectangle bounds) {
+        this.bounds = bounds;
     }
-    public void setTarget_row(int target_row)
-    {
-        this.target_row = target_row;
+
+    public void resetAnalysisBounds(Size frameSize) {
+        this.bounds = new Rectangle(new Point(frameSize.width / 2, frameSize.height / 2), frameSize.width, frameSize.height);
+    }
+
+    public void enableDebug() {
+        this.debug = true;
+    }
+
+    public void disableDebug() {
+        this.debug = false;
     }
 
     /**
@@ -88,9 +117,7 @@ public final class Beacon {
         //Faster method - picks the two largest contours without concern
         FAST,
         //Slower and complex method - picks contours based on statistical analysis
-        COMPLEX,
-        //Fastest method - runs
-        ONEDIMENSIONAL;
+        COMPLEX;
         public String toString() {
             switch (this) {
                 case DEFAULT:
@@ -99,8 +126,6 @@ public final class Beacon {
                     return "FAST";
                 case COMPLEX:
                     return "COMPLEX";
-                case ONEDIMENSIONAL:
-                    return "ONEDIMENSIONAL";
             }
         }
     }
@@ -263,7 +288,7 @@ public final class Beacon {
         }
 
         /**
-         * Test whether if the left side is blue
+         * Test whether if the left side is blueDetector
          * @return True if the left side is BLUE or BLUE_BRIGHT
          */
         public boolean isLeftBlue() {
@@ -287,7 +312,7 @@ public final class Beacon {
         }
 
         /**
-         * Test whether if the right side is blue
+         * Test whether if the right side is blueDetector
          * @return True if the right side is BLUE or BLUE_BRIGHT
         */
         public boolean isRightBlue() {
