@@ -37,7 +37,7 @@ public class ImageRotationExtension implements VisionExtension {
 
     public double getRotationCompensationAngleBiased() {
         return (isInverted ? -1 : 1) * ScreenOrientation.getFromAngle(sensors.getScreenOrientationCompensation()
-                + unbiasedOrientation.getAngle()).getAngle();
+                - unbiasedOrientation.getAngle()).getAngle();
     }
 
     public ScreenOrientation getRotationCompensation() {

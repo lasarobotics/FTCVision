@@ -34,6 +34,7 @@ package com.qualcomm.ftcrobotcontroller.opmodes;
 import org.lasarobotics.vision.android.Cameras;
 import org.lasarobotics.vision.ftc.resq.Beacon;
 import org.lasarobotics.vision.opmode.VisionOpMode;
+import org.lasarobotics.vision.util.ScreenOrientation;
 import org.opencv.core.Size;
 
 /**
@@ -49,9 +50,11 @@ public class BasicVisionSample extends VisionOpMode {
 
         //Set the camera used for detection
         this.setCamera(Cameras.PRIMARY);
+
         //Set the frame size
         //Larger = sometimes more accurate, but also much slower
         //For Testable OpModes, this might make the image appear small - it might be best not to use this
+        //After this method runs, it will set the "width" and "height" of the frame
         this.setFrameSize(new Size(900, 900));
 
         //Enable extensions. Use what you need.
@@ -62,13 +65,21 @@ public class BasicVisionSample extends VisionOpMode {
         //or when you rotate the phone, sometimes the colors swap
         //rotation.setRotationInversion(true);
 
-        //You can do this for certain phones which switch red and blue
-        //It will rotate the display and detection by 180 degrees, making it upright
-        //rotation.setUnbiasedOrientation(ScreenOrientation.LANDSCAPE_WEST);
+        //Set this to the default orientation of your program (it's probably PORTRAIT)
+        //Also, it's recommended to turn OFF Auto Rotate
+        //If you can't get any readings or swap red and blue, try changing this
+        rotation.setUnbiasedOrientation(ScreenOrientation.PORTRAIT);
 
         //Set the beacon analysis method
         //Try them all and see what works!
         beacon.setAnalysisMethod(Beacon.AnalysisMethod.FAST);
+
+        //Set analysis boundary
+        //You should comment this to use the entire screen and uncomment only if
+        //you want faster analysis at the cost of not using the entire frame.
+        //This is also particularly useful if you know approximately where the beacon is
+        //as this will eliminate parts of the frame which may cause problems)
+        //beacon.setAnalysisBounds(new Rectangle(new Point(width / 2, height / 2), width / 4, height / 4));
     }
 
     @Override

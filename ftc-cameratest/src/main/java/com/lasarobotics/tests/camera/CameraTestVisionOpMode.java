@@ -5,6 +5,7 @@ import org.lasarobotics.vision.detection.objects.Rectangle;
 import org.lasarobotics.vision.ftc.resq.Beacon;
 import org.lasarobotics.vision.image.Drawing;
 import org.lasarobotics.vision.opmode.TestableVisionOpMode;
+import org.lasarobotics.vision.util.ScreenOrientation;
 import org.lasarobotics.vision.util.color.ColorGRAY;
 import org.lasarobotics.vision.util.color.ColorRGBA;
 import org.opencv.core.Mat;
@@ -37,11 +38,10 @@ public class CameraTestVisionOpMode extends TestableVisionOpMode {
 
         //UNCOMMENT THIS IF you're using a SECONDARY (facing toward screen) camera
         //or when you rotate the phone, sometimes the colors swap
-        rotation.setRotationInversion(false);
+        //rotation.setRotationInversion(true);
 
-        //You can uncomment this for certain phones which switch red and blue
-        //It will rotate the display and detection by 180 degrees, making it upright
-        //rotation.setUnbiasedOrientation(ScreenOrientation.LANDSCAPE_WEST);
+        //Set this to the default orientation of your program
+        rotation.setUnbiasedOrientation(ScreenOrientation.LANDSCAPE);
 
         //Set the beacon analysis method
         //Try them all and see what works!
@@ -50,10 +50,9 @@ public class CameraTestVisionOpMode extends TestableVisionOpMode {
         //Set analysis boundary
         //You should comment this to use the entire screen and uncomment only if
         //you want faster analysis at the cost of not using the entire frame.
-        //(This is also particularly useful if you know approximately where the beacon is
-        // as this will eliminate parts of the frame which may cause problems).
+        //This is also particularly useful if you know approximately where the beacon is
+        //as this will eliminate parts of the frame which may cause problems)
         beacon.setAnalysisBounds(new Rectangle(new Point(width / 2, height / 2), width / 4, height / 4));
-        //beacon.resetAnalysisBounds(getFrameSize());
 
         //Debug drawing
         //Enable this only if you're running test app - otherwise, you should turn it off
