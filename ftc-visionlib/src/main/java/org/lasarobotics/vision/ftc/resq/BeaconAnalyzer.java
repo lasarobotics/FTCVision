@@ -186,9 +186,9 @@ class BeaconAnalyzer {
         double WH_ratio = widthBeacon / beaconHeight;
         double ratioError = Math.abs((Constants.BEACON_WH_RATIO - WH_ratio)) / Constants.BEACON_WH_RATIO; // perfect value = 0;
         double averageHeight = (leftMostContour.height() + rightMostContour.height()) / 2.0;
-        double dy = Math.abs((leftMostContour.centroid().y - rightMostContour.centroid().y) / averageHeight);
-        double confidence = MathUtil.normalPDFNormalized(MathUtil.distance(ratioError, dy), 1.0, 0);
-        //double confidence = 2 - MathUtil.coerce(1, 2, ((1 + ratioError) * (1 + dy)) / 2.0);
+        double dy = Math.abs((leftMostContour.centroid().y - rightMostContour.centroid().y) / averageHeight * 4.0);
+        double dArea = Math.sqrt(leftMostContour.area() / rightMostContour.area());
+        double confidence = MathUtil.normalPDFNormalized(MathUtil.distance(MathUtil.distance(ratioError, dy), dArea), 5.0, 1.0);
 
         if (leftIsRed)
             return new Beacon.BeaconAnalysis(Beacon.BeaconColor.RED, Beacon.BeaconColor.BLUE, boundingBox, confidence);
