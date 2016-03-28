@@ -61,6 +61,11 @@ public class CameraTestVisionOpMode extends TestableVisionOpMode {
     }
 
     @Override
+    public void stop() {
+        super.stop();
+    }
+
+    @Override
     public Mat frame(Mat rgba, Mat gray) {
         /*
           We set the Analysis boundary in the frame loop just in case we couldn't get it
