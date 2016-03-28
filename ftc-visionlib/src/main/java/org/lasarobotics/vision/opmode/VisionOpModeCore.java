@@ -121,8 +121,9 @@ abstract class VisionOpModeCore extends OpMode implements CameraBridgeViewBase.C
             boolean success = OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_0_0, hardwareMap.appContext, openCVLoaderCallback);
             if (!success)
                 Log.e("OpenCV", "Asynchronous initialization failed!");
-            else
+            else {
                 Log.d("OpenCV", "Asynchronous initialization succeeded!");
+            }
         } else {
             Log.d("OpenCV", "OpenCV library found inside package. Using it!");
             openCVLoaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
@@ -183,21 +184,24 @@ abstract class VisionOpModeCore extends OpMode implements CameraBridgeViewBase.C
 
     @Override
     public void stop() {
-        super.stop();
-
-        if (openCVCamera != null)
+        if (openCVCamera != null) {
             openCVCamera.disableView();
+            openCVCamera.disconnectCamera();
+        }
+
+        super.stop();
     }
 
     @Override
     public void onCameraViewStarted(int width, int height) {
         this.width = width;
         this.height = height;
+        Log.d("CAMERA", "STARTED");
     }
 
     @Override
     public void onCameraViewStopped() {
-
+        Log.d("CAMERA", "STOPPED");
     }
 
     @Override

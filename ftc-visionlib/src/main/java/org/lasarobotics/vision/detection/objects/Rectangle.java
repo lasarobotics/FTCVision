@@ -38,7 +38,7 @@ public class Rectangle extends Detectable {
      * @param height Height of the rectangle
      */
     public Rectangle(Point center, double width, double height) {
-        setRect(new Rect((int) (center.x - width / 2), (int) (center.y - height / 2), (int) width, (int) height));
+        setRect(new Rect((int) (center.x - (width / 2)), (int) (center.y - (height / 2)), (int) width, (int) height));
     }
 
     /**

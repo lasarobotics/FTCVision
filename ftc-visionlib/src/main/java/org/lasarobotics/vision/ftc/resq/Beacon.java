@@ -15,7 +15,7 @@ import java.text.DecimalFormat;
  */
 public final class Beacon {
 
-    private final AnalysisMethod method;
+    private AnalysisMethod method;
     private Rectangle bounds;
     private ColorBlobDetector blueDetector = new ColorBlobDetector(Constants.COLOR_BLUE_LOWER, Constants.COLOR_BLUE_UPPER);
     private ColorBlobDetector redDetector = new ColorBlobDetector(Constants.COLOR_RED_LOWER, Constants.COLOR_RED_UPPER);
@@ -90,6 +90,14 @@ public final class Beacon {
             case COMPLEX:
                 return BeaconAnalyzer.analyze_COMPLEX(redDetector.getContours(), blueDetector.getContours(), img, gray, orientation, this.bounds, this.debug);
         }
+    }
+
+    public AnalysisMethod getAnalysisMethod() {
+        return method;
+    }
+
+    public void setAnalysisMethod(AnalysisMethod method) {
+        this.method = method;
     }
 
     public void setAnalysisBounds(Rectangle bounds) {

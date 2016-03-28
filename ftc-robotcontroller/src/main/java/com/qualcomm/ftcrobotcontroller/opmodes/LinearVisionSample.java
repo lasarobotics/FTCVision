@@ -32,6 +32,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 package com.qualcomm.ftcrobotcontroller.opmodes;
 
 import org.lasarobotics.vision.android.Cameras;
+import org.lasarobotics.vision.detection.objects.Rectangle;
 import org.lasarobotics.vision.ftc.resq.Beacon;
 import org.lasarobotics.vision.opmode.LinearVisionOpMode;
 import org.lasarobotics.vision.util.ScreenOrientation;
@@ -83,8 +84,12 @@ public class LinearVisionSample extends LinearVisionOpMode {
         //You should comment this to use the entire screen and uncomment only if
         //you want faster analysis at the cost of not using the entire frame.
         //This is also particularly useful if you know approximately where the beacon is
-        //as this will eliminate parts of the frame which may cause problems)
-        //beacon.setAnalysisBounds(new Rectangle(new Point(width / 2, height / 2), width / 4, height / 4));
+        //as this will eliminate parts of the frame which may cause problems
+        //This will not work on some methods, such as COMPLEX
+        //Rectangle bounds = new Rectangle(new Point(width / 2, height / 2), width - 200, 200);
+        //beacon.setAnalysisBounds(bounds);
+        //Or you can just use the entire screen
+        beacon.setAnalysisBounds(new Rectangle(0, 0, height, width));
 
         //Wait for the match to begin
         waitForStart();

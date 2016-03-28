@@ -13,18 +13,17 @@ public class BeaconExtension implements VisionExtension {
     private Beacon beacon;
 
     private Beacon.BeaconAnalysis analysis = new Beacon.BeaconAnalysis();
-    private Beacon.AnalysisMethod analysisMethod = Beacon.AnalysisMethod.DEFAULT;
 
     public Beacon.BeaconAnalysis getAnalysis() {
         return analysis;
     }
 
     public Beacon.AnalysisMethod getAnalysisMethod() {
-        return analysisMethod;
+        return beacon.getAnalysisMethod();
     }
 
     public void setAnalysisMethod(Beacon.AnalysisMethod method) {
-        this.analysisMethod = method;
+        beacon.setAnalysisMethod(method);
     }
 
     public void setAnalysisBounds(Rectangle bounds) {
@@ -41,7 +40,7 @@ public class BeaconExtension implements VisionExtension {
 
     public void init(VisionOpMode opmode) {
         //Initialize all detectors here
-        beacon = new Beacon(analysisMethod);
+        beacon = new Beacon();
     }
 
     public void loop(VisionOpMode opmode) {

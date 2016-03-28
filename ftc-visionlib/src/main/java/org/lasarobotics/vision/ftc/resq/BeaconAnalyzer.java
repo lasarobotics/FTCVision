@@ -22,11 +22,19 @@ import java.util.List;
  * Static beacon analysis methods
  */
 class BeaconAnalyzer {
+
     static Beacon.BeaconAnalysis analyze_FAST(List<Contour> contoursR, List<Contour> contoursB,
-                                              Mat img, ScreenOrientation orientation, Rectangle bounds, boolean debug) {
+                                              Mat imgUnbounded, ScreenOrientation orientation, Rectangle bounds, boolean debug) {
         //DEBUG Draw contours before filtering
-        if (debug) Drawing.drawContours(img, contoursR, new ColorRGBA("#FF0000"), 2);
-        if (debug) Drawing.drawContours(img, contoursB, new ColorRGBA("#0000FF"), 2);
+        if (debug) Drawing.drawContours(imgUnbounded, contoursR, new ColorRGBA("#FF0000"), 2);
+        if (debug) Drawing.drawContours(imgUnbounded, contoursB, new ColorRGBA("#0000FF"), 2);
+
+        //Bound the image
+        Point offset = new Point(bounds.left(), Math.min(bounds.top(), bounds.bottom()));
+        Mat img = imgUnbounded.submat((int) bounds.top(), (int) bounds.bottom(), (int) bounds.left(), (int) bounds.right());
+
+        if (debug)
+            Drawing.drawRectangle(img, new Point(0, 0), new Point(img.width(), img.height()), new ColorRGBA("#aaaaaa"), 4);
 
         List<Contour> contoursRed = new ArrayList<>(contoursR);
         List<Contour> contoursBlue = new ArrayList<>(contoursB);
@@ -78,8 +86,10 @@ class BeaconAnalyzer {
         Point bestBlueCenter = largestBlue.centroid();
 
         //DEBUG R/B text
-        if (debug) Drawing.drawText(img, "R", bestRedCenter, 1.0f, new ColorRGBA(255, 0, 0));
-        if (debug) Drawing.drawText(img, "B", bestBlueCenter, 1.0f, new ColorRGBA(0, 0, 255));
+        if (debug)
+            Drawing.drawText(imgUnbounded, "R", bestRedCenter, 1.0f, new ColorRGBA(255, 0, 0));
+        if (debug)
+            Drawing.drawText(imgUnbounded, "B", bestBlueCenter, 1.0f, new ColorRGBA(0, 0, 255));
 
         //Test which side is red and blue
         //If the distance between the sides is smaller than a value, then return unknown
@@ -171,7 +181,7 @@ class BeaconAnalyzer {
         Rectangle boundingBox = new Rectangle(new Rect(beaconTopLeft, beaconBottomRight));
 
         //Draw the rectangle containing the beacon
-        if (debug) Drawing.drawRectangle(img, boundingBox, new ColorRGBA(0, 255, 0), 4);
+        if (debug) Drawing.drawRectangle(imgUnbounded, boundingBox, new ColorRGBA(0, 255, 0), 4);
 
         //Tell us the height of the beacon
         //TODO later we can get the distance away from the beacon based on its height and position
