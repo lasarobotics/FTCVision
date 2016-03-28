@@ -1,10 +1,14 @@
 package org.lasarobotics.vision.detection;
 
+import com.qualcomm.robotcore.util.Range;
+
 import org.lasarobotics.vision.detection.objects.Contour;
 import org.lasarobotics.vision.detection.objects.Ellipse;
 import org.lasarobotics.vision.detection.objects.Rectangle;
+import org.lasarobotics.vision.image.Drawing;
 import org.lasarobotics.vision.image.Filter;
 import org.lasarobotics.vision.util.MathUtil;
+import org.lasarobotics.vision.util.color.ColorRGBA;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.MatOfPoint2f;
@@ -123,7 +127,7 @@ public class PrimitiveDetection {
      * @param grayImage Grayscale image
      * @return Ellipse locations
      */
-    public EllipseLocationResult locateEllipses(Mat grayImage) {
+    public static EllipseLocationResult locateEllipses(Mat grayImage) {
         Mat gray = grayImage.clone();
 
         Filter.downsample(gray, 2);
@@ -166,7 +170,7 @@ public class PrimitiveDetection {
     /**
      * Contains the list of rectangles retrieved from locateRectangles()
      */
-    public class RectangleLocationResult {
+    public static class RectangleLocationResult {
         final List<Contour> contours;
         final List<Rectangle> ellipses;
 
@@ -195,7 +199,7 @@ public class PrimitiveDetection {
     /**
      * Contains the list of ellipses retrieved from locateEllipses()
      */
-    public class EllipseLocationResult {
+    public static class EllipseLocationResult {
         final List<Contour> contours;
         final List<Ellipse> ellipses;
 

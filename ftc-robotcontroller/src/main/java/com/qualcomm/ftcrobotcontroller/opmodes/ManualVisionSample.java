@@ -33,18 +33,12 @@ package com.qualcomm.ftcrobotcontroller.opmodes;
 
 import org.lasarobotics.vision.android.Cameras;
 import org.lasarobotics.vision.detection.ColorBlobDetector;
-import org.lasarobotics.vision.detection.objects.Contour;
 import org.lasarobotics.vision.ftc.resq.Beacon;
-import org.lasarobotics.vision.image.Drawing;
 import org.lasarobotics.vision.opmode.ManualVisionOpMode;
-import org.lasarobotics.vision.util.color.ColorGRAY;
+import org.lasarobotics.vision.util.ScreenOrientation;
 import org.lasarobotics.vision.util.color.ColorHSV;
-import org.lasarobotics.vision.util.color.ColorRGBA;
 import org.opencv.core.Mat;
-import org.opencv.core.Point;
 import org.opencv.core.Size;
-
-import java.util.List;
 
 /**
  * TeleOp Mode
@@ -60,7 +54,6 @@ public class ManualVisionSample extends ManualVisionOpMode {
     private Beacon.BeaconAnalysis colorAnalysis = new Beacon.BeaconAnalysis();
     private ColorBlobDetector detectorRed;
     private ColorBlobDetector detectorBlue;
-    private boolean noError = true;
 
     @Override
     public void init() {
@@ -71,7 +64,7 @@ public class ManualVisionSample extends ManualVisionOpMode {
         detectorBlue = new ColorBlobDetector(lowerBoundBlue, upperBoundBlue);
 
         //Set the camera used for detection
-        this.setCamera(Cameras.SECONDARY);
+        this.setCamera(Cameras.PRIMARY);
         //Set the frame size
         //Larger = sometimes more accurate, but also much slower
         //For Testable OpModes, this might make the image appear small - it might be best not to use this
@@ -86,7 +79,6 @@ public class ManualVisionSample extends ManualVisionOpMode {
         telemetry.addData("Vision Color", colorAnalysis.toString());
         telemetry.addData("Analysis Confidence", colorAnalysis.getConfidenceString());
         telemetry.addData("Vision Size", "Width: " + width + " Height: " + height);
-        telemetry.addData("Vision Status", noError ? "OK!" : "ANALYSIS ERROR!");
     }
 
     @Override
@@ -101,35 +93,15 @@ public class ManualVisionSample extends ManualVisionOpMode {
             detectorRed.process(rgba);
             detectorBlue.process(rgba);
 
-            //Get the list of contours
-            List<Contour> contoursRed = detectorRed.getContours();
-            List<Contour> contoursBlue = detectorBlue.getContours();
-
             //Get color analysis
             Beacon beacon = new Beacon(Beacon.AnalysisMethod.DEFAULT);
-            colorAnalysis = beacon.analyzeFrame(contoursRed, contoursBlue, rgba, gray);
-
-            //Draw red and blue contours
-            Drawing.drawContours(rgba, contoursRed, new ColorRGBA(255, 0, 0), 2);
-            Drawing.drawContours(rgba, contoursBlue, new ColorRGBA(0, 0, 255), 2);
-
-            //Transform.enlarge(mRgba, originalSize, true);
-            //Transform.enlarge(mGray, originalSize, true);
-
-            //Draw text
-            Drawing.drawText(rgba, colorAnalysis.toString(),
-                    new Point(0, 8), 1.0f, new ColorGRAY(255), Drawing.Anchor.BOTTOMLEFT);
-
-            noError = true;
+            //You may need to change the Screen Orientation to your preference
+            colorAnalysis = beacon.analyzeFrame(detectorRed, detectorBlue, rgba, gray, ScreenOrientation.LANDSCAPE);
         }
         catch (Exception e)
         {
-            Drawing.drawText(rgba, "Analysis Error", new Point(0, 8), 1.0f, new ColorRGBA("#F44336"), Drawing.Anchor.BOTTOMLEFT);
-            noError = false;
             e.printStackTrace();
         }
-
-        Drawing.drawText(rgba, "FPS: " + fps.getFPSString(), new Point(0, 24), 1.0f, new ColorRGBA("#ffffff")); //"#2196F3"
 
         return rgba;
     }

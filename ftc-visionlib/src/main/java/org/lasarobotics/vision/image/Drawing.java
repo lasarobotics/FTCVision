@@ -114,7 +114,7 @@ public class Drawing {
         drawRectangle(img, topLeft, bottomRight, color, 2);
     }
 
-    private static void drawRectangle(Mat img, Point topLeft, Point bottomRight, Color color, int thickness) {
+    public static void drawRectangle(Mat img, Point topLeft, Point bottomRight, Color color, int thickness) {
         Imgproc.rectangle(img, topLeft, bottomRight, color.getScalarRGBA(), thickness);
     }
 

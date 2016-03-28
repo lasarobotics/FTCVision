@@ -1,6 +1,7 @@
 package com.lasarobotics.tests.camera;
 
 import org.lasarobotics.vision.android.Cameras;
+import org.lasarobotics.vision.detection.objects.Rectangle;
 import org.lasarobotics.vision.ftc.resq.Beacon;
 import org.lasarobotics.vision.image.Drawing;
 import org.lasarobotics.vision.opmode.TestableVisionOpMode;
@@ -23,10 +24,12 @@ public class CameraTestVisionOpMode extends TestableVisionOpMode {
         super.init();
 
         //Set the camera used for detection
-        this.setCamera(Cameras.SECONDARY);
+        this.setCamera(Cameras.PRIMARY);
+
         //Set the frame size
         //Larger = sometimes more accurate, but also much slower
         //For Testable OpModes, this might make the image appear small - it might be best not to use this
+        //After this method runs, it will set the "width" and "height" of the frame
         this.setFrameSize(new Size(900, 900));
 
         //Enable extensions. Use what you need.
@@ -35,15 +38,30 @@ public class CameraTestVisionOpMode extends TestableVisionOpMode {
 
         //UNCOMMENT THIS IF you're using a SECONDARY (facing toward screen) camera
         //or when you rotate the phone, sometimes the colors swap
-        rotation.setRotationInversion(false);
+        //rotation.setRotationInversion(true);
 
-        //You can do this for certain phones which switch red and blue
-        //It will rotate the display and detection by 180 degrees, making it upright
-        rotation.setUnbiasedOrientation(ScreenOrientation.PORTRAIT);
+        //Set this to the default orientation of your program
+        rotation.setUnbiasedOrientation(ScreenOrientation.LANDSCAPE);
 
         //Set the beacon analysis method
         //Try them all and see what works!
         beacon.setAnalysisMethod(Beacon.AnalysisMethod.FAST);
+
+        //Set analysis boundary
+        //You should comment this to use the entire screen and uncomment only if
+        //you want faster analysis at the cost of not using the entire frame.
+        //This is also particularly useful if you know approximately where the beacon is
+        //as this will eliminate parts of the frame which may cause problems
+        //This will not work on some methods, such as COMPLEX
+        Rectangle bounds = new Rectangle(new Point(width / 2, height / 2), width - 200, 200);
+        beacon.setAnalysisBounds(bounds);
+        //Or you can just use the entire screen
+        //beacon.setAnalysisBounds(new Rectangle(0, 0, height, width));
+
+        //Debug drawing
+        //Enable this only if you're running test app - otherwise, you should turn it off
+        //(Although it doesn't harm anything if you leave it on, only slows down processing a tad)
+        beacon.enableDebug();
     }
 
     @Override

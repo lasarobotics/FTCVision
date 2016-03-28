@@ -122,6 +122,7 @@ public class ColorBlobDetector {
 
     /**
      * Process an rgba image. The results can be drawn on retrieved later.
+     * This method does not modify the image.
      * @param rgbaImage An RGBA image matrix
      */
     public void process(Mat rgbaImage) {

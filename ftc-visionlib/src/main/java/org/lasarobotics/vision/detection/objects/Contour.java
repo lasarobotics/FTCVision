@@ -89,21 +89,6 @@ public class Contour extends Detectable {
         //C_{\mathrm x} = \frac{1}{6A}\sum_{i=0}^{n-1}(x_i+x_{i+1})(x_i\ y_{i+1} - x_{i+1}\ y_i)
         //C_{\mathrm y} = \frac{1}{6A}\sum_{i=0}^{n-1}(y_i+y_{i+1})(x_i\ y_{i+1} - x_{i+1}\ y_i)
 
-        /*if (in.size() > 2) {
-            T doubleArea = 0;
-            cv::Point_<T> p(0,0);
-            cv::Point_<T> p0 = in->back();
-            for (const cv::Point_<T>& p1 : in) {//C++11
-                T a = p0.x * p1.y - p0.y * p1.x; //cross product, (signed) double area of triangle of vertices (origin,p0,p1)
-                p += (p0 + p1) * a;
-                doubleArea += a;
-                p0 = p1;
-            }
-
-            if (doubleArea != 0)
-                return p * (1 / (3 * doubleArea) ); //Operator / does not exist for cv::Point
-        }*/
-
         if (count() < 2)
             return center();
 
@@ -113,6 +98,7 @@ public class Contour extends Detectable {
         Point[] points = this.getPoints();
 
         for (int i = 0; i < points.length - 1; i++) {
+            //cross product, (signed) double area of triangle of vertices (origin,p0,p1)
             double signedArea = (points[i].x * points[i + 1].y) - (points[i + 1].x * points[i].y);
             xSum += (points[i].x + points[i + 1].x) * signedArea;
             ySum += (points[i].y + points[i + 1].y) * signedArea;
