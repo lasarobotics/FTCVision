@@ -33,7 +33,6 @@ abstract class VisionOpModeCore extends OpMode implements CameraBridgeViewBase.C
 
     public VisionOpModeCore() {
         initialized = false;
-        openCVInitialized = false;
         openCVCamera = null;
     }
 
@@ -76,6 +75,12 @@ abstract class VisionOpModeCore extends OpMode implements CameraBridgeViewBase.C
 
         width = openCVCamera.getFrameWidth();
         height = openCVCamera.getFrameHeight();
+        if (width == 0 || height == 0) {
+            Log.e("FTCVision", "OpenCV Camera failed to initialize width and height properties on startup.\r\n" +
+                    "This is generally okay, but if you use width or height during init() you may\r\n" +
+                    "run into a problem.");
+        }
+
         return new Size(width, height);
     }
 
@@ -190,6 +195,9 @@ abstract class VisionOpModeCore extends OpMode implements CameraBridgeViewBase.C
             openCVCamera.disableView();
             openCVCamera.disconnectCamera();
         }
+
+        initialized = false;
+        openCVCamera = null;
 
         super.stop();
     }

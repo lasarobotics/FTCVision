@@ -77,6 +77,7 @@ public abstract class VisionOpMode extends VisionOpModeCore {
 
     @Override
     public Mat frame(Mat rgba, Mat gray) {
+
         for (Extensions extension : Extensions.values())
             if (isEnabled(extension)) {
                 //Pipe the rgba of the previous point into the gray of the next
