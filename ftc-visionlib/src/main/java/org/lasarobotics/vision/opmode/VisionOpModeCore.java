@@ -196,6 +196,9 @@ abstract class VisionOpModeCore extends OpMode implements CameraBridgeViewBase.C
             openCVCamera.disconnectCamera();
         }
 
+        if (sensors != null)
+            sensors.stop();
+
         initialized = false;
         openCVCamera = null;
 
