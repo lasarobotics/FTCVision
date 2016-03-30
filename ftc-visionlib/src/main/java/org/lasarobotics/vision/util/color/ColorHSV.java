@@ -23,6 +23,11 @@ public class ColorHSV extends Color {
         super(new Scalar(h, s, v));
     }
 
+    /**
+     * Get the HSV colorspace
+     *
+     * @return ColorSpace.HSV
+     */
     public ColorSpace getColorSpace() {
         return ColorSpace.HSV;
     }
@@ -34,14 +39,26 @@ public class ColorHSV extends Color {
         return new Scalar(s.val[0], s.val[1], s.val[2]);
     }
 
+    /**
+     * Get the color hue
+     * @return Hue (0-255)
+     */
     public int hue() {
         return (int) scalar.val[0];
     }
 
+    /**
+     * Get the color saturation
+     * @return Saturation (0-255)
+     */
     public int saturation() {
         return (int) scalar.val[1];
     }
 
+    /**
+     * Get the color value
+     * @return Value (0-255)
+     */
     public int value() {
         return (int) scalar.val[2];
     }

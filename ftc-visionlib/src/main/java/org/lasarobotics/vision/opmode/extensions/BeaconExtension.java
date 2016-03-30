@@ -14,26 +14,50 @@ public class BeaconExtension implements VisionExtension {
 
     private Beacon.BeaconAnalysis analysis = new Beacon.BeaconAnalysis();
 
+    /**
+     * Get latest beacon analysis
+     *
+     * @return A Beacon.BeaconAnalysis struct
+     */
     public Beacon.BeaconAnalysis getAnalysis() {
         return analysis;
     }
 
+    /**
+     * Get the currently used analysis method
+     * @return Analysis method
+     */
     public Beacon.AnalysisMethod getAnalysisMethod() {
         return beacon.getAnalysisMethod();
     }
 
+    /**
+     * Set the analysis method to use for beacon analysis
+     * @param method Analysis method to use
+     */
     public void setAnalysisMethod(Beacon.AnalysisMethod method) {
         beacon.setAnalysisMethod(method);
     }
 
+    /**
+     * Set analysis bounds
+     * Areas of the image outside of the bounded area will not be processed
+     * @param bounds A rectangle containing the boundary
+     */
     public void setAnalysisBounds(Rectangle bounds) {
         beacon.setAnalysisBounds(bounds);
     }
 
+    /**
+     * Enable debug drawing. Use this on testing apps only, not the robot controller.
+     */
     public void enableDebug() {
         beacon.enableDebug();
     }
 
+    /**
+     * Disable debug drawing (default). Use this on the robot controller.
+     */
     public void disableDebug() {
         beacon.disableDebug();
     }
@@ -51,7 +75,7 @@ public class BeaconExtension implements VisionExtension {
         try {
             //Get screen orientation data
             ScreenOrientation orientation = ScreenOrientation.getFromAngle(
-                    VisionOpMode.rotation.getRotationCompensationAngleBiased());
+                    VisionOpMode.rotation.getRotationCompensationAngle());
 
             //Get color analysis
             this.analysis = beacon.analyzeFrame(rgba, gray, orientation);

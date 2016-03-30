@@ -12,36 +12,85 @@ import org.opencv.core.Mat;
 public class ImageRotationExtension implements VisionExtension {
 
     private final Sensors sensors = new Sensors();
-    private ScreenOrientation unbiasedOrientation = ScreenOrientation.LANDSCAPE;
+    private ScreenOrientation defaultOrientation = ScreenOrientation.LANDSCAPE;
     private boolean isInverted = false;
 
+    /**
+     * Get the screen orientation of the current activity
+     * This is the native orientation of the display
+     * Some rotations, including upside down, are natively disabled in Android
+     * <p/>
+     * Do not use this to figure out the current phone orientation as Android can lock the screen
+     * orientation and therefore force your program into one orientation.
+     *
+     * @return Screen orientation as reported by the current activity
+     */
     public ScreenOrientation getScreenOrientationDisplay() {
         return sensors.getActivityScreenOrientation();
     }
 
-    private ScreenOrientation getUnbiasedOrientation() {
-        return ScreenOrientation.getFromAngle((isInverted ? -1 : 1) * unbiasedOrientation.getAngle());
+    /**
+     * Get the "zero" orientation
+     * This is the rotation in which the program starts - likely this is either LANDSCAPE or PORTRAIT
+     * You can set this with setDefaultOrientation()
+     *
+     * @return The "zero" orientation
+     */
+    private ScreenOrientation getDefaultOrientation() {
+        return ScreenOrientation.getFromAngle((isInverted ? -1 : 1) * defaultOrientation.getAngle());
     }
 
-    public void setUnbiasedOrientation(ScreenOrientation orientation) {
-        this.unbiasedOrientation = orientation;
+    /**
+     * Set the "zero" orientation
+     * This is the rotation in which the program starts - likely this is either LANDSCAPE or PORTRAIT
+     *
+     * @param orientation Default or "zero" orientation
+     */
+    public void setDefaultOrientation(ScreenOrientation orientation) {
+        this.defaultOrientation = orientation;
     }
 
+    /**
+     * Get the screen orientation as returned by Android sensors
+     * Use getRotationCompensationAngle() instead if you want to correct for the screen rotation
+     * for purposes such as drawing to the screen.
+     * If all you need is to figure out which way the phone is facing, you can use this method.
+     * @return Screen orientation as reported by Android sensors
+     */
     public ScreenOrientation getScreenOrientationActual() {
         return sensors.getScreenOrientation();
     }
 
-    public double getRotationCompensationAngle() {
+    private double getRotationCompensationAngleUnbiased() {
         return (isInverted ? -1 : 1) * sensors.getScreenOrientationCompensation();
     }
 
-    public double getRotationCompensationAngleBiased() {
+    /**
+     * Get rotation compensation angle as reported by fusing data from the Android sensors and
+     * the native Android drawing API. Use this when you need to figure out which way you need to
+     * draw onto the screen.
+     * This is a compensation between the activity orientation and the actual phone orientation.
+     * If you need to get the actual phone orientation alone then use getScreenOrientationActual().
+     *
+     * @return Fused angle compensating for the difference between the actual orientation and the
+     * Android API drawing orientation.
+     */
+    public double getRotationCompensationAngle() {
         return (isInverted ? -1 : 1) * ScreenOrientation.getFromAngle(sensors.getScreenOrientationCompensation()
-                - unbiasedOrientation.getAngle()).getAngle();
+                - defaultOrientation.getAngle()).getAngle();
     }
 
+    /**
+     * Get rotation compensation as reported by fusing data from the Android sensors and
+     * the native Android drawing API. Use this when you need to figure out which way you need to
+     * draw onto the screen.
+     * This is a compensation between the activity orientation and the actual phone orientation.
+     * If you need to get the actual phone orientation alone then use getScreenOrientationActual().
+     * @return Fused orientation compensating for the difference between the actual orientation and the
+     * Android API drawing orientation.
+     */
     public ScreenOrientation getRotationCompensation() {
-        return ScreenOrientation.getFromAngle(getRotationCompensationAngle());
+        return ScreenOrientation.getFromAngle(getRotationCompensationAngleUnbiased());
     }
 
     /**
@@ -76,7 +125,7 @@ public class ImageRotationExtension implements VisionExtension {
 
     @Override
     public Mat frame(VisionOpMode opmode, Mat rgba, Mat gray) {
-        double angle = getUnbiasedOrientation().getAngle();
+        double angle = getDefaultOrientation().getAngle();
         if (angle != 0) {
             Transform.rotate(rgba, angle);
             opmode.width = rgba.width();
