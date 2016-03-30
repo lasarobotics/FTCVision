@@ -18,6 +18,12 @@ public enum ScreenOrientation {
         this.angle = angle;
     }
 
+    /**
+     * Get the screen orientation from an angle value
+     *
+     * @param angle Angle value, in degrees
+     * @return ScreenOrientation or throws RuntimeException if cannot convert
+     */
     public static ScreenOrientation getFromAngle(double angle) {
         return getFromAngle((int) angle);
     }
@@ -43,6 +49,11 @@ public enum ScreenOrientation {
         }
     }
 
+    /**
+     * Get a ScreenOrientation value from an android.view.Surface ID
+     * @param id android.view.Surface ID
+     * @return ScreenOrientation instance
+     */
     public static ScreenOrientation getFromSurface(int id) {
         switch (id) {
             case Surface.ROTATION_0:
@@ -58,6 +69,10 @@ public enum ScreenOrientation {
         }
     }
 
+    /**
+     * Get the angle of this ScreenOrientation in degrees
+     * @return Angle, in degrees
+     */
     public double getAngle() {
         return angle;
     }

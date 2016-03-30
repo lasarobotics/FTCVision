@@ -41,7 +41,7 @@ public class CameraTestVisionOpMode extends TestableVisionOpMode {
         //rotation.setRotationInversion(true);
 
         //Set this to the default orientation of your program
-        rotation.setUnbiasedOrientation(ScreenOrientation.LANDSCAPE);
+        rotation.setDefaultOrientation(ScreenOrientation.LANDSCAPE);
 
         //Set the beacon analysis method
         //Try them all and see what works!

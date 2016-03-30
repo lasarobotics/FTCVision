@@ -60,7 +60,6 @@ public enum ColorSpace {
      * @param to The color space to convert to
      * @return True if convertable, false otherwise
      */
-    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean canConvertTo(ColorSpace to) {
         return (to == this) || (getConversionsTo(to) != null);
     }
