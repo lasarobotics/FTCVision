@@ -23,8 +23,108 @@ import java.util.List;
  */
 class BeaconAnalyzer {
 
+    static Beacon.BeaconAnalysis analyze_REALTIME(List<Contour> contoursR, List<Contour> contoursB,
+                                                  ScreenOrientation orientation) {
+        List<Contour> contoursRed = new ArrayList<>(contoursR);
+        List<Contour> contoursBlue = new ArrayList<>(contoursB);
+
+        //Get the largest contour in each - we're calling this one the main light
+        int largestIndexRed = findLargestIndex(contoursRed);
+        int largestIndexBlue = findLargestIndex(contoursBlue);
+        Contour largestRed = (largestIndexRed != -1) ? contoursRed.get(largestIndexRed) : null;
+        Contour largestBlue = (largestIndexBlue != -1) ? contoursBlue.get(largestIndexBlue) : null;
+
+        //If we don't have a main light for one of the colors, we know both colors are the same
+        if (largestRed == null && largestBlue == null)
+            return new Beacon.BeaconAnalysis();
+
+        //If the largest part of the non-null color is wider than a certain distance, then both are bright
+        //Otherwise, only one may be lit
+        //If only one is lit, and is wider than a certain distance, it is bright
+        //We are currently assuming that the beacon cannot be in a "bright" state
+        if (largestRed == null)
+            return new Beacon.BeaconAnalysis();
+        else if (largestBlue == null)
+            return new Beacon.BeaconAnalysis();
+
+        //Look at the locations of the largest contours
+        //Check to see if the largest red contour is more left-most than the largest right contour
+        //If it is, then we know that the left beacon is red and the other blue, and vice versa
+        Point bestRedCenter = largestRed.center();
+        Point bestBlueCenter = largestBlue.center();
+
+        //Test which side is red and blue
+        //If the distance between the sides is smaller than a value, then return unknown
+        //Figure out which way to read the image
+        double orientationAngle = orientation.getAngle();
+        boolean swapLeftRight = orientationAngle >= 180; //swap if LANDSCAPE_WEST or PORTRAIT_REVERSE
+        boolean readOppositeAxis = orientation == ScreenOrientation.PORTRAIT ||
+                orientation == ScreenOrientation.PORTRAIT_REVERSE; //read other axis if any kind of portrait
+
+        boolean leftIsRed;
+        Contour leftMostContour, rightMostContour;
+        if (readOppositeAxis) {
+            if (bestRedCenter.y < bestBlueCenter.y) {
+                leftIsRed = true;
+            } else if (bestBlueCenter.y < bestRedCenter.y) {
+                leftIsRed = false;
+            } else {
+                return new Beacon.BeaconAnalysis();
+            }
+        } else {
+            if (bestRedCenter.x < bestBlueCenter.x) {
+                leftIsRed = true;
+            } else if (bestBlueCenter.x < bestRedCenter.x) {
+                leftIsRed = false;
+            } else {
+                return new Beacon.BeaconAnalysis();
+            }
+        }
+
+        //Swap left and right if necessary
+        leftIsRed = swapLeftRight != leftIsRed;
+
+        //Get the left-most best contour (or top-most if axis swapped) (or right-most if L/R swapped)
+        if (readOppositeAxis) {
+            //Get top-most best contour
+            leftMostContour = ((largestRed.topLeft().y) < (largestBlue.topLeft().y)) ? largestRed : largestBlue;
+            //Get bottom-most best contour
+            rightMostContour = ((largestRed.topLeft().y) < (largestBlue.topLeft().y)) ? largestBlue : largestRed;
+        } else {
+            //Get left-most best contour
+            leftMostContour = ((largestRed.topLeft().y) < (largestBlue.topLeft().y)) ? largestRed : largestBlue;
+            //Get the right-most best contour
+            rightMostContour = ((largestRed.topLeft().y) < (largestBlue.topLeft().y)) ? largestBlue : largestRed;
+        }
+
+        //Swap left and right if necessary
+        //BUGFIX: invert when we swap
+        if (swapLeftRight) {
+            Contour temp = leftMostContour;
+            leftMostContour = rightMostContour;
+            rightMostContour = temp;
+        }
+
+        //Get the approximate bounding box of the contours
+        double widthContours = rightMostContour.right() - leftMostContour.left();
+        double heightContours = Math.max(leftMostContour.height(), rightMostContour.height());
+
+        //Center of contours is the average of centers of the contours
+        Point lCenter = leftMostContour.center();
+        Point rCenter = leftMostContour.center();
+        Point center = new Point((lCenter.x + rCenter.x) / 2,
+                (lCenter.y + rCenter.y) / 2);
+
+        Rectangle centerRect = new Rectangle(center, widthContours, heightContours);
+
+        if (leftIsRed)
+            return new Beacon.BeaconAnalysis(Beacon.BeaconColor.RED, Beacon.BeaconColor.BLUE, centerRect, 0.5);
+        else
+            return new Beacon.BeaconAnalysis(Beacon.BeaconColor.BLUE, Beacon.BeaconColor.RED, centerRect, 0.5);
+    }
+
     static Beacon.BeaconAnalysis analyze_FAST(List<Contour> contoursR, List<Contour> contoursB,
-                                              Mat imgUnbounded, ScreenOrientation orientation, Rectangle bounds, boolean debug) {
+                                              Mat imgUnbounded, Mat gray, ScreenOrientation orientation, Rectangle bounds, boolean debug) {
         //DEBUG Draw contours before filtering
         if (debug) Drawing.drawContours(imgUnbounded, contoursR, new ColorRGBA("#FF0000"), 2);
         if (debug) Drawing.drawContours(imgUnbounded, contoursB, new ColorRGBA("#0000FF"), 2);
@@ -35,6 +135,13 @@ class BeaconAnalyzer {
 
         if (debug)
             Drawing.drawRectangle(img, new Point(0, 0), new Point(img.width(), img.height()), new ColorRGBA("#aaaaaa"), 4);
+
+        //Locate ellipses in the image to process contours against
+        //Each contour must have an ellipse of correct specification
+        PrimitiveDetection.EllipseLocationResult ellipseLocationResult = PrimitiveDetection.locateEllipses(gray);
+        List<Ellipse> ellipses = ellipseLocationResult.getEllipses();
+        if (debug)
+            Drawing.drawEllipses(imgUnbounded, ellipses, new ColorRGBA("#ff0745"), 1);
 
         List<Contour> contoursRed = new ArrayList<>(contoursR);
         List<Contour> contoursBlue = new ArrayList<>(contoursB);
@@ -148,6 +255,8 @@ class BeaconAnalyzer {
             leftMostContour = rightMostContour;
             rightMostContour = temp;
         }
+
+        //Now that we have the two contours, let's find ellipses that match
 
         //Draw the box surrounding both contours
         //Get the width of the contours

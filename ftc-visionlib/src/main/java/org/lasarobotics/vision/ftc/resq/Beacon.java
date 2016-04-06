@@ -1,6 +1,7 @@
 package org.lasarobotics.vision.ftc.resq;
 
 import org.lasarobotics.vision.detection.ColorBlobDetector;
+import org.lasarobotics.vision.detection.objects.Ellipse;
 import org.lasarobotics.vision.detection.objects.Rectangle;
 import org.lasarobotics.vision.util.MathUtil;
 import org.lasarobotics.vision.util.ScreenOrientation;
@@ -83,10 +84,12 @@ public final class Beacon {
         redDetector.process(img);
 
         switch (method) {
+            case REALTIME:
+                return BeaconAnalyzer.analyze_REALTIME(redDetector.getContours(), blueDetector.getContours(), orientation);
             case FAST:
             case DEFAULT:
             default:
-                return BeaconAnalyzer.analyze_FAST(redDetector.getContours(), blueDetector.getContours(), img, orientation, this.bounds, this.debug);
+                return BeaconAnalyzer.analyze_FAST(redDetector.getContours(), blueDetector.getContours(), img, gray, orientation, this.bounds, this.debug);
             case COMPLEX:
                 return BeaconAnalyzer.analyze_COMPLEX(redDetector.getContours(), blueDetector.getContours(), img, gray, orientation, this.bounds, this.debug);
         }
@@ -151,12 +154,16 @@ public final class Beacon {
     public enum AnalysisMethod {
         //Default method
         DEFAULT,
+        //Extremely fast method that gives only color info
+        REALTIME,
         //Faster method - picks the two largest contours without concern
         FAST,
         //Slower and complex method - picks contours based on statistical analysis
         COMPLEX;
         public String toString() {
             switch (this) {
+                case REALTIME:
+                    return "REALTIME";
                 case DEFAULT:
                 case FAST:
                 default:
@@ -203,10 +210,12 @@ public final class Beacon {
         private final BeaconColor left;
         private final BeaconColor right;
         private final Rectangle location;
+        private final Ellipse leftButton;
+        private final Ellipse rightButton;
 
         //TODO Color and CONFIDENCE should make up the results
 
-        //TODO add Size size, Point locationTopLeft, Distance distanceApprox
+        //TODO add Distance distanceApprox
 
         /**
          * Instantiate a blank analysis
@@ -216,6 +225,8 @@ public final class Beacon {
             this.right = BeaconColor.UNKNOWN;
             this.confidence = 0.0f;
             this.location = new Rectangle();
+            this.leftButton = new Ellipse();
+            this.rightButton = new Ellipse();
         }
 
         BeaconAnalysis(BeaconColor left, BeaconColor right, Rectangle location, double confidence) {
@@ -223,6 +234,36 @@ public final class Beacon {
             this.right = right;
             this.confidence = confidence;
             this.location = location;
+            this.leftButton = new Ellipse();
+            this.rightButton = new Ellipse();
+        }
+
+        BeaconAnalysis(BeaconColor left, BeaconColor right, Rectangle location, double confidence,
+                       Ellipse leftButton, Ellipse rightButton) {
+            this.left = left;
+            this.right = right;
+            this.confidence = confidence;
+            this.location = location;
+            this.leftButton = leftButton;
+            this.rightButton = rightButton;
+        }
+
+        /**
+         * Get the ellipse containing the left button, if found
+         *
+         * @return Left button ellipse, or a blank ellipse if not found
+         */
+        public Ellipse getLeftButton() {
+            return leftButton;
+        }
+
+        /**
+         * Get the ellipse containing the right button, if found
+         *
+         * @return Right button ellipse, or a blank ellipse if not found
+         */
+        public Ellipse getRightButton() {
+            return rightButton;
         }
 
         /**

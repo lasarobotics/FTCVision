@@ -16,6 +16,8 @@ import org.opencv.imgproc.Imgproc;
 public class Contour extends Detectable {
 
     private final MatOfPoint mat;
+    private Point topLeft = null;
+    private Size size = null;
 
     /**
      * Instantiate a contour from an OpenCV matrix of points (float)
@@ -33,6 +35,36 @@ public class Contour extends Detectable {
      */
     public Contour(MatOfPoint2f data) {
         this.mat = new MatOfPoint(data.toArray());
+    }
+
+    private void calculate() {
+        if (topLeft != null)
+            return;
+
+        //Calculate size and topLeft at the same time
+        double minX = Double.MAX_VALUE;
+        double maxX = Double.MIN_VALUE;
+        double minY = Double.MAX_VALUE;
+        double maxY = Double.MIN_VALUE;
+
+        Point[] points = getPoints();
+        for (Point p : points) {
+            if (p.x < minX) {
+                minX = p.x;
+            }
+            if (p.y < minY) {
+                minY = p.y;
+            }
+            if (p.x > maxX) {
+                maxX = p.x;
+            }
+            if (p.y > maxY) {
+                maxY = p.y;
+            }
+        }
+
+        size = new Size(maxX - minX, maxY - minY);
+        topLeft = new Point(minX, minY);
     }
 
     /**
@@ -117,39 +149,38 @@ public class Contour extends Detectable {
      * @return Center of the object as a point
      */
     public Point center() {
-        double xSum = 0.0;
-        double ySum = 0.0;
-        Point[] points = this.getPoints();
-
-        for (Point p : points) {
-            xSum += p.x;
-            ySum += p.y;
-        }
-        return new Point(xSum / points.length, ySum / points.length);
+        calculate();
+        return new Point(topLeft.x + (size.width / 2), topLeft.y + (size.height / 2));
     }
 
     public double height() {
-        return (int) size().height;
+        calculate();
+        return (int) size.height;
     }
 
     public double width() {
-        return (int) size().width;
+        calculate();
+        return (int) size.width;
     }
 
     public double top() {
-        return topLeft().y;
+        calculate();
+        return topLeft.y;
     }
 
     public double bottom() {
-        return topLeft().y + size().height;
+        calculate();
+        return topLeft.y + size.height;
     }
 
     public double left() {
-        return topLeft().x;
+        calculate();
+        return topLeft.x;
     }
 
     public double right() {
-        return topLeft().x + size().width;
+        calculate();
+        return topLeft.x + size.width;
     }
 
     /**
@@ -171,27 +202,25 @@ public class Contour extends Detectable {
      * @return The top left corner of the contour
      */
     public Point topLeft() {
-        double minX = Double.MAX_VALUE;
-        double minY = Double.MAX_VALUE;
+        calculate();
+        return topLeft;
+    }
 
-        Point[] points = getPoints();
-        for (Point p : points) {
-            if (p.x < minX) {
-                minX = p.x;
-            }
-            if (p.y < minY) {
-                minY = p.y;
-            }
-        }
-
-        return new Point(minX, minY);
+    /**
+     * Get the size of the contour i.e. a width and height
+     *
+     * @return Size as (width, height)
+     */
+    public Size size() {
+        calculate();
+        return size;
     }
 
     /**
      * Get the size of the contour i.e. a width and height
      * @return Size as (width, height)
      */
-    public Size size() {
+    private Size _size() {
         double minX = Double.MAX_VALUE;
         double maxX = Double.MIN_VALUE;
         double minY = Double.MAX_VALUE;
