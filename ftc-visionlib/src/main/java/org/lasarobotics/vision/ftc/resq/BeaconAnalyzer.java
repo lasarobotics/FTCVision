@@ -288,12 +288,9 @@ class BeaconAnalyzer {
                 new Rectangle(imgUnbounded.size()));
         Rectangle rightRect = rightMostContour.getBoundingRectangle().clip(
                 new Rectangle(imgUnbounded.size()));
-        Log.w("Img", imgUnbounded.rows() + "*" + imgUnbounded.cols());
-        Log.w("LS", leftRect.toString());
         Mat leftContourImg = imgUnbounded.submat(
                 (int) leftRect.top(), (int) leftRect.bottom(),
                 (int) leftRect.left(), (int) leftRect.right());
-        Log.w("RS", rightRect.toString());
         Mat rightContourImg = imgUnbounded.submat(
                 (int) rightRect.top(), (int) rightRect.bottom(),
                 (int) rightRect.left(), (int) rightRect.right());
