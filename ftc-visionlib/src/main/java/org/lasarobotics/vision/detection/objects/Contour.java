@@ -192,6 +192,16 @@ public class Contour extends Detectable {
         return new Rect((int) top(), (int) left(), (int) width(), (int) height());
     }
 
+    /**
+     * Get a bounding rectangle surrounding the contour
+     *
+     * @return Returns an FTCVision rectangle
+     */
+    public Rectangle getBoundingRectangle() {
+        calculate();
+        return new Rectangle(center(), size.width, size.height);
+    }
+
     public Point bottomRight() {
         return new Point(right(), bottom());
     }

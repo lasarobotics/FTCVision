@@ -9,6 +9,7 @@ import org.lasarobotics.vision.detection.objects.Rectangle;
 import org.lasarobotics.vision.image.Drawing;
 import org.lasarobotics.vision.util.MathUtil;
 import org.lasarobotics.vision.util.ScreenOrientation;
+import org.lasarobotics.vision.util.color.Color;
 import org.lasarobotics.vision.util.color.ColorRGBA;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -135,13 +136,6 @@ class BeaconAnalyzer {
 
         if (debug)
             Drawing.drawRectangle(img, new Point(0, 0), new Point(img.width(), img.height()), new ColorRGBA("#aaaaaa"), 4);
-
-        //Locate ellipses in the image to process contours against
-        //Each contour must have an ellipse of correct specification
-        PrimitiveDetection.EllipseLocationResult ellipseLocationResult = PrimitiveDetection.locateEllipses(gray);
-        List<Ellipse> ellipses = ellipseLocationResult.getEllipses();
-        if (debug)
-            Drawing.drawEllipses(imgUnbounded, ellipses, new ColorRGBA("#ff0745"), 1);
 
         List<Contour> contoursRed = new ArrayList<>(contoursR);
         List<Contour> contoursBlue = new ArrayList<>(contoursB);
@@ -288,6 +282,29 @@ class BeaconAnalyzer {
         Point beaconBottomRight = new Point(center.x + (beaconSizeFinal.width / 2),
                 center.y + (beaconSizeFinal.height / 2));
         Rectangle boundingBox = new Rectangle(new Rect(beaconTopLeft, beaconBottomRight));
+
+        //Get ellipses in region of interest
+        //Make sure the rectangles don't leave the image size
+        Rectangle leftRect = leftMostContour.getBoundingRectangle().clip(
+                new Rectangle(imgUnbounded.size()));
+        Rectangle rightRect = rightMostContour.getBoundingRectangle().clip(
+                new Rectangle(imgUnbounded.size()));
+        Mat leftContourImg = imgUnbounded.submat(
+                (int) leftRect.top(), (int) leftRect.bottom(),
+                (int) leftRect.left(), (int) leftRect.right());
+        Mat rightContourImg = imgUnbounded.submat(
+                (int) rightRect.top(), (int) rightRect.bottom(),
+                (int) rightRect.left(), (int) rightRect.right());
+
+        //Locate ellipses in the image to process contours against
+        List<Ellipse> ellipsesLeft =
+                PrimitiveDetection.locateEllipses(leftContourImg).getEllipses();
+        if (debug)
+            Drawing.drawEllipses(imgUnbounded, ellipsesLeft, new ColorRGBA("#ff0745"), 1);
+        List<Ellipse> ellipsesRight =
+                PrimitiveDetection.locateEllipses(rightContourImg).getEllipses();
+        if (debug)
+            Drawing.drawEllipses(imgUnbounded, ellipsesRight, new ColorRGBA("#ff0745"), 1);
 
         //Draw the rectangle containing the beacon
         if (debug) Drawing.drawRectangle(imgUnbounded, boundingBox, new ColorRGBA(0, 255, 0), 4);
