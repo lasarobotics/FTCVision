@@ -7,6 +7,7 @@ import org.opencv.core.MatOfPoint;
 import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
+import org.opencv.core.RotatedRect;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
@@ -15,7 +16,7 @@ import org.opencv.imgproc.Imgproc;
  */
 public class Contour extends Detectable {
 
-    private final MatOfPoint mat;
+    private MatOfPoint mat;
     private Point topLeft = null;
     private Size size = null;
 
@@ -227,32 +228,17 @@ public class Contour extends Detectable {
     }
 
     /**
-     * Get the size of the contour i.e. a width and height
-     * @return Size as (width, height)
+     * Offset the object, translating it by a specific offset point
+     * @param offset Point to offset by, e.g. (1, 0) would move object 1 px right
      */
-    private Size _size() {
-        double minX = Double.MAX_VALUE;
-        double maxX = Double.MIN_VALUE;
-        double minY = Double.MAX_VALUE;
-        double maxY = Double.MIN_VALUE;
+    @Override
+    public void offset(Point offset) {
+        Point[] points = this.getPoints();
 
-        Point[] points = getPoints();
-        for (Point p : points) {
-            if (p.x < minX) {
-                minX = p.x;
-            }
-            if (p.y < minY) {
-                minY = p.y;
-            }
-            if (p.x > maxX) {
-                maxX = p.x;
-            }
-            if (p.y > maxY) {
-                maxY = p.y;
-            }
-        }
+        for (int i=0; i<points.length; i++)
+            points[i] = new Point(points[i].x + offset.x, points[i].y + offset.y);
 
-        return new Size(maxX - minX, maxY - minY);
+        mat.fromArray(points);
     }
 
     /**

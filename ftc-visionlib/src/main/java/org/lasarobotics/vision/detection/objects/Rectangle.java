@@ -134,6 +134,16 @@ public class Rectangle extends Detectable {
         return size().height;
     }
 
+    /**
+     * Offset the object, translating it by a specific offset point
+     * @param offset Point to offset by, e.g. (1, 0) would move object 1 px right
+     */
+    @Override
+    public void offset(Point offset) {
+        this.rect = new RotatedRect(new Point(rect.center.x + offset.x, rect.center.y + offset.y),
+                rect.size, rect.angle);
+    }
+
     public double width() {
         return size().width;
     }
@@ -185,11 +195,10 @@ public class Rectangle extends Detectable {
      */
     public Rectangle clip(Rectangle rectangle)
     {
-        Rectangle r = new Rectangle(Math.max(rectangle.top(), this.top()),
+        return new Rectangle(Math.max(rectangle.top(), this.top()),
                              Math.max(rectangle.left(), this.left()),
                              Math.min(rectangle.bottom(), this.bottom()),
                              Math.min(rectangle.right(), this.right()));
-        return r;
     }
 
     /**

@@ -4,6 +4,7 @@ import android.util.Log;
 
 import org.lasarobotics.vision.detection.PrimitiveDetection;
 import org.lasarobotics.vision.detection.objects.Contour;
+import org.lasarobotics.vision.detection.objects.Detectable;
 import org.lasarobotics.vision.detection.objects.Ellipse;
 import org.lasarobotics.vision.detection.objects.Rectangle;
 import org.lasarobotics.vision.image.Drawing;
@@ -288,20 +289,22 @@ class BeaconAnalyzer {
                 new Rectangle(imgUnbounded.size()));
         Rectangle rightRect = rightMostContour.getBoundingRectangle().clip(
                 new Rectangle(imgUnbounded.size()));
-        Mat leftContourImg = imgUnbounded.submat(
+        Mat leftContourImg = gray.submat(
                 (int) leftRect.top(), (int) leftRect.bottom(),
                 (int) leftRect.left(), (int) leftRect.right());
-        Mat rightContourImg = imgUnbounded.submat(
+        Mat rightContourImg = gray.submat(
                 (int) rightRect.top(), (int) rightRect.bottom(),
                 (int) rightRect.left(), (int) rightRect.right());
 
         //Locate ellipses in the image to process contours against
         List<Ellipse> ellipsesLeft =
                 PrimitiveDetection.locateEllipses(leftContourImg).getEllipses();
+        Detectable.offset(ellipsesLeft, new Point(leftRect.left(), leftRect.top()));
         if (debug)
             Drawing.drawEllipses(imgUnbounded, ellipsesLeft, new ColorRGBA("#ff0745"), 1);
         List<Ellipse> ellipsesRight =
                 PrimitiveDetection.locateEllipses(rightContourImg).getEllipses();
+        Detectable.offset(ellipsesRight, new Point(rightRect.left(), rightRect.top()));
         if (debug)
             Drawing.drawEllipses(imgUnbounded, ellipsesRight, new ColorRGBA("#ff0745"), 1);
 

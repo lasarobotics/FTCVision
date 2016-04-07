@@ -9,7 +9,7 @@ import org.opencv.core.Size;
  * Implements a single ellipse (acts like RotatedRect) with advanced measurement utilities
  */
 public class Ellipse extends Detectable implements Comparable<Ellipse> {
-    private final RotatedRect rect;
+    private RotatedRect rect;
 
     /**
      * Instantiate a null ellipse
@@ -45,6 +45,16 @@ public class Ellipse extends Detectable implements Comparable<Ellipse> {
 
     public double height() {
         return size().height;
+    }
+
+    /**
+     * Offset the object, translating it by a specific offset point
+     * @param offset Point to offset by, e.g. (1, 0) would move object 1 px right
+     */
+    @Override
+    public void offset(Point offset) {
+        this.rect = new RotatedRect(new Point(rect.center.x + offset.x, rect.center.y + offset.y),
+                rect.size, rect.angle);
     }
 
     public double width() {
