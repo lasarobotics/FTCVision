@@ -27,7 +27,10 @@ public class Rectangle extends Detectable {
      * @param right  Right-most X value
      */
     public Rectangle(double top, double left, double bottom, double right) {
-        setRect(new Rect((int) top, (int) left, (int) Math.abs(right - left), (int) Math.abs(bottom - top)));
+        double width = Math.abs(right - left);
+        double height = Math.abs(bottom - top);
+        Point center = new Point(left + (width / 2.0), top + (height / 2.0));
+        setRect(new Rect((int) (center.x - (width / 2)), (int) (center.y - (height / 2)), (int) width, (int) height));
     }
 
     /**
@@ -182,10 +185,11 @@ public class Rectangle extends Detectable {
      */
     public Rectangle clip(Rectangle rectangle)
     {
-        return new Rectangle(Math.max(rectangle.top(), this.top()),
+        Rectangle r = new Rectangle(Math.max(rectangle.top(), this.top()),
                              Math.max(rectangle.left(), this.left()),
                              Math.min(rectangle.bottom(), this.bottom()),
                              Math.min(rectangle.right(), this.right()));
+        return r;
     }
 
     /**
@@ -198,5 +202,10 @@ public class Rectangle extends Detectable {
         //TODO this algorithm checks for entirety; make an isEntirelyInside() and isPartiallyInside()
         return left() >= contour.left() && right() <= contour.right() &&
                 top() >= contour.top() && bottom() <= contour.bottom();
+    }
+
+    @Override
+    public String toString() {
+        return "rows: " + top() + " " + bottom() + " cols: " + left() + " " + right();
     }
 }
