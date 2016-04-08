@@ -83,7 +83,7 @@ public class CameraTestVisionOpMode extends TestableVisionOpMode {
         //I don't think this needs to be in loop, but I'm putting here just in case it needs to be reset every run
         //test more later
         Camera.Parameters p = openCVCamera.getCamera().getParameters();
-        p.setWhiteBalance("daylight");
+        p.setWhiteBalance("twilight");
         p.setAutoWhiteBalanceLock(true);
         openCVCamera.getCamera().setParameters(p);
         Log.e("valid white: ", Arrays.toString(p.getSupportedWhiteBalance().toArray()));
