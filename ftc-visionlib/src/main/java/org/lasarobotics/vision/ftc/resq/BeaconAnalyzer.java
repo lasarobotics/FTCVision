@@ -1,5 +1,6 @@
 package org.lasarobotics.vision.ftc.resq;
 
+import android.graphics.drawable.GradientDrawable;
 import android.util.Log;
 
 import org.lasarobotics.vision.detection.PrimitiveDetection;
@@ -7,6 +8,7 @@ import org.lasarobotics.vision.detection.objects.Contour;
 import org.lasarobotics.vision.detection.objects.Ellipse;
 import org.lasarobotics.vision.detection.objects.Rectangle;
 import org.lasarobotics.vision.image.Drawing;
+import org.lasarobotics.vision.image.Transform;
 import org.lasarobotics.vision.util.MathUtil;
 import org.lasarobotics.vision.util.ScreenOrientation;
 import org.lasarobotics.vision.util.color.ColorRGBA;
@@ -32,9 +34,10 @@ class BeaconAnalyzer {
         //Bound the image
         Point offset = new Point(bounds.left(), Math.min(bounds.top(), bounds.bottom()));
         Mat img = imgUnbounded.submat((int) bounds.top(), (int) bounds.bottom(), (int) bounds.left(), (int) bounds.right());
-
+        if(orientation == ScreenOrientation.PORTRAIT)
+            Transform.rotate(img, 90);
         if (debug)
-            Drawing.drawRectangle(img, new Point(0, 0), new Point(img.width(), img.height()), new ColorRGBA("#aaaaaa"), 4);
+            Drawing.drawRectangle(img, new Point(0, 0), new Point(img.width(), img.height()), new ColorRGBA("#00ff99"), 4);
 
         List<Contour> contoursRed = new ArrayList<>(contoursR);
         List<Contour> contoursBlue = new ArrayList<>(contoursB);
