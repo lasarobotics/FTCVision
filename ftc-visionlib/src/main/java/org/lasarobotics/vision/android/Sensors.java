@@ -37,7 +37,6 @@ public final class Sensors implements SensorEventListener {
         mSensorManager = (SensorManager) Util.getContext().getSystemService(Context.SENSOR_SERVICE);
         mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         mMagneticField = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
-        activated = false;
         resume();
     }
 
@@ -47,19 +46,20 @@ public final class Sensors implements SensorEventListener {
     public void resume() {
         if (activated)
             return;
+        activated = true;
         mSensorManager.registerListener(this, mAccelerometer, READ_SPEED);
         mSensorManager.registerListener(this, mMagneticField, READ_SPEED);
-        activated = true;
     }
 
     /**
      * Pause sensor reading
      */
     public void stop() {
-        if (!activated)
-            return;
+        //if (!activated)
+        //    return;
+        mSensorManager.unregisterListener(this, mAccelerometer);
+        mSensorManager.unregisterListener(this, mMagneticField);
         activated = false;
-        mSensorManager.unregisterListener(this);
     }
 
     /**
@@ -151,8 +151,6 @@ public final class Sensors implements SensorEventListener {
         double pitch = orientation[1] / 2 / Math.PI * 360.0;
         double roll = orientation[2] / 2 / Math.PI * 360.0;
         double azimuth = orientation[0] / 2 / Math.PI * 360.0;
-
-        Log.d("Rotation", pitch + ", " + roll + ", " + azimuth);
 
         //If the phone is too close to the ground, don't update
         if (Math.abs(roll) <= ROLL_MINIMUM)

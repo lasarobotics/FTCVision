@@ -7,14 +7,27 @@ import org.opencv.core.Scalar;
  */
 public class ColorGRAY extends Color {
 
+    /**
+     * Instantiate a Grayscale (8-bit) color from a Scalar
+     *
+     * @param s Scalar value containing one number (0-255)
+     */
     public ColorGRAY(Scalar s) {
         super(s);
     }
 
+    /**
+     * Instantiate a Grayscale (8-bit) color from an integer
+     * @param v Value (0-255)
+     */
     public ColorGRAY(int v) {
         super(new Scalar(v));
     }
 
+    /**
+     * Get the GRAY colorspace
+     * @return Colorspace.GRAY
+     */
     public ColorSpace getColorSpace() {
         return ColorSpace.GRAY;
     }
@@ -26,6 +39,10 @@ public class ColorGRAY extends Color {
         return new Scalar(s.val[0]);
     }
 
+    /**
+     * Get brightness value
+     * @return Value (0-255)
+     */
     public int value() {
         return (int) scalar.val[0];
     }

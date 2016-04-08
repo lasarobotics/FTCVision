@@ -190,9 +190,16 @@ public class Transform {
         Imgproc.resize(img, img, size, 0, 0, interpolation);
     }
 
+    /**
+     * Type of reflection
+     * Creates a reflection matrix based on the type of value
+     */
     public enum FlipType {
+        //Reflect across Y axis
         FLIP_ACROSS_Y(0),
+        //Reflect across X axis
         FLIP_ACROSS_X(1),
+        //Reflect across both axis simultaneously
         FLIP_BOTH(-1);
 
         final int val;

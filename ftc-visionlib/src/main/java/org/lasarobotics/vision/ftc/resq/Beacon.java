@@ -92,26 +92,55 @@ public final class Beacon {
         }
     }
 
+    /**
+     * Get current analysis method
+     *
+     * @return Current analysis method
+     */
     public AnalysisMethod getAnalysisMethod() {
         return method;
     }
 
+    /**
+     * Set analysis method
+     * @param method AnalysisMethod selection
+     */
     public void setAnalysisMethod(AnalysisMethod method) {
         this.method = method;
     }
 
+
+    /**
+     * Set a rectangle to contain the analyzed area
+     * An orange box will be shown containing the analyzed area
+     * Only currently works on the FAST method
+     * @param bounds Rectangle containing the frame area to analyze
+     */
     public void setAnalysisBounds(Rectangle bounds) {
         this.bounds = bounds;
     }
 
+    /**
+     * Reset analysis bounds to contain the entirety of a frame size
+     *
+     * @param frameSize
+     */
     public void resetAnalysisBounds(Size frameSize) {
         this.bounds = new Rectangle(new Point(frameSize.width / 2, frameSize.height / 2), frameSize.width, frameSize.height);
     }
 
+    /**
+     * Enable debug displays.
+     * Use this only on testing apps, otherwise it might slow your program
+     * down a little bit or confuse your custom code
+     */
     public void enableDebug() {
         this.debug = true;
     }
 
+    /**
+     * Disable debug displays (default)
+     */
     public void disableDebug() {
         this.debug = false;
     }

@@ -83,7 +83,7 @@ public abstract class VisionEnabledActivity extends Activity implements CameraBr
         super.onPause();
         if (openCVCamera != null)
             openCVCamera.disableView();
-        opMode.sensors.stop();
+        opMode.stop();
     }
 
     @Override
@@ -91,7 +91,7 @@ public abstract class VisionEnabledActivity extends Activity implements CameraBr
         super.onDestroy();
         if (openCVCamera != null)
             openCVCamera.disableView();
-        opMode.sensors.stop();
+        opMode.stop();
         this.finish();
     }
 
@@ -113,7 +113,5 @@ public abstract class VisionEnabledActivity extends Activity implements CameraBr
             Log.d("OpenCV", "OpenCV library found inside package. Using it!");
             openCVLoaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
         }
-
-        opMode.sensors.resume();
     }
 }

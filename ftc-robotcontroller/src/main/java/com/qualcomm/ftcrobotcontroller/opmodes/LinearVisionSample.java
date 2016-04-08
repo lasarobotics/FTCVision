@@ -74,7 +74,7 @@ public class LinearVisionSample extends LinearVisionOpMode {
         //Set this to the default orientation of your program (it's probably PORTRAIT)
         //Also, it's recommended to turn OFF Auto Rotate
         //If you can't get any readings or swap red and blue, try changing this
-        rotation.setUnbiasedOrientation(ScreenOrientation.PORTRAIT);
+        rotation.setDefaultOrientation(ScreenOrientation.PORTRAIT);
 
         //Set the beacon analysis method
         //Try them all and see what works!

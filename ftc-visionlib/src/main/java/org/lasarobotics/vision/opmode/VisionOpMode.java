@@ -41,6 +41,11 @@ public abstract class VisionOpMode extends VisionOpModeCore {
         return (extensions & extension.id) > 0;
     }
 
+    /**
+     * Enable a particular Vision Extension.
+     *
+     * @param extension Extension ID
+     */
     protected void enableExtension(Extensions extension) {
         //Don't initialize extension if we haven't ever called init() yet
         if (extensionsInitialized)
@@ -49,6 +54,10 @@ public abstract class VisionOpMode extends VisionOpModeCore {
         extensions = extensions | extension.id;
     }
 
+    /**
+     * Disable a particular Vision Extension
+     * @param extension Extension ID
+     */
     private void disableExtension(Extensions extension) {
         extensions -= extensions & extension.id;
 
@@ -77,6 +86,7 @@ public abstract class VisionOpMode extends VisionOpModeCore {
 
     @Override
     public Mat frame(Mat rgba, Mat gray) {
+
         for (Extensions extension : Extensions.values())
             if (isEnabled(extension)) {
                 //Pipe the rgba of the previous point into the gray of the next
@@ -96,6 +106,9 @@ public abstract class VisionOpMode extends VisionOpModeCore {
                 disableExtension(extension); //disable and stop
     }
 
+    /**
+     * List of Vision Extensions
+     */
     public enum Extensions {
         BEACON(2, beacon),      //low priority
         ROTATION(1, rotation);  //high priority - image must rotate prior to analysis

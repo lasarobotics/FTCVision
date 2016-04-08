@@ -50,7 +50,7 @@ public class CameraTestVisionOpMode extends TestableVisionOpMode {
         //rotation.setRotationInversion(true);
 
         //Set this to the default orientation of your program
-        rotation.setUnbiasedOrientation(ScreenOrientation.PORTRAIT);
+        rotation.setDefaultOrientation(ScreenOrientation.LANDSCAPE);
 
         //Set the beacon analysis method
         //Try them all and see what works!
@@ -63,10 +63,11 @@ public class CameraTestVisionOpMode extends TestableVisionOpMode {
         //as this will eliminate parts of the frame which may cause problems
         //This will not work on some methods, such as COMPLEX
         //Rectangle bounds = new Rectangle(new Point(width / 2, 330), width, 75);
-        Rectangle bounds = new Rectangle(new Point(330.0/480 * 800, height / 2), 250, height);
-        beacon.setAnalysisBounds(bounds);
+        //Rectangle bounds = new Rectangle(new Point(330.0/480 * 800, height / 2), 250, height);
+        //beacon.setAnalysisBounds(bounds);
         //Or you can just use the entire screen
-        //beacon.setAnalysisBounds(new Rectangle(0, 0, width, height));
+        beacon.setAnalysisBounds(new Rectangle(0, 0, width, height));
+
 
         //Debug drawing
         //Enable this only if you're running test app - otherwise, you should turn it off
@@ -94,7 +95,27 @@ public class CameraTestVisionOpMode extends TestableVisionOpMode {
     }
 
     @Override
+    public void stop() {
+        super.stop();
+    }
+
+    @Override
     public Mat frame(Mat rgba, Mat gray) {
+        /*
+          We set the Analysis boundary in the frame loop just in case we couldn't get it
+          during init(). This happens when another app is using OpenCV simulataneously.
+         */
+        //Set analysis boundary
+        //You should comment this to use the entire screen and uncomment only if
+        //you want faster analysis at the cost of not using the entire frame.
+        //This is also particularly useful if you know approximately where the beacon is
+        //as this will eliminate parts of the frame which may cause problems
+        //This will not work on some methods, such as COMPLEX
+        Rectangle bounds = new Rectangle(new Point(width / 2, height / 2), width - 200, 200);
+        beacon.setAnalysisBounds(bounds);
+        //Or you can just use the entire screen
+        //beacon.setAnalysisBounds(new Rectangle(0, 0, height, width));
+
         //Run all extensions, then get matrices
         rgba = super.frame(rgba, gray);
         Imgproc.cvtColor(rgba, gray, Imgproc.COLOR_RGBA2GRAY);
