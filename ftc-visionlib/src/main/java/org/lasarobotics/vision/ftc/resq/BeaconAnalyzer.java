@@ -256,7 +256,7 @@ class BeaconAnalyzer {
         //Get the width of the contours
         double widthBeacon = rightMostContour.right() - leftMostContour.left();
 
-        //Center of contours is the average of centers of the contours
+        //Center of contours is the average of centroids of the contours
         Point center = new Point((leftMostContour.centroid().x + rightMostContour.centroid().x) / 2,
                 (leftMostContour.centroid().y + rightMostContour.centroid().y) / 2);
 
@@ -300,13 +300,59 @@ class BeaconAnalyzer {
         List<Ellipse> ellipsesLeft =
                 PrimitiveDetection.locateEllipses(leftContourImg).getEllipses();
         Detectable.offset(ellipsesLeft, new Point(leftRect.left(), leftRect.top()));
-        if (debug)
-            Drawing.drawEllipses(imgUnbounded, ellipsesLeft, new ColorRGBA("#ff0745"), 1);
         List<Ellipse> ellipsesRight =
                 PrimitiveDetection.locateEllipses(rightContourImg).getEllipses();
         Detectable.offset(ellipsesRight, new Point(rightRect.left(), rightRect.top()));
-        if (debug)
-            Drawing.drawEllipses(imgUnbounded, ellipsesRight, new ColorRGBA("#ff0745"), 1);
+
+        //Score ellipses
+        BeaconScoring scorer = new BeaconScoring(imgUnbounded.size());
+        List<BeaconScoring.ScoredEllipse> scoredEllipsesLeft = scorer.scoreEllipses(ellipsesLeft, null, null, gray);
+        scoredEllipsesLeft = filterEllipses(scoredEllipsesLeft);
+        ellipsesLeft = BeaconScoring.ScoredEllipse.getList(scoredEllipsesLeft);
+        if (debug) Drawing.drawEllipses(imgUnbounded, ellipsesLeft, new ColorRGBA("#00ff00"), 3);
+        List<BeaconScoring.ScoredEllipse> scoredEllipsesRight = scorer.scoreEllipses(ellipsesRight, null, null, gray);
+        scoredEllipsesRight = filterEllipses(scoredEllipsesRight);
+        ellipsesRight = BeaconScoring.ScoredEllipse.getList(scoredEllipsesRight);
+        if (debug) Drawing.drawEllipses(imgUnbounded, ellipsesRight, new ColorRGBA("#00ff00"), 3);
+
+        //Calculate ellipse center if present
+        Point centerLeft = null;
+        Point centerRight = null;
+        boolean done = false;
+        do {
+            centerLeft = null;
+            centerRight = null;
+            if (scoredEllipsesLeft.size() > 0)
+                centerLeft = scoredEllipsesLeft.get(0).ellipse.center();
+            if (scoredEllipsesRight.size() > 0)
+                centerRight = scoredEllipsesRight.get(0).ellipse.center();
+
+            //Make very, very sure that we didn't just find the same ellipse
+            if (centerLeft != null && centerRight != null) {
+                if (Math.abs(centerLeft.x - centerRight.x) <
+                        Constants.ELLIPSE_MIN_DISTANCE * beaconSize.width) {
+                    //Are both ellipses on the left or right side of the beacon? - remove the opposite side's ellipse
+                    if (Math.abs(centerLeft.x - leftRect.center().x) < Constants.DETECTION_MIN_DISTANCE * beaconSize.width)
+                        scoredEllipsesRight.remove(0);
+                    else
+                        scoredEllipsesLeft.remove(0);
+                } else
+                    done = true;
+            } else
+                done = true;
+
+        } while (!done);
+
+        //Improve the beacon center if both ellipses present
+        if (centerLeft != null && centerRight != null) {
+            center.x = (centerLeft.x + centerRight.x) / 2;
+        }
+
+        if (debug) Drawing.drawCross(imgUnbounded, center, new ColorRGBA("#ffffff"), 10, 4);
+        if (debug && centerLeft != null)
+            Drawing.drawCross(imgUnbounded, centerLeft, new ColorRGBA("#ffff00"), 8, 3);
+        if (debug && centerRight != null)
+            Drawing.drawCross(imgUnbounded, centerRight, new ColorRGBA("#ffff00"), 8, 3);
 
         //Draw the rectangle containing the beacon
         if (debug) Drawing.drawRectangle(imgUnbounded, boundingBox, new ColorRGBA(0, 255, 0), 4);
@@ -326,12 +372,40 @@ class BeaconAnalyzer {
         double averageHeight = (leftMostContour.height() + rightMostContour.height()) / 2.0;
         double dy = Math.abs((leftMostContour.centroid().y - rightMostContour.centroid().y) / averageHeight * 4.0);
         double dArea = Math.sqrt(leftMostContour.area() / rightMostContour.area());
-        double confidence = MathUtil.normalPDFNormalized(MathUtil.distance(MathUtil.distance(ratioError, dy), dArea), 5.0, 1.0);
+        double buttons = 1.0 - (centerLeft != null ? 0 : 1) - (centerRight != null ? 0 : 1);
+        double buttonsdy = (centerLeft != null && centerRight != null) ?
+                1.0 + Math.abs(centerLeft.y - centerRight.y) / averageHeight : 0.5;
+        double confidence = MathUtil.normalPDFNormalized(
+                MathUtil.distance(MathUtil.distance(dArea, dy), ratioError),
+                5.0, 1.0);
 
         if (leftIsRed)
             return new Beacon.BeaconAnalysis(Beacon.BeaconColor.RED, Beacon.BeaconColor.BLUE, boundingBox, confidence);
         else
             return new Beacon.BeaconAnalysis(Beacon.BeaconColor.BLUE, Beacon.BeaconColor.RED, boundingBox, confidence);
+    }
+
+    private static Point ellipseCenter(List<BeaconScoring.ScoredEllipse> ellipses) {
+        if (ellipses.size() == 0)
+            return null;
+        double x = 0;
+        double y = 0;
+        double weight = 0;
+        for (BeaconScoring.ScoredEllipse ellipse : ellipses) {
+            x += ellipse.ellipse.center().x * ellipse.score;
+            y += ellipse.ellipse.center().y * ellipse.score;
+            weight += ellipse.score;
+        }
+        x /= weight;
+        y /= weight;
+        return new Point(x, y);
+    }
+
+    private static List<BeaconScoring.ScoredEllipse> filterEllipses(List<BeaconScoring.ScoredEllipse> ellipses) {
+        for (int i = ellipses.size() - 1; i >= 0; i--)
+            if (ellipses.get(i).score < Constants.ELLIPSE_SCORE_REQ)
+                ellipses.remove(i);
+        return ellipses;
     }
 
     private static int findLargestIndex(List<Contour> contours) {

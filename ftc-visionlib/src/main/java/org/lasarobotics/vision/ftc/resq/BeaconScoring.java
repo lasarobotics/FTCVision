@@ -196,6 +196,10 @@ class BeaconScoring {
                 ellipses.add(e.ellipse);
             return ellipses;
         }
+
+        public Ellipse getEllipse() {
+            return ellipse;
+        }
     }
 
     static class ScoredContour extends Scorable {
