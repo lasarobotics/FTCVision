@@ -370,14 +370,13 @@ class BeaconAnalyzer {
         double WH_ratio = widthBeacon / beaconHeight;
         double ratioError = Math.abs((Constants.BEACON_WH_RATIO - WH_ratio)) / Constants.BEACON_WH_RATIO; // perfect value = 0;
         double averageHeight = (leftMostContour.height() + rightMostContour.height()) / 2.0;
-        double dy = Math.abs((leftMostContour.centroid().y - rightMostContour.centroid().y) / averageHeight * 4.0);
+        double dy = Math.abs((leftMostContour.centroid().y - rightMostContour.centroid().y) / averageHeight * Constants.FAST_HEIGHT_DELTA_FACTOR);
         double dArea = Math.sqrt(leftMostContour.area() / rightMostContour.area());
-        double buttons = 1.0 - (centerLeft != null ? 0 : 1) - (centerRight != null ? 0 : 1);
         double buttonsdy = (centerLeft != null && centerRight != null) ?
-                1.0 + Math.abs(centerLeft.y - centerRight.y) / averageHeight : 0.5;
+                (Math.abs(centerLeft.y - centerRight.y) / averageHeight * Constants.FAST_HEIGHT_DELTA_FACTOR) : Constants.ELLIPSE_PRESENCE_BIAS;
         double confidence = MathUtil.normalPDFNormalized(
-                MathUtil.distance(MathUtil.distance(dArea, dy), ratioError),
-                5.0, 1.0);
+                MathUtil.distance(MathUtil.distance(MathUtil.distance(ratioError, dy), dArea), buttonsdy)/2.0,
+                Constants.FAST_CONFIDENCE_NORM, 0.0);
 
         if (leftIsRed)
             return new Beacon.BeaconAnalysis(Beacon.BeaconColor.RED, Beacon.BeaconColor.BLUE, boundingBox, confidence);
