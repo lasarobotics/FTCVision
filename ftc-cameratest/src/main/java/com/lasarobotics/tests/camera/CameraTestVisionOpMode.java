@@ -35,10 +35,6 @@ public class CameraTestVisionOpMode extends TestableVisionOpMode {
 
         //Set the camera used for detection
         this.setCamera(Cameras.PRIMARY);
-        Camera.Parameters p = openCVCamera.getCamera().getParameters();
-        p.setWhiteBalance("twilight");
-        String output = Arrays.toString(p.getSupportedWhiteBalance().toArray());
-        Log.e("valid white: ", output);
         //Set the frame size
         //Larger = sometimes more accurate, but also much slower
         //For Testable OpModes, this might make the image appear small - it might be best not to use this
@@ -83,10 +79,14 @@ public class CameraTestVisionOpMode extends TestableVisionOpMode {
         super.loop();
         //openCVCamera.getCamera().getParameters().setAutoExposureLock(true);
         //openCVCamera.disconnectCamera();
+
+        //I don't think this needs to be in loop, but I'm putting here just in case it needs to be reset every run
+        //test more later
         Camera.Parameters p = openCVCamera.getCamera().getParameters();
         p.setWhiteBalance("daylight");
         p.setAutoWhiteBalanceLock(true);
         openCVCamera.getCamera().setParameters(p);
+        Log.e("valid white: ", Arrays.toString(p.getSupportedWhiteBalance().toArray()));
         Log.e("allow whitebalance? ", openCVCamera.getCamera().getParameters().isAutoWhiteBalanceLockSupported() + "");
         Log.e("current whitebalance: ", openCVCamera.getCamera().getParameters().getWhiteBalance());
 
