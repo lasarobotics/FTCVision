@@ -16,7 +16,6 @@ import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Size;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -387,9 +386,11 @@ class BeaconAnalyzer {
                 Constants.FAST_CONFIDENCE_NORM, 0.0);
 
         if (leftIsRed)
-            return new Beacon.BeaconAnalysis(Beacon.BeaconColor.RED, Beacon.BeaconColor.BLUE, boundingBox, confidence);
+            return new Beacon.BeaconAnalysis(Beacon.BeaconColor.RED, Beacon.BeaconColor.BLUE, boundingBox, confidence
+                    , scoredEllipsesLeft.get(0).ellipse, scoredEllipsesRight.get(0).ellipse);
         else
-            return new Beacon.BeaconAnalysis(Beacon.BeaconColor.BLUE, Beacon.BeaconColor.RED, boundingBox, confidence);
+            return new Beacon.BeaconAnalysis(Beacon.BeaconColor.BLUE, Beacon.BeaconColor.RED, boundingBox, confidence
+                    , scoredEllipsesLeft.get(0).ellipse, scoredEllipsesRight.get(0).ellipse);
     }
 
     private static List<BeaconScoring.ScoredEllipse> filterEllipses(List<BeaconScoring.ScoredEllipse> ellipses) {
@@ -488,6 +489,8 @@ class BeaconAnalyzer {
         //We're calling this one the main light
         Contour bestRed = (associations.redContours.size() > 0) ? associations.redContours.get(0).contour.contour : null;
         Contour bestBlue = (associations.blueContours.size() > 0) ? associations.blueContours.get(0).contour.contour : null;
+        Ellipse bestRedEllipse = (associations.redContours.size() > 0 && associations.redContours.get(0).ellipses.size() > 0) ? associations.redContours.get(0).ellipses.get(0).ellipse : null;
+        Ellipse bestBlueEllipse = (associations.blueContours.size() > 0 && associations.blueContours.get(0).ellipses.size() > 0) ? associations.blueContours.get(0).ellipses.get(0).ellipse : null;
 
         //If we don't have a main light for one of the colors, we know both colors are the same
         //TODO we should re-filter the contours by size to ensure that we get at least a decent size
@@ -540,6 +543,7 @@ class BeaconAnalyzer {
 
         boolean leftIsRed;
         Contour leftMostContour, rightMostContour;
+        Ellipse leftEllipse, rightEllipse;
         if (readOppositeAxis) {
             if (bestRedCenter.y + minDistance < bestBlueCenter.y) {
                 leftIsRed = true;
@@ -565,13 +569,17 @@ class BeaconAnalyzer {
         if (readOppositeAxis) {
             //Get top-most best contour
             leftMostContour = ((bestRed.topLeft().y) < (bestBlue.topLeft().y)) ? bestRed : bestBlue;
+            leftEllipse = ((bestRed.topLeft().y) < (bestBlue.topLeft().y)) ? bestRedEllipse : bestBlueEllipse;
             //Get bottom-most best contour
             rightMostContour = ((bestRed.topLeft().y) < (bestBlue.topLeft().y)) ? bestBlue : bestRed;
+            rightEllipse = ((bestRed.topLeft().y) < (bestBlue.topLeft().y)) ? bestBlueEllipse : bestRedEllipse;
         } else {
             //Get left-most best contour
             leftMostContour = ((bestRed.topLeft().y) < (bestBlue.topLeft().y)) ? bestRed : bestBlue;
+            leftEllipse = ((bestRed.topLeft().y) < (bestBlue.topLeft().y)) ? bestRedEllipse : bestBlueEllipse;
             //Get the right-most best contour
             rightMostContour = ((bestRed.topLeft().y) < (bestBlue.topLeft().y)) ? bestBlue : bestRed;
+            rightEllipse = ((bestRed.topLeft().y) < (bestBlue.topLeft().y)) ? bestBlueEllipse : bestRedEllipse;
         }
 
         //DEBUG Logging
@@ -584,6 +592,10 @@ class BeaconAnalyzer {
             Contour temp = leftMostContour;
             leftMostContour = rightMostContour;
             rightMostContour = temp;
+
+            Ellipse tE = leftEllipse;
+            leftEllipse = rightEllipse;
+            rightEllipse = tE;
         }
 
         //Draw the box surrounding both contours
@@ -629,10 +641,17 @@ class BeaconAnalyzer {
         //Check if the size of the largest contour(s) is about twice the size of the other
         //This would indicate one is brightly lit and the other is not
 
+        //Draw some more debug info
+        if (debug) Drawing.drawCross(img, center, new ColorRGBA("#ffffff"), 10, 4);
+        if (debug && leftEllipse != null)
+            Drawing.drawCross(img, leftEllipse.center(), new ColorRGBA("#ffff00"), 8, 3);
+        if (debug && rightEllipse != null)
+            Drawing.drawCross(img, rightEllipse.center(), new ColorRGBA("#ffff00"), 8, 3);
+
         //If this is not true, then neither part of the beacon is highly lit
         if (leftIsRed)
-            return new Beacon.BeaconAnalysis(Beacon.BeaconColor.RED, Beacon.BeaconColor.BLUE, boundingBox, confidence);
+            return new Beacon.BeaconAnalysis(Beacon.BeaconColor.RED, Beacon.BeaconColor.BLUE, boundingBox, confidence, leftEllipse, rightEllipse);
         else
-            return new Beacon.BeaconAnalysis(Beacon.BeaconColor.BLUE, Beacon.BeaconColor.RED, boundingBox, confidence);
+            return new Beacon.BeaconAnalysis(Beacon.BeaconColor.BLUE, Beacon.BeaconColor.RED, boundingBox, confidence, leftEllipse, rightEllipse);
     }
 }
