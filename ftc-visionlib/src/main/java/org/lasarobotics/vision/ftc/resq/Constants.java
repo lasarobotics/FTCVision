@@ -13,6 +13,7 @@ public abstract class Constants {
     static final double ELLIPSE_PRESENCE_BIAS = 1.5;
     static final double FAST_HEIGHT_DELTA_FACTOR = 4.0;
     static final double FAST_CONFIDENCE_NORM = 5.0;
+    static final double FAST_CONFIDENCE_ROUNDNESS = 2.0;
 
     //COMPLEX
     static final double CONFIDENCE_DIVISOR = 800;

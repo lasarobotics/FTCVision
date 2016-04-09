@@ -85,7 +85,7 @@ public final class Beacon {
 
         switch (method) {
             case REALTIME:
-                return BeaconAnalyzer.analyze_REALTIME(redDetector.getContours(), blueDetector.getContours(), orientation);
+                return BeaconAnalyzer.analyze_REALTIME(redDetector.getContours(), blueDetector.getContours(), img, orientation, this.debug);
             case FAST:
             case DEFAULT:
             default:
