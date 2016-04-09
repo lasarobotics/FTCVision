@@ -385,12 +385,16 @@ class BeaconAnalyzer {
                 MathUtil.distance(MathUtil.distance(MathUtil.distance(ratioError, dy), dArea), buttonsdy)/Constants.FAST_CONFIDENCE_ROUNDNESS,
                 Constants.FAST_CONFIDENCE_NORM, 0.0);
 
+        //Get button ellipses
+        Ellipse leftEllipse = scoredEllipsesLeft.size() > 0 ? scoredEllipsesLeft.get(0).ellipse : null;
+        Ellipse rightEllipse = scoredEllipsesRight.size() > 0 ? scoredEllipsesRight.get(0).ellipse : null;
+
         if (leftIsRed)
             return new Beacon.BeaconAnalysis(Beacon.BeaconColor.RED, Beacon.BeaconColor.BLUE, boundingBox, confidence
-                    , scoredEllipsesLeft.get(0).ellipse, scoredEllipsesRight.get(0).ellipse);
+                    , leftEllipse, rightEllipse);
         else
             return new Beacon.BeaconAnalysis(Beacon.BeaconColor.BLUE, Beacon.BeaconColor.RED, boundingBox, confidence
-                    , scoredEllipsesLeft.get(0).ellipse, scoredEllipsesRight.get(0).ellipse);
+                    , leftEllipse, rightEllipse);
     }
 
     private static List<BeaconScoring.ScoredEllipse> filterEllipses(List<BeaconScoring.ScoredEllipse> ellipses) {

@@ -105,9 +105,8 @@ public class CameraTestVisionOpMode extends TestableVisionOpMode {
                 new Point(width - 300, 40), 1.0f, new ColorRGBA("#FFC107"));
 
         //Display rotation sensor compensation
-        Drawing.drawText(rgba, "Rot: " + sensors.getScreenOrientationCompensation() + "("
-                + sensors.getActivityScreenOrientation().getAngle() + " act, "
-                + sensors.getScreenOrientation().getAngle() + " sen)", new Point(0, 50), 1.0f, new ColorRGBA("#ffffff"), Drawing.Anchor.BOTTOMLEFT); //"#2196F3"
+        Drawing.drawText(rgba, "Rot: " + sensors.getScreenOrientationCompensation()
+                + " (" + sensors.getScreenOrientation() + ")", new Point(0, 50), 1.0f, new ColorRGBA("#ffffff"), Drawing.Anchor.BOTTOMLEFT); //"#2196F3"
 
         return rgba;
     }
