@@ -392,22 +392,6 @@ class BeaconAnalyzer {
             return new Beacon.BeaconAnalysis(Beacon.BeaconColor.BLUE, Beacon.BeaconColor.RED, boundingBox, confidence);
     }
 
-    private static Point ellipseCenter(List<BeaconScoring.ScoredEllipse> ellipses) {
-        if (ellipses.size() == 0)
-            return null;
-        double x = 0;
-        double y = 0;
-        double weight = 0;
-        for (BeaconScoring.ScoredEllipse ellipse : ellipses) {
-            x += ellipse.ellipse.center().x * ellipse.score;
-            y += ellipse.ellipse.center().y * ellipse.score;
-            weight += ellipse.score;
-        }
-        x /= weight;
-        y /= weight;
-        return new Point(x, y);
-    }
-
     private static List<BeaconScoring.ScoredEllipse> filterEllipses(List<BeaconScoring.ScoredEllipse> ellipses) {
         for (int i = ellipses.size() - 1; i >= 0; i--)
             if (ellipses.get(i).score < Constants.ELLIPSE_SCORE_REQ)

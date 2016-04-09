@@ -55,7 +55,7 @@ public final class Beacon {
      * @return Beacon analysis class
      */
     public BeaconAnalysis analyzeFrame(Mat img, Mat gray) {
-        return analyzeFrame(this.blueDetector, this.redDetector, img, gray, ScreenOrientation.DEFAULT);
+        return analyzeFrame(this.redDetector, this.blueDetector, img, gray, ScreenOrientation.DEFAULT);
     }
 
     /**
@@ -67,19 +67,19 @@ public final class Beacon {
      * @return Beacon analysis class
      */
     public BeaconAnalysis analyzeFrame(Mat img, Mat gray, ScreenOrientation orientation) {
-        return analyzeFrame(this.blueDetector, this.redDetector, img, gray, orientation);
+        return analyzeFrame(this.redDetector, this.blueDetector, img, gray, orientation);
     }
 
     /**
      * Analyze the current frame using the selected analysis method, using custom color blob detectors
-     * @param blueDetector Blue color blob detector
      * @param redDetector Red color blob detector
+     * @param blueDetector Blue color blob detector
      * @param img Image to analyze
      * @param gray Grayscale image to analyze
      * @param orientation Screen orientation compensation, given by the android.Sensors class
      * @return Beacon analysis class
      */
-    public BeaconAnalysis analyzeFrame(ColorBlobDetector blueDetector, ColorBlobDetector redDetector, Mat img, Mat gray, ScreenOrientation orientation) {
+    public BeaconAnalysis analyzeFrame(ColorBlobDetector redDetector, ColorBlobDetector blueDetector, Mat img, Mat gray, ScreenOrientation orientation) {
         blueDetector.process(img);
         redDetector.process(img);
 
@@ -264,6 +264,12 @@ public final class Beacon {
          */
         public Ellipse getRightButton() {
             return rightButton;
+        }
+
+
+        public boolean hasEllipses()
+        {
+            return (leftButton != null && rightButton != null);
         }
 
         /**

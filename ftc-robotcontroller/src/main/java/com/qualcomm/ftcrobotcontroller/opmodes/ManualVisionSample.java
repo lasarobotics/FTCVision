@@ -96,7 +96,7 @@ public class ManualVisionSample extends ManualVisionOpMode {
             //Get color analysis
             Beacon beacon = new Beacon(Beacon.AnalysisMethod.DEFAULT);
             //You may need to change the Screen Orientation to your preference
-            colorAnalysis = beacon.analyzeFrame(detectorRed, detectorBlue, rgba, gray, ScreenOrientation.LANDSCAPE);
+            colorAnalysis = beacon.analyzeFrame(detectorBlue, detectorRed, rgba, gray, ScreenOrientation.LANDSCAPE);
         }
         catch (Exception e)
         {
