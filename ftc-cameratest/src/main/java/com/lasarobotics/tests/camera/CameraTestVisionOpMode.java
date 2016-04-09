@@ -45,7 +45,7 @@ public class CameraTestVisionOpMode extends TestableVisionOpMode {
 
         //Set the beacon analysis method
         //Try them all and see what works!
-        beacon.setAnalysisMethod(Beacon.AnalysisMethod.COMPLEX);
+        beacon.setAnalysisMethod(Beacon.AnalysisMethod.FAST);
 
         //Debug drawing
         //Enable this only if you're running test app - otherwise, you should turn it off

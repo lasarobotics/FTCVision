@@ -152,13 +152,25 @@ public final class Beacon {
      * Analysis method
      */
     public enum AnalysisMethod {
-        //Default method
+        /**
+         * Default method, currently FAST
+         */
         DEFAULT,
-        //Extremely fast method that gives only color info
+        /**
+         * Extremely fast method that performs less accurate analysis
+         * REALTIME is great when speed should best accuracy
+         */
         REALTIME,
-        //Faster method - picks the two largest contours without concern
+        /**
+         * Faster method - selects the two largest contours and analyzes them
+         * FAST is great when near the beacon, but is not suitable for long-distance analysis
+         */
         FAST,
-        //Slower and complex method - picks contours based on statistical analysis
+        /**
+         * Slower and complex method - picks contours based on statistical analysis
+         * COMPLEX is highly complex and a work in progress, but is better at selecting
+         * the correct beacon at long distances, but requires that the entire beacon be in view.
+         */
         COMPLEX;
         public String toString() {
             switch (this) {
