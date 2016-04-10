@@ -178,6 +178,18 @@ public class Ellipse extends Detectable implements Comparable<Ellipse> {
                 top() >= contour.top() && bottom() <= contour.bottom();
     }
 
+    /**
+     * Transpose this rectangle so that x becomes y and vice versa
+     *
+     * @return Transposed rectangle instance
+     */
+    @SuppressWarnings("SuspiciousNameCombination")
+    public Ellipse transpose() {
+        return new Ellipse(new RotatedRect(
+                new Point(rect.center.y, rect.center.x),
+                new Size(rect.size.height, rect.size.width), rect.angle));
+    }
+
     /***
      * Compare ellipses by area
      *

@@ -247,7 +247,7 @@ class BeaconAnalyzer {
         //DEBUG Logging
         if (debug)
             Log.d("Beacon", "Orientation: " + orientation + "Angle: " + orientationAngle + " Swap Axis: " + readOppositeAxis +
-                " Swap Direction: " + swapLeftRight);
+                    " Swap Direction: " + swapLeftRight);
 
         //Swap left and right if necessary
         //BUGFIX: invert when we swap
@@ -334,6 +334,14 @@ class BeaconAnalyzer {
             if (scoredEllipsesRight.size() > 0)
                 centerRight = scoredEllipsesRight.get(0).ellipse.center();
 
+            //Flip axis if necesary
+            if (centerLeft != null && readOppositeAxis) {
+                centerLeft.set(new double[]{centerLeft.y, centerLeft.x});
+            }
+            if (centerRight != null && readOppositeAxis) {
+                centerRight.set(new double[]{centerRight.y, centerRight.x});
+            }
+
             //Make very, very sure that we didn't just find the same ellipse
             if (centerLeft != null && centerRight != null) {
                 if (Math.abs(centerLeft.x - centerRight.x) <
@@ -351,15 +359,51 @@ class BeaconAnalyzer {
         } while (!done);
 
         //Improve the beacon center if both ellipses present
+        byte ellipseExtrapolated = 0;
         if (centerLeft != null && centerRight != null) {
-            center.x = (centerLeft.x + centerRight.x) / 2;
+            if (readOppositeAxis)
+                center.y = (centerLeft.x + centerRight.x) / 2;
+            else
+                center.x = (centerLeft.x + centerRight.x) / 2;
+        }
+        //Extrapolate other ellipse location if one present
+        //FIXME: This method of extrapolation may not work when readOppositeAxis is true
+        else if (centerLeft != null) {
+            ellipseExtrapolated = 2;
+            if (readOppositeAxis)
+                centerRight = new Point(centerLeft.x - 2 * Math.abs(center.x - centerLeft.x),
+                        (centerLeft.y + center.y) / 2);
+            else
+                centerRight = new Point(centerLeft.x + 2 * Math.abs(center.x - centerLeft.x),
+                        (centerLeft.y + center.y) / 2);
+            if (readOppositeAxis)
+                centerRight.set(new double[]{centerRight.y, centerRight.x});
+        } else if (centerRight != null) {
+            ellipseExtrapolated = 1;
+            if (readOppositeAxis)
+                centerLeft = new Point(centerRight.x + 2 * Math.abs(center.x - centerRight.x),
+                        (centerRight.y + center.y) / 2);
+            else
+                centerLeft = new Point(centerRight.x - 2 * Math.abs(center.x - centerRight.x),
+                        (centerRight.y + center.y) / 2);
+            if (readOppositeAxis)
+                centerLeft.set(new double[]{centerLeft.y, centerLeft.x});
         }
 
+        //Draw center locations
         if (debug) Drawing.drawCross(imgUnbounded, center, new ColorRGBA("#ffffff"), 10, 4);
-        if (debug && centerLeft != null)
-            Drawing.drawCross(imgUnbounded, centerLeft, new ColorRGBA("#ffff00"), 8, 3);
-        if (debug && centerRight != null)
-            Drawing.drawCross(imgUnbounded, centerRight, new ColorRGBA("#ffff00"), 8, 3);
+        if (debug && centerLeft != null) {
+            ColorRGBA c = ellipseExtrapolated != 1 ? new ColorRGBA("#ffff00") : new ColorRGBA("#ff00ff");
+            //noinspection SuspiciousNameCombination
+            Drawing.drawCross(imgUnbounded,
+                    !readOppositeAxis ? centerLeft : new Point(centerLeft.y, centerLeft.x), c, 8, 3);
+        }
+        if (debug && centerRight != null) {
+            ColorRGBA c = ellipseExtrapolated != 2 ? new ColorRGBA("#ffff00") : new ColorRGBA("#ff00ff");
+            //noinspection SuspiciousNameCombination
+            Drawing.drawCross(imgUnbounded,
+                    !readOppositeAxis ? centerRight : new Point(centerRight.y, centerRight.x), c, 8, 3);
+        }
 
         //Draw the rectangle containing the beacon
         if (debug) Drawing.drawRectangle(imgUnbounded, boundingBox, new ColorRGBA(0, 255, 0), 4);
@@ -388,6 +432,10 @@ class BeaconAnalyzer {
         //Get button ellipses
         Ellipse leftEllipse = scoredEllipsesLeft.size() > 0 ? scoredEllipsesLeft.get(0).ellipse : null;
         Ellipse rightEllipse = scoredEllipsesRight.size() > 0 ? scoredEllipsesRight.get(0).ellipse : null;
+
+        //Switch axis if necessary
+        if (readOppositeAxis)
+            boundingBox = boundingBox.transpose();
 
         if (leftIsRed)
             return new Beacon.BeaconAnalysis(Beacon.BeaconColor.RED, Beacon.BeaconColor.BLUE, boundingBox, confidence
@@ -651,6 +699,16 @@ class BeaconAnalyzer {
             Drawing.drawCross(img, leftEllipse.center(), new ColorRGBA("#ffff00"), 8, 3);
         if (debug && rightEllipse != null)
             Drawing.drawCross(img, rightEllipse.center(), new ColorRGBA("#ffff00"), 8, 3);
+
+        //Switch axis if necessary
+        if (leftEllipse != null && readOppositeAxis) {
+            leftEllipse = leftEllipse.transpose();
+        }
+        if (rightEllipse != null && readOppositeAxis) {
+            rightEllipse = rightEllipse.transpose();
+        }
+        if (readOppositeAxis)
+            boundingBox = boundingBox.transpose();
 
         //If this is not true, then neither part of the beacon is highly lit
         if (leftIsRed)

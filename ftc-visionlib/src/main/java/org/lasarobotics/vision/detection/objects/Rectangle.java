@@ -213,6 +213,16 @@ public class Rectangle extends Detectable {
                 top() >= contour.top() && bottom() <= contour.bottom();
     }
 
+    /**
+     * Transpose this rectangle so that x becomes y and vice versa
+     *
+     * @return Transposed rectangle instance
+     */
+    @SuppressWarnings("SuspiciousNameCombination")
+    public Rectangle transpose() {
+        return new Rectangle(new Point(rect.center.y, rect.center.x), rect.size.height, rect.size.width);
+    }
+
     @Override
     public String toString() {
         return "rows: " + top() + " " + bottom() + " cols: " + left() + " " + right();
