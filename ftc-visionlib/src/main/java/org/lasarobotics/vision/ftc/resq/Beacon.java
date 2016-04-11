@@ -463,5 +463,10 @@ public final class Beacon {
         public String toString() {
             return "Color: " + getColorString() + "\r\n Location: " + getLocationString() + "\r\n Confidence: " + getConfidenceString();
         }
+
+        public String getButtonString() {
+            return "Left: " + (leftButton != null ? leftButton.getLocationString() : "N/A") +
+                    " Right: " + (rightButton != null ? rightButton.getLocationString() : "N/A");
+        }
     }
 }

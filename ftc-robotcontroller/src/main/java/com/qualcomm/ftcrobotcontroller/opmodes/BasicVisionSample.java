@@ -93,9 +93,11 @@ public class BasicVisionSample extends VisionOpMode {
         super.loop();
 
         telemetry.addData("Beacon Color", beacon.getAnalysis().getColorString());
-        telemetry.addData("Beacon Location (Center)", beacon.getAnalysis().getLocationString());
+        telemetry.addData("Beacon Center", beacon.getAnalysis().getLocationString());
         telemetry.addData("Beacon Confidence", beacon.getAnalysis().getConfidenceString());
+        telemetry.addData("Beacon Buttons", beacon.getAnalysis().getButtonString());
         telemetry.addData("Rotation Compensation", rotation.getRotationCompensationAngle());
+        telemetry.addData("Screen Rotation", rotation.getScreenOrientationActual());
         telemetry.addData("Frame Rate", fps.getFPSString() + " FPS");
         telemetry.addData("Frame Size", "Width: " + width + " Height: " + height);
     }

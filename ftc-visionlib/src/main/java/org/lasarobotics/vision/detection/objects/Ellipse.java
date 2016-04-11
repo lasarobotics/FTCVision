@@ -1,5 +1,7 @@
 package org.lasarobotics.vision.detection.objects;
 
+import android.annotation.SuppressLint;
+
 import org.jetbrains.annotations.NotNull;
 import org.opencv.core.Point;
 import org.opencv.core.RotatedRect;
@@ -188,6 +190,12 @@ public class Ellipse extends Detectable implements Comparable<Ellipse> {
         return new Ellipse(new RotatedRect(
                 new Point(rect.center.y, rect.center.x),
                 new Size(rect.size.height, rect.size.width), rect.angle));
+    }
+
+    @SuppressLint("DefaultLocale")
+    public String getLocationString()
+    {
+        return String.format("(%.0f, %.0f)", rect.center.x, rect.center.y);
     }
 
     /***
