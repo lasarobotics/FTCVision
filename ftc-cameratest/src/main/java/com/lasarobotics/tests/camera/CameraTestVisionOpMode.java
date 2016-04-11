@@ -49,13 +49,13 @@ public class CameraTestVisionOpMode extends TestableVisionOpMode {
          * Also, it's recommended to turn OFF Auto Rotate
          * If you can't get any readings or swap red and blue, try changing this
          */
-        rotation.setDefaultOrientation(ScreenOrientation.PORTRAIT);
+        rotation.setDefaultOrientation(ScreenOrientation.LANDSCAPE);
 
         /**
          * Set the beacon analysis method
          * Try them all and see what works!
          */
-        beacon.setAnalysisMethod(Beacon.AnalysisMethod.FAST);
+        beacon.setAnalysisMethod(Beacon.AnalysisMethod.REALTIME);
 
         /**
          * Debug drawing
@@ -109,7 +109,7 @@ public class CameraTestVisionOpMode extends TestableVisionOpMode {
                 new Point(0, 8), 1.0f, new ColorGRAY(255), Drawing.Anchor.BOTTOMLEFT);
 
         //Display FPS
-        Drawing.drawText(rgba, "FPS: " + fps.getFPSString(), new Point(0, 24), 1.0f, new ColorRGBA("#2196F3")); //"#2196F3"
+        Drawing.drawText(rgba, "FPS: " + fps.getFPSString(), new Point(0, 24), 1.0f, new ColorRGBA("#ffffff"));
 
         //Display analysis method
         Drawing.drawText(rgba, beacon.getAnalysisMethod().toString() + " Analysis",
