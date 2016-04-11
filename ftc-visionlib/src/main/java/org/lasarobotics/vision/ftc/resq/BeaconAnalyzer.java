@@ -15,6 +15,7 @@ import org.lasarobotics.vision.util.color.ColorRGBA;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
+import org.opencv.core.RotatedRect;
 import org.opencv.core.Size;
 
 import java.util.List;
@@ -263,9 +264,9 @@ class BeaconAnalyzer {
             rightMostContour = ((largestRed.topLeft().y) < (largestBlue.topLeft().y)) ? largestBlue : largestRed;
         } else {
             //Get left-most best contour
-            leftMostContour = ((largestRed.topLeft().y) < (largestBlue.topLeft().y)) ? largestRed : largestBlue;
+            leftMostContour = ((largestRed.topLeft().x) < (largestBlue.topLeft().x)) ? largestRed : largestBlue;
             //Get the right-most best contour
-            rightMostContour = ((largestRed.topLeft().y) < (largestBlue.topLeft().y)) ? largestBlue : largestRed;
+            rightMostContour = ((largestRed.topLeft().x) < (largestBlue.topLeft().x)) ? largestBlue : largestRed;
         }
 
         //DEBUG Logging
@@ -275,7 +276,7 @@ class BeaconAnalyzer {
 
         //Swap left and right if necessary
         //BUGFIX: invert when we swap
-        if (swapLeftRight) {
+        if (!swapLeftRight) {
             Contour temp = leftMostContour;
             leftMostContour = rightMostContour;
             rightMostContour = temp;
@@ -371,7 +372,7 @@ class BeaconAnalyzer {
                 if (Math.abs(centerLeft.x - centerRight.x) <
                         Constants.ELLIPSE_MIN_DISTANCE * beaconSize.width) {
                     //Are both ellipses on the left or right side of the beacon? - remove the opposite side's ellipse
-                    if (Math.abs(centerLeft.x - leftRect.center().x) < Constants.DETECTION_MIN_DISTANCE * beaconSize.width)
+                    if (Math.abs(centerLeft.x - leftRect.center().x) < Constants.ELLIPSE_MIN_DISTANCE * beaconSize.width)
                         scoredEllipsesRight.remove(0);
                     else
                         scoredEllipsesLeft.remove(0);
@@ -456,6 +457,38 @@ class BeaconAnalyzer {
         //Get button ellipses
         Ellipse leftEllipse = scoredEllipsesLeft.size() > 0 ? scoredEllipsesLeft.get(0).ellipse : null;
         Ellipse rightEllipse = scoredEllipsesRight.size() > 0 ? scoredEllipsesRight.get(0).ellipse : null;
+
+        //Test for color switching
+        if (leftEllipse != null && rightEllipse != null && leftEllipse.center().x > rightEllipse.center().x)
+        {
+            Ellipse tE = leftEllipse;
+            leftEllipse = rightEllipse;
+            rightEllipse = tE;
+        }
+        else if ((leftEllipse != null && leftEllipse.center().x > center.x) ||
+                 (rightEllipse != null && rightEllipse.center().x < center.x))
+        {
+            Ellipse tE = leftEllipse;
+            leftEllipse = rightEllipse;
+            rightEllipse = tE;
+        }
+
+        //Axis correction for ellipses
+        if (swapLeftRight)
+        {
+            if (leftEllipse != null)
+                leftEllipse = new Ellipse(new RotatedRect(
+                    new Point(img.width() - leftEllipse.center().x, leftEllipse.center().y),
+                    leftEllipse.size(), leftEllipse.angle()));
+            if (rightEllipse != null)
+                rightEllipse = new Ellipse(new RotatedRect(
+                        new Point(img.width() - rightEllipse.center().x, rightEllipse.center().y),
+                        rightEllipse.size(), rightEllipse.angle()));
+            //Swap again after correcting axis to ensure left is left and right is right
+            Ellipse tE = leftEllipse;
+            leftEllipse = rightEllipse;
+            rightEllipse = tE;
+        }
 
         //Switch axis if necessary
         if (readOppositeAxis)

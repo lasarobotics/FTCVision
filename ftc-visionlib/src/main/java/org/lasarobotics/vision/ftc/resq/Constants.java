@@ -18,11 +18,12 @@ public abstract class Constants {
     //FAST
     static final double ELLIPSE_SCORE_REQ = 10.0;
     static final double DETECTION_MIN_DISTANCE = 0.1;
-    static final double ELLIPSE_MIN_DISTANCE = 0.3;
+    static final double ELLIPSE_MIN_DISTANCE = 0.15;
     static final double ELLIPSE_PRESENCE_BIAS = 1.5;
     static final double FAST_HEIGHT_DELTA_FACTOR = 4.0;
     static final double FAST_CONFIDENCE_NORM = 5.0;
     static final double FAST_CONFIDENCE_ROUNDNESS = 2.0;
+    static final double FAST_ELLIPSE_MISMATCH_DIVISOR = 3.0;
 
     //COMPLEX
     static final double CONFIDENCE_DIVISOR = 800;
