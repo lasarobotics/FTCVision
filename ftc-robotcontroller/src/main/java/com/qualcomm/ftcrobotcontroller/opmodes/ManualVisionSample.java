@@ -63,10 +63,14 @@ public class ManualVisionSample extends ManualVisionOpMode {
         detectorRed = new ColorBlobDetector(lowerBoundRed, upperBoundRed);
         detectorBlue = new ColorBlobDetector(lowerBoundBlue, upperBoundBlue);
 
-        //Set the camera used for detection
+          /* Set the camera used for detection */
         this.setCamera(Cameras.PRIMARY);
-        //Set the frame size
-        //Larger = sometimes more accurate, but also much slower
+
+        /**
+         * Set the frame size
+         * Larger = sometimes more accurate, but also much slower
+         * After this method runs, it will set the "width" and "height" of the frame
+         **/
         this.setFrameSize(new Size(900, 900));
     }
 

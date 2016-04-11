@@ -56,7 +56,6 @@ public class BasicVisionSample extends VisionOpMode {
         /**
          * Set the frame size
          * Larger = sometimes more accurate, but also much slower
-         * For Testable OpModes, this might make the image appear small - it might be best not to use this
          * After this method runs, it will set the "width" and "height" of the frame
          **/
         this.setFrameSize(new Size(900, 900));
