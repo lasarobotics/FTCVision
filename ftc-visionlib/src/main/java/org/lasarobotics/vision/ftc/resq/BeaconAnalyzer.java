@@ -2,6 +2,7 @@ package org.lasarobotics.vision.ftc.resq;
 
 import android.util.Log;
 
+import org.lasarobotics.vision.detection.ColorBlobDetector;
 import org.lasarobotics.vision.detection.PrimitiveDetection;
 import org.lasarobotics.vision.detection.objects.Contour;
 import org.lasarobotics.vision.detection.objects.Detectable;
@@ -136,8 +137,8 @@ class BeaconAnalyzer {
             return new Beacon.BeaconAnalysis(Beacon.BeaconColor.BLUE, Beacon.BeaconColor.RED, centerRect, confidence);
     }
 
-    static Beacon.BeaconAnalysis analyze_FAST(List<Contour> contoursRed, List<Contour> contoursBlue,
-                                              Mat imgUnbounded, Mat gray, ScreenOrientation orientation, Rectangle bounds, boolean debug) {
+    static Beacon.BeaconAnalysis analyze_FAST(ColorBlobDetector detectorRed, ColorBlobDetector detectorBlue,
+                                              Mat img, Mat gray, ScreenOrientation orientation, Rectangle bounds, boolean debug) {
         //Figure out which way to read the image
         double orientationAngle = orientation.getAngle();
         boolean swapLeftRight = orientationAngle >= 180; //swap if LANDSCAPE_WEST or PORTRAIT_REVERSE
@@ -149,32 +150,37 @@ class BeaconAnalyzer {
             //Force the analysis box to transpose inself in place
             //noinspection SuspiciousNameCombination
             bounds = new Rectangle(
-                    new Point(bounds.center().y/imgUnbounded.height()*imgUnbounded.width(),
-                    bounds.center().x/imgUnbounded.width()*imgUnbounded.height()),
-                    bounds.height(), bounds.width()).clip(new Rectangle(imgUnbounded.size()));
+                    new Point(bounds.center().y/img.height()*img.width(),
+                    bounds.center().x/img.width()*img.height()),
+                    bounds.height(), bounds.width()).clip(new Rectangle(img.size()));
         if (!swapLeftRight && readOppositeAxis)
             //Force the analysis box to flip across its primary axis
             bounds = new Rectangle(
-                    new Point((imgUnbounded.size().width/2) + Math.abs(bounds.center().x - (imgUnbounded.size().width/2)),
+                    new Point((img.size().width/2) + Math.abs(bounds.center().x - (img.size().width/2)),
                             bounds.center().y), bounds.width(), bounds.height());
         else if (swapLeftRight && !readOppositeAxis)
             //Force the analysis box to flip across its primary axis
             bounds = new Rectangle(
-                    new Point(bounds.center().x, imgUnbounded.size().height - bounds.center().y),
+                    new Point(bounds.center().x, img.size().height - bounds.center().y),
                     bounds.width(), bounds.height());
-        bounds = bounds.clip(new Rectangle(imgUnbounded.size()));
-        Mat img = imgUnbounded.submat((int) bounds.top(), (int) bounds.bottom(), (int) bounds.left(), (int) bounds.right());
+        bounds = bounds.clip(new Rectangle(img.size()));
+
+        //Get contours within the bounds
+        detectorRed.process(img);
+        detectorBlue.process(img);
+        List<Contour> contoursRed = detectorRed.getContours();
+        List<Contour> contoursBlue = detectorBlue.getContours();
 
         //DEBUG Draw contours before filtering
-        if (debug) Drawing.drawContours(imgUnbounded, contoursRed, new ColorRGBA("#FF0000"), 2);
-        if (debug) Drawing.drawContours(imgUnbounded, contoursBlue, new ColorRGBA("#0000FF"), 2);
+        if (debug) Drawing.drawContours(img, contoursRed, new ColorRGBA("#FF0000"), 2);
+        if (debug) Drawing.drawContours(img, contoursBlue, new ColorRGBA("#0000FF"), 2);
 
         if (debug)
-            Drawing.drawRectangle(img, new Point(0, 0), new Point(img.width(), img.height()), new ColorRGBA("#aaaaaa"), 4);
+            Drawing.drawRectangle(img, bounds, new ColorRGBA("#aaaaaa"), 4);
 
         //Get the largest contour in each - we're calling this one the main light
-        int largestIndexRed = findLargestIndex(contoursRed);
-        int largestIndexBlue = findLargestIndex(contoursBlue);
+        int largestIndexRed = findLargestIndexInBounds(contoursRed, bounds);
+        int largestIndexBlue = findLargestIndexInBounds(contoursBlue, bounds);
         Contour largestRed = (largestIndexRed != -1) ? contoursRed.get(largestIndexRed) : null;
         Contour largestBlue = (largestIndexBlue != -1) ? contoursBlue.get(largestIndexBlue) : null;
 
@@ -218,9 +224,9 @@ class BeaconAnalyzer {
 
         //DEBUG R/B text
         if (debug)
-            Drawing.drawText(imgUnbounded, "R", bestRedCenter, 1.0f, new ColorRGBA(255, 0, 0));
+            Drawing.drawText(img, "R", bestRedCenter, 1.0f, new ColorRGBA(255, 0, 0));
         if (debug)
-            Drawing.drawText(imgUnbounded, "B", bestBlueCenter, 1.0f, new ColorRGBA(0, 0, 255));
+            Drawing.drawText(img, "B", bestBlueCenter, 1.0f, new ColorRGBA(0, 0, 255));
 
         //Test which side is red and blue
         //If the distance between the sides is smaller than a value, then return unknown
@@ -311,9 +317,9 @@ class BeaconAnalyzer {
         //Get ellipses in region of interest
         //Make sure the rectangles don't leave the image size
         Rectangle leftRect = leftMostContour.getBoundingRectangle().clip(
-                new Rectangle(imgUnbounded.size()));
+                new Rectangle(img.size()));
         Rectangle rightRect = rightMostContour.getBoundingRectangle().clip(
-                new Rectangle(imgUnbounded.size()));
+                new Rectangle(img.size()));
         Mat leftContourImg = gray.submat(
                 (int) leftRect.top(), (int) leftRect.bottom(),
                 (int) leftRect.left(), (int) leftRect.right());
@@ -330,15 +336,15 @@ class BeaconAnalyzer {
         Detectable.offset(ellipsesRight, new Point(rightRect.left(), rightRect.top()));
 
         //Score ellipses
-        BeaconScoring scorer = new BeaconScoring(imgUnbounded.size());
+        BeaconScoring scorer = new BeaconScoring(img.size());
         List<BeaconScoring.ScoredEllipse> scoredEllipsesLeft = scorer.scoreEllipses(ellipsesLeft, null, null, gray);
         scoredEllipsesLeft = filterEllipses(scoredEllipsesLeft);
         ellipsesLeft = BeaconScoring.ScoredEllipse.getList(scoredEllipsesLeft);
-        if (debug) Drawing.drawEllipses(imgUnbounded, ellipsesLeft, new ColorRGBA("#00ff00"), 3);
+        if (debug) Drawing.drawEllipses(img, ellipsesLeft, new ColorRGBA("#00ff00"), 3);
         List<BeaconScoring.ScoredEllipse> scoredEllipsesRight = scorer.scoreEllipses(ellipsesRight, null, null, gray);
         scoredEllipsesRight = filterEllipses(scoredEllipsesRight);
         ellipsesRight = BeaconScoring.ScoredEllipse.getList(scoredEllipsesRight);
-        if (debug) Drawing.drawEllipses(imgUnbounded, ellipsesRight, new ColorRGBA("#00ff00"), 3);
+        if (debug) Drawing.drawEllipses(img, ellipsesRight, new ColorRGBA("#00ff00"), 3);
 
         //Calculate ellipse center if present
         Point centerLeft = null;
@@ -409,22 +415,22 @@ class BeaconAnalyzer {
         }
 
         //Draw center locations
-        if (debug) Drawing.drawCross(imgUnbounded, center, new ColorRGBA("#ffffff"), 10, 4);
+        if (debug) Drawing.drawCross(img, center, new ColorRGBA("#ffffff"), 10, 4);
         if (debug && centerLeft != null) {
             ColorRGBA c = ellipseExtrapolated != 1 ? new ColorRGBA("#ffff00") : new ColorRGBA("#ff00ff");
             //noinspection SuspiciousNameCombination
-            Drawing.drawCross(imgUnbounded,
+            Drawing.drawCross(img,
                     !readOppositeAxis ? centerLeft : new Point(centerLeft.y, centerLeft.x), c, 8, 3);
         }
         if (debug && centerRight != null) {
             ColorRGBA c = ellipseExtrapolated != 2 ? new ColorRGBA("#ffff00") : new ColorRGBA("#ff00ff");
             //noinspection SuspiciousNameCombination
-            Drawing.drawCross(imgUnbounded,
+            Drawing.drawCross(img,
                     !readOppositeAxis ? centerRight : new Point(centerRight.y, centerRight.x), c, 8, 3);
         }
 
         //Draw the rectangle containing the beacon
-        if (debug) Drawing.drawRectangle(imgUnbounded, boundingBox, new ColorRGBA(0, 255, 0), 4);
+        if (debug) Drawing.drawRectangle(img, boundingBox, new ColorRGBA(0, 255, 0), 4);
 
         //Tell us the height of the beacon
         //TODO later we can get the distance away from the beacon based on its height and position
@@ -468,6 +474,21 @@ class BeaconAnalyzer {
             if (ellipses.get(i).score < Constants.ELLIPSE_SCORE_REQ)
                 ellipses.remove(i);
         return ellipses;
+    }
+
+    private static int findLargestIndexInBounds(List<Contour> contours, Rectangle bounds) {
+        if (contours.size() < 1)
+            return -1;
+        int largestIndex = 0;
+        double maxArea = 0.0f;
+        for (int i = 0; i < contours.size(); i++) {
+            Contour c = contours.get(i);
+            if (c.area() > maxArea && c.isMostlyInside(bounds)) {
+                largestIndex = i;
+                maxArea = c.area();
+            }
+        }
+        return largestIndex;
     }
 
     private static int findLargestIndex(List<Contour> contours) {

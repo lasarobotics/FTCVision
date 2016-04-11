@@ -242,6 +242,17 @@ public class Contour extends Detectable {
     }
 
     /**
+     * Returns true if the contour is MOSTLY inside a given area
+     * That is, the centroid is within the bounded area
+     *
+     * @param rect Rectangle to check agains
+     * @return True if the contour is mostly inside the rectangle, false otherwise
+     */
+    public boolean isMostlyInside(Rectangle rect) {
+        return centroid().inside(rect.getBoundingRect());
+    }
+
+    /**
      * Get the arc length of the contour
      * @param closed True if the contour should be calculated as closed
      * @return Arc length

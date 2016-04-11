@@ -80,17 +80,18 @@ public final class Beacon {
      * @return Beacon analysis class
      */
     public BeaconAnalysis analyzeFrame(ColorBlobDetector redDetector, ColorBlobDetector blueDetector, Mat img, Mat gray, ScreenOrientation orientation) {
-        blueDetector.process(img);
-        redDetector.process(img);
-
         switch (method) {
             case REALTIME:
+                blueDetector.process(img);
+                redDetector.process(img);
                 return BeaconAnalyzer.analyze_REALTIME(redDetector.getContours(), blueDetector.getContours(), img, orientation, this.debug);
             case FAST:
             case DEFAULT:
             default:
-                return BeaconAnalyzer.analyze_FAST(redDetector.getContours(), blueDetector.getContours(), img, gray, orientation, this.bounds, this.debug);
+                return BeaconAnalyzer.analyze_FAST(redDetector, blueDetector, img, gray, orientation, this.bounds, this.debug);
             case COMPLEX:
+                blueDetector.process(img);
+                redDetector.process(img);
                 return BeaconAnalyzer.analyze_COMPLEX(redDetector.getContours(), blueDetector.getContours(), img, gray, orientation, this.bounds, this.debug);
         }
     }
