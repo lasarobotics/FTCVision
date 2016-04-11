@@ -138,8 +138,31 @@ class BeaconAnalyzer {
 
     static Beacon.BeaconAnalysis analyze_FAST(List<Contour> contoursRed, List<Contour> contoursBlue,
                                               Mat imgUnbounded, Mat gray, ScreenOrientation orientation, Rectangle bounds, boolean debug) {
+        //Figure out which way to read the image
+        double orientationAngle = orientation.getAngle();
+        boolean swapLeftRight = orientationAngle >= 180; //swap if LANDSCAPE_WEST or PORTRAIT_REVERSE
+        boolean readOppositeAxis = orientation == ScreenOrientation.PORTRAIT ||
+                orientation == ScreenOrientation.PORTRAIT_REVERSE; //read other axis if any kind of portrait
+
         //Bound the image
-        Point offset = new Point(bounds.left(), Math.min(bounds.top(), bounds.bottom()));
+        if (readOppositeAxis)
+            //Force the analysis box to transpose inself in place
+            //noinspection SuspiciousNameCombination
+            bounds = new Rectangle(
+                    new Point(bounds.center().y/imgUnbounded.height()*imgUnbounded.width(),
+                    bounds.center().x/imgUnbounded.width()*imgUnbounded.height()),
+                    bounds.height(), bounds.width()).clip(new Rectangle(imgUnbounded.size()));
+        if (!swapLeftRight && readOppositeAxis)
+            //Force the analysis box to flip across its primary axis
+            bounds = new Rectangle(
+                    new Point((imgUnbounded.size().width/2) + Math.abs(bounds.center().x - (imgUnbounded.size().width/2)),
+                            bounds.center().y), bounds.width(), bounds.height());
+        else if (swapLeftRight && !readOppositeAxis)
+            //Force the analysis box to flip across its primary axis
+            bounds = new Rectangle(
+                    new Point(bounds.center().x, imgUnbounded.size().height - bounds.center().y),
+                    bounds.width(), bounds.height());
+        bounds = bounds.clip(new Rectangle(imgUnbounded.size()));
         Mat img = imgUnbounded.submat((int) bounds.top(), (int) bounds.bottom(), (int) bounds.left(), (int) bounds.right());
 
         //DEBUG Draw contours before filtering
@@ -202,11 +225,6 @@ class BeaconAnalyzer {
         //Test which side is red and blue
         //If the distance between the sides is smaller than a value, then return unknown
         final int minDistance = (int) (Constants.DETECTION_MIN_DISTANCE * beaconSize.width); //percent of beacon width
-        //Figure out which way to read the image
-        double orientationAngle = orientation.getAngle();
-        boolean swapLeftRight = orientationAngle >= 180; //swap if LANDSCAPE_WEST or PORTRAIT_REVERSE
-        boolean readOppositeAxis = orientation == ScreenOrientation.PORTRAIT ||
-                orientation == ScreenOrientation.PORTRAIT_REVERSE; //read other axis if any kind of portrait
 
         boolean leftIsRed;
         Contour leftMostContour, rightMostContour;

@@ -89,7 +89,7 @@ public class LinearVisionSample extends LinearVisionOpMode {
         //Rectangle bounds = new Rectangle(new Point(width / 2, height / 2), width - 200, 200);
         //beacon.setAnalysisBounds(bounds);
         //Or you can just use the entire screen
-        beacon.setAnalysisBounds(new Rectangle(0, 0, height, width));
+        beacon.setAnalysisBounds(new Rectangle(getFrameSize()));
 
         //Wait for the match to begin
         waitForStart();

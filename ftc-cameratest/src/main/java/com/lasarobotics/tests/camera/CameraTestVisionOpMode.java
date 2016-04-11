@@ -77,7 +77,7 @@ public class CameraTestVisionOpMode extends TestableVisionOpMode {
         //This is also particularly useful if you know approximately where the beacon is
         //as this will eliminate parts of the frame which may cause problems
         //This will not work on some methods, such as COMPLEX
-        Rectangle bounds = new Rectangle(new Point(width / 2, height / 2), width - 200, 200);
+        Rectangle bounds = new Rectangle(new Point(width / 2, 0), 200, 200);
         beacon.setAnalysisBounds(bounds);
         //Or you can just use the entire screen
         //beacon.setAnalysisBounds(new Rectangle(0, 0, height, width));
