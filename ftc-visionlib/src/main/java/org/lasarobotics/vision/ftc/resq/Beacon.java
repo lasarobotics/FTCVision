@@ -80,6 +80,8 @@ public final class Beacon {
      * @return Beacon analysis class
      */
     public BeaconAnalysis analyzeFrame(ColorBlobDetector redDetector, ColorBlobDetector blueDetector, Mat img, Mat gray, ScreenOrientation orientation) {
+        if (this.bounds == null)
+            this.bounds = new Rectangle(img.size());
         switch (method) {
             case REALTIME:
                 blueDetector.process(img);

@@ -6,6 +6,7 @@ import org.lasarobotics.vision.ftc.resq.Beacon;
 import org.lasarobotics.vision.image.Drawing;
 import org.lasarobotics.vision.opmode.TestableVisionOpMode;
 import org.lasarobotics.vision.util.ScreenOrientation;
+import org.lasarobotics.vision.util.color.Color;
 import org.lasarobotics.vision.util.color.ColorGRAY;
 import org.lasarobotics.vision.util.color.ColorRGBA;
 import org.opencv.core.Mat;
@@ -23,33 +24,45 @@ public class CameraTestVisionOpMode extends TestableVisionOpMode {
     public void init() {
         super.init();
 
-        //Set the camera used for detection
+        /* Set the camera used for detection */
         this.setCamera(Cameras.PRIMARY);
 
-        //Set the frame size
-        //Larger = sometimes more accurate, but also much slower
-        //For Testable OpModes, this might make the image appear small - it might be best not to use this
-        //After this method runs, it will set the "width" and "height" of the frame
+        /**
+         * Set the frame size
+         * Larger = sometimes more accurate, but also much slower
+         * For Testable OpModes, this might make the image appear small - it might be best not to use this
+         * After this method runs, it will set the "width" and "height" of the frame
+         **/
         this.setFrameSize(new Size(900, 900));
 
-        //Enable extensions. Use what you need.
+        /* Enable extensions. Use what you need. */
         enableExtension(Extensions.BEACON);     //Beacon detection
         enableExtension(Extensions.ROTATION);   //Automatic screen rotation correction
 
-        //UNCOMMENT THIS IF you're using a SECONDARY (facing toward screen) camera
-        //or when you rotate the phone, sometimes the colors swap
+        /**
+         * UNCOMMENT THIS IF you're using a SECONDARY (facing toward screen) camera
+         * or when you rotate the phone, sometimes the colors swap
+         **/
         //rotation.setRotationInversion(true);
 
-        //Set this to the default orientation of your program
-        rotation.setDefaultOrientation(ScreenOrientation.LANDSCAPE);
+        /**
+         * Set this to the default orientation of your program (it's probably PORTRAIT)
+         * Also, it's recommended to turn OFF Auto Rotate
+         * If you can't get any readings or swap red and blue, try changing this
+         */
+        rotation.setDefaultOrientation(ScreenOrientation.PORTRAIT);
 
-        //Set the beacon analysis method
-        //Try them all and see what works!
+        /**
+         * Set the beacon analysis method
+         * Try them all and see what works!
+         */
         beacon.setAnalysisMethod(Beacon.AnalysisMethod.FAST);
 
-        //Debug drawing
-        //Enable this only if you're running test app - otherwise, you should turn it off
-        //(Although it doesn't harm anything if you leave it on, only slows down processing a tad)
+        /**
+         * Debug drawing
+         * Enable this only if you're running test app - otherwise, you should turn it off
+         * (Although it doesn't harm anything if you leave it on, only slows down image processing)
+         */
         beacon.enableDebug();
     }
 
@@ -67,24 +80,23 @@ public class CameraTestVisionOpMode extends TestableVisionOpMode {
 
     @Override
     public Mat frame(Mat rgba, Mat gray) {
-        /*
-          We set the Analysis boundary in the frame loop just in case we couldn't get it
-          during init(). This happens when another app is using OpenCV simulataneously.
-         */
-        //Set analysis boundary
-        //You should comment this to use the entire screen and uncomment only if
-        //you want faster analysis at the cost of not using the entire frame.
-        //This is also particularly useful if you know approximately where the beacon is
-        //as this will eliminate parts of the frame which may cause problems
-        //This will not work on some methods, such as COMPLEX
-        Rectangle bounds = new Rectangle(new Point(width / 2, height/2), width - 200, 200);
-        beacon.setAnalysisBounds(bounds);
-        //Or you can just use the entire screen
-        //beacon.setAnalysisBounds(new Rectangle(0, 0, height, width));
+        /**
+         * Set analysis boundary
+         * You should comment this to use the entire screen and uncomment only if
+         * you want faster analysis at the cost of not using the entire frame.
+         * This is also particularly useful if you know approximately where the beacon is
+         * as this will eliminate parts of the frame which may cause problems
+         * This will not work on some methods, such as COMPLEX
+         *
+         * We set the Analysis boundary in the frame loop just in case we couldn't get it
+         * during init(). This happens when another app is using OpenCV simulataneously.
+         * Doing so should only be necessary in testing apps
+         **/
+        beacon.setAnalysisBounds(new Rectangle(new Point(width / 2, height/2), width - 200, 200));
 
         //Run all extensions, then get matrices
         rgba = super.frame(rgba, gray);
-        Imgproc.cvtColor(rgba, gray, Imgproc.COLOR_RGBA2GRAY);
+        gray = Color.rapidConvertRGBAToGRAY(rgba);
 
         //Get beacon analysis
         Beacon.BeaconAnalysis beaconAnalysis = beacon.getAnalysis();
@@ -98,7 +110,7 @@ public class CameraTestVisionOpMode extends TestableVisionOpMode {
                 new Point(0, 8), 1.0f, new ColorGRAY(255), Drawing.Anchor.BOTTOMLEFT);
 
         //Display FPS
-        Drawing.drawText(rgba, "FPS: " + fps.getFPSString(), new Point(0, 24), 1.0f, new ColorRGBA("#ffffff")); //"#2196F3"
+        Drawing.drawText(rgba, "FPS: " + fps.getFPSString(), new Point(0, 24), 1.0f, new ColorRGBA("#2196F3")); //"#2196F3"
 
         //Display analysis method
         Drawing.drawText(rgba, beacon.getAnalysisMethod().toString() + " Analysis",

@@ -67,7 +67,6 @@ public class ManualVisionSample extends ManualVisionOpMode {
         this.setCamera(Cameras.PRIMARY);
         //Set the frame size
         //Larger = sometimes more accurate, but also much slower
-        //For Testable OpModes, this might make the image appear small - it might be best not to use this
         this.setFrameSize(new Size(900, 900));
     }
 
@@ -76,7 +75,7 @@ public class ManualVisionSample extends ManualVisionOpMode {
         super.loop();
 
         telemetry.addData("Vision FPS", fps.getFPSString());
-        telemetry.addData("Vision Color", colorAnalysis.toString());
+        telemetry.addData("Vision Color", colorAnalysis.getColorString());
         telemetry.addData("Analysis Confidence", colorAnalysis.getConfidenceString());
         telemetry.addData("Vision Size", "Width: " + width + " Height: " + height);
     }
@@ -89,14 +88,13 @@ public class ManualVisionSample extends ManualVisionOpMode {
     @Override
     public Mat frame(Mat rgba, Mat gray) {
         try {
-            //Process the frame for the color blobs
-            detectorRed.process(rgba);
-            detectorBlue.process(rgba);
-
-            //Get color analysis
+            //Prepare beacon instance
             Beacon beacon = new Beacon(Beacon.AnalysisMethod.DEFAULT);
             //You may need to change the Screen Orientation to your preference
-            colorAnalysis = beacon.analyzeFrame(detectorBlue, detectorRed, rgba, gray, ScreenOrientation.LANDSCAPE);
+            ScreenOrientation orientation = ScreenOrientation.LANDSCAPE_WEST;
+            //Analyze the frame and return the analysis
+            colorAnalysis = beacon.analyzeFrame(detectorBlue, detectorRed, rgba, gray,
+                    orientation);
         }
         catch (Exception e)
         {
