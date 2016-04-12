@@ -1,27 +1,18 @@
 package com.lasarobotics.tests.camera;
 
-import android.graphics.Color;
-import android.hardware.Camera;
-import android.os.Debug;
-import android.util.Log;
-
-//import org.lasarobotics.vision.opmode.VisionOpModeCore;
 import org.lasarobotics.vision.android.Cameras;
 import org.lasarobotics.vision.detection.objects.Rectangle;
 import org.lasarobotics.vision.ftc.resq.Beacon;
 import org.lasarobotics.vision.image.Drawing;
 import org.lasarobotics.vision.opmode.TestableVisionOpMode;
 import org.lasarobotics.vision.util.ScreenOrientation;
+import org.lasarobotics.vision.util.color.Color;
 import org.lasarobotics.vision.util.color.ColorGRAY;
 import org.lasarobotics.vision.util.color.ColorRGBA;
-import org.opencv.android.JavaCameraView;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
-
-import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  * Vision OpMode run by the Camera Test Activity
@@ -33,63 +24,50 @@ public class CameraTestVisionOpMode extends TestableVisionOpMode {
     public void init() {
         super.init();
 
-        //Set the camera used for detection
+        /* Set the camera used for detection */
         this.setCamera(Cameras.PRIMARY);
-        //Set the frame size
-        //Larger = sometimes more accurate, but also much slower
-        //For Testable OpModes, this might make the image appear small - it might be best not to use this
-        //After this method runs, it will set the "width" and "height" of the frame
+
+        /**
+         * Set the frame size
+         * Larger = sometimes more accurate, but also much slower
+         * After this method runs, it will set the "width" and "height" of the frame
+         **/
         this.setFrameSize(new Size(900, 900));
 
-        //Enable extensions. Use what you need.
+        /* Enable extensions. Use what you need. */
         enableExtension(Extensions.BEACON);     //Beacon detection
-        //enableExtension(Extensions.ROTATION);   //Automatic screen rotation correction
+        enableExtension(Extensions.ROTATION);   //Automatic screen rotation correction
 
-        //UNCOMMENT THIS IF you're using a SECONDARY (facing toward screen) camera
-        //or when you rotate the phone, sometimes the colors swap
+        /**
+         * UNCOMMENT THIS IF you're using a SECONDARY (facing toward screen) camera
+         * or when you rotate the phone, sometimes the colors swap
+         **/
         //rotation.setRotationInversion(true);
 
-        //Set this to the default orientation of your program
+        /**
+         * Set this to the default orientation of your program (it's probably PORTRAIT)
+         * Also, it's recommended to turn OFF Auto Rotate
+         * If you can't get any readings or swap red and blue, try changing this
+         */
         rotation.setDefaultOrientation(ScreenOrientation.LANDSCAPE);
 
-        //Set the beacon analysis method
-        //Try them all and see what works!
+        /**
+         * Set the beacon analysis method
+         * Try them all and see what works!
+         */
         beacon.setAnalysisMethod(Beacon.AnalysisMethod.FAST);
 
-        //Set analysis boundary
-        //You should comment this to use the entire screen and uncomment only if
-        //you want faster analysis at the cost of not using the entire frame.
-        //This is also particularly useful if you know approximately where the beacon is
-        //as this will eliminate parts of the frame which may cause problems
-        //This will not work on some methods, such as COMPLEX
-        //Rectangle bounds = new Rectangle(new Point(width / 2, 330), width, 75);
-        //Rectangle bounds = new Rectangle(new Point(330.0/480 * 800, height / 2), 250, height);
-        //beacon.setAnalysisBounds(bounds);
-        //Or you can just use the entire screen
-        beacon.setAnalysisBounds(new Rectangle(0, 0, width, height));
-
-
-        //Debug drawing
-        //Enable this only if you're running test app - otherwise, you should turn it off
-        //(Although it doesn't harm anything if you leave it on, only slows down processing a tad)
+        /**
+         * Debug drawing
+         * Enable this only if you're running test app - otherwise, you should turn it off
+         * (Although it doesn't harm anything if you leave it on, only slows down image processing)
+         */
         beacon.enableDebug();
     }
 
     @Override
     public void loop() {
         super.loop();
-        //openCVCamera.getCamera().getParameters().setAutoExposureLock(true);
-        //openCVCamera.disconnectCamera();
-
-        //I don't think this needs to be in loop, but I'm putting here just in case it needs to be reset every run
-        //test more later
-        Camera.Parameters p = openCVCamera.getCamera().getParameters();
-        p.setWhiteBalance("twilight");
-        p.setAutoWhiteBalanceLock(true);
-        openCVCamera.getCamera().setParameters(p);
-        Log.e("valid white: ", Arrays.toString(p.getSupportedWhiteBalance().toArray()));
-        Log.e("allow whitebalance? ", openCVCamera.getCamera().getParameters().isAutoWhiteBalanceLockSupported() + "");
-        Log.e("current whitebalance: ", openCVCamera.getCamera().getParameters().getWhiteBalance());
 
         //Telemetry won't work here, but you can still do logging
     }
@@ -101,24 +79,36 @@ public class CameraTestVisionOpMode extends TestableVisionOpMode {
 
     @Override
     public Mat frame(Mat rgba, Mat gray) {
-        /*
-          We set the Analysis boundary in the frame loop just in case we couldn't get it
-          during init(). This happens when another app is using OpenCV simulataneously.
-         */
-        //Set analysis boundary
-        //You should comment this to use the entire screen and uncomment only if
-        //you want faster analysis at the cost of not using the entire frame.
-        //This is also particularly useful if you know approximately where the beacon is
-        //as this will eliminate parts of the frame which may cause problems
-        //This will not work on some methods, such as COMPLEX
-        Rectangle bounds = new Rectangle(new Point(width / 2, height / 2), width - 200, 200);
-        beacon.setAnalysisBounds(bounds);
-        //Or you can just use the entire screen
-        //beacon.setAnalysisBounds(new Rectangle(0, 0, height, width));
+        /**
+         * Set analysis boundary
+         * You should comment this to use the entire screen and uncomment only if
+         * you want faster analysis at the cost of not using the entire frame.
+         * This is also particularly useful if you know approximately where the beacon is
+         * as this will eliminate parts of the frame which may cause problems
+         * This will not work on some methods, such as COMPLEX
+         *
+         * We set the Analysis boundary in the frame loop just in case we couldn't get it
+         * during init(). This happens when another app is using OpenCV simulataneously.
+         * Doing so should only be necessary in testing apps
+         **/
+        //beacon.setAnalysisBounds(new Rectangle(new Point(width / 2, height/2), width - 200, 200));
 
         //Run all extensions, then get matrices
         rgba = super.frame(rgba, gray);
-        Imgproc.cvtColor(rgba, gray, Imgproc.COLOR_RGBA2GRAY);
+        gray = Color.rapidConvertRGBAToGRAY(rgba);
+
+        //Display a Grid-system every 50 pixels
+        final int dist = 50;
+        for (int x = width/2 + 50; x<width; x+=dist)
+            Drawing.drawLine(rgba, new Point(x, 0), new Point(x, height), new ColorRGBA("#88888822"), 1);
+        for (int x = width/2 - 50; x>=0; x-=dist)
+            Drawing.drawLine(rgba, new Point(x, 0), new Point(x, height), new ColorRGBA("#88888822"), 1);
+        Drawing.drawLine(rgba, new Point(width/2, 0), new Point(width/2, height), new ColorRGBA("#ffffff44"), 1);
+        for (int y = height/2 + 50; y<height; y+=dist)
+            Drawing.drawLine(rgba, new Point(0, y), new Point(width, y), new ColorRGBA("#88888822"), 1);
+        for (int y = height/2 - 50; y>=0; y-=dist)
+            Drawing.drawLine(rgba, new Point(0, y), new Point(width, y), new ColorRGBA("#88888822"), 1);
+        Drawing.drawLine(rgba, new Point(0, height/2), new Point(width, height/2), new ColorRGBA("#ffffff44"), 1);
 
         //Get beacon analysis
         Beacon.BeaconAnalysis beaconAnalysis = beacon.getAnalysis();
@@ -132,32 +122,18 @@ public class CameraTestVisionOpMode extends TestableVisionOpMode {
                 new Point(0, 8), 1.0f, new ColorGRAY(255), Drawing.Anchor.BOTTOMLEFT);
 
         //Display FPS
-        Drawing.drawText(rgba, "FPS: " + fps.getFPSString(), new Point(0, 24), 1.0f, new ColorRGBA("#ffffff")); //"#2196F3"
+        Drawing.drawText(rgba, "FPS: " + fps.getFPSString(), new Point(0, 24), 1.0f, new ColorRGBA("#ffffff"));
 
-        //Display center of the beacon
-        Drawing.drawText(rgba, "Center: " + beaconAnalysis.getCenter().toString(), new Point(0, 75), 1.0f, new ColorRGBA("#ffffff")); //"#2196F3"
-
-        //Display height and width of the image
-        Drawing.drawText(rgba, "Height: " + height + " Width: " + width, new Point(0, 100), 1.0f, new ColorRGBA("#ffffff")); //"#2196F3"
+        //Display Beacon Center
+        Drawing.drawText(rgba, "Center: " + beacon.getAnalysis().getCenter().toString(), new Point(0, 78), 1.0f, new ColorRGBA("#ffffff"));
 
         //Display analysis method
         Drawing.drawText(rgba, beacon.getAnalysisMethod().toString() + " Analysis",
                 new Point(width - 300, 40), 1.0f, new ColorRGBA("#FFC107"));
 
-        //Display a Grid-system every 50 pixels
-        /*int max = Math.max(width, height);
-        for(int pixel = 0; pixel < max; pixel += 50)
-        {
-            if(pixel < width)
-                Drawing.drawLine(rgba, new Point(pixel, 0), new Point(pixel, height), new ColorRGBA("#888888"), 2);
-            if(pixel < height)
-                Drawing.drawLine(rgba, new Point(0, pixel), new Point(width, pixel), new ColorRGBA("#888888"), 2);
-        }*/
-
         //Display rotation sensor compensation
-        Drawing.drawText(rgba, "Rot: " + sensors.getScreenOrientationCompensation() + "("
-                + sensors.getActivityScreenOrientation().getAngle() + " act, "
-                + sensors.getScreenOrientation().getAngle() + " sen)", new Point(0, 50), 1.0f, new ColorRGBA("#ffffff"), Drawing.Anchor.BOTTOMLEFT); //"#2196F3"
+        Drawing.drawText(rgba, "Rot: " + sensors.getScreenOrientationCompensation()
+                + " (" + sensors.getScreenOrientation() + ")", new Point(0, 50), 1.0f, new ColorRGBA("#ffffff"), Drawing.Anchor.BOTTOMLEFT); //"#2196F3"
 
         return rgba;
     }

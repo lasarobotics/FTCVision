@@ -44,8 +44,8 @@ public final class Sensors implements SensorEventListener {
      * Resume reading sensors after reading was stopped
      */
     public void resume() {
-        if (activated)
-            return;
+        //if (activated)
+        //    return;
         activated = true;
         mSensorManager.registerListener(this, mAccelerometer, READ_SPEED);
         mSensorManager.registerListener(this, mMagneticField, READ_SPEED);

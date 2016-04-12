@@ -1,6 +1,7 @@
 package org.lasarobotics.vision.ftc.resq;
 
 import org.lasarobotics.vision.detection.ColorBlobDetector;
+import org.lasarobotics.vision.detection.objects.Ellipse;
 import org.lasarobotics.vision.detection.objects.Rectangle;
 import org.lasarobotics.vision.util.MathUtil;
 import org.lasarobotics.vision.util.ScreenOrientation;
@@ -54,7 +55,7 @@ public final class Beacon {
      * @return Beacon analysis class
      */
     public BeaconAnalysis analyzeFrame(Mat img, Mat gray) {
-        return analyzeFrame(this.blueDetector, this.redDetector, img, gray, ScreenOrientation.DEFAULT);
+        return analyzeFrame(this.redDetector, this.blueDetector, img, gray, ScreenOrientation.DEFAULT);
     }
 
     /**
@@ -66,28 +67,33 @@ public final class Beacon {
      * @return Beacon analysis class
      */
     public BeaconAnalysis analyzeFrame(Mat img, Mat gray, ScreenOrientation orientation) {
-        return analyzeFrame(this.blueDetector, this.redDetector, img, gray, orientation);
+        return analyzeFrame(this.redDetector, this.blueDetector, img, gray, orientation);
     }
 
     /**
      * Analyze the current frame using the selected analysis method, using custom color blob detectors
-     * @param blueDetector Blue color blob detector
      * @param redDetector Red color blob detector
+     * @param blueDetector Blue color blob detector
      * @param img Image to analyze
      * @param gray Grayscale image to analyze
      * @param orientation Screen orientation compensation, given by the android.Sensors class
      * @return Beacon analysis class
      */
-    public BeaconAnalysis analyzeFrame(ColorBlobDetector blueDetector, ColorBlobDetector redDetector, Mat img, Mat gray, ScreenOrientation orientation) {
-        blueDetector.process(img);
-        redDetector.process(img);
-
+    public BeaconAnalysis analyzeFrame(ColorBlobDetector redDetector, ColorBlobDetector blueDetector, Mat img, Mat gray, ScreenOrientation orientation) {
+        if (this.bounds == null)
+            this.bounds = new Rectangle(img.size());
         switch (method) {
+            case REALTIME:
+                blueDetector.process(img);
+                redDetector.process(img);
+                return BeaconAnalyzer.analyze_REALTIME(redDetector.getContours(), blueDetector.getContours(), img, orientation, this.debug);
             case FAST:
             case DEFAULT:
             default:
-                return BeaconAnalyzer.analyze_FAST(redDetector.getContours(), blueDetector.getContours(), img, orientation, this.bounds, this.debug);
+                return BeaconAnalyzer.analyze_FAST(redDetector, blueDetector, img, gray, orientation, this.bounds, this.debug);
             case COMPLEX:
+                blueDetector.process(img);
+                redDetector.process(img);
                 return BeaconAnalyzer.analyze_COMPLEX(redDetector.getContours(), blueDetector.getContours(), img, gray, orientation, this.bounds, this.debug);
         }
     }
@@ -149,14 +155,30 @@ public final class Beacon {
      * Analysis method
      */
     public enum AnalysisMethod {
-        //Default method
+        /**
+         * Default method, currently FAST
+         */
         DEFAULT,
-        //Faster method - picks the two largest contours without concern
+        /**
+         * Extremely fast method that performs less accurate analysis
+         * REALTIME is great when speed should best accuracy
+         */
+        REALTIME,
+        /**
+         * Faster method - selects the two largest contours and analyzes them
+         * FAST is great when near the beacon, but is not suitable for long-distance analysis
+         */
         FAST,
-        //Slower and complex method - picks contours based on statistical analysis
+        /**
+         * Slower and complex method - picks contours based on statistical analysis
+         * COMPLEX is highly complex and a work in progress, but is better at selecting
+         * the correct beacon at long distances, but requires that the entire beacon be in view.
+         */
         COMPLEX;
         public String toString() {
             switch (this) {
+                case REALTIME:
+                    return "REALTIME";
                 case DEFAULT:
                 case FAST:
                 default:
@@ -203,10 +225,12 @@ public final class Beacon {
         private final BeaconColor left;
         private final BeaconColor right;
         private final Rectangle location;
+        private final Ellipse leftButton;
+        private final Ellipse rightButton;
 
         //TODO Color and CONFIDENCE should make up the results
 
-        //TODO add Size size, Point locationTopLeft, Distance distanceApprox
+        //TODO add Distance distanceApprox
 
         /**
          * Instantiate a blank analysis
@@ -216,6 +240,8 @@ public final class Beacon {
             this.right = BeaconColor.UNKNOWN;
             this.confidence = 0.0f;
             this.location = new Rectangle();
+            this.leftButton = null;
+            this.rightButton = null;
         }
 
         BeaconAnalysis(BeaconColor left, BeaconColor right, Rectangle location, double confidence) {
@@ -223,6 +249,42 @@ public final class Beacon {
             this.right = right;
             this.confidence = confidence;
             this.location = location;
+            this.leftButton = null;
+            this.rightButton = null;
+        }
+
+        BeaconAnalysis(BeaconColor left, BeaconColor right, Rectangle location, double confidence,
+                       Ellipse leftButton, Ellipse rightButton) {
+            this.left = left;
+            this.right = right;
+            this.confidence = confidence;
+            this.location = location;
+            this.leftButton = leftButton;
+            this.rightButton = rightButton;
+        }
+
+        /**
+         * Get the ellipse containing the left button, if found
+         *
+         * @return Left button ellipse, or a blank ellipse if not found
+         */
+        public Ellipse getLeftButton() {
+            return leftButton;
+        }
+
+        /**
+         * Get the ellipse containing the right button, if found
+         *
+         * @return Right button ellipse, or a blank ellipse if not found
+         */
+        public Ellipse getRightButton() {
+            return rightButton;
+        }
+
+
+        public boolean hasEllipses()
+        {
+            return (leftButton != null && rightButton != null);
         }
 
         /**
@@ -402,6 +464,11 @@ public final class Beacon {
         @Override
         public String toString() {
             return "Color: " + getColorString() + "\r\n Location: " + getLocationString() + "\r\n Confidence: " + getConfidenceString();
+        }
+
+        public String getButtonString() {
+            return "Left: " + (leftButton != null ? leftButton.getLocationString() : "N/A") +
+                    " Right: " + (rightButton != null ? rightButton.getLocationString() : "N/A");
         }
     }
 }

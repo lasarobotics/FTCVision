@@ -7,6 +7,8 @@ import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 
+import java.util.List;
+
 /**
  * A detectable object
  */
@@ -85,5 +87,24 @@ public abstract class Detectable {
 
         //Calculate average and return new color instance
         return Color.create(Core.mean(subMat), imgSpace);
+    }
+
+    /**
+     * Offset the object, translating it by a specific offset point
+     * @param offset Point to offset by, e.g. (1, 0) would move object 1 px right
+     */
+    public abstract void offset(Point offset);
+
+    /**
+     * Offset a list of objects, translating them by a specific offset point
+     * @param detectables List of detectables
+     * @param offset Point to offset by, e.g. (1, 0) would move objects 1 px right
+     * @return Modified list of detectables
+     */
+    public static List<? extends Detectable> offset(List<? extends Detectable> detectables, Point offset)
+    {
+        for(int i=0; i<detectables.size(); i++)
+            detectables.get(i).offset(offset);
+        return detectables;
     }
 }

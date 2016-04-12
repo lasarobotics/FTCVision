@@ -41,9 +41,11 @@ import org.opencv.core.Mat;
 import org.opencv.core.Size;
 
 /**
- * TeleOp Mode
- * <p/>
- * Enables control of the robot via the gamepad
+ * Manual Vision Sample
+ *
+ * Use when you need absolute control of each frame and want to customize
+ * how Visino works for you. In a ManualVisionOpMode, you have far more control
+ * and can even use the entirety of OpenCV for your own custom processing.
  */
 public class ManualVisionSample extends ManualVisionOpMode {
 
@@ -63,11 +65,14 @@ public class ManualVisionSample extends ManualVisionOpMode {
         detectorRed = new ColorBlobDetector(lowerBoundRed, upperBoundRed);
         detectorBlue = new ColorBlobDetector(lowerBoundBlue, upperBoundBlue);
 
-        //Set the camera used for detection
+          /* Set the camera used for detection */
         this.setCamera(Cameras.PRIMARY);
-        //Set the frame size
-        //Larger = sometimes more accurate, but also much slower
-        //For Testable OpModes, this might make the image appear small - it might be best not to use this
+
+        /**
+         * Set the frame size
+         * Larger = sometimes more accurate, but also much slower
+         * After this method runs, it will set the "width" and "height" of the frame
+         **/
         this.setFrameSize(new Size(900, 900));
     }
 
@@ -76,7 +81,7 @@ public class ManualVisionSample extends ManualVisionOpMode {
         super.loop();
 
         telemetry.addData("Vision FPS", fps.getFPSString());
-        telemetry.addData("Vision Color", colorAnalysis.toString());
+        telemetry.addData("Vision Color", colorAnalysis.getColorString());
         telemetry.addData("Analysis Confidence", colorAnalysis.getConfidenceString());
         telemetry.addData("Vision Size", "Width: " + width + " Height: " + height);
     }
@@ -89,14 +94,13 @@ public class ManualVisionSample extends ManualVisionOpMode {
     @Override
     public Mat frame(Mat rgba, Mat gray) {
         try {
-            //Process the frame for the color blobs
-            detectorRed.process(rgba);
-            detectorBlue.process(rgba);
-
-            //Get color analysis
-            Beacon beacon = new Beacon(Beacon.AnalysisMethod.DEFAULT);
+            //Prepare beacon instance
+            Beacon beacon = new Beacon(Beacon.AnalysisMethod.FAST);
             //You may need to change the Screen Orientation to your preference
-            colorAnalysis = beacon.analyzeFrame(detectorRed, detectorBlue, rgba, gray, ScreenOrientation.LANDSCAPE);
+            ScreenOrientation orientation = ScreenOrientation.LANDSCAPE_WEST;
+            //Analyze the frame and return the analysis
+            colorAnalysis = beacon.analyzeFrame(detectorBlue, detectorRed, rgba, gray,
+                    orientation);
         }
         catch (Exception e)
         {
