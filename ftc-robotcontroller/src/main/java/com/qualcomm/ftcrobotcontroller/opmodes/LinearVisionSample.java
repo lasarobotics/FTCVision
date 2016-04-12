@@ -40,9 +40,15 @@ import org.opencv.core.Mat;
 import org.opencv.core.Size;
 
 /**
- * TeleOp Mode
- * <p/>
- * Enables control of the robot via the gamepad
+ * Linear Vision Sample
+ *
+ * Use this in a typical linear op mode. A LinearVisionOpMode allows using
+ * Vision Extensions, which do a lot of processing for you. Just enable the extension
+ * and set its options to your preference!
+ *
+ * Please note that the LinearVisionOpMode is specially designed to target a particular
+ * version of the FTC Robot Controler app. Changes to the app may break the LinearVisionOpMode.
+ * Should this happen, open up an issue on GitHub. :)
  */
 public class LinearVisionSample extends LinearVisionOpMode {
 

@@ -41,9 +41,11 @@ import org.opencv.core.Mat;
 import org.opencv.core.Size;
 
 /**
- * TeleOp Mode
- * <p/>
- * Enables control of the robot via the gamepad
+ * Manual Vision Sample
+ *
+ * Use when you need absolute control of each frame and want to customize
+ * how Visino works for you. In a ManualVisionOpMode, you have far more control
+ * and can even use the entirety of OpenCV for your own custom processing.
  */
 public class ManualVisionSample extends ManualVisionOpMode {
 
@@ -93,7 +95,7 @@ public class ManualVisionSample extends ManualVisionOpMode {
     public Mat frame(Mat rgba, Mat gray) {
         try {
             //Prepare beacon instance
-            Beacon beacon = new Beacon(Beacon.AnalysisMethod.DEFAULT);
+            Beacon beacon = new Beacon(Beacon.AnalysisMethod.FAST);
             //You may need to change the Screen Orientation to your preference
             ScreenOrientation orientation = ScreenOrientation.LANDSCAPE_WEST;
             //Analyze the frame and return the analysis

@@ -240,8 +240,8 @@ public final class Beacon {
             this.right = BeaconColor.UNKNOWN;
             this.confidence = 0.0f;
             this.location = new Rectangle();
-            this.leftButton = new Ellipse();
-            this.rightButton = new Ellipse();
+            this.leftButton = null;
+            this.rightButton = null;
         }
 
         BeaconAnalysis(BeaconColor left, BeaconColor right, Rectangle location, double confidence) {
@@ -249,8 +249,8 @@ public final class Beacon {
             this.right = right;
             this.confidence = confidence;
             this.location = location;
-            this.leftButton = new Ellipse();
-            this.rightButton = new Ellipse();
+            this.leftButton = null;
+            this.rightButton = null;
         }
 
         BeaconAnalysis(BeaconColor left, BeaconColor right, Rectangle location, double confidence,

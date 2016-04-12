@@ -48,8 +48,8 @@ class BeaconAnalyzer {
         //Look at the locations of the largest contours
         //Check to see if the largest red contour is more left-most than the largest right contour
         //If it is, then we know that the left beacon is red and the other blue, and vice versa
-        Point bestRedCenter = largestRed.center();
-        Point bestBlueCenter = largestBlue.center();
+        Point bestRedCenter = largestRed.centroid();
+        Point bestBlueCenter = largestBlue.centroid();
 
         //DEBUG R/B text
         if (debug)
@@ -114,8 +114,8 @@ class BeaconAnalyzer {
         double heightContours = Math.max(leftMostContour.height(), rightMostContour.height());
 
         //Center of contours is the average of centers of the contours
-        Point lCenter = leftMostContour.center();
-        Point rCenter = rightMostContour.center();
+        Point lCenter = leftMostContour.centroid();
+        Point rCenter = rightMostContour.centroid();
         Point center = new Point((lCenter.x + rCenter.x) / 2,
                 (lCenter.y + rCenter.y) / 2);
         if (debug) Drawing.drawCross(img, center, new ColorRGBA("#ffffff"), 10, 4);
@@ -126,7 +126,7 @@ class BeaconAnalyzer {
         double WH_ratio = widthBeacon / beaconHeight;
         double ratioError = Math.abs((Constants.BEACON_WH_RATIO - WH_ratio)) / Constants.BEACON_WH_RATIO; // perfect value = 0;
         double averageHeight = (leftMostContour.height() + rightMostContour.height()) / 2.0;
-        double dy = Math.abs((leftMostContour.center().y - rightMostContour.center().y) / averageHeight * Constants.FAST_HEIGHT_DELTA_FACTOR);
+        double dy = Math.abs((lCenter.y - rCenter.y) / averageHeight * Constants.FAST_HEIGHT_DELTA_FACTOR);
         double dArea = Math.sqrt(leftMostContour.area() / rightMostContour.area());
         double confidence = MathUtil.normalPDFNormalized(
                 MathUtil.distance(MathUtil.distance(ratioError, dy), dArea)/Constants.FAST_CONFIDENCE_ROUNDNESS,
@@ -706,10 +706,6 @@ class BeaconAnalyzer {
             rightEllipse = ((bestRed.topLeft().y) < (bestBlue.topLeft().y)) ? bestBlueEllipse : bestRedEllipse;
         }
 
-        //DEBUG Logging
-        Log.d("Beacon", "Orientation: " + orientation + "Angle: " + orientationAngle + " Swap Axis: " + readOppositeAxis +
-                " Swap Direction: " + swapLeftRight);
-
         //Swap left and right if necessary
         //BUGFIX: invert when we swap
         if (swapLeftRight) {
@@ -772,13 +768,51 @@ class BeaconAnalyzer {
         if (debug && rightEllipse != null)
             Drawing.drawCross(img, rightEllipse.center(), new ColorRGBA("#ffff00"), 8, 3);
 
+        //Test for color switching
+        if (leftEllipse != null && rightEllipse != null && leftEllipse.center().x > rightEllipse.center().x)
+        {
+            Ellipse tE = leftEllipse;
+            leftEllipse = rightEllipse;
+            rightEllipse = tE;
+        }
+        else if ((leftEllipse != null && leftEllipse.center().x > center.x) ||
+                (rightEllipse != null && rightEllipse.center().x < center.x))
+        {
+            Ellipse tE = leftEllipse;
+            leftEllipse = rightEllipse;
+            rightEllipse = tE;
+        }
+
+        //Axis correction for ellipses
+        if (swapLeftRight)
+        {
+            if (leftEllipse != null)
+                leftEllipse = new Ellipse(new RotatedRect(
+                        new Point(img.width() - leftEllipse.center().x, leftEllipse.center().y),
+                        leftEllipse.size(), leftEllipse.angle()));
+            if (rightEllipse != null)
+                rightEllipse = new Ellipse(new RotatedRect(
+                        new Point(img.width() - rightEllipse.center().x, rightEllipse.center().y),
+                        rightEllipse.size(), rightEllipse.angle()));
+            //Swap again after correcting axis to ensure left is left and right is right
+            Ellipse tE = leftEllipse;
+            leftEllipse = rightEllipse;
+            rightEllipse = tE;
+        }
+
+        //Make very, very sure that we didn't just find the same ellipse
+        if (leftEllipse != null && rightEllipse != null) {
+            if (Math.abs(leftEllipse.center().x - rightEllipse.center().x) <
+                    Constants.ELLIPSE_MIN_DISTANCE * beaconSize.width) {
+                //Are both ellipses on the left or right side of the beacon? - remove the opposite side's ellipse
+                if (Math.abs(leftEllipse.center().x - leftMostContour.center().x) < Constants.ELLIPSE_MIN_DISTANCE * beaconSize.width)
+                    rightEllipse = null;
+                else
+                    leftEllipse = null;
+            }
+        }
+
         //Switch axis if necessary
-        if (leftEllipse != null && readOppositeAxis) {
-            leftEllipse = leftEllipse.transpose();
-        }
-        if (rightEllipse != null && readOppositeAxis) {
-            rightEllipse = rightEllipse.transpose();
-        }
         if (readOppositeAxis)
             boundingBox = boundingBox.transpose();
 

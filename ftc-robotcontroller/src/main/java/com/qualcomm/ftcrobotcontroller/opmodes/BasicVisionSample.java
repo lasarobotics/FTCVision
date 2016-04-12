@@ -40,9 +40,14 @@ import org.opencv.core.Point;
 import org.opencv.core.Size;
 
 /**
- * TeleOp Mode
- * <p/>
- * Enables control of the robot via the gamepad
+ * Basic Vision Sample
+ *
+ * Use this in a typical op mode. A VisionOpMode allows using
+ * Vision Extensions, which do a lot of processing for you. Just enable the extension
+ * and set its options to your preference!
+ *
+ * The VisionOpMode is the base of all vision processing and other styles of OpMode
+ * even extend the VisionOpMode class! Be sure to extend it if writing your own OpMode structure.
  */
 public class BasicVisionSample extends VisionOpMode {
 

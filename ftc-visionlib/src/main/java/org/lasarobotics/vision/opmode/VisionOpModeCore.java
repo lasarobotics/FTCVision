@@ -112,7 +112,6 @@ abstract class VisionOpModeCore extends OpMode implements CameraBridgeViewBase.C
     @Override
     public void init() {
         //Initialize camera view
-
         BaseLoaderCallback openCVLoaderCallback = null;
         try {
             openCVLoaderCallback = new BaseLoaderCallback(hardwareMap.appContext) {
@@ -153,7 +152,12 @@ abstract class VisionOpModeCore extends OpMode implements CameraBridgeViewBase.C
             }
         } else {
             Log.d("OpenCV", "OpenCV library found inside package. Using it!");
-            openCVLoaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
+            if (openCVLoaderCallback != null)
+                openCVLoaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
+            else {
+                Log.e("OpenCV", "Failed to load OpenCV from package!");
+                return;
+            }
         }
 
         while (!openCVInitialized) {

@@ -55,7 +55,7 @@ public class CameraTestVisionOpMode extends TestableVisionOpMode {
          * Set the beacon analysis method
          * Try them all and see what works!
          */
-        beacon.setAnalysisMethod(Beacon.AnalysisMethod.REALTIME);
+        beacon.setAnalysisMethod(Beacon.AnalysisMethod.FAST);
 
         /**
          * Debug drawing
@@ -91,7 +91,7 @@ public class CameraTestVisionOpMode extends TestableVisionOpMode {
          * during init(). This happens when another app is using OpenCV simulataneously.
          * Doing so should only be necessary in testing apps
          **/
-        beacon.setAnalysisBounds(new Rectangle(new Point(width / 2, height/2), width - 200, 200));
+        //beacon.setAnalysisBounds(new Rectangle(new Point(width / 2, height/2), width - 200, 200));
 
         //Run all extensions, then get matrices
         rgba = super.frame(rgba, gray);
