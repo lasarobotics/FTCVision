@@ -1,5 +1,7 @@
 package org.lasarobotics.vision.detection.objects;
 
+import android.annotation.SuppressLint;
+
 import org.jetbrains.annotations.NotNull;
 import org.opencv.core.Point;
 import org.opencv.core.RotatedRect;
@@ -9,7 +11,14 @@ import org.opencv.core.Size;
  * Implements a single ellipse (acts like RotatedRect) with advanced measurement utilities
  */
 public class Ellipse extends Detectable implements Comparable<Ellipse> {
-    private final RotatedRect rect;
+    private RotatedRect rect;
+
+    /**
+     * Instantiate a null ellipse
+     */
+    public Ellipse() {
+        this.rect = new RotatedRect();
+    }
 
     /**
      * Create an ellipse based on an OpenCV rotated rectangle
@@ -38,6 +47,16 @@ public class Ellipse extends Detectable implements Comparable<Ellipse> {
 
     public double height() {
         return size().height;
+    }
+
+    /**
+     * Offset the object, translating it by a specific offset point
+     * @param offset Point to offset by, e.g. (1, 0) would move object 1 px right
+     */
+    @Override
+    public void offset(Point offset) {
+        this.rect = new RotatedRect(new Point(rect.center.x + offset.x, rect.center.y + offset.y),
+                rect.size, rect.angle);
     }
 
     public double width() {
@@ -159,6 +178,24 @@ public class Ellipse extends Detectable implements Comparable<Ellipse> {
         //TODO also try all 4 points to match (will ensure it is entirely inside)
         return left() >= contour.left() && right() <= contour.right() &&
                 top() >= contour.top() && bottom() <= contour.bottom();
+    }
+
+    /**
+     * Transpose this rectangle so that x becomes y and vice versa
+     *
+     * @return Transposed rectangle instance
+     */
+    @SuppressWarnings("SuspiciousNameCombination")
+    public Ellipse transpose() {
+        return new Ellipse(new RotatedRect(
+                new Point(rect.center.y, rect.center.x),
+                new Size(rect.size.height, rect.size.width), rect.angle));
+    }
+
+    @SuppressLint("DefaultLocale")
+    public String getLocationString()
+    {
+        return String.format("(%.0f, %.0f)", rect.center.x, rect.center.y);
     }
 
     /***

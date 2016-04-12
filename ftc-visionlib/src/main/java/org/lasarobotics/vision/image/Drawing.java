@@ -71,6 +71,17 @@ public class Drawing {
         Imgproc.line(img, point1, point2, color.getScalarRGBA(), thickness);
     }
 
+    public static void drawCross(Mat img, Point center, Color color) {
+        drawCross(img, center, color, 8, 2);
+    }
+
+    public static void drawCross(Mat img, Point center, Color color, int radius, int thickness) {
+        drawLine(img, new Point(center.x - radius, center.y),
+                new Point(center.x + radius, center.y), color, thickness);
+        drawLine(img, new Point(center.x, center.y - radius),
+                new Point(center.x, center.y + radius), color, thickness);
+    }
+
     public static void drawContour(Mat img, Contour contour, Color color) {
         drawContour(img, contour, color, 2);
     }

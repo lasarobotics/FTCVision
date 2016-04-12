@@ -40,9 +40,15 @@ import org.opencv.core.Mat;
 import org.opencv.core.Size;
 
 /**
- * TeleOp Mode
- * <p/>
- * Enables control of the robot via the gamepad
+ * Linear Vision Sample
+ *
+ * Use this in a typical linear op mode. A LinearVisionOpMode allows using
+ * Vision Extensions, which do a lot of processing for you. Just enable the extension
+ * and set its options to your preference!
+ *
+ * Please note that the LinearVisionOpMode is specially designed to target a particular
+ * version of the FTC Robot Controler app. Changes to the app may break the LinearVisionOpMode.
+ * Should this happen, open up an issue on GitHub. :)
  */
 public class LinearVisionSample extends LinearVisionOpMode {
 
@@ -54,42 +60,48 @@ public class LinearVisionSample extends LinearVisionOpMode {
         //Wait for vision to initialize - this should be the first thing you do
         waitForVisionStart();
 
-        //Set the camera used for detection
+        /* Set the camera used for detection */
         this.setCamera(Cameras.PRIMARY);
 
-        //Set the frame size
-        //Larger = sometimes more accurate, but also much slower
-        //For Testable OpModes, this might make the image appear small - it might be best not to use this
-        //After this method runs, it will set the "width" and "height" of the frame
+        /**
+         * Set the frame size
+         * Larger = sometimes more accurate, but also much slower
+         * After this method runs, it will set the "width" and "height" of the frame
+         **/
         this.setFrameSize(new Size(900, 900));
 
-        //Enable extensions. Use what you need.
+        /* Enable extensions. Use what you need. */
         enableExtension(Extensions.BEACON);     //Beacon detection
         enableExtension(Extensions.ROTATION);   //Automatic screen rotation correction
 
-        //UNCOMMENT THIS IF you're using a SECONDARY (facing toward screen) camera
-        //or when you rotate the phone, sometimes the colors swap
+        /**
+         * UNCOMMENT THIS IF you're using a SECONDARY (facing toward screen) camera
+         * or when you rotate the phone, sometimes the colors swap
+         **/
         //rotation.setRotationInversion(true);
 
-        //Set this to the default orientation of your program (it's probably PORTRAIT)
-        //Also, it's recommended to turn OFF Auto Rotate
-        //If you can't get any readings or swap red and blue, try changing this
+        /**
+         * Set this to the default orientation of your program (it's probably PORTRAIT)
+         * Also, it's recommended to turn OFF Auto Rotate
+         * If you can't get any readings or swap red and blue, try changing this
+         */
         rotation.setDefaultOrientation(ScreenOrientation.PORTRAIT);
 
-        //Set the beacon analysis method
-        //Try them all and see what works!
+        /**
+         * Set the beacon analysis method
+         * Try them all and see what works!
+         */
         beacon.setAnalysisMethod(Beacon.AnalysisMethod.FAST);
 
-        //Set analysis boundary
-        //You should comment this to use the entire screen and uncomment only if
-        //you want faster analysis at the cost of not using the entire frame.
-        //This is also particularly useful if you know approximately where the beacon is
-        //as this will eliminate parts of the frame which may cause problems
-        //This will not work on some methods, such as COMPLEX
-        //Rectangle bounds = new Rectangle(new Point(width / 2, height / 2), width - 200, 200);
-        //beacon.setAnalysisBounds(bounds);
-        //Or you can just use the entire screen
-        beacon.setAnalysisBounds(new Rectangle(0, 0, height, width));
+        /**
+         * Set analysis boundary
+         * You should comment this to use the entire screen and uncomment only if
+         * you want faster analysis at the cost of not using the entire frame.
+         * This is also particularly useful if you know approximately where the beacon is
+         * as this will eliminate parts of the frame which may cause problems
+         * This will not work on some methods, such as COMPLEX
+         **/
+        //beacon.setAnalysisBounds(new Rectangle(new Point(width / 2, height / 2), width - 200, 200));
 
         //Wait for the match to begin
         waitForStart();
@@ -100,9 +112,11 @@ public class LinearVisionSample extends LinearVisionOpMode {
         while (opModeIsActive()) {
             //Log a few things
             telemetry.addData("Beacon Color", beacon.getAnalysis().getColorString());
-            telemetry.addData("Beacon Location (Center)", beacon.getAnalysis().getLocationString());
+            telemetry.addData("Beacon Center", beacon.getAnalysis().getLocationString());
             telemetry.addData("Beacon Confidence", beacon.getAnalysis().getConfidenceString());
+            telemetry.addData("Beacon Buttons", beacon.getAnalysis().getButtonString());
             telemetry.addData("Rotation Compensation", rotation.getRotationCompensationAngle());
+            telemetry.addData("Screen Rotation", rotation.getScreenOrientationActual());
             telemetry.addData("Frame Rate", fps.getFPSString() + " FPS");
             telemetry.addData("Frame Size", "Width: " + width + " Height: " + height);
             telemetry.addData("Frame Counter", frameCount);
