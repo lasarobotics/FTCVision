@@ -68,7 +68,7 @@ public class ManualVisionSample extends ManualVisionOpMode {
         detectorRed = new ColorBlobDetector(lowerBoundRed, upperBoundRed);
         detectorBlue = new ColorBlobDetector(lowerBoundBlue, upperBoundBlue);
 
-          /* Set the cameraControl used for detection */
+          /* Set the camera used for detection */
         this.setCamera(Cameras.PRIMARY);
 
         /**

@@ -621,7 +621,7 @@ class BeaconAnalyzer {
         if (bestRed == null && bestBlue == null)
             return new Beacon.BeaconAnalysis(Beacon.BeaconColor.UNKNOWN, Beacon.BeaconColor.UNKNOWN, new Rectangle(), 0.0f);
 
-        //TODO rotate image based on cameraControl rotation here
+        //TODO rotate image based on camera rotation here
 
         //The height of the beacon on screen is the height of the best contour
         Contour largestHeight = ((bestRed != null ? bestRed.size().height : 0) >

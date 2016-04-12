@@ -7,13 +7,13 @@ import android.content.pm.PackageManager;
  * List of available Android cameras
  */
 public enum Cameras {
-    //Primary (front-facing) cameraControl
+    //Primary (front-facing) camera
     PRIMARY(0),
-    //Secondary (screen-facing) cameraControl
+    //Secondary (screen-facing) camera
     SECONDARY(1),
-    //Other cameraControl - ID 2
+    //Other camera - ID 2
     OTHER_1(2),
-    //Other cameraControl - ID 3
+    //Other camera - ID 3
     OTHER_2(3);
 
     final int id;
@@ -33,7 +33,7 @@ public enum Cameras {
     }
 
     /**
-     * Get the cameraControl ID
+     * Get the camera ID
      *
      * @return Camera ID
      */
@@ -43,7 +43,7 @@ public enum Cameras {
 
     /**
      * Returns a Camera instance from this Camera ID
-     * @return The cameraControl instance
+     * @return The camera instance
      */
     public Camera createCamera() {
         return new Camera(this);

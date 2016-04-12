@@ -7,7 +7,7 @@ import org.lasarobotics.vision.util.ScreenOrientation;
 import org.opencv.core.Mat;
 
 /**
- * Implements image rotation correction to ensure the cameraControl is facing the correct direction
+ * Implements image rotation correction to ensure the camera is facing the correct direction
  */
 public class ImageRotationExtension implements VisionExtension {
 
@@ -95,7 +95,7 @@ public class ImageRotationExtension implements VisionExtension {
 
     /**
      * Set whether the direction of rotation should be inverted.
-     * This may be necessary when using the inner cameraControl
+     * This may be necessary when using the inner camera
      *
      * @param inverted True to rotate counterclockwise, false for clockwise
      */

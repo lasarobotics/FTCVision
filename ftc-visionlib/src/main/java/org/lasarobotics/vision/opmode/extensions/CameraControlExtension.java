@@ -193,7 +193,7 @@ public class CameraControlExtension implements VisionExtension {
         else
             Log.w("Vision","Manual exposure compensation not supported.");
 
-        //Update cameraControl parameters
+        //Update camera parameters
         try {
             opmode.openCVCamera.getCamera().setParameters(p);
         } catch (RuntimeException e)
@@ -221,7 +221,7 @@ public class CameraControlExtension implements VisionExtension {
         if (p.isAutoExposureLockSupported())
             p.setAutoExposureLock(false);
 
-        //Update cameraControl parameters
+        //Update camera parameters
         try {
             opmode.openCVCamera.getCamera().setParameters(p);
         } catch (RuntimeException e)

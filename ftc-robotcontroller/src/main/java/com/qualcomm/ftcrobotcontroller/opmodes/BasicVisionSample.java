@@ -56,7 +56,7 @@ public class BasicVisionSample extends VisionOpMode {
     public void init() {
         super.init();
 
-        /* Set the cameraControl used for detection */
+        /* Set the camera used for detection */
         this.setCamera(Cameras.PRIMARY);
 
         /**
@@ -72,7 +72,7 @@ public class BasicVisionSample extends VisionOpMode {
         enableExtension(Extensions.CAMERA_CONTROL); //Manual camera control
 
         /**
-         * UNCOMMENT THIS IF you're using a SECONDARY (facing toward screen) cameraControl
+         * UNCOMMENT THIS IF you're using a SECONDARY (facing toward screen) camera
          * or when you rotate the phone, sometimes the colors swap
          **/
         //rotation.setRotationInversion(true);
