@@ -1,5 +1,8 @@
 package com.lasarobotics.tests.camera;
 
+import android.hardware.Camera;
+import android.util.Log;
+
 import org.lasarobotics.vision.android.Cameras;
 import org.lasarobotics.vision.detection.objects.Rectangle;
 import org.lasarobotics.vision.ftc.resq.Beacon;
@@ -13,6 +16,8 @@ import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
+
+import java.util.Arrays;
 
 /**
  * Vision OpMode run by the Camera Test Activity
@@ -70,6 +75,16 @@ public class CameraTestVisionOpMode extends TestableVisionOpMode {
         super.loop();
 
         //Telemetry won't work here, but you can still do logging
+
+        //I don't think this needs to be in loop, but I'm putting here just in case it needs to be reset every run
+        //test more later
+        Camera.Parameters p = openCVCamera.getCamera().getParameters();
+        p.setWhiteBalance("twilight");
+        p.setAutoWhiteBalanceLock(true);
+        openCVCamera.getCamera().setParameters(p);
+        Log.e("valid white: ", Arrays.toString(p.getSupportedWhiteBalance().toArray()));
+        Log.e("allow whitebalance? ", openCVCamera.getCamera().getParameters().isAutoWhiteBalanceLockSupported() + "");
+        Log.e("current whitebalance: ", openCVCamera.getCamera().getParameters().getWhiteBalance());
     }
 
     @Override
