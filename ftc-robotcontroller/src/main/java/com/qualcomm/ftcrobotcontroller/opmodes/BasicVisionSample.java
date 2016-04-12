@@ -35,6 +35,7 @@ import org.lasarobotics.vision.android.Cameras;
 import org.lasarobotics.vision.detection.objects.Rectangle;
 import org.lasarobotics.vision.ftc.resq.Beacon;
 import org.lasarobotics.vision.opmode.VisionOpMode;
+import org.lasarobotics.vision.opmode.extensions.CameraControlExtension;
 import org.lasarobotics.vision.util.ScreenOrientation;
 import org.opencv.core.Point;
 import org.opencv.core.Size;
@@ -55,7 +56,7 @@ public class BasicVisionSample extends VisionOpMode {
     public void init() {
         super.init();
 
-        /* Set the camera used for detection */
+        /* Set the cameraControl used for detection */
         this.setCamera(Cameras.PRIMARY);
 
         /**
@@ -66,11 +67,12 @@ public class BasicVisionSample extends VisionOpMode {
         this.setFrameSize(new Size(900, 900));
 
         /* Enable extensions. Use what you need. */
-        enableExtension(Extensions.BEACON);     //Beacon detection
-        enableExtension(Extensions.ROTATION);   //Automatic screen rotation correction
+        enableExtension(Extensions.BEACON);         //Beacon detection
+        enableExtension(Extensions.ROTATION);       //Automatic screen rotation correction
+        enableExtension(Extensions.CAMERA_CONTROL); //Manual camera control
 
         /**
-         * UNCOMMENT THIS IF you're using a SECONDARY (facing toward screen) camera
+         * UNCOMMENT THIS IF you're using a SECONDARY (facing toward screen) cameraControl
          * or when you rotate the phone, sometimes the colors swap
          **/
         //rotation.setRotationInversion(true);
@@ -97,6 +99,12 @@ public class BasicVisionSample extends VisionOpMode {
          * This will not work on some methods, such as COMPLEX
          **/
         //beacon.setAnalysisBounds(new Rectangle(new Point(width / 2, height / 2), width - 200, 200));
+
+        /**
+         * Set camera control extension preferences
+         */
+        cameraControl.setColorTemperature(CameraControlExtension.ColorTemperature.AUTO);
+        cameraControl.setAutoExposureCompensation();
     }
 
     @Override

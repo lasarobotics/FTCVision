@@ -8,8 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Implements a single Android camera
- * Used to get information about an Android native camera, as well as perform a few critical functions
+ * Implements a single Android cameraControl
+ * Used to get information about an Android native cameraControl, as well as perform a few critical functions
  */
 @SuppressWarnings("deprecation")
 public class Camera {
@@ -17,8 +17,8 @@ public class Camera {
     private int id;
 
     /**
-     * Instantiate an instance of a camera
-     * WARNING! Each camera can only be instantiated in once place at a time - be sure to release() when you are done.
+     * Instantiate an instance of a cameraControl
+     * WARNING! Each cameraControl can only be instantiated in once place at a time - be sure to release() when you are done.
      *
      * @param camera Camera ID
      */
@@ -27,9 +27,9 @@ public class Camera {
     }
 
     /**
-     * Checks if the hardware supports a camera. It should.
+     * Checks if the hardware supports a cameraControl. It should.
      *
-     * @return True if hardware supports camera, false otherwise
+     * @return True if hardware supports cameraControl, false otherwise
      */
     public static boolean isHardwareAvailable() {
         return Util.getContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA);
@@ -44,8 +44,8 @@ public class Camera {
     }
 
     /**
-     * Get an instance of a camera
-     * @return The native camera instance
+     * Get an instance of a cameraControl
+     * @return The native cameraControl instance
      */
     public android.hardware.Camera getCamera() {
         return c;
@@ -57,21 +57,21 @@ public class Camera {
     }
 
     /**
-     * Unlock the camera for use by other applications
+     * Unlock the cameraControl for use by other applications
      */
     public void unlock() {
         c.unlock();
     }
 
     /**
-     * Lock the camera so the current application can use it - be sure to unlock()
+     * Lock the cameraControl so the current application can use it - be sure to unlock()
      */
     public void lock() {
         c.lock();
     }
 
     /**
-     * Unlock and release the camera instance.
+     * Unlock and release the cameraControl instance.
      * After calling this method, destory the Camera instance and recreate it if you need to use it again
      */
     public void release() {
@@ -79,23 +79,23 @@ public class Camera {
     }
 
     /**
-     * Get the internal ID of the camera
-     * @return The camera's ID
+     * Get the internal ID of the cameraControl
+     * @return The cameraControl's ID
      */
     public int getID() {
         return id;
     }
 
     /**
-     * Tests whether the camera exists (i.e. is not null)
-     * @return True if camera is not null, false otherwise
+     * Tests whether the cameraControl exists (i.e. is not null)
+     * @return True if cameraControl is not null, false otherwise
      */
     public boolean doesExist() {
         return (c != null);
     }
 
     /**
-     * Get the largest frame size supported by the camera
+     * Get the largest frame size supported by the cameraControl
      * @return Largest frame size in pixels
      */
     public Size getLargestFrameSize() {
@@ -113,7 +113,7 @@ public class Camera {
     }
 
     /**
-     * Get all frame sizes supported by the camera
+     * Get all frame sizes supported by the cameraControl
      * @return A list of supported frame sizes
      */
     public List<Size> getAllFrameSizes() {

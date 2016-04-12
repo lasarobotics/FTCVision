@@ -47,8 +47,8 @@ abstract class VisionOpModeCore extends OpMode implements CameraBridgeViewBase.C
     }
 
     /**
-     * Set the camera to use
-     * This method may fail if the camera is locked.
+     * Set the cameraControl to use
+     * This method may fail if the cameraControl is locked.
      *
      * @param camera Camera to use
      */
@@ -60,7 +60,7 @@ abstract class VisionOpModeCore extends OpMode implements CameraBridgeViewBase.C
         openCVCamera.setCameraIndex(camera.getID());
         if (initialized)
             if (!openCVCamera.connectCamera(width, height))
-                error("Could not initialize camera!\r\n" +
+                error("Could not initialize cameraControl!\r\n" +
                         "This may occur because the OpenCV Manager is not installed,\r\n" +
                         "CAMERA permission is not allowed in AndroidManifest.xml,\r\n" +
                         "or because another app is currently locking it.");
@@ -68,8 +68,8 @@ abstract class VisionOpModeCore extends OpMode implements CameraBridgeViewBase.C
     }
 
     /**
-     * Set the maximum frame size that the camera uses
-     * This method will fail if the camera is locked - it is recommended to check the result.
+     * Set the maximum frame size that the cameraControl uses
+     * This method will fail if the cameraControl is locked - it is recommended to check the result.
      *
      * @param frameSize Maximum (target) frame size
      * @return Actual frame size or null if cannot be set
@@ -83,7 +83,7 @@ abstract class VisionOpModeCore extends OpMode implements CameraBridgeViewBase.C
         openCVCamera.setMaxFrameSize((int) frameSize.width, (int) frameSize.height);
         if (initialized)
             if (!openCVCamera.connectCamera((int) frameSize.width, (int) frameSize.height))
-                error("Could not initialize camera!\r\n" +
+                error("Could not initialize cameraControl!\r\n" +
                         "This may occur because the OpenCV Manager is not installed,\r\n" +
                         "CAMERA permission is not allowed in AndroidManifest.xml,\r\n" +
                         "or because another app is currently locking it.");
@@ -111,7 +111,7 @@ abstract class VisionOpModeCore extends OpMode implements CameraBridgeViewBase.C
 
     @Override
     public void init() {
-        //Initialize camera view
+        //Initialize cameraControl view
         BaseLoaderCallback openCVLoaderCallback = null;
         try {
             openCVLoaderCallback = new BaseLoaderCallback(hardwareMap.appContext) {
@@ -187,7 +187,7 @@ abstract class VisionOpModeCore extends OpMode implements CameraBridgeViewBase.C
                     openCVCamera.disableView();
                 openCVCamera.enableView();
                 if (!openCVCamera.connectCamera(initialMaxSize, initialMaxSize))
-                    error("Could not initialize camera!\r\n" +
+                    error("Could not initialize cameraControl!\r\n" +
                             "This may occur because the OpenCV Manager is not installed,\r\n" +
                             "CAMERA permission is not allowed in AndroidManifest.xml,\r\n" +
                             "or because another app is currently locking it.");

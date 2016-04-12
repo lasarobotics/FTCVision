@@ -8,7 +8,7 @@ public abstract class ManualVisionOpMode extends VisionOpModeCore {
     }
 
     /**
-     * Returns every frame an image received from the camera.
+     * Returns every frame an image received from the cameraControl.
      * If your method runs for too long, frames will be skipped (this is normal behaviour, reducing
      * FPS).
      *

@@ -44,8 +44,11 @@ import org.opencv.core.Size;
  * Manual Vision Sample
  *
  * Use when you need absolute control of each frame and want to customize
- * how Visino works for you. In a ManualVisionOpMode, you have far more control
+ * how Vision works for you. In a ManualVisionOpMode, you have far more control
  * and can even use the entirety of OpenCV for your own custom processing.
+ *
+ * Please note that you cannot use any Vision Extensions in a ManualVisionOpMode, but you
+ * can still call the extensions' init(), loop(), and frame() methods if you want to use them,
  */
 public class ManualVisionSample extends ManualVisionOpMode {
 
@@ -65,7 +68,7 @@ public class ManualVisionSample extends ManualVisionOpMode {
         detectorRed = new ColorBlobDetector(lowerBoundRed, upperBoundRed);
         detectorBlue = new ColorBlobDetector(lowerBoundBlue, upperBoundBlue);
 
-          /* Set the camera used for detection */
+          /* Set the cameraControl used for detection */
         this.setCamera(Cameras.PRIMARY);
 
         /**

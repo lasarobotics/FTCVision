@@ -8,6 +8,7 @@ import org.lasarobotics.vision.detection.objects.Rectangle;
 import org.lasarobotics.vision.ftc.resq.Beacon;
 import org.lasarobotics.vision.image.Drawing;
 import org.lasarobotics.vision.opmode.TestableVisionOpMode;
+import org.lasarobotics.vision.opmode.extensions.CameraControlExtension;
 import org.lasarobotics.vision.util.ScreenOrientation;
 import org.lasarobotics.vision.util.color.Color;
 import org.lasarobotics.vision.util.color.ColorGRAY;
@@ -29,7 +30,7 @@ public class CameraTestVisionOpMode extends TestableVisionOpMode {
     public void init() {
         super.init();
 
-        /* Set the camera used for detection */
+        /* Set the cameraControl used for detection */
         this.setCamera(Cameras.PRIMARY);
 
         /**
@@ -40,11 +41,12 @@ public class CameraTestVisionOpMode extends TestableVisionOpMode {
         this.setFrameSize(new Size(900, 900));
 
         /* Enable extensions. Use what you need. */
-        enableExtension(Extensions.BEACON);     //Beacon detection
-        enableExtension(Extensions.ROTATION);   //Automatic screen rotation correction
+        enableExtension(Extensions.BEACON);         //Beacon detection
+        enableExtension(Extensions.ROTATION);       //Automatic screen rotation correction
+        enableExtension(Extensions.CAMERA_CONTROL); //Manual camera control
 
         /**
-         * UNCOMMENT THIS IF you're using a SECONDARY (facing toward screen) camera
+         * UNCOMMENT THIS IF you're using a SECONDARY (facing toward screen) cameraControl
          * or when you rotate the phone, sometimes the colors swap
          **/
         //rotation.setRotationInversion(true);
@@ -68,23 +70,17 @@ public class CameraTestVisionOpMode extends TestableVisionOpMode {
          * (Although it doesn't harm anything if you leave it on, only slows down image processing)
          */
         beacon.enableDebug();
+
+        /**
+         * Set camera control extension preferences
+         */
+        cameraControl.setColorTemperature(CameraControlExtension.ColorTemperature.AUTO);
+        cameraControl.setAutoExposureCompensation();
     }
 
     @Override
     public void loop() {
         super.loop();
-
-        //Telemetry won't work here, but you can still do logging
-
-        //I don't think this needs to be in loop, but I'm putting here just in case it needs to be reset every run
-        //test more later
-        Camera.Parameters p = openCVCamera.getCamera().getParameters();
-        p.setWhiteBalance("twilight");
-        p.setAutoWhiteBalanceLock(true);
-        openCVCamera.getCamera().setParameters(p);
-        Log.e("valid white: ", Arrays.toString(p.getSupportedWhiteBalance().toArray()));
-        Log.e("allow whitebalance? ", openCVCamera.getCamera().getParameters().isAutoWhiteBalanceLockSupported() + "");
-        Log.e("current whitebalance: ", openCVCamera.getCamera().getParameters().getWhiteBalance());
     }
 
     @Override
@@ -113,7 +109,7 @@ public class CameraTestVisionOpMode extends TestableVisionOpMode {
         gray = Color.rapidConvertRGBAToGRAY(rgba);
 
         //Display a Grid-system every 50 pixels
-        final int dist = 50;
+        /*final int dist = 50;
         for (int x = width/2 + 50; x<width; x+=dist)
             Drawing.drawLine(rgba, new Point(x, 0), new Point(x, height), new ColorRGBA("#88888822"), 1);
         for (int x = width/2 - 50; x>=0; x-=dist)
@@ -123,7 +119,7 @@ public class CameraTestVisionOpMode extends TestableVisionOpMode {
             Drawing.drawLine(rgba, new Point(0, y), new Point(width, y), new ColorRGBA("#88888822"), 1);
         for (int y = height/2 - 50; y>=0; y-=dist)
             Drawing.drawLine(rgba, new Point(0, y), new Point(width, y), new ColorRGBA("#88888822"), 1);
-        Drawing.drawLine(rgba, new Point(0, height/2), new Point(width, height/2), new ColorRGBA("#ffffff44"), 1);
+        Drawing.drawLine(rgba, new Point(0, height/2), new Point(width, height/2), new ColorRGBA("#ffffff44"), 1);*/
 
         //Get beacon analysis
         Beacon.BeaconAnalysis beaconAnalysis = beacon.getAnalysis();

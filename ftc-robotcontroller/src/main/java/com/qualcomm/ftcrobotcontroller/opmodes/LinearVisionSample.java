@@ -35,6 +35,7 @@ import org.lasarobotics.vision.android.Cameras;
 import org.lasarobotics.vision.detection.objects.Rectangle;
 import org.lasarobotics.vision.ftc.resq.Beacon;
 import org.lasarobotics.vision.opmode.LinearVisionOpMode;
+import org.lasarobotics.vision.opmode.extensions.CameraControlExtension;
 import org.lasarobotics.vision.util.ScreenOrientation;
 import org.opencv.core.Mat;
 import org.opencv.core.Size;
@@ -60,7 +61,7 @@ public class LinearVisionSample extends LinearVisionOpMode {
         //Wait for vision to initialize - this should be the first thing you do
         waitForVisionStart();
 
-        /* Set the camera used for detection */
+        /* Set the cameraControl used for detection */
         this.setCamera(Cameras.PRIMARY);
 
         /**
@@ -71,11 +72,12 @@ public class LinearVisionSample extends LinearVisionOpMode {
         this.setFrameSize(new Size(900, 900));
 
         /* Enable extensions. Use what you need. */
-        enableExtension(Extensions.BEACON);     //Beacon detection
-        enableExtension(Extensions.ROTATION);   //Automatic screen rotation correction
+        enableExtension(Extensions.BEACON);         //Beacon detection
+        enableExtension(Extensions.ROTATION);       //Automatic screen rotation correction
+        enableExtension(Extensions.CAMERA_CONTROL); //Manual camera control
 
         /**
-         * UNCOMMENT THIS IF you're using a SECONDARY (facing toward screen) camera
+         * UNCOMMENT THIS IF you're using a SECONDARY (facing toward screen) cameraControl
          * or when you rotate the phone, sometimes the colors swap
          **/
         //rotation.setRotationInversion(true);
@@ -92,6 +94,12 @@ public class LinearVisionSample extends LinearVisionOpMode {
          * Try them all and see what works!
          */
         beacon.setAnalysisMethod(Beacon.AnalysisMethod.FAST);
+
+        /**
+         * Set camera control extension preferences
+         */
+        cameraControl.setColorTemperature(CameraControlExtension.ColorTemperature.AUTO);
+        cameraControl.setAutoExposureCompensation();
 
         /**
          * Set analysis boundary

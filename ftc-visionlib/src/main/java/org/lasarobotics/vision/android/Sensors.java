@@ -12,7 +12,7 @@ import org.lasarobotics.vision.util.ScreenOrientation;
 import org.lasarobotics.vision.util.Vector3;
 
 /**
- * Contains methods for reading Android native sensors, other than the camera
+ * Contains methods for reading Android native sensors, other than the cameraControl
  */
 public final class Sensors implements SensorEventListener {
 
