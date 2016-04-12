@@ -25,6 +25,9 @@ public class CameraControlExtension implements VisionExtension {
     private boolean autoExpoComp = true;
 
     @SuppressWarnings("deprecation")
+    /**
+     * Approximate color temperature
+     */
     public enum ColorTemperature
     {
         AUTO(Camera.Parameters.WHITE_BALANCE_AUTO, false),
@@ -62,6 +65,9 @@ public class CameraControlExtension implements VisionExtension {
         }
     }
 
+    /**
+     * Enable automatic exposure compensation
+     */
     public void setAutoExposureCompensation()
     {
         this.expoComp = 0;
@@ -69,6 +75,17 @@ public class CameraControlExtension implements VisionExtension {
         paramsSet = false;
     }
 
+    /**
+     * Set a manual exposure compensation value
+     *
+     * Use getMinExposureCompensation() and getMaxExposureCompensation()
+     * to figure this out. If using these two variables, be sure to run this method
+     * AFTER init to ensure they are non-zero.
+     *
+     * Typically, this is a value from -12 to 12, with 12 being bright.
+     *
+     * @param expoComp Exposure compensation value
+     */
     public void setManualExposureCompensation(int expoComp)
     {
         this.expoComp = expoComp;
@@ -76,31 +93,58 @@ public class CameraControlExtension implements VisionExtension {
         paramsSet = false;
     }
 
+    /**
+     * Set a target color temperature
+     * @param colorTemp Target color temperature
+     */
     public void setColorTemperature(ColorTemperature colorTemp)
     {
         this.colorTemp = colorTemp;
         paramsSet = false;
     }
 
-
+    /**
+     * Get a minimum exposure compensation value, typically -12.
+     *
+     * Be sure to run this method AFTER init to ensure it is non-zero.
+     * @return Minimum exposure compensation value
+     */
     public int getMinExposureCompensation()
     {
         return minExpo;
     }
 
+    /**
+     * Get a maximum exposure compensation value, typically 12.
+     *
+     * Be sure to run this method AFTER init to ensure it is non-zero.
+     * @return Maximum exposure compensation value
+     */
     public int getMaxExposureCompensation()
     {
         return maxExpo;
     }
 
+    /**
+     * Get color temperature setting
+     * @return Color temperature
+     */
     public ColorTemperature getColorTemp() {
         return colorTemp;
     }
 
+    /**
+     * Get current exposure compensation
+     * @return Current exposure compensation or zero if not present
+     */
     public int getExposureCompensation() {
         return expoComp;
     }
 
+    /**
+     * Gets whether exposure compensation is automated
+     * @return True if exposure compensation is automatic, false if manual
+     */
     public boolean isAutomaticExposureCompensation()
     {
         return autoExpoComp;
@@ -114,14 +158,22 @@ public class CameraControlExtension implements VisionExtension {
         autoExpoComp = true;
     }
 
-    @SuppressWarnings("AccessStaticViaInstance")
+
     @Override
     public void loop(VisionOpMode opmode) {
-        if (paramsSet) return;
+
+    }
+
+    @Override
+    @SuppressWarnings("AccessStaticViaInstance")
+    public Mat frame(VisionOpMode opmode, Mat rgba, Mat gray) {
+        if (opmode.openCVCamera == null)
+            paramsSet = false;
+        if (paramsSet || opmode.openCVCamera == null) return rgba;
 
         Camera.Parameters p = opmode.openCVCamera.getCamera().getParameters();
 
-        //Get cameraControl info
+        //Get camera info
         this.minExpo = p.getMinExposureCompensation();
         this.maxExpo = p.getMaxExposureCompensation();
         expoComp = (int)MathUtil.coerce(minExpo, maxExpo, expoComp);
@@ -149,13 +201,10 @@ public class CameraControlExtension implements VisionExtension {
             //Sometimes, we fail to set the parameters
             e.printStackTrace();
             paramsSet = false;
-            return;
+            return rgba;
         }
         paramsSet = true;
-    }
 
-    @Override
-    public Mat frame(VisionOpMode opmode, Mat rgba, Mat gray) {
         return rgba;
     }
 

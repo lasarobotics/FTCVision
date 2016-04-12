@@ -97,6 +97,9 @@ public class LinearVisionSample extends LinearVisionOpMode {
 
         /**
          * Set camera control extension preferences
+         *
+         * Enabling manual settings will improve analysis rate and may lead to better results under
+         * tested conditions. If the environment changes, expect to change these values.
          */
         cameraControl.setColorTemperature(CameraControlExtension.ColorTemperature.AUTO);
         cameraControl.setAutoExposureCompensation();
