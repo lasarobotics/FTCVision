@@ -35,6 +35,7 @@ import org.lasarobotics.vision.android.Cameras;
 import org.lasarobotics.vision.detection.objects.Rectangle;
 import org.lasarobotics.vision.ftc.resq.Beacon;
 import org.lasarobotics.vision.opmode.LinearVisionOpMode;
+import org.lasarobotics.vision.opmode.extensions.CameraControlExtension;
 import org.lasarobotics.vision.util.ScreenOrientation;
 import org.opencv.core.Mat;
 import org.opencv.core.Size;
@@ -47,7 +48,7 @@ import org.opencv.core.Size;
  * and set its options to your preference!
  *
  * Please note that the LinearVisionOpMode is specially designed to target a particular
- * version of the FTC Robot Controler app. Changes to the app may break the LinearVisionOpMode.
+ * version of the FTC Robot Controller app. Changes to the app may break the LinearVisionOpMode.
  * Should this happen, open up an issue on GitHub. :)
  */
 public class LinearVisionSample extends LinearVisionOpMode {
@@ -71,8 +72,9 @@ public class LinearVisionSample extends LinearVisionOpMode {
         this.setFrameSize(new Size(900, 900));
 
         /* Enable extensions. Use what you need. */
-        enableExtension(Extensions.BEACON);     //Beacon detection
-        enableExtension(Extensions.ROTATION);   //Automatic screen rotation correction
+        enableExtension(Extensions.BEACON);         //Beacon detection
+        enableExtension(Extensions.ROTATION);       //Automatic screen rotation correction
+        enableExtension(Extensions.CAMERA_CONTROL); //Manual camera control
 
         /**
          * UNCOMMENT THIS IF you're using a SECONDARY (facing toward screen) camera
@@ -92,6 +94,15 @@ public class LinearVisionSample extends LinearVisionOpMode {
          * Try them all and see what works!
          */
         beacon.setAnalysisMethod(Beacon.AnalysisMethod.FAST);
+
+        /**
+         * Set camera control extension preferences
+         *
+         * Enabling manual settings will improve analysis rate and may lead to better results under
+         * tested conditions. If the environment changes, expect to change these values.
+         */
+        cameraControl.setColorTemperature(CameraControlExtension.ColorTemperature.AUTO);
+        cameraControl.setAutoExposureCompensation();
 
         /**
          * Set analysis boundary

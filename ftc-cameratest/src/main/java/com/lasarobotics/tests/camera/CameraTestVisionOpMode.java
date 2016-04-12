@@ -1,10 +1,14 @@
 package com.lasarobotics.tests.camera;
 
+import android.hardware.Camera;
+import android.util.Log;
+
 import org.lasarobotics.vision.android.Cameras;
 import org.lasarobotics.vision.detection.objects.Rectangle;
 import org.lasarobotics.vision.ftc.resq.Beacon;
 import org.lasarobotics.vision.image.Drawing;
 import org.lasarobotics.vision.opmode.TestableVisionOpMode;
+import org.lasarobotics.vision.opmode.extensions.CameraControlExtension;
 import org.lasarobotics.vision.util.ScreenOrientation;
 import org.lasarobotics.vision.util.color.Color;
 import org.lasarobotics.vision.util.color.ColorGRAY;
@@ -13,6 +17,8 @@ import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
+
+import java.util.Arrays;
 
 /**
  * Vision OpMode run by the Camera Test Activity
@@ -35,8 +41,9 @@ public class CameraTestVisionOpMode extends TestableVisionOpMode {
         this.setFrameSize(new Size(900, 900));
 
         /* Enable extensions. Use what you need. */
-        enableExtension(Extensions.BEACON);     //Beacon detection
-        enableExtension(Extensions.ROTATION);   //Automatic screen rotation correction
+        enableExtension(Extensions.BEACON);         //Beacon detection
+        enableExtension(Extensions.ROTATION);       //Automatic screen rotation correction
+        enableExtension(Extensions.CAMERA_CONTROL); //Manual camera control
 
         /**
          * UNCOMMENT THIS IF you're using a SECONDARY (facing toward screen) camera
@@ -63,13 +70,20 @@ public class CameraTestVisionOpMode extends TestableVisionOpMode {
          * (Although it doesn't harm anything if you leave it on, only slows down image processing)
          */
         beacon.enableDebug();
+
+        /**
+         * Set camera control extension preferences
+         *
+         * Enabling manual settings will improve analysis rate and may lead to better results under
+         * tested conditions. If the environment changes, expect to change these values.
+         */
+        cameraControl.setColorTemperature(CameraControlExtension.ColorTemperature.AUTO);
+        cameraControl.setAutoExposureCompensation();
     }
 
     @Override
     public void loop() {
         super.loop();
-
-        //Telemetry won't work here, but you can still do logging
     }
 
     @Override
@@ -97,6 +111,19 @@ public class CameraTestVisionOpMode extends TestableVisionOpMode {
         rgba = super.frame(rgba, gray);
         gray = Color.rapidConvertRGBAToGRAY(rgba);
 
+        //Display a Grid-system every 50 pixels
+        /*final int dist = 50;
+        for (int x = width/2 + 50; x<width; x+=dist)
+            Drawing.drawLine(rgba, new Point(x, 0), new Point(x, height), new ColorRGBA("#88888822"), 1);
+        for (int x = width/2 - 50; x>=0; x-=dist)
+            Drawing.drawLine(rgba, new Point(x, 0), new Point(x, height), new ColorRGBA("#88888822"), 1);
+        Drawing.drawLine(rgba, new Point(width/2, 0), new Point(width/2, height), new ColorRGBA("#ffffff44"), 1);
+        for (int y = height/2 + 50; y<height; y+=dist)
+            Drawing.drawLine(rgba, new Point(0, y), new Point(width, y), new ColorRGBA("#88888822"), 1);
+        for (int y = height/2 - 50; y>=0; y-=dist)
+            Drawing.drawLine(rgba, new Point(0, y), new Point(width, y), new ColorRGBA("#88888822"), 1);
+        Drawing.drawLine(rgba, new Point(0, height/2), new Point(width, height/2), new ColorRGBA("#ffffff44"), 1);*/
+
         //Get beacon analysis
         Beacon.BeaconAnalysis beaconAnalysis = beacon.getAnalysis();
 
@@ -110,6 +137,9 @@ public class CameraTestVisionOpMode extends TestableVisionOpMode {
 
         //Display FPS
         Drawing.drawText(rgba, "FPS: " + fps.getFPSString(), new Point(0, 24), 1.0f, new ColorRGBA("#ffffff"));
+
+        //Display Beacon Center
+        Drawing.drawText(rgba, "Center: " + beacon.getAnalysis().getCenter().toString(), new Point(0, 78), 1.0f, new ColorRGBA("#ffffff"));
 
         //Display analysis method
         Drawing.drawText(rgba, beacon.getAnalysisMethod().toString() + " Analysis",

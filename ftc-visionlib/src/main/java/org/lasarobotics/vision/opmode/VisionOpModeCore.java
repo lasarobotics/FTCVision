@@ -24,7 +24,7 @@ import org.opencv.core.Size;
  */
 abstract class VisionOpModeCore extends OpMode implements CameraBridgeViewBase.CvCameraViewListener2 {
     private static final int initialMaxSize = 1200;
-    static JavaCameraView openCVCamera;
+    public static JavaCameraView openCVCamera;
     private static boolean initialized = false;
     private static boolean openCVInitialized = false;
     public int width, height;
