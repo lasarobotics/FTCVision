@@ -7,13 +7,22 @@ import org.lasarobotics.vision.util.color.ColorHSV;
  */
 public abstract class Constants {
     //BEACON
-    public static double BEACON_WIDTH = 21.8;     //entire beacon width
-    public static double BEACON_HEIGHT = 14.5;    //entire beacon height
-    public static double BEACON_WH_RATIO = BEACON_WIDTH / BEACON_HEIGHT; //entire beacon ratio
+    public static final double BEACON_WIDTH = 21.8;     //entire beacon width in cm
+    public static final double BEACON_HEIGHT = 14.5;    //entire beacon height in cm
+    public static final double BEACON_WH_RATIO = BEACON_WIDTH / BEACON_HEIGHT; //entire beacon ratio
+    public static final double BEACON_BUTTON_HEIGHT = 2; //Height of button in cm
     public static ColorHSV COLOR_RED_LOWER = new ColorHSV((int) (300.0 / 360.0 * 255.0), (int) (0.090 * 255.0), (int) (0.500 * 255.0));
     public static ColorHSV COLOR_RED_UPPER = new ColorHSV((int) (400.0 / 360.0 * 255.0), 255, 255);
     public static ColorHSV COLOR_BLUE_LOWER = new ColorHSV((int) (170.0 / 360.0 * 255.0), (int) (0.090 * 255.0), (int) (0.500 * 255.0));
     public static ColorHSV COLOR_BLUE_UPPER = new ColorHSV((int) (270.0 / 360.0 * 255.0), 255, 255);
+
+    //UNITS
+    public static final double CM_FT_SCALE = 1.0/30.48; //Conversion ratio for cm to ft
+
+    //DISTANCE LINEARIZATION
+    public static double CAMERA_HOR_VANGLE = 0; //Horizontal view angle of the camera
+    public static double CAMERA_VERT_VANGLE = 0; //Vertical view angle of the camera
+    public static final double MAX_DIST_FROM_BEACON = 10; //Maximum possible distance from beacon in feet
 
     //FAST
     static final double ELLIPSE_SCORE_REQ = 10.0;
@@ -23,7 +32,6 @@ public abstract class Constants {
     static final double FAST_HEIGHT_DELTA_FACTOR = 4.0;
     static final double FAST_CONFIDENCE_NORM = 5.0;
     static final double FAST_CONFIDENCE_ROUNDNESS = 2.0;
-    static final double FAST_ELLIPSE_MISMATCH_DIVISOR = 3.0;
 
     //COMPLEX
     static final double CONFIDENCE_DIVISOR = 800;

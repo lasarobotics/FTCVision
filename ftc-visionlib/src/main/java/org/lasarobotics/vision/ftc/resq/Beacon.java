@@ -1,5 +1,7 @@
 package org.lasarobotics.vision.ftc.resq;
 
+import android.annotation.SuppressLint;
+
 import org.lasarobotics.vision.detection.ColorBlobDetector;
 import org.lasarobotics.vision.detection.objects.Ellipse;
 import org.lasarobotics.vision.detection.objects.Rectangle;
@@ -276,6 +278,7 @@ public final class Beacon {
         private final Rectangle location;
         private final Ellipse leftButton;
         private final Ellipse rightButton;
+        private final Size imageSize;
 
         //TODO Color and CONFIDENCE should make up the results
 
@@ -291,25 +294,28 @@ public final class Beacon {
             this.location = new Rectangle();
             this.leftButton = null;
             this.rightButton = null;
+            this.imageSize = null;
         }
 
-        BeaconAnalysis(BeaconColor left, BeaconColor right, Rectangle location, double confidence) {
+        BeaconAnalysis(BeaconColor left, BeaconColor right, Rectangle location, double confidence, Size imageSize) {
             this.left = left;
             this.right = right;
             this.confidence = confidence;
             this.location = location;
             this.leftButton = null;
             this.rightButton = null;
+            this.imageSize = imageSize;
         }
 
         BeaconAnalysis(BeaconColor left, BeaconColor right, Rectangle location, double confidence,
-                       Ellipse leftButton, Ellipse rightButton) {
+                       Ellipse leftButton, Ellipse rightButton, Size imageSize) {
             this.left = left;
             this.right = right;
             this.confidence = confidence;
             this.location = location;
             this.leftButton = leftButton;
             this.rightButton = rightButton;
+            this.imageSize = imageSize;
         }
 
         /**
@@ -425,6 +431,38 @@ public final class Beacon {
         public String getConfidenceString() {
             final DecimalFormat format = new DecimalFormat("0.000");
             return !Double.isNaN(confidence) ? format.format(MathUtil.coerce(0, 1, getConfidence()) * 100.0f) + "%" : "N/A";
+        }
+
+        /**
+         * Get approximate distance from beacon in feet
+         * @return Distance in feet (for approximation only)
+         */
+        public double getDistanceApprox()
+        {
+            if (imageSize == null)
+                return 0.0;
+
+            try {
+                double tempRadius;
+                if (leftButton != null && rightButton != null) {
+                    double buttonHeight = leftButton.height() + rightButton.height() / 2;
+                    tempRadius = Constants.BEACON_BUTTON_HEIGHT / (2 * Math.tan((Constants.CAMERA_VERT_VANGLE * buttonHeight) / (2 * imageSize.height)));
+                } else
+                    tempRadius = Constants.BEACON_HEIGHT / (2 * Math.tan((Constants.CAMERA_VERT_VANGLE * location.height()) / (2 * imageSize.height)));
+                //if (sameBeacon)
+                //    tempRadius = Math.abs(tempRadius - distance) * Constants.CM_FT_SCALE < Constants.DIST_CHANGE_THRESHOLD ? tempRadius : distance;
+                return (tempRadius * Constants.CM_FT_SCALE < Constants.MAX_DIST_FROM_BEACON) ? tempRadius : 0.0;
+            } catch (Exception e)
+            {
+                e.printStackTrace();
+                return 0.0;
+            }
+        }
+
+        @SuppressLint("DefaultLocale")
+        public String getDistanceApproxString()
+        {
+            return String.format("%.6f ft", getDistanceApprox());
         }
 
         /**
