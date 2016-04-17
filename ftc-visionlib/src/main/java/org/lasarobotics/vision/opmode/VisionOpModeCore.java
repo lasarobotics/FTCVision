@@ -55,7 +55,6 @@ abstract class VisionOpModeCore extends OpMode implements CameraBridgeViewBase.C
      * @param camera Camera to use
      */
     public void setCamera(Cameras camera) {
-        setCameraInfo(camera.getID());
         if (openCVCamera == null)
             return;
         openCVCamera.disableView();
@@ -101,18 +100,6 @@ abstract class VisionOpModeCore extends OpMode implements CameraBridgeViewBase.C
         }
 
         return new Size(width, height);
-    }
-
-    private void setCameraInfo(int cameraID)
-    {
-        android.hardware.Camera c = android.hardware.Camera.open(cameraID);
-        android.hardware.Camera.Parameters pam = c.getParameters();
-        Constants.CAMERA_HOR_VANGLE = pam.getHorizontalViewAngle() * Math.PI/180.0;
-        Constants.CAMERA_VERT_VANGLE = pam.getVerticalViewAngle() * Math.PI/180.0;
-
-        //Release the camera for later use
-        c.unlock();
-        c.release();
     }
 
     /**

@@ -1,10 +1,14 @@
 package org.lasarobotics.vision.ftc.resq;
 
 import android.annotation.SuppressLint;
+import android.hardware.Camera;
+
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.lasarobotics.vision.detection.ColorBlobDetector;
 import org.lasarobotics.vision.detection.objects.Ellipse;
 import org.lasarobotics.vision.detection.objects.Rectangle;
+import org.lasarobotics.vision.opmode.VisionOpMode;
 import org.lasarobotics.vision.util.MathUtil;
 import org.lasarobotics.vision.util.ScreenOrientation;
 import org.lasarobotics.vision.util.color.ColorHSV;
@@ -442,6 +446,18 @@ public final class Beacon {
             if (imageSize == null)
                 return 0.0;
 
+            if (Constants.CAMERA_VERT_VANGLE == 0) {
+                Camera camera = VisionOpMode.openCVCamera.getCamera();
+                if (camera == null) return 0.0;
+                try {
+                    updateCameraInfo(camera);
+                } catch(Exception e)
+                {
+                    e.printStackTrace();
+                    return 0.0;
+                }
+            }
+
             try {
                 double tempRadius;
                 if (leftButton != null && rightButton != null) {
@@ -451,12 +467,20 @@ public final class Beacon {
                     tempRadius = Constants.BEACON_HEIGHT / (2 * Math.tan((Constants.CAMERA_VERT_VANGLE * location.height()) / (2 * imageSize.height)));
                 //if (sameBeacon)
                 //    tempRadius = Math.abs(tempRadius - distance) * Constants.CM_FT_SCALE < Constants.DIST_CHANGE_THRESHOLD ? tempRadius : distance;
-                return (tempRadius * Constants.CM_FT_SCALE < Constants.MAX_DIST_FROM_BEACON) ? tempRadius : 0.0;
+                return (tempRadius * Constants.CM_FT_SCALE < Constants.MAX_DIST_FROM_BEACON) ? tempRadius * Constants.CM_FT_SCALE : 0.0;
             } catch (Exception e)
             {
                 e.printStackTrace();
                 return 0.0;
             }
+        }
+
+        private void updateCameraInfo(android.hardware.Camera camera)
+        {
+            if (camera == null) return;
+            android.hardware.Camera.Parameters pam = camera.getParameters();
+            Constants.CAMERA_HOR_VANGLE = pam.getHorizontalViewAngle() * Math.PI/180.0;
+            Constants.CAMERA_VERT_VANGLE = pam.getVerticalViewAngle() * Math.PI/180.0;
         }
 
         @SuppressLint("DefaultLocale")
