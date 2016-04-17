@@ -5,8 +5,10 @@ import org.lasarobotics.vision.detection.objects.Ellipse;
 import org.lasarobotics.vision.detection.objects.Rectangle;
 import org.lasarobotics.vision.util.MathUtil;
 import org.lasarobotics.vision.util.ScreenOrientation;
+import org.lasarobotics.vision.util.color.ColorHSV;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
+import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 
 import java.text.DecimalFormat;
@@ -55,7 +57,7 @@ public final class Beacon {
      * @return Beacon analysis class
      */
     public BeaconAnalysis analyzeFrame(Mat img, Mat gray) {
-        return analyzeFrame(this.redDetector, this.blueDetector, img, gray, ScreenOrientation.DEFAULT);
+        return analyzeFrame(this.redDetector, this.blueDetector, img, gray, ScreenOrientation.LANDSCAPE);
     }
 
     /**
@@ -129,10 +131,57 @@ public final class Beacon {
     /**
      * Reset analysis bounds to contain the entirety of a frame size
      *
-     * @param frameSize
+     * @param frameSize Frame size
      */
     public void resetAnalysisBounds(Size frameSize) {
         this.bounds = new Rectangle(new Point(frameSize.width / 2, frameSize.height / 2), frameSize.width, frameSize.height);
+    }
+
+    /**
+     * Set color tolerance for red beacon detector
+     * @param tolerance A color tolerance value from -1 to 1, where 0 is unmodified, 1 is maximum
+     *                  tolerance (more colors detect as red), -1 is minimum (fery vew colors detect
+     *                  as red)
+     */
+    public void setColorToleranceRed(double tolerance)
+    {
+        //Reset the detector first
+        redDetector = new ColorBlobDetector(Constants.COLOR_RED_LOWER, Constants.COLOR_RED_UPPER);
+        double[] center = redDetector.getColorCenter().getScalar().val;
+        double[] radius = redDetector.getColorRadius().val;
+        radius = getColorWithTolerance(radius, tolerance);
+        Scalar lower = new Scalar(center[0] - radius[0], center[1] - radius[1], center[2] - radius[2]);
+        Scalar upper = new Scalar(center[0] + radius[0], center[1] + radius[1], center[2] + radius[2]);
+        redDetector = new ColorBlobDetector(new ColorHSV(lower), new ColorHSV(upper));
+    }
+
+    /**
+     * Set color tolerance for blue beacon detector
+     * @param tolerance A color tolerance value from -1 to 1, where 0 is unmodified, 1 is maximum
+     *                  tolerance (more colors detect as blue), -1 is minimum (fery vew colors detect
+     *                  as blue)
+     */
+    public void setColorToleranceBlue(double tolerance)
+    {
+        //Reset the detector first
+        blueDetector = new ColorBlobDetector(Constants.COLOR_BLUE_LOWER, Constants.COLOR_BLUE_UPPER);
+        double[] center = blueDetector.getColorCenter().getScalar().val;
+        double[] radius = blueDetector.getColorRadius().val;
+        radius = getColorWithTolerance(radius, tolerance);
+        Scalar lower = new Scalar(center[0] - radius[0], center[1] - radius[1], center[2] - radius[2]);
+        Scalar upper = new Scalar(center[0] + radius[0], center[1] + radius[1], center[2] + radius[2]);
+        blueDetector = new ColorBlobDetector(new ColorHSV(lower), new ColorHSV(upper));
+    }
+
+    private static double[] getColorWithTolerance(double[] color, double tolerance)
+    {
+        //tolerance is 1/x
+        tolerance = 1/((MathUtil.coerce(-1.0, 1.0, -tolerance)/1.25)+1);
+        //scale the color by the tolerance base 4
+        color[0] = (0.25 * color[0] * tolerance) + (0.75 * color[0]);    //hue
+        color[1] = (0.50 * color[1] * tolerance) + (0.50 * color[1]);    //saturation
+        color[2] = (0.75 * color[2] * tolerance) + (0.25 * color[2]);    //value
+        return color;
     }
 
     /**

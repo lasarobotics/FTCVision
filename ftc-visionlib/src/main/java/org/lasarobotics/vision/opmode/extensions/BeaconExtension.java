@@ -1,9 +1,12 @@
 package org.lasarobotics.vision.opmode.extensions;
 
+import org.lasarobotics.vision.detection.ColorBlobDetector;
 import org.lasarobotics.vision.detection.objects.Rectangle;
 import org.lasarobotics.vision.ftc.resq.Beacon;
+import org.lasarobotics.vision.ftc.resq.Constants;
 import org.lasarobotics.vision.opmode.VisionOpMode;
 import org.lasarobotics.vision.util.ScreenOrientation;
+import org.lasarobotics.vision.util.color.ColorHSV;
 import org.opencv.core.Mat;
 
 /**
@@ -37,6 +40,28 @@ public class BeaconExtension implements VisionExtension {
      */
     public void setAnalysisMethod(Beacon.AnalysisMethod method) {
         beacon.setAnalysisMethod(method);
+    }
+
+    /**
+     * Set color tolerance for red beacon detector
+     * @param tolerance A color tolerance value from -1 to 1, where 0 is unmodified, 1 is maximum
+     *                  tolerance (more colors detect as red), -1 is minimum (fery vew colors detect
+     *                  as red)
+     */
+    public void setColorToleranceRed(double tolerance)
+    {
+        beacon.setColorToleranceRed(tolerance);
+    }
+
+    /**
+     * Set color tolerance for blue beacon detector
+     * @param tolerance A color tolerance value from -1 to 1, where 0 is unmodified, 1 is maximum
+     *                  tolerance (more colors detect as blue), -1 is minimum (fery vew colors detect
+     *                  as blue)
+     */
+    public void setColorToleranceBlue(double tolerance)
+    {
+        beacon.setColorToleranceBlue(tolerance);
     }
 
     /**
