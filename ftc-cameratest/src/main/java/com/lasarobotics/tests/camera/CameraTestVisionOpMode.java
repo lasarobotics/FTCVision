@@ -159,6 +159,9 @@ public class CameraTestVisionOpMode extends TestableVisionOpMode {
         Drawing.drawText(rgba, beacon.getAnalysisMethod().toString() + " Analysis",
                 new Point(width - 300, 40), 1.0f, new ColorRGBA("#FFC107"));
 
+        //Get approximate distance
+        Drawing.drawText(rgba, "Distance: " + beacon.getAnalysis().getDistanceApproxString(), new Point(0, 120), 1.0f, new ColorRGBA("#ffffff"), Drawing.Anchor.BOTTOMLEFT);
+
         //Display rotation sensor compensation
         Drawing.drawText(rgba, "Rot: " + rotation.getRotationCompensationAngle()
                 + " (" + sensors.getScreenOrientation() + ")", new Point(0, 50), 1.0f, new ColorRGBA("#ffffff"), Drawing.Anchor.BOTTOMLEFT); //"#2196F3"

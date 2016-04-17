@@ -8,8 +8,10 @@ import android.widget.LinearLayout;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
+import org.lasarobotics.vision.android.Camera;
 import org.lasarobotics.vision.android.Cameras;
 import org.lasarobotics.vision.android.Sensors;
+import org.lasarobotics.vision.ftc.resq.Constants;
 import org.lasarobotics.vision.util.FPS;
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase;

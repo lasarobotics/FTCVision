@@ -133,9 +133,9 @@ class BeaconAnalyzer {
                 Constants.FAST_CONFIDENCE_NORM, 0.0);
 
         if (leftIsRed)
-            return new Beacon.BeaconAnalysis(Beacon.BeaconColor.RED, Beacon.BeaconColor.BLUE, centerRect, confidence);
+            return new Beacon.BeaconAnalysis(Beacon.BeaconColor.RED, Beacon.BeaconColor.BLUE, centerRect, confidence, img.size());
         else
-            return new Beacon.BeaconAnalysis(Beacon.BeaconColor.BLUE, Beacon.BeaconColor.RED, centerRect, confidence);
+            return new Beacon.BeaconAnalysis(Beacon.BeaconColor.BLUE, Beacon.BeaconColor.RED, centerRect, confidence, img.size());
     }
 
     static Beacon.BeaconAnalysis analyze_FAST(ColorBlobDetector detectorRed, ColorBlobDetector detectorBlue,
@@ -496,10 +496,10 @@ class BeaconAnalyzer {
 
         if (leftIsRed)
             return new Beacon.BeaconAnalysis(Beacon.BeaconColor.RED, Beacon.BeaconColor.BLUE, boundingBox, confidence
-                    , leftEllipse, rightEllipse);
+                    , leftEllipse, rightEllipse, img.size());
         else
             return new Beacon.BeaconAnalysis(Beacon.BeaconColor.BLUE, Beacon.BeaconColor.RED, boundingBox, confidence
-                    , leftEllipse, rightEllipse);
+                    , leftEllipse, rightEllipse, img.size());
     }
 
     private static List<BeaconScoring.ScoredEllipse> filterEllipses(List<BeaconScoring.ScoredEllipse> ellipses) {
@@ -619,7 +619,7 @@ class BeaconAnalyzer {
         //If we don't have a main light for one of the colors, we know both colors are the same
         //TODO we should re-filter the contours by size to ensure that we get at least a decent size
         if (bestRed == null && bestBlue == null)
-            return new Beacon.BeaconAnalysis(Beacon.BeaconColor.UNKNOWN, Beacon.BeaconColor.UNKNOWN, new Rectangle(), 0.0f);
+            return new Beacon.BeaconAnalysis(Beacon.BeaconColor.UNKNOWN, Beacon.BeaconColor.UNKNOWN, new Rectangle(), 0.0f, img.size());
 
         //TODO rotate image based on camera rotation here
 
@@ -818,8 +818,8 @@ class BeaconAnalyzer {
 
         //If this is not true, then neither part of the beacon is highly lit
         if (leftIsRed)
-            return new Beacon.BeaconAnalysis(Beacon.BeaconColor.RED, Beacon.BeaconColor.BLUE, boundingBox, confidence, leftEllipse, rightEllipse);
+            return new Beacon.BeaconAnalysis(Beacon.BeaconColor.RED, Beacon.BeaconColor.BLUE, boundingBox, confidence, leftEllipse, rightEllipse, img.size());
         else
-            return new Beacon.BeaconAnalysis(Beacon.BeaconColor.BLUE, Beacon.BeaconColor.RED, boundingBox, confidence, leftEllipse, rightEllipse);
+            return new Beacon.BeaconAnalysis(Beacon.BeaconColor.BLUE, Beacon.BeaconColor.RED, boundingBox, confidence, leftEllipse, rightEllipse, img.size());
     }
 }
