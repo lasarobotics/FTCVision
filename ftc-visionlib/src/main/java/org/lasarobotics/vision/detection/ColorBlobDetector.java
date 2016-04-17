@@ -121,6 +121,32 @@ public class ColorBlobDetector {
     }
 
     /**
+     * Get the color center of the detector (average of min and max values)
+     * @return Color center as ColorHSV
+     */
+    public ColorHSV getColorCenter()
+    {
+        //if (isRadiusSet)
+        //    return (ColorHSV)color.convertColor(ColorSpace.HSV);
+        double[] l = lowerBound.getScalar().val;
+        double[] u = upperBound.getScalar().val;
+        Scalar mean = new Scalar((l[0]+u[0])/2,(l[1]+u[1])/2,(l[2]+u[2])/2);
+        return new ColorHSV(mean);
+    }
+
+    /**
+     * Get color radius from center color
+     * @return Color radius as Scalar (in HSV form)
+     */
+    public Scalar getColorRadius()
+    {
+        double[] l = lowerBound.getScalar().val;
+        double[] u = upperBound.getScalar().val;
+        double[] mean = getColorCenter().getScalar().val;
+        return new Scalar(Math.abs(mean[0]-l[0]),Math.abs(mean[1]-l[1]),Math.abs(mean[2]-l[2]));
+    }
+
+    /**
      * Process an rgba image. The results can be drawn on retrieved later.
      * This method does not modify the image.
      * @param rgbaImage An RGBA image matrix

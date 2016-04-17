@@ -59,6 +59,13 @@ public class CameraTestVisionOpMode extends TestableVisionOpMode {
         beacon.setAnalysisMethod(Beacon.AnalysisMethod.FAST);
 
         /**
+         * Set color tolerances
+         * 0 is default, -1 is minimum and 1 is maximum tolerance
+         */
+        beacon.setColorToleranceRed(0);
+        beacon.setColorToleranceBlue(0);
+
+        /**
          * Debug drawing
          * Enable this only if you're running test app - otherwise, you should turn it off
          * (Although it doesn't harm anything if you leave it on, only slows down image processing)

@@ -85,6 +85,13 @@ public class BasicVisionSample extends VisionOpMode {
         beacon.setAnalysisMethod(Beacon.AnalysisMethod.FAST);
 
         /**
+         * Set color tolerances
+         * 0 is default, -1 is minimum and 1 is maximum tolerance
+         */
+        beacon.setColorToleranceRed(0);
+        beacon.setColorToleranceBlue(0);
+
+        /**
          * Set analysis boundary
          * You should comment this to use the entire screen and uncomment only if
          * you want faster analysis at the cost of not using the entire frame.
