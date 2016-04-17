@@ -64,11 +64,15 @@ public class ManualVisionSample extends ManualVisionOpMode {
     public void init() {
         super.init();
 
-        //Initialize all detectors here
+        /* Initialize all detectors here */
         detectorRed = new ColorBlobDetector(lowerBoundRed, upperBoundRed);
         detectorBlue = new ColorBlobDetector(lowerBoundBlue, upperBoundBlue);
 
-          /* Set the camera used for detection */
+        /**
+         * Set the camera used for detection
+         * PRIMARY = Front-facing, larger camera
+         * SECONDARY = Screen-facing, "selfie" camera :D
+         **/
         this.setCamera(Cameras.PRIMARY);
 
         /**
@@ -100,7 +104,7 @@ public class ManualVisionSample extends ManualVisionOpMode {
             //Prepare beacon instance
             Beacon beacon = new Beacon(Beacon.AnalysisMethod.FAST);
             //You may need to change the Screen Orientation to your preference
-            ScreenOrientation orientation = ScreenOrientation.LANDSCAPE_WEST;
+            ScreenOrientation orientation = ScreenOrientation.LANDSCAPE_REVERSE;
             //Analyze the frame and return the analysis
             colorAnalysis = beacon.analyzeFrame(detectorBlue, detectorRed, rgba, gray,
                     orientation);

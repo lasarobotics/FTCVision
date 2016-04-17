@@ -1,6 +1,12 @@
 package org.lasarobotics.vision.opmode.extensions;
 
+import android.app.Activity;
+import android.content.pm.ActivityInfo;
+import android.provider.Settings;
+import android.util.Log;
+
 import org.lasarobotics.vision.android.Sensors;
+import org.lasarobotics.vision.android.Util;
 import org.lasarobotics.vision.image.Transform;
 import org.lasarobotics.vision.opmode.VisionOpMode;
 import org.lasarobotics.vision.util.ScreenOrientation;
@@ -12,8 +18,59 @@ import org.opencv.core.Mat;
 public class ImageRotationExtension implements VisionExtension {
 
     private final Sensors sensors = new Sensors();
-    private ScreenOrientation defaultOrientation = ScreenOrientation.LANDSCAPE;
     private boolean isInverted = false;
+
+    public void enableAutoRotate()
+    {
+        setAutoRotateState(true);
+    }
+
+    public void disableAutoRotate()
+    {
+        setAutoRotateState(false);
+    }
+
+    private void setAutoRotateState(boolean enabled)
+    {
+        Settings.System.putInt( Util.getContext().getContentResolver(), Settings.System.ACCELEROMETER_ROTATION, enabled ? 1 : 0);
+    }
+
+    public void setActivityOrientationAutoRotate()
+    {
+        setActivityOrientation(ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR);
+    }
+
+    public void setActivityOrientationFixed(ScreenOrientation orientation)
+    {
+        switch(orientation) {
+            case LANDSCAPE:
+            default:
+                setActivityOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+                break;
+            case PORTRAIT:
+                setActivityOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+                break;
+            case LANDSCAPE_REVERSE:
+                setActivityOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
+                break;
+            case PORTRAIT_REVERSE:
+                setActivityOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT);
+                break;
+        }
+    }
+
+    private void setActivityOrientation(int state)
+    {
+        try {
+            Activity activity = Util.getActivity();
+            activity.setRequestedOrientation(state);
+        } catch (IllegalArgumentException e)
+        {
+            Log.e("ScreenOrientation", "Looks like screen orientation changed and the app crashed!\r\n" +
+                    "It's likely you are using an incompatible Activity or a TestableVisionOpMode.\r\n" +
+                    "Refrain from setting screen orientation settings to fix this issue.");
+        }
+    }
 
     /**
      * Get the screen orientation of the current activity
@@ -30,27 +87,6 @@ public class ImageRotationExtension implements VisionExtension {
     }
 
     /**
-     * Get the "zero" orientation
-     * This is the rotation in which the program starts - likely this is either LANDSCAPE or PORTRAIT
-     * You can set this with setDefaultOrientation()
-     *
-     * @return The "zero" orientation
-     */
-    private ScreenOrientation getDefaultOrientation() {
-        return ScreenOrientation.getFromAngle((isInverted ? -1 : 1) * defaultOrientation.getAngle());
-    }
-
-    /**
-     * Set the "zero" orientation
-     * This is the rotation in which the program starts - likely this is either LANDSCAPE or PORTRAIT
-     *
-     * @param orientation Default or "zero" orientation
-     */
-    public void setDefaultOrientation(ScreenOrientation orientation) {
-        this.defaultOrientation = orientation;
-    }
-
-    /**
      * Get the screen orientation as returned by Android sensors
      * Use getRotationCompensationAngle() instead if you want to correct for the screen rotation
      * for purposes such as drawing to the screen.
@@ -59,10 +95,6 @@ public class ImageRotationExtension implements VisionExtension {
      */
     public ScreenOrientation getScreenOrientationActual() {
         return sensors.getScreenOrientation();
-    }
-
-    private double getRotationCompensationAngleUnbiased() {
-        return (isInverted ? -1 : 1) * sensors.getScreenOrientationCompensation();
     }
 
     /**
@@ -76,8 +108,11 @@ public class ImageRotationExtension implements VisionExtension {
      * Android API drawing orientation.
      */
     public double getRotationCompensationAngle() {
-        return (isInverted ? -1 : 1) * ScreenOrientation.getFromAngle(sensors.getScreenOrientationCompensation()
-                - defaultOrientation.getAngle()).getAngle();
+        return (isInverted ? -1 : 1) * ScreenOrientation.getFromAngle(sensors.getScreenOrientationCompensation()).getAngle();
+    }
+
+    private double getRotationCompensationAngleUnbiased() {
+        return (isInverted ? -1 : 1) * sensors.getScreenOrientationCompensation();
     }
 
     /**
@@ -99,7 +134,7 @@ public class ImageRotationExtension implements VisionExtension {
      *
      * @param inverted True to rotate counterclockwise, false for clockwise
      */
-    public void setRotationInversion(boolean inverted) {
+    public void setIsUsingSecondaryCamera(boolean inverted) {
         isInverted = inverted;
     }
 
@@ -125,12 +160,8 @@ public class ImageRotationExtension implements VisionExtension {
 
     @Override
     public Mat frame(VisionOpMode opmode, Mat rgba, Mat gray) {
-        double angle = getDefaultOrientation().getAngle();
-        if (angle != 0) {
-            Transform.rotate(rgba, angle);
-            opmode.width = rgba.width();
-            opmode.height = rgba.height();
-        }
+        if (isInverted)
+            Transform.flip(rgba, Transform.FlipType.FLIP_ACROSS_X);
         return rgba;
     }
 

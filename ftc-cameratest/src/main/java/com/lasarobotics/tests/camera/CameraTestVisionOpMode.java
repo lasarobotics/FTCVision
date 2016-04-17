@@ -30,33 +30,27 @@ public class CameraTestVisionOpMode extends TestableVisionOpMode {
     public void init() {
         super.init();
 
-        /* Set the camera used for detection */
+        /**
+         * Set the camera used for detection
+         * PRIMARY = Front-facing, larger camera
+         * SECONDARY = Screen-facing, "selfie" camera :D
+         **/
         this.setCamera(Cameras.PRIMARY);
 
         /**
-         * Set the frame size
+         * Set the maximum frame size
          * Larger = sometimes more accurate, but also much slower
          * After this method runs, it will set the "width" and "height" of the frame
          **/
         this.setFrameSize(new Size(900, 900));
 
-        /* Enable extensions. Use what you need. */
+        /**
+         * Enable extensions. Use what you need.
+         * If you turn on the BEACON extension, it's best to turn on ROTATION too.
+         */
         enableExtension(Extensions.BEACON);         //Beacon detection
         enableExtension(Extensions.ROTATION);       //Automatic screen rotation correction
         enableExtension(Extensions.CAMERA_CONTROL); //Manual camera control
-
-        /**
-         * UNCOMMENT THIS IF you're using a SECONDARY (facing toward screen) camera
-         * or when you rotate the phone, sometimes the colors swap
-         **/
-        //rotation.setRotationInversion(true);
-
-        /**
-         * Set this to the default orientation of your program (it's probably PORTRAIT)
-         * Also, it's recommended to turn OFF Auto Rotate
-         * If you can't get any readings or swap red and blue, try changing this
-         */
-        rotation.setDefaultOrientation(ScreenOrientation.LANDSCAPE);
 
         /**
          * Set the beacon analysis method
@@ -70,6 +64,19 @@ public class CameraTestVisionOpMode extends TestableVisionOpMode {
          * (Although it doesn't harm anything if you leave it on, only slows down image processing)
          */
         beacon.enableDebug();
+
+        /**
+         * Set the rotation parameters of the screen
+         *
+         * First, tell the extension whether you are using a secondary camera
+         * (or in some devices, a front-facing camera that reverses some colors).
+         *
+         * For TestableVisionOpModes, changing other settings may break the app. See other examples
+         * for normal OpModes.
+         */
+        rotation.setIsUsingSecondaryCamera(false);
+        rotation.disableAutoRotate();
+        rotation.setActivityOrientationFixed(ScreenOrientation.LANDSCAPE);
 
         /**
          * Set camera control extension preferences
@@ -146,7 +153,7 @@ public class CameraTestVisionOpMode extends TestableVisionOpMode {
                 new Point(width - 300, 40), 1.0f, new ColorRGBA("#FFC107"));
 
         //Display rotation sensor compensation
-        Drawing.drawText(rgba, "Rot: " + sensors.getScreenOrientationCompensation()
+        Drawing.drawText(rgba, "Rot: " + rotation.getRotationCompensationAngle()
                 + " (" + sensors.getScreenOrientation() + ")", new Point(0, 50), 1.0f, new ColorRGBA("#ffffff"), Drawing.Anchor.BOTTOMLEFT); //"#2196F3"
 
         return rgba;

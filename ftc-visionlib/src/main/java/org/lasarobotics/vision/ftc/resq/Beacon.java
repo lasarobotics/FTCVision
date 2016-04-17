@@ -55,7 +55,7 @@ public final class Beacon {
      * @return Beacon analysis class
      */
     public BeaconAnalysis analyzeFrame(Mat img, Mat gray) {
-        return analyzeFrame(this.redDetector, this.blueDetector, img, gray, ScreenOrientation.DEFAULT);
+        return analyzeFrame(this.redDetector, this.blueDetector, img, gray, ScreenOrientation.LANDSCAPE);
     }
 
     /**

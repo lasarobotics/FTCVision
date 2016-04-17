@@ -112,9 +112,9 @@ public abstract class VisionOpMode extends VisionOpModeCore {
      * List of Vision Extensions
      */
     public enum Extensions {
-        BEACON(4, beacon),      //low priority
-        CAMERA_CONTROL(2, cameraControl),
-        ROTATION(1, rotation);  //high priority - image must rotate prior to analysis
+        BEACON(2, beacon),
+        CAMERA_CONTROL(1, cameraControl), //high priority
+        ROTATION(4, rotation); //low priority
 
         final int id;
         final VisionExtension instance;

@@ -3,6 +3,7 @@ package com.lasarobotics.tests.camera;
 import android.os.Bundle;
 import android.view.WindowManager;
 
+import org.lasarobotics.vision.opmode.TestableVisionOpMode;
 import org.lasarobotics.vision.opmode.VisionEnabledActivity;
 
 public class CameraTestActivity extends VisionEnabledActivity {
@@ -10,6 +11,8 @@ public class CameraTestActivity extends VisionEnabledActivity {
     public CameraTestActivity() {
         super();
     }
+
+    TestableVisionOpMode opmode;
 
     /**
      * Called when the activity is first created.
@@ -21,6 +24,13 @@ public class CameraTestActivity extends VisionEnabledActivity {
 
         setContentView(R.layout.activity_cameratest);
 
-        initializeVision(R.id.surfaceView, new CameraTestVisionOpMode());
+        opmode = new CameraTestVisionOpMode();
+        initializeVision(R.id.surfaceView, opmode);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        opmode.stop();
     }
 }

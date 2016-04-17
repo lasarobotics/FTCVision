@@ -61,7 +61,11 @@ public class LinearVisionSample extends LinearVisionOpMode {
         //Wait for vision to initialize - this should be the first thing you do
         waitForVisionStart();
 
-        /* Set the camera used for detection */
+        /**
+         * Set the camera used for detection
+         * PRIMARY = Front-facing, larger camera
+         * SECONDARY = Screen-facing, "selfie" camera :D
+         **/
         this.setCamera(Cameras.PRIMARY);
 
         /**
@@ -71,38 +75,19 @@ public class LinearVisionSample extends LinearVisionOpMode {
          **/
         this.setFrameSize(new Size(900, 900));
 
-        /* Enable extensions. Use what you need. */
+        /**
+         * Enable extensions. Use what you need.
+         * If you turn on the BEACON extension, it's best to turn on ROTATION too.
+         */
         enableExtension(Extensions.BEACON);         //Beacon detection
         enableExtension(Extensions.ROTATION);       //Automatic screen rotation correction
         enableExtension(Extensions.CAMERA_CONTROL); //Manual camera control
-
-        /**
-         * UNCOMMENT THIS IF you're using a SECONDARY (facing toward screen) camera
-         * or when you rotate the phone, sometimes the colors swap
-         **/
-        //rotation.setRotationInversion(true);
-
-        /**
-         * Set this to the default orientation of your program (it's probably PORTRAIT)
-         * Also, it's recommended to turn OFF Auto Rotate
-         * If you can't get any readings or swap red and blue, try changing this
-         */
-        rotation.setDefaultOrientation(ScreenOrientation.PORTRAIT);
 
         /**
          * Set the beacon analysis method
          * Try them all and see what works!
          */
         beacon.setAnalysisMethod(Beacon.AnalysisMethod.FAST);
-
-        /**
-         * Set camera control extension preferences
-         *
-         * Enabling manual settings will improve analysis rate and may lead to better results under
-         * tested conditions. If the environment changes, expect to change these values.
-         */
-        cameraControl.setColorTemperature(CameraControlExtension.ColorTemperature.AUTO);
-        cameraControl.setAutoExposureCompensation();
 
         /**
          * Set analysis boundary
@@ -113,6 +98,33 @@ public class LinearVisionSample extends LinearVisionOpMode {
          * This will not work on some methods, such as COMPLEX
          **/
         //beacon.setAnalysisBounds(new Rectangle(new Point(width / 2, height / 2), width - 200, 200));
+
+        /**
+         * Set the rotation parameters of the screen
+         * If colors are being flipped or output appears consistently incorrect, try changing these.
+         *
+         * First, tell the extension whether you are using a secondary camera
+         * (or in some devices, a front-facing camera that reverses some colors).
+         *
+         * It's a good idea to disable global auto rotate in Android settings. You can do this
+         * by calling disableAutoRotate() or enableAutoRotate().
+         *
+         * It's also a good idea to force the phone into a specific orientation (or auto rotate) by
+         * calling either setActivityOrientationAutoRotate() or setActivityOrientationFixed(). If
+         * you don't, the camera reader may have problems reading the current orientation.
+         */
+        rotation.setIsUsingSecondaryCamera(false);
+        rotation.disableAutoRotate();
+        rotation.setActivityOrientationAutoRotate();
+
+        /**
+         * Set camera control extension preferences
+         *
+         * Enabling manual settings will improve analysis rate and may lead to better results under
+         * tested conditions. If the environment changes, expect to change these values.
+         */
+        cameraControl.setColorTemperature(CameraControlExtension.ColorTemperature.AUTO);
+        cameraControl.setAutoExposureCompensation();
 
         //Wait for the match to begin
         waitForStart();

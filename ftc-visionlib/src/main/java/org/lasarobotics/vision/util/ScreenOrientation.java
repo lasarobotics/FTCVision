@@ -9,7 +9,7 @@ public enum ScreenOrientation {
     LANDSCAPE(0),
     DEFAULT(0),
     PORTRAIT(90),
-    LANDSCAPE_WEST(180),
+    LANDSCAPE_REVERSE(180),
     PORTRAIT_REVERSE(270);
 
     private final double angle;
@@ -29,7 +29,7 @@ public enum ScreenOrientation {
     }
 
     private static ScreenOrientation getFromAngle(int angle) {
-        while (angle > 360)
+        while (angle >= 360)
             angle -= 360;
         while (angle < 0)
             angle += 360;
@@ -41,7 +41,7 @@ public enum ScreenOrientation {
             case 90:
                 return PORTRAIT;
             case 180:
-                return LANDSCAPE_WEST;
+                return LANDSCAPE_REVERSE;
             case 270:
                 return PORTRAIT_REVERSE;
             default:
@@ -61,7 +61,7 @@ public enum ScreenOrientation {
             case Surface.ROTATION_90:
                 return PORTRAIT;
             case Surface.ROTATION_180:
-                return LANDSCAPE_WEST;
+                return LANDSCAPE_REVERSE;
             case Surface.ROTATION_270:
                 return PORTRAIT_REVERSE;
             default:

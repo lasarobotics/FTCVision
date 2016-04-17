@@ -1,11 +1,12 @@
 package org.lasarobotics.vision.android;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.util.Log;
+import android.view.Surface;
 import android.view.WindowManager;
 
 import org.lasarobotics.vision.util.ScreenOrientation;
@@ -44,8 +45,6 @@ public final class Sensors implements SensorEventListener {
      * Resume reading sensors after reading was stopped
      */
     public void resume() {
-        //if (activated)
-        //    return;
         activated = true;
         mSensorManager.registerListener(this, mAccelerometer, READ_SPEED);
         mSensorManager.registerListener(this, mMagneticField, READ_SPEED);
@@ -55,8 +54,6 @@ public final class Sensors implements SensorEventListener {
      * Pause sensor reading
      */
     public void stop() {
-        //if (!activated)
-        //    return;
         mSensorManager.unregisterListener(this, mAccelerometer);
         mSensorManager.unregisterListener(this, mMagneticField);
         activated = false;
@@ -131,12 +128,31 @@ public final class Sensors implements SensorEventListener {
         return ScreenOrientation.getFromSurface(rotation);
     }
 
+    public ScreenOrientation getDeviceDefaultOrientation() {
+
+        WindowManager windowManager =  (WindowManager) Util.getContext().getSystemService(Context.WINDOW_SERVICE);
+
+        Configuration config = Util.getContext().getResources().getConfiguration();
+
+        int rotation = windowManager.getDefaultDisplay().getRotation();
+
+        if ( ((rotation == Surface.ROTATION_0 || rotation == Surface.ROTATION_180) &&
+                config.orientation == Configuration.ORIENTATION_LANDSCAPE)
+                || ((rotation == Surface.ROTATION_90 || rotation == Surface.ROTATION_270) &&
+                config.orientation == Configuration.ORIENTATION_PORTRAIT)) {
+            return ScreenOrientation.LANDSCAPE;
+        } else {
+            return ScreenOrientation.PORTRAIT;
+        }
+    }
+
     /**
      * Get the screen orientation compensation, in degrees, between the activity and the target screen orientation
      * @return Sensor orientation - Activity orientation + Zero orientation (typically 90 degrees)
      */
     public double getScreenOrientationCompensation() {
-        return getScreenOrientation().getAngle() - getActivityScreenOrientation().getAngle() + ScreenOrientation.PORTRAIT.getAngle();
+        //BUGFIX reverse orientation for primary cameras
+        return -getScreenOrientation().getAngle();
     }
 
     private void updateScreenOrientation() {
@@ -160,14 +176,14 @@ public final class Sensors implements SensorEventListener {
 
         if (Math.abs(pitch) <= PITCH_TOLERANCE)
             if (roll > 0.0f)
-                current = ScreenOrientation.LANDSCAPE_WEST;
+                current = ScreenOrientation.LANDSCAPE_REVERSE;
             else
                 current = ScreenOrientation.LANDSCAPE;
         else if (Math.abs(pitch) >= PITCH_TOLERANCE_HIGH)
             if (pitch > 0.0f)
-                current = ScreenOrientation.PORTRAIT;
-            else
                 current = ScreenOrientation.PORTRAIT_REVERSE;
+            else
+                current = ScreenOrientation.PORTRAIT;
 
         screenOrientation = current;
     }
