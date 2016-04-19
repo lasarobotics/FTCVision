@@ -2,7 +2,7 @@
   <img src="https://raw.githubusercontent.com/lasarobotics/ftcvision/img/logo.png?raw=true" alt="FTC-Sees!"/>
 </p>
 
-# FTC Vision Library [![Build Status](https://travis-ci.org/lasarobotics/FTCVision.svg?branch=master)](https://travis-ci.org/lasarobotics/FTCVision) [![Documentation Status](https://img.shields.io/badge/documentation-0.9.0%20(up%20to%20date)-blue.svg)](http://ftcvision.lasarobotics.org)
+# FTC Vision Library [![Build Status](https://travis-ci.org/lasarobotics/FTCVision.svg?branch=master)](https://travis-ci.org/lasarobotics/FTCVision) [![Documentation Status](https://img.shields.io/badge/documentation-1.0.0%20(up%20to%20date)-blue.svg)](http://ftcvision.lasarobotics.org)
 Computer Vision library for FTC based on OpenCV, featuring **beacon color and position detection**, as well as an easy-to-use `VisionOpMode` format and many additional detection features planned in the future.
 
 ## Installing from Scratch
@@ -39,9 +39,26 @@ compile project(':opencv-java')
 - Before running the app for the first time, install the "OpenCV Manager" from the Google Play Store to enable Vision processing.
 - Run and test the code! Let us know if you encounter any difficulties.
 - You can now write your custom `VisionOpMode`!
+- *(Optional)* Add Vision testing app (see pictures of it below!) by copying all files from `ftc-cameratest` into the root of your project. Then, add `include ':ftc-cameratest'` to your `settings.gradle` in the root of your project. To run the camera test app, click the green "Sync Project with Gradle Files" button to update your project, then select `ftc-cameratest` from the dropdown.
+
+## Installing via Git Submodule *(advanced)*
+When installing via Git submodule, **every person cloning your repo will need to run `git submodule init` and `git subomodule update` for every new clone.** However, you also get the advantage of not copying all the files yourself and you can update the project to the latest version easily by navigating inside the `ftc-vision` folder then running `git pull`.
+
+- Inside the root of your project directory, run
+```
+git submodule init
+git submodule add https://github.com/lasarobotics/ftcvision ftc-vision
+```
+- Follow the guide "Installing into Existing Project" starting from the third bullet point. Please note that since everything will be in the `ftc-vision` folder and thus directories will need to be modified. Once you get to the step that modifies `settings.gradle`, add the following lines:
+```
+project(':opencv-java').projectDir = new File('ftc-vision/opencv-java')
+project(':ftc-visionlib').projectDir = new File('ftc-vision/ftc-visionlib')
+project(':ftc-cameratest').projectDir = new File('ftc-vision/ftc-cameratest') <- only if you want to enable the camera testing app
+```
+- You can now write your custom `VisionOpMode`!
 
 ## Status
-This library is currently under insanely active development. We're in the **Beta** phase right now. If you have any questions or would like to help, send a note to `smo-key` (contact info on profile). Thank you!
+This library is complete as of World Championship 2016. If you have any questions or would like to help, send a note to `smo-key` (contact info on profile) or open an issue. Thank you!
 
 ## Documentation [![Documentation Status](https://img.shields.io/badge/documentation-0.9.0%20(up%20to%20date)-blue.svg)](http://ftcvision.lasarobotics.org)
 
@@ -49,9 +66,12 @@ Documentation for the stable library is available at http://ftcvision.lasaroboti
 
 ## Does it work?
 
-**Yes!** FTCVision can detect a beacon 0.5-4 feet away with 65% accuracy in 0.3 seconds. Here are some pictures. :smiley:
+**Yes!** FTCVision can detect a beacon 0.5-4 feet away with 90% accuracy in 0.2 seconds. Here are some pictures. :smiley:
 
 #### Accuracy Test
+![Can it detect the beacon?](https://raw.githubusercontent.com/lasarobotics/ftcvision/img/test4.png)
+
+#### Old Accuracy Test
 ![Can it detect the beacon?](https://raw.githubusercontent.com/lasarobotics/ftcvision/img/test2.png)
 
 #### Distance Test
@@ -66,7 +86,12 @@ Documentation for the stable library is available at http://ftcvision.lasaroboti
 #### Analysis Methods
 ![FAST vs. COMPLEX](https://raw.githubusercontent.com/lasarobotics/ftcvision/img/methods.png)
 
+- The **FAST** method analyzes frames at around 5 FPS. It looks for the primary colors in the image and correlates these to locate a beacon.
+- The **COMPLEX** method analyzes frames at around 2-4 FPS. It uses statistical analysis to determine the beacon's location.
+- Additionally, a **REALTIME** method exists that retrieves frames and analyzes them as fast as possible (up to 15 FPS).
+
 ## Goals
+- To make it easy for teams to use the power of OpenCV on the Android platform
 - Locate the lit target (the thing with two buttons) within the camera viewfield
 - Move the robot to the lit target, while identifying the color status of the target
 - Locate the button of the target color and activate it
@@ -75,4 +100,3 @@ Documentation for the stable library is available at http://ftcvision.lasaroboti
 - Beacon located successfully with automated environmental and orientation tuning.
 - A competition-proof `OpMode` scheme created so that the robot controller does not need to be modified to use the app.
 - Now supports nearly every phone since Android 4.2, including both the ZTE Speed and Moto G.
-- All initial goals complete - now tweaking beacon detection and preparing for something more...
