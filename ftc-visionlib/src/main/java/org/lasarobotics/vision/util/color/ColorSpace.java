@@ -32,6 +32,7 @@ public enum ColorSpace {
 
     /**
      * Each conversions array contains a list of int[], one for each other ColorSpace to convert to.
+     * <p/>
      * Each int[] contains a list of operations and sizes, as such:
      * { operation, input scalar dimension, output scalar dimension, ... }
      */

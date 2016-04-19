@@ -1,10 +1,6 @@
 package com.lasarobotics.tests.camera;
 
-import android.hardware.Camera;
-import android.util.Log;
-
 import org.lasarobotics.vision.android.Cameras;
-import org.lasarobotics.vision.detection.objects.Rectangle;
 import org.lasarobotics.vision.ftc.resq.Beacon;
 import org.lasarobotics.vision.image.Drawing;
 import org.lasarobotics.vision.opmode.TestableVisionOpMode;
@@ -16,9 +12,6 @@ import org.lasarobotics.vision.util.color.ColorRGBA;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Size;
-import org.opencv.imgproc.Imgproc;
-
-import java.util.Arrays;
 
 /**
  * Vision OpMode run by the Camera Test Activity

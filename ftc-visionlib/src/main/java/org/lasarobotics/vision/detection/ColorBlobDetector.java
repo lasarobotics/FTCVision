@@ -60,6 +60,7 @@ public class ColorBlobDetector {
 
     /**
      * Create a color blob detector searching for a color between two bounds
+     *
      * @param colorMinimum Minimum bound in HSV
      * @param colorMaximum Maximum bound in HSV
      */
@@ -110,7 +111,34 @@ public class ColorBlobDetector {
     }
 
     /**
+     * Get the color center of the detector (average of min and max values)
+     *
+     * @return Color center as ColorHSV
+     */
+    public ColorHSV getColorCenter() {
+        //if (isRadiusSet)
+        //    return (ColorHSV)color.convertColor(ColorSpace.HSV);
+        double[] l = lowerBound.getScalar().val;
+        double[] u = upperBound.getScalar().val;
+        Scalar mean = new Scalar((l[0] + u[0]) / 2, (l[1] + u[1]) / 2, (l[2] + u[2]) / 2);
+        return new ColorHSV(mean);
+    }
+
+    /**
+     * Get color radius from center color
+     *
+     * @return Color radius as Scalar (in HSV form)
+     */
+    public Scalar getColorRadius() {
+        double[] l = lowerBound.getScalar().val;
+        double[] u = upperBound.getScalar().val;
+        double[] mean = getColorCenter().getScalar().val;
+        return new Scalar(Math.abs(mean[0] - l[0]), Math.abs(mean[1] - l[1]), Math.abs(mean[2] - l[2]));
+    }
+
+    /**
      * Set color radius to a new radius
+     *
      * @param radius Color radius in HSV
      */
     public void setColorRadius(ColorHSV radius) {
@@ -121,34 +149,9 @@ public class ColorBlobDetector {
     }
 
     /**
-     * Get the color center of the detector (average of min and max values)
-     * @return Color center as ColorHSV
-     */
-    public ColorHSV getColorCenter()
-    {
-        //if (isRadiusSet)
-        //    return (ColorHSV)color.convertColor(ColorSpace.HSV);
-        double[] l = lowerBound.getScalar().val;
-        double[] u = upperBound.getScalar().val;
-        Scalar mean = new Scalar((l[0]+u[0])/2,(l[1]+u[1])/2,(l[2]+u[2])/2);
-        return new ColorHSV(mean);
-    }
-
-    /**
-     * Get color radius from center color
-     * @return Color radius as Scalar (in HSV form)
-     */
-    public Scalar getColorRadius()
-    {
-        double[] l = lowerBound.getScalar().val;
-        double[] u = upperBound.getScalar().val;
-        double[] mean = getColorCenter().getScalar().val;
-        return new Scalar(Math.abs(mean[0]-l[0]),Math.abs(mean[1]-l[1]),Math.abs(mean[2]-l[2]));
-    }
-
-    /**
      * Process an rgba image. The results can be drawn on retrieved later.
      * This method does not modify the image.
+     *
      * @param rgbaImage An RGBA image matrix
      */
     public void process(Mat rgbaImage) {
@@ -196,7 +199,8 @@ public class ColorBlobDetector {
 
     /**
      * Draw contours matched by the blob detector
-     * @param img Image to draw on
+     *
+     * @param img   Image to draw on
      * @param color Color to draw the contours in
      */
     public void drawContours(Mat img, Color color) {
@@ -205,8 +209,9 @@ public class ColorBlobDetector {
 
     /**
      * Draw contours matched by the blob detector
-     * @param img Image to draw on
-     * @param color Color to draw the contours in
+     *
+     * @param img       Image to draw on
+     * @param color     Color to draw the contours in
      * @param thickness Contour thickness
      */
     public void drawContours(Mat img, Color color, int thickness) {
@@ -215,6 +220,7 @@ public class ColorBlobDetector {
 
     /**
      * Get a list of contours after running process()
+     *
      * @return Processed list of contours
      */
     public List<Contour> getContours() {

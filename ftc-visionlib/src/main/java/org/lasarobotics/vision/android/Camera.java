@@ -18,6 +18,7 @@ public class Camera {
 
     /**
      * Instantiate an instance of a camera
+     * <p/>
      * WARNING! Each camera can only be instantiated in once place at a time - be sure to release() when you are done.
      *
      * @param camera Camera ID
@@ -37,6 +38,7 @@ public class Camera {
 
     /**
      * Get the number of cameras available
+     *
      * @return Number of native cameras
      */
     public static int getCameraCount() {
@@ -45,6 +47,7 @@ public class Camera {
 
     /**
      * Get an instance of a camera
+     *
      * @return The native camera instance
      */
     public android.hardware.Camera getCamera() {
@@ -72,6 +75,7 @@ public class Camera {
 
     /**
      * Unlock and release the camera instance.
+     * <p/>
      * After calling this method, destory the Camera instance and recreate it if you need to use it again
      */
     public void release() {
@@ -80,6 +84,7 @@ public class Camera {
 
     /**
      * Get the internal ID of the camera
+     *
      * @return The camera's ID
      */
     public int getID() {
@@ -88,6 +93,7 @@ public class Camera {
 
     /**
      * Tests whether the camera exists (i.e. is not null)
+     *
      * @return True if camera is not null, false otherwise
      */
     public boolean doesExist() {
@@ -96,6 +102,7 @@ public class Camera {
 
     /**
      * Get the largest frame size supported by the camera
+     *
      * @return Largest frame size in pixels
      */
     public Size getLargestFrameSize() {
@@ -105,6 +112,7 @@ public class Camera {
 
     /**
      * Get the best frame size for real-time video
+     *
      * @return Best frame size, generally significantly smaller than the largest frame size
      */
     public Size getBestFrameSize() {
@@ -114,6 +122,7 @@ public class Camera {
 
     /**
      * Get all frame sizes supported by the camera
+     *
      * @return A list of supported frame sizes
      */
     public List<Size> getAllFrameSizes() {

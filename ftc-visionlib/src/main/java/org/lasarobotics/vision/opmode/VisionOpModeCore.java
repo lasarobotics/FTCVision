@@ -40,8 +40,7 @@ abstract class VisionOpModeCore extends OpMode implements CameraBridgeViewBase.C
         return initialized;
     }
 
-    private void error(String message)
-    {
+    private void error(String message) {
         Log.e("FTCVision", message);
         telemetry.addData("Vision Status", message);
     }
@@ -146,8 +145,7 @@ abstract class VisionOpModeCore extends OpMode implements CameraBridgeViewBase.C
                 Log.e("OpenCV", "Asynchronous initialization failed!");
                 error("Could not initialize OpenCV!\r\n" +
                         "Did you install the OpenCV Manager from the Play Store?");
-            }
-            else {
+            } else {
                 Log.d("OpenCV", "Asynchronous initialization succeeded!");
             }
         } else {

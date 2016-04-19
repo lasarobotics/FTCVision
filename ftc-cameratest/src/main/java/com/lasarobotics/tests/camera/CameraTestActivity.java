@@ -8,11 +8,11 @@ import org.lasarobotics.vision.opmode.VisionEnabledActivity;
 
 public class CameraTestActivity extends VisionEnabledActivity {
 
+    private TestableVisionOpMode opmode;
+
     public CameraTestActivity() {
         super();
     }
-
-    private TestableVisionOpMode opmode;
 
     /**
      * Called when the activity is first created.

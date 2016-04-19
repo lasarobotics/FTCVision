@@ -35,6 +35,7 @@ public class FPS {
 
     /**
      * Get the frames per second count, as a double (prefer using getFPSString() instead).
+     *
      * @return The FPS, as a double in frames/second.
      */
     private double getFPS() {
@@ -53,7 +54,7 @@ public class FPS {
 
     /**
      * Pause the FPS counter.
-     *
+     * <p/>
      * Call this when you're not going to use it for a while
      */
     public void pause() {

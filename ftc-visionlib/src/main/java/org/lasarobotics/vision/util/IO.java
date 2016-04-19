@@ -58,6 +58,7 @@ class IO {
 
     /**
      * Seperate a string into lines split by line endings
+     *
      * @param data Single string
      * @return Lines
      */

@@ -2,9 +2,7 @@ package org.lasarobotics.vision.android;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.app.ActivityManager;
 import android.app.Application;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -15,7 +13,6 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.HashMap;
 
 /**
  * Android utilities
@@ -44,6 +41,7 @@ public final class Util {
      *
      * @return the main Activity
      */
+    @SuppressWarnings("unchecked")
     @TargetApi(Build.VERSION_CODES.KITKAT)
     public static Activity getActivity() {
         /*ActivityManager am = (ActivityManager)getContext().getSystemService(Context.ACTIVITY_SERVICE);

@@ -50,9 +50,20 @@ public final class Beacon {
         this.bounds = bounds;
     }
 
+    private static double[] getColorWithTolerance(double[] color, double tolerance) {
+        //tolerance is 1/x
+        tolerance = 1 / ((MathUtil.coerce(-1.0, 1.0, -tolerance) / 1.25) + 1);
+        //scale the color by the tolerance base 4
+        color[0] = (0.25 * color[0] * tolerance) + (0.75 * color[0]);    //hue
+        color[1] = (0.50 * color[1] * tolerance) + (0.50 * color[1]);    //saturation
+        color[2] = (0.75 * color[2] * tolerance) + (0.25 * color[2]);    //value
+        return color;
+    }
+
     /**
      * Analyze the current frame using the selected analysis method
-     * @param img Image to analyze
+     *
+     * @param img  Image to analyze
      * @param gray Grayscale image to analyze
      * @return Beacon analysis class
      */
@@ -74,11 +85,12 @@ public final class Beacon {
 
     /**
      * Analyze the current frame using the selected analysis method, using custom color blob detectors
-     * @param redDetector Red color blob detector
+     *
+     * @param redDetector  Red color blob detector
      * @param blueDetector Blue color blob detector
-     * @param img Image to analyze
-     * @param gray Grayscale image to analyze
-     * @param orientation Screen orientation compensation, given by the android.Sensors class
+     * @param img          Image to analyze
+     * @param gray         Grayscale image to analyze
+     * @param orientation  Screen orientation compensation, given by the android.Sensors class
      * @return Beacon analysis class
      */
     public BeaconAnalysis analyzeFrame(ColorBlobDetector redDetector, ColorBlobDetector blueDetector, Mat img, Mat gray, ScreenOrientation orientation) {
@@ -111,17 +123,18 @@ public final class Beacon {
 
     /**
      * Set analysis method
+     *
      * @param method AnalysisMethod selection
      */
     public void setAnalysisMethod(AnalysisMethod method) {
         this.method = method;
     }
 
-
     /**
      * Set a rectangle to contain the analyzed area
      * An orange box will be shown containing the analyzed area
      * Only currently works on the FAST method
+     *
      * @param bounds Rectangle containing the frame area to analyze
      */
     public void setAnalysisBounds(Rectangle bounds) {
@@ -139,12 +152,12 @@ public final class Beacon {
 
     /**
      * Set color tolerance for red beacon detector
+     *
      * @param tolerance A color tolerance value from -1 to 1, where 0 is unmodified, 1 is maximum
      *                  tolerance (more colors detect as red), -1 is minimum (fery vew colors detect
      *                  as red)
      */
-    public void setColorToleranceRed(double tolerance)
-    {
+    public void setColorToleranceRed(double tolerance) {
         //Reset the detector first
         redDetector = new ColorBlobDetector(Constants.COLOR_RED_LOWER, Constants.COLOR_RED_UPPER);
         double[] center = redDetector.getColorCenter().getScalar().val;
@@ -157,12 +170,12 @@ public final class Beacon {
 
     /**
      * Set color tolerance for blue beacon detector
+     *
      * @param tolerance A color tolerance value from -1 to 1, where 0 is unmodified, 1 is maximum
      *                  tolerance (more colors detect as blue), -1 is minimum (fery vew colors detect
      *                  as blue)
      */
-    public void setColorToleranceBlue(double tolerance)
-    {
+    public void setColorToleranceBlue(double tolerance) {
         //Reset the detector first
         blueDetector = new ColorBlobDetector(Constants.COLOR_BLUE_LOWER, Constants.COLOR_BLUE_UPPER);
         double[] center = blueDetector.getColorCenter().getScalar().val;
@@ -171,17 +184,6 @@ public final class Beacon {
         Scalar lower = new Scalar(center[0] - radius[0], center[1] - radius[1], center[2] - radius[2]);
         Scalar upper = new Scalar(center[0] + radius[0], center[1] + radius[1], center[2] + radius[2]);
         blueDetector = new ColorBlobDetector(new ColorHSV(lower), new ColorHSV(upper));
-    }
-
-    private static double[] getColorWithTolerance(double[] color, double tolerance)
-    {
-        //tolerance is 1/x
-        tolerance = 1/((MathUtil.coerce(-1.0, 1.0, -tolerance)/1.25)+1);
-        //scale the color by the tolerance base 4
-        color[0] = (0.25 * color[0] * tolerance) + (0.75 * color[0]);    //hue
-        color[1] = (0.50 * color[1] * tolerance) + (0.50 * color[1]);    //saturation
-        color[2] = (0.75 * color[2] * tolerance) + (0.25 * color[2]);    //value
-        return color;
     }
 
     /**
@@ -224,6 +226,7 @@ public final class Beacon {
          * the correct beacon at long distances, but requires that the entire beacon be in view.
          */
         COMPLEX;
+
         public String toString() {
             switch (this) {
                 case REALTIME:
@@ -331,13 +334,13 @@ public final class Beacon {
         }
 
 
-        public boolean hasEllipses()
-        {
+        public boolean hasEllipses() {
             return (leftButton != null && rightButton != null);
         }
 
         /**
          * Get the bounding box surrounding the beacon
+         *
          * @return Rectangle
          */
         public Rectangle getBoundingBox() {
@@ -346,6 +349,7 @@ public final class Beacon {
 
         /**
          * Get the top left corner of the beacon
+         *
          * @return Point
          */
         public Point getTopLeft() {
@@ -354,6 +358,7 @@ public final class Beacon {
 
         /**
          * Get the bottomr ight corner of the beacon
+         *
          * @return Point
          */
         public Point getBottomRight() {
@@ -362,6 +367,7 @@ public final class Beacon {
 
         /**
          * Get the center of the beacon
+         *
          * @return Point
          */
         public Point getCenter() {
@@ -388,6 +394,7 @@ public final class Beacon {
 
         /**
          * Get the color of the left side of the beacon
+         *
          * @return Beacon color state
          */
         public BeaconColor getStateLeft() {
@@ -396,6 +403,7 @@ public final class Beacon {
 
         /**
          * Get the color of the right side of the beacon
+         *
          * @return Beacon color state
          */
         public BeaconColor getStateRight() {
@@ -404,10 +412,11 @@ public final class Beacon {
 
         /**
          * Get a confidence value that the beacon analysis is correct
-         *
+         * <p/>
          * This is an approximation, but can be used carefully to filter out random noise.
-         *
+         * <p/>
          * Also, only certain analysis methods provide a confidence - this will then return zero.
+         *
          * @return Confidence, if applicable - zero if not applicable
          */
         public double getConfidence() {
@@ -416,10 +425,11 @@ public final class Beacon {
 
         /**
          * Get a confidence string that the beacon analysis is correct
-         *
+         * <p/>
          * This is an approximation, but can be used carefully to filter out random noise.
-         *
+         * <p/>
          * Also, only certain analysis methods provide a confidence - this will then return zero.
+         *
          * @return Confidence, if applicable - "N/A" if not applicable
          */
         public String getConfidenceString() {
@@ -429,6 +439,7 @@ public final class Beacon {
 
         /**
          * Test whether if the left side has a known color
+         *
          * @return True if the left side is NOT UNKNOWN
          */
         public boolean isLeftKnown() {
@@ -437,6 +448,7 @@ public final class Beacon {
 
         /**
          * Test whether if the left side is blueDetector
+         *
          * @return True if the left side is BLUE or BLUE_BRIGHT
          */
         public boolean isLeftBlue() {
@@ -445,6 +457,7 @@ public final class Beacon {
 
         /**
          * Test whether if the left side is red
+         *
          * @return True if the left side is RED or RED_BRIGHT
          */
         public boolean isLeftRed() {
@@ -453,6 +466,7 @@ public final class Beacon {
 
         /**
          * Test whether if the right side has a known color
+         *
          * @return True if the right side is NOT UNKNOWN
          */
         public boolean isRightKnown() {
@@ -461,14 +475,16 @@ public final class Beacon {
 
         /**
          * Test whether if the right side is blueDetector
+         *
          * @return True if the right side is BLUE or BLUE_BRIGHT
-        */
+         */
         public boolean isRightBlue() {
             return (right == BeaconColor.BLUE_BRIGHT || right == BeaconColor.BLUE);
         }
 
         /**
          * Test whether if the right side is red
+         *
          * @return True if the right side is RED or RED_BRIGHT
          */
         public boolean isRightRed() {
@@ -477,6 +493,7 @@ public final class Beacon {
 
         /**
          * Test whether the beacon is found
+         *
          * @return isLeftKnown() && isRightKnown()
          */
         public boolean isBeaconFound() {
@@ -485,8 +502,9 @@ public final class Beacon {
 
         /**
          * Test whether the beacon is fully lit
-         *
+         * <p/>
          * Note that in this revision, brightness is not supported
+         *
          * @return True if both sides have a bright component
          */
         public boolean isBeaconFullyLit() {
@@ -496,6 +514,7 @@ public final class Beacon {
 
         /**
          * Get a string representing the colors of the beacon
+         *
          * @return left, right
          */
         public String getColorString() {
@@ -504,6 +523,7 @@ public final class Beacon {
 
         /**
          * Get the location of the beacon as a string
+         *
          * @return Center of the beacon
          */
         public String getLocationString() {

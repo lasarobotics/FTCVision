@@ -31,6 +31,7 @@ public class Ellipse extends Detectable implements Comparable<Ellipse> {
 
     /**
      * Get the OpenCV rectangle which circumscribes the ellipse
+     *
      * @return OpenCV rectange
      */
     public RotatedRect getRect() {
@@ -39,6 +40,7 @@ public class Ellipse extends Detectable implements Comparable<Ellipse> {
 
     /**
      * Get the size of the ellipse (ignoring inclination)
+     *
      * @return Size of the ellipse
      */
     public Size size() {
@@ -51,6 +53,7 @@ public class Ellipse extends Detectable implements Comparable<Ellipse> {
 
     /**
      * Offset the object, translating it by a specific offset point
+     *
      * @param offset Point to offset by, e.g. (1, 0) would move object 1 px right
      */
     @Override
@@ -65,6 +68,7 @@ public class Ellipse extends Detectable implements Comparable<Ellipse> {
 
     /**
      * Get the angle of inclination of the ellipse
+     *
      * @return Angle of inclination
      */
     public double angle() {
@@ -73,6 +77,7 @@ public class Ellipse extends Detectable implements Comparable<Ellipse> {
 
     /**
      * Get the center of the ellipse
+     *
      * @return Center of the ellipse as a point
      */
     public Point center() {
@@ -106,6 +111,7 @@ public class Ellipse extends Detectable implements Comparable<Ellipse> {
 
     /**
      * Get the major axis of the ellipse
+     *
      * @return 2a
      */
     private double majorAxis() {
@@ -114,6 +120,7 @@ public class Ellipse extends Detectable implements Comparable<Ellipse> {
 
     /**
      * Get the minor axis of the ellipse
+     *
      * @return 2b
      */
     private double minorAxis() {
@@ -122,6 +129,7 @@ public class Ellipse extends Detectable implements Comparable<Ellipse> {
 
     /**
      * Get the semi-major axis of the ellipse
+     *
      * @return a
      */
     private double semiMajorAxis() {
@@ -130,6 +138,7 @@ public class Ellipse extends Detectable implements Comparable<Ellipse> {
 
     /**
      * Get the semi-minor axis of the ellipse
+     *
      * @return b
      */
     private double semiMinorAxis() {
@@ -193,8 +202,7 @@ public class Ellipse extends Detectable implements Comparable<Ellipse> {
     }
 
     @SuppressLint("DefaultLocale")
-    public String getLocationString()
-    {
+    public String getLocationString() {
         return String.format("(%.0f, %.0f)", rect.center.x, rect.center.y);
     }
 

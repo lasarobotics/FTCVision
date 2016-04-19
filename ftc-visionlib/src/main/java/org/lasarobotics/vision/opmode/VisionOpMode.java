@@ -58,6 +58,7 @@ public abstract class VisionOpMode extends VisionOpModeCore {
 
     /**
      * Disable a particular Vision Extension
+     *
      * @param extension Extension ID
      */
     private void disableExtension(Extensions extension) {

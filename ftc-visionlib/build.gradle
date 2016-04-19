@@ -29,6 +29,5 @@ dependencies {
     compile(name: 'RobotCore-release', ext: 'aar')
     compile project(':opencv-java')
     compile 'org.jetbrains:annotations:13.0'
-    compile files('libs/zxing-core-3.2.1.jar')
 }
 

@@ -129,7 +129,7 @@ class BeaconAnalyzer {
         double dy = Math.abs((lCenter.y - rCenter.y) / averageHeight * Constants.FAST_HEIGHT_DELTA_FACTOR);
         double dArea = Math.sqrt(leftMostContour.area() / rightMostContour.area());
         double confidence = MathUtil.normalPDFNormalized(
-                MathUtil.distance(MathUtil.distance(ratioError, dy), dArea)/Constants.FAST_CONFIDENCE_ROUNDNESS,
+                MathUtil.distance(MathUtil.distance(ratioError, dy), dArea) / Constants.FAST_CONFIDENCE_ROUNDNESS,
                 Constants.FAST_CONFIDENCE_NORM, 0.0);
 
         if (leftIsRed)
@@ -151,13 +151,13 @@ class BeaconAnalyzer {
             //Force the analysis box to transpose inself in place
             //noinspection SuspiciousNameCombination
             bounds = new Rectangle(
-                    new Point(bounds.center().y/img.height()*img.width(),
-                    bounds.center().x/img.width()*img.height()),
+                    new Point(bounds.center().y / img.height() * img.width(),
+                            bounds.center().x / img.width() * img.height()),
                     bounds.height(), bounds.width()).clip(new Rectangle(img.size()));
         if (!swapLeftRight && readOppositeAxis)
             //Force the analysis box to flip across its primary axis
             bounds = new Rectangle(
-                    new Point((img.size().width/2) + Math.abs(bounds.center().x - (img.size().width/2)),
+                    new Point((img.size().width / 2) + Math.abs(bounds.center().x - (img.size().width / 2)),
                             bounds.center().y), bounds.width(), bounds.height());
         else if (swapLeftRight && !readOppositeAxis)
             //Force the analysis box to flip across its primary axis
@@ -337,19 +337,19 @@ class BeaconAnalyzer {
         Detectable.offset(ellipsesRight, new Point(rightRect.left(), rightRect.top()));
 
         //Score ellipses
-        BeaconScoring scorer = new BeaconScoring(img.size());
-        List<BeaconScoring.ScoredEllipse> scoredEllipsesLeft = scorer.scoreEllipses(ellipsesLeft, null, null, gray);
+        BeaconScoringCOMPLEX scorer = new BeaconScoringCOMPLEX(img.size());
+        List<BeaconScoringCOMPLEX.ScoredEllipse> scoredEllipsesLeft = scorer.scoreEllipses(ellipsesLeft, null, null, gray);
         scoredEllipsesLeft = filterEllipses(scoredEllipsesLeft);
-        ellipsesLeft = BeaconScoring.ScoredEllipse.getList(scoredEllipsesLeft);
+        ellipsesLeft = BeaconScoringCOMPLEX.ScoredEllipse.getList(scoredEllipsesLeft);
         if (debug) Drawing.drawEllipses(img, ellipsesLeft, new ColorRGBA("#00ff00"), 3);
-        List<BeaconScoring.ScoredEllipse> scoredEllipsesRight = scorer.scoreEllipses(ellipsesRight, null, null, gray);
+        List<BeaconScoringCOMPLEX.ScoredEllipse> scoredEllipsesRight = scorer.scoreEllipses(ellipsesRight, null, null, gray);
         scoredEllipsesRight = filterEllipses(scoredEllipsesRight);
-        ellipsesRight = BeaconScoring.ScoredEllipse.getList(scoredEllipsesRight);
+        ellipsesRight = BeaconScoringCOMPLEX.ScoredEllipse.getList(scoredEllipsesRight);
         if (debug) Drawing.drawEllipses(img, ellipsesRight, new ColorRGBA("#00ff00"), 3);
 
         //Calculate ellipse center if present
-        Point centerLeft = null;
-        Point centerRight = null;
+        Point centerLeft;
+        Point centerRight;
         boolean done = false;
         do {
             centerLeft = null;
@@ -451,7 +451,7 @@ class BeaconAnalyzer {
         double buttonsdy = (centerLeft != null && centerRight != null) ?
                 (Math.abs(centerLeft.y - centerRight.y) / averageHeight * Constants.FAST_HEIGHT_DELTA_FACTOR) : Constants.ELLIPSE_PRESENCE_BIAS;
         double confidence = MathUtil.normalPDFNormalized(
-                MathUtil.distance(MathUtil.distance(MathUtil.distance(ratioError, dy), dArea), buttonsdy)/Constants.FAST_CONFIDENCE_ROUNDNESS,
+                MathUtil.distance(MathUtil.distance(MathUtil.distance(ratioError, dy), dArea), buttonsdy) / Constants.FAST_CONFIDENCE_ROUNDNESS,
                 Constants.FAST_CONFIDENCE_NORM, 0.0);
 
         //Get button ellipses
@@ -459,27 +459,23 @@ class BeaconAnalyzer {
         Ellipse rightEllipse = scoredEllipsesRight.size() > 0 ? scoredEllipsesRight.get(0).ellipse : null;
 
         //Test for color switching
-        if (leftEllipse != null && rightEllipse != null && leftEllipse.center().x > rightEllipse.center().x)
-        {
+        if (leftEllipse != null && rightEllipse != null && leftEllipse.center().x > rightEllipse.center().x) {
             Ellipse tE = leftEllipse;
             leftEllipse = rightEllipse;
             rightEllipse = tE;
-        }
-        else if ((leftEllipse != null && leftEllipse.center().x > center.x) ||
-                 (rightEllipse != null && rightEllipse.center().x < center.x))
-        {
+        } else if ((leftEllipse != null && leftEllipse.center().x > center.x) ||
+                (rightEllipse != null && rightEllipse.center().x < center.x)) {
             Ellipse tE = leftEllipse;
             leftEllipse = rightEllipse;
             rightEllipse = tE;
         }
 
         //Axis correction for ellipses
-        if (swapLeftRight)
-        {
+        if (swapLeftRight) {
             if (leftEllipse != null)
                 leftEllipse = new Ellipse(new RotatedRect(
-                    new Point(img.width() - leftEllipse.center().x, leftEllipse.center().y),
-                    leftEllipse.size(), leftEllipse.angle()));
+                        new Point(img.width() - leftEllipse.center().x, leftEllipse.center().y),
+                        leftEllipse.size(), leftEllipse.angle()));
             if (rightEllipse != null)
                 rightEllipse = new Ellipse(new RotatedRect(
                         new Point(img.width() - rightEllipse.center().x, rightEllipse.center().y),
@@ -502,7 +498,7 @@ class BeaconAnalyzer {
                     , leftEllipse, rightEllipse);
     }
 
-    private static List<BeaconScoring.ScoredEllipse> filterEllipses(List<BeaconScoring.ScoredEllipse> ellipses) {
+    private static List<BeaconScoringCOMPLEX.ScoredEllipse> filterEllipses(List<BeaconScoringCOMPLEX.ScoredEllipse> ellipses) {
         for (int i = ellipses.size() - 1; i >= 0; i--)
             if (ellipses.get(i).score < Constants.ELLIPSE_SCORE_REQ)
                 ellipses.remove(i);
@@ -564,15 +560,15 @@ class BeaconAnalyzer {
         if (debug) Drawing.drawContours(img, contoursBlue, new ColorRGBA("#BBDEFB"), 2);
 
         //Score contours
-        BeaconScoring scorer = new BeaconScoring(img.size());
-        List<BeaconScoring.ScoredContour> scoredContoursRed = scorer.scoreContours(contoursRed, null, null, img, gray);
-        List<BeaconScoring.ScoredContour> scoredContoursBlue = scorer.scoreContours(contoursBlue, null, null, img, gray);
+        BeaconScoringCOMPLEX scorer = new BeaconScoringCOMPLEX(img.size());
+        List<BeaconScoringCOMPLEX.ScoredContour> scoredContoursRed = scorer.scoreContours(contoursRed, null, null, img, gray);
+        List<BeaconScoringCOMPLEX.ScoredContour> scoredContoursBlue = scorer.scoreContours(contoursBlue, null, null, img, gray);
 
         //DEBUG Draw red and blue contours after filtering
         if (debug)
-            Drawing.drawContours(img, BeaconScoring.ScoredContour.getList(scoredContoursRed), new ColorRGBA(255, 0, 0), 2);
+            Drawing.drawContours(img, BeaconScoringCOMPLEX.ScoredContour.getList(scoredContoursRed), new ColorRGBA(255, 0, 0), 2);
         if (debug)
-            Drawing.drawContours(img, BeaconScoring.ScoredContour.getList(scoredContoursBlue), new ColorRGBA(0, 0, 255), 2);
+            Drawing.drawContours(img, BeaconScoringCOMPLEX.ScoredContour.getList(scoredContoursBlue), new ColorRGBA(0, 0, 255), 2);
 
         //Locate ellipses in the image to process contours against
         //Each contour must have an ellipse of correct specification
@@ -586,22 +582,22 @@ class BeaconAnalyzer {
         //Drawing.drawEllipses(img, ellipses, new ColorRGBA("#ff0745"), 1);
 
         //Score ellipses
-        List<BeaconScoring.ScoredEllipse> scoredEllipses = scorer.scoreEllipses(ellipses, null, null, gray);
+        List<BeaconScoringCOMPLEX.ScoredEllipse> scoredEllipses = scorer.scoreEllipses(ellipses, null, null, gray);
 
         //DEBUG Ellipse data after filtering
         if (debug)
-            Drawing.drawEllipses(img, BeaconScoring.ScoredEllipse.getList(scoredEllipses), new ColorRGBA("#FFC107"), 2);
+            Drawing.drawEllipses(img, BeaconScoringCOMPLEX.ScoredEllipse.getList(scoredEllipses), new ColorRGBA("#FFC107"), 2);
 
         //DEBUG draw top 5 ellipses
         if (scoredEllipses.size() > 0 && debug) {
-            Drawing.drawEllipses(img, BeaconScoring.ScoredEllipse.getList(scoredEllipses.subList(0, scoredEllipses.size() > 5 ? 5 : scoredEllipses.size()))
+            Drawing.drawEllipses(img, BeaconScoringCOMPLEX.ScoredEllipse.getList(scoredEllipses.subList(0, scoredEllipses.size() > 5 ? 5 : scoredEllipses.size()))
                     , new ColorRGBA("#d0ff00"), 3);
-            Drawing.drawEllipses(img, BeaconScoring.ScoredEllipse.getList(scoredEllipses.subList(0, scoredEllipses.size() > 3 ? 3 : scoredEllipses.size()))
+            Drawing.drawEllipses(img, BeaconScoringCOMPLEX.ScoredEllipse.getList(scoredEllipses.subList(0, scoredEllipses.size() > 3 ? 3 : scoredEllipses.size()))
                     , new ColorRGBA("#00ff00"), 3);
         }
 
         //Third, comparative analysis is used on each ellipse and contour to create a score for the contours
-        BeaconScoring.MultiAssociatedContours associations = scorer.scoreAssociations(scoredContoursRed, scoredContoursBlue, scoredEllipses);
+        BeaconScoringCOMPLEX.MultiAssociatedContours associations = scorer.scoreAssociations(scoredContoursRed, scoredContoursBlue, scoredEllipses);
         double score = (associations.blueContours.size() > 0 ? associations.blueContours.get(0).score : 0) +
                 (associations.redContours.size() > 0 ? associations.redContours.get(0).score : 0);
         double confidence = score / Constants.CONFIDENCE_DIVISOR;
@@ -769,23 +765,19 @@ class BeaconAnalyzer {
             Drawing.drawCross(img, rightEllipse.center(), new ColorRGBA("#ffff00"), 8, 3);
 
         //Test for color switching
-        if (leftEllipse != null && rightEllipse != null && leftEllipse.center().x > rightEllipse.center().x)
-        {
+        if (leftEllipse != null && rightEllipse != null && leftEllipse.center().x > rightEllipse.center().x) {
             Ellipse tE = leftEllipse;
             leftEllipse = rightEllipse;
             rightEllipse = tE;
-        }
-        else if ((leftEllipse != null && leftEllipse.center().x > center.x) ||
-                (rightEllipse != null && rightEllipse.center().x < center.x))
-        {
+        } else if ((leftEllipse != null && leftEllipse.center().x > center.x) ||
+                (rightEllipse != null && rightEllipse.center().x < center.x)) {
             Ellipse tE = leftEllipse;
             leftEllipse = rightEllipse;
             rightEllipse = tE;
         }
 
         //Axis correction for ellipses
-        if (swapLeftRight)
-        {
+        if (swapLeftRight) {
             if (leftEllipse != null)
                 leftEllipse = new Ellipse(new RotatedRect(
                         new Point(img.width() - leftEllipse.center().x, leftEllipse.center().y),

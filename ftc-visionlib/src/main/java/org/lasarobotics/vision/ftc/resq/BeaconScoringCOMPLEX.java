@@ -18,11 +18,11 @@ import java.util.List;
 /**
  * Internal class designed to score and analyze data relating to the beacon
  */
-class BeaconScoring {
+class BeaconScoringCOMPLEX {
 
     private final Size imgSize;
 
-    BeaconScoring(Size imgSize) {
+    BeaconScoringCOMPLEX(Size imgSize) {
         this.imgSize = imgSize;
     }
 

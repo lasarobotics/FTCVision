@@ -23,7 +23,8 @@ public abstract class Color {
 
     /**
      * Create a color based on a colorspaace and a scalar value
-     * @param s Scalar value
+     *
+     * @param s          Scalar value
      * @param colorSpace Colorspace
      * @return Color instance
      */
@@ -39,7 +40,8 @@ public abstract class Color {
 
     /**
      * Create a blank RGBA matrix (8-bit color info * 4 channels)
-     * @param width Matrix width
+     *
+     * @param width  Matrix width
      * @param height Matrix height
      * @return RGBA image matrix
      */
@@ -49,7 +51,8 @@ public abstract class Color {
 
     /**
      * Create a blank Grayscale matrix (8-bit color info)
-     * @param width Matrix width
+     *
+     * @param width  Matrix width
      * @param height Matrix height
      * @return Grayscale matrix
      */
@@ -60,6 +63,7 @@ public abstract class Color {
     /**
      * Rapidly convert an RGBA matrix to a Grayscale matrix, bypassing
      * most of the color conversion overhead.
+     *
      * @param rgba RGBA matrix
      * @return Grayscale matrix
      */
@@ -71,8 +75,9 @@ public abstract class Color {
 
     /**
      * Convert a matrix in one color space to another
-     * @param in Input matrix
-     * @param spaceIn Input colorspace
+     *
+     * @param in       Input matrix
+     * @param spaceIn  Input colorspace
      * @param spaceOut Output colorspace
      * @return Matrix in output colorspace
      */
@@ -101,6 +106,7 @@ public abstract class Color {
 
     /**
      * Get the color's scalar value
+     *
      * @return Scalar value
      */
     public Scalar getScalar() {
@@ -113,6 +119,7 @@ public abstract class Color {
 
     /**
      * Get the color's scalar value in Android-native RGBA
+     *
      * @return Scalar value converted to RGBA
      */
     public Scalar getScalarRGBA() {
@@ -121,12 +128,14 @@ public abstract class Color {
 
     /**
      * Get the colorspace ID
+     *
      * @return Colorspace ID
      */
     protected abstract ColorSpace getColorSpace();
 
     /**
      * Parse a scalar value into the colorspace
+     *
      * @param s Scalar value
      * @return Colorspace scalar value
      */
@@ -134,6 +143,7 @@ public abstract class Color {
 
     /**
      * Convert this color to another colorspace
+     *
      * @param to Colorspace to convert to
      * @return Color in other colorspace
      */
@@ -151,6 +161,7 @@ public abstract class Color {
 
     /**
      * Convert this color to a different colorspace and return a scalar
+     *
      * @param to Colorspace to convert to
      * @return Scalar in other colorspace
      */

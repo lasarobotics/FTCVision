@@ -43,6 +43,7 @@ public enum Cameras {
 
     /**
      * Returns a Camera instance from this Camera ID
+     *
      * @return The camera instance
      */
     public Camera createCamera() {

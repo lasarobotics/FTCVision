@@ -21,7 +21,8 @@ public class Filter {
 
     /**
      * Erode the image using morphological transformations
-     * @param img Image matrix
+     *
+     * @param img    Image matrix
      * @param amount Amount to erode = 0
      */
     public static void erode(Mat img, int amount) {
@@ -33,7 +34,8 @@ public class Filter {
 
     /**
      * Dilate the image using morphological transformations
-     * @param img Image matrix
+     *
+     * @param img    Image matrix
      * @param amount Amount to dilate = 0
      */
     public static void dilate(Mat img, int amount) {
@@ -45,6 +47,7 @@ public class Filter {
 
     /**
      * Downsample and blur an image (using a Gaussian pyramid kernel)
+     *
      * @param img   The image
      * @param scale The scale, a number greater than 1
      */
@@ -54,6 +57,7 @@ public class Filter {
 
     /**
      * Upsample and blur an image (using a Gaussian pyramid kernel)
+     *
      * @param img   The image
      * @param scale The scale, a number greater than 1
      */
