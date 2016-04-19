@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2016 Arthur Pachachura, LASA Robotics, and contributors
+ * MIT licensed
+ */
 package org.lasarobotics.vision.util.color;
 
 import org.opencv.core.Scalar;
@@ -23,10 +27,21 @@ public class ColorHSV extends Color {
         super(new Scalar(h, s, v));
     }
 
+    /**
+     * Get the HSV colorspace
+     *
+     * @return ColorSpace.HSV
+     */
     public ColorSpace getColorSpace() {
         return ColorSpace.HSV;
     }
 
+    /**
+     * Parse a scalar value into the colorspace
+     *
+     * @param s Scalar value
+     * @return Colorspace scalar value
+     */
     @Override
     protected Scalar parseScalar(Scalar s) {
         if (s.val.length < 3)
@@ -34,14 +49,29 @@ public class ColorHSV extends Color {
         return new Scalar(s.val[0], s.val[1], s.val[2]);
     }
 
+    /**
+     * Get the color hue
+     *
+     * @return Hue (0-255)
+     */
     public int hue() {
         return (int) scalar.val[0];
     }
 
+    /**
+     * Get the color saturation
+     *
+     * @return Saturation (0-255)
+     */
     public int saturation() {
         return (int) scalar.val[1];
     }
 
+    /**
+     * Get the color value
+     *
+     * @return Value (0-255)
+     */
     public int value() {
         return (int) scalar.val[2];
     }

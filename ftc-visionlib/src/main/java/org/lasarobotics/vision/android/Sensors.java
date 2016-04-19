@@ -1,11 +1,16 @@
+/*
+ * Copyright (c) 2016 Arthur Pachachura, LASA Robotics, and contributors
+ * MIT licensed
+ */
 package org.lasarobotics.vision.android;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.util.Log;
+import android.view.Surface;
 import android.view.WindowManager;
 
 import org.lasarobotics.vision.util.ScreenOrientation;
@@ -37,7 +42,6 @@ public final class Sensors implements SensorEventListener {
         mSensorManager = (SensorManager) Util.getContext().getSystemService(Context.SENSOR_SERVICE);
         mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         mMagneticField = mSensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
-        activated = false;
         resume();
     }
 
@@ -45,21 +49,18 @@ public final class Sensors implements SensorEventListener {
      * Resume reading sensors after reading was stopped
      */
     public void resume() {
-        if (activated)
-            return;
+        activated = true;
         mSensorManager.registerListener(this, mAccelerometer, READ_SPEED);
         mSensorManager.registerListener(this, mMagneticField, READ_SPEED);
-        activated = true;
     }
 
     /**
      * Pause sensor reading
      */
     public void stop() {
-        if (!activated)
-            return;
+        mSensorManager.unregisterListener(this, mAccelerometer);
+        mSensorManager.unregisterListener(this, mMagneticField);
         activated = false;
-        mSensorManager.unregisterListener(this);
     }
 
     /**
@@ -123,6 +124,7 @@ public final class Sensors implements SensorEventListener {
 
     /**
      * Get the activity's screen orientation, which can be locked by the activity
+     *
      * @return The activity's screen orietnation
      */
     public ScreenOrientation getActivityScreenOrientation() {
@@ -132,11 +134,36 @@ public final class Sensors implements SensorEventListener {
     }
 
     /**
+     * Get the natural orientation of the device. For larger phones it is often LANDSCAPE - for smaller, PORTRAIT.
+     *
+     * @return LANDSCAPE or PORTRAIT, based on the screen information
+     */
+    public ScreenOrientation getDeviceDefaultOrientation() {
+
+        WindowManager windowManager = (WindowManager) Util.getContext().getSystemService(Context.WINDOW_SERVICE);
+
+        Configuration config = Util.getContext().getResources().getConfiguration();
+
+        int rotation = windowManager.getDefaultDisplay().getRotation();
+
+        if (((rotation == Surface.ROTATION_0 || rotation == Surface.ROTATION_180) &&
+                config.orientation == Configuration.ORIENTATION_LANDSCAPE)
+                || ((rotation == Surface.ROTATION_90 || rotation == Surface.ROTATION_270) &&
+                config.orientation == Configuration.ORIENTATION_PORTRAIT)) {
+            return ScreenOrientation.LANDSCAPE;
+        } else {
+            return ScreenOrientation.PORTRAIT;
+        }
+    }
+
+    /**
      * Get the screen orientation compensation, in degrees, between the activity and the target screen orientation
+     *
      * @return Sensor orientation - Activity orientation + Zero orientation (typically 90 degrees)
      */
     public double getScreenOrientationCompensation() {
-        return getScreenOrientation().getAngle() - getActivityScreenOrientation().getAngle() + ScreenOrientation.PORTRAIT.getAngle();
+        //BUGFIX reverse orientation for primary cameras
+        return -getScreenOrientation().getAngle();
     }
 
     private void updateScreenOrientation() {
@@ -152,8 +179,6 @@ public final class Sensors implements SensorEventListener {
         double roll = orientation[2] / 2 / Math.PI * 360.0;
         double azimuth = orientation[0] / 2 / Math.PI * 360.0;
 
-        Log.d("Rotation", pitch + ", " + roll + ", " + azimuth);
-
         //If the phone is too close to the ground, don't update
         if (Math.abs(roll) <= ROLL_MINIMUM)
             return;
@@ -162,20 +187,21 @@ public final class Sensors implements SensorEventListener {
 
         if (Math.abs(pitch) <= PITCH_TOLERANCE)
             if (roll > 0.0f)
-                current = ScreenOrientation.LANDSCAPE_WEST;
+                current = ScreenOrientation.LANDSCAPE_REVERSE;
             else
                 current = ScreenOrientation.LANDSCAPE;
         else if (Math.abs(pitch) >= PITCH_TOLERANCE_HIGH)
             if (pitch > 0.0f)
-                current = ScreenOrientation.PORTRAIT;
-            else
                 current = ScreenOrientation.PORTRAIT_REVERSE;
+            else
+                current = ScreenOrientation.PORTRAIT;
 
         screenOrientation = current;
     }
 
     /**
      * Event that fires when sensor data is updated
+     *
      * @param event Event data
      */
     public void onSensorChanged(SensorEvent event) {

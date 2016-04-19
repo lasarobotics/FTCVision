@@ -1,4 +1,10 @@
+/*
+ * Copyright (c) 2016 Arthur Pachachura, LASA Robotics, and contributors
+ * MIT licensed
+ */
 package org.lasarobotics.vision.detection.objects;
+
+import android.annotation.SuppressLint;
 
 import org.jetbrains.annotations.NotNull;
 import org.opencv.core.Point;
@@ -9,7 +15,14 @@ import org.opencv.core.Size;
  * Implements a single ellipse (acts like RotatedRect) with advanced measurement utilities
  */
 public class Ellipse extends Detectable implements Comparable<Ellipse> {
-    private final RotatedRect rect;
+    private RotatedRect rect;
+
+    /**
+     * Instantiate a null ellipse
+     */
+    public Ellipse() {
+        this.rect = new RotatedRect();
+    }
 
     /**
      * Create an ellipse based on an OpenCV rotated rectangle
@@ -22,6 +35,7 @@ public class Ellipse extends Detectable implements Comparable<Ellipse> {
 
     /**
      * Get the OpenCV rectangle which circumscribes the ellipse
+     *
      * @return OpenCV rectange
      */
     public RotatedRect getRect() {
@@ -30,6 +44,7 @@ public class Ellipse extends Detectable implements Comparable<Ellipse> {
 
     /**
      * Get the size of the ellipse (ignoring inclination)
+     *
      * @return Size of the ellipse
      */
     public Size size() {
@@ -40,12 +55,24 @@ public class Ellipse extends Detectable implements Comparable<Ellipse> {
         return size().height;
     }
 
+    /**
+     * Offset the object, translating it by a specific offset point
+     *
+     * @param offset Point to offset by, e.g. (1, 0) would move object 1 px right
+     */
+    @Override
+    public void offset(Point offset) {
+        this.rect = new RotatedRect(new Point(rect.center.x + offset.x, rect.center.y + offset.y),
+                rect.size, rect.angle);
+    }
+
     public double width() {
         return size().width;
     }
 
     /**
      * Get the angle of inclination of the ellipse
+     *
      * @return Angle of inclination
      */
     public double angle() {
@@ -54,6 +81,7 @@ public class Ellipse extends Detectable implements Comparable<Ellipse> {
 
     /**
      * Get the center of the ellipse
+     *
      * @return Center of the ellipse as a point
      */
     public Point center() {
@@ -87,6 +115,7 @@ public class Ellipse extends Detectable implements Comparable<Ellipse> {
 
     /**
      * Get the major axis of the ellipse
+     *
      * @return 2a
      */
     private double majorAxis() {
@@ -95,6 +124,7 @@ public class Ellipse extends Detectable implements Comparable<Ellipse> {
 
     /**
      * Get the minor axis of the ellipse
+     *
      * @return 2b
      */
     private double minorAxis() {
@@ -103,6 +133,7 @@ public class Ellipse extends Detectable implements Comparable<Ellipse> {
 
     /**
      * Get the semi-major axis of the ellipse
+     *
      * @return a
      */
     private double semiMajorAxis() {
@@ -111,6 +142,7 @@ public class Ellipse extends Detectable implements Comparable<Ellipse> {
 
     /**
      * Get the semi-minor axis of the ellipse
+     *
      * @return b
      */
     private double semiMinorAxis() {
@@ -159,6 +191,23 @@ public class Ellipse extends Detectable implements Comparable<Ellipse> {
         //TODO also try all 4 points to match (will ensure it is entirely inside)
         return left() >= contour.left() && right() <= contour.right() &&
                 top() >= contour.top() && bottom() <= contour.bottom();
+    }
+
+    /**
+     * Transpose this rectangle so that x becomes y and vice versa
+     *
+     * @return Transposed rectangle instance
+     */
+    @SuppressWarnings("SuspiciousNameCombination")
+    public Ellipse transpose() {
+        return new Ellipse(new RotatedRect(
+                new Point(rect.center.y, rect.center.x),
+                new Size(rect.size.height, rect.size.width), rect.angle));
+    }
+
+    @SuppressLint("DefaultLocale")
+    public String getLocationString() {
+        return String.format("(%.0f, %.0f)", rect.center.x, rect.center.y);
     }
 
     /***

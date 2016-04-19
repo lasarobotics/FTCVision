@@ -1,5 +1,6 @@
-/**
- * Detectable primitives which can be analyzed
+/*
+ * Copyright (c) 2016 Arthur Pachachura, LASA Robotics, and contributors
+ * MIT licensed
  */
 package org.lasarobotics.vision.detection.objects;
 
@@ -16,6 +17,8 @@ import org.opencv.imgproc.Imgproc;
 public class Contour extends Detectable {
 
     private final MatOfPoint mat;
+    private Point topLeft = null;
+    private Size size = null;
 
     /**
      * Instantiate a contour from an OpenCV matrix of points (float)
@@ -35,8 +38,39 @@ public class Contour extends Detectable {
         this.mat = new MatOfPoint(data.toArray());
     }
 
+    private void calculate() {
+        if (topLeft != null)
+            return;
+
+        //Calculate size and topLeft at the same time
+        double minX = Double.MAX_VALUE;
+        double maxX = Double.MIN_VALUE;
+        double minY = Double.MAX_VALUE;
+        double maxY = Double.MIN_VALUE;
+
+        Point[] points = getPoints();
+        for (Point p : points) {
+            if (p.x < minX) {
+                minX = p.x;
+            }
+            if (p.y < minY) {
+                minY = p.y;
+            }
+            if (p.x > maxX) {
+                maxX = p.x;
+            }
+            if (p.y > maxY) {
+                maxY = p.y;
+            }
+        }
+
+        size = new Size(maxX - minX, maxY - minY);
+        topLeft = new Point(minX, minY);
+    }
+
     /**
      * Get data as a float
+     *
      * @return OpenCV matrix of points
      */
     public MatOfPoint getData() {
@@ -63,8 +97,9 @@ public class Contour extends Detectable {
 
     /**
      * Get the area of the contour
-     *
+     * <p/>
      * A highly precise method that integrates the contour with respect to its arc length.
+     *
      * @return Area of the contour
      */
     public double area() {
@@ -89,21 +124,6 @@ public class Contour extends Detectable {
         //C_{\mathrm x} = \frac{1}{6A}\sum_{i=0}^{n-1}(x_i+x_{i+1})(x_i\ y_{i+1} - x_{i+1}\ y_i)
         //C_{\mathrm y} = \frac{1}{6A}\sum_{i=0}^{n-1}(y_i+y_{i+1})(x_i\ y_{i+1} - x_{i+1}\ y_i)
 
-        /*if (in.size() > 2) {
-            T doubleArea = 0;
-            cv::Point_<T> p(0,0);
-            cv::Point_<T> p0 = in->back();
-            for (const cv::Point_<T>& p1 : in) {//C++11
-                T a = p0.x * p1.y - p0.y * p1.x; //cross product, (signed) double area of triangle of vertices (origin,p0,p1)
-                p += (p0 + p1) * a;
-                doubleArea += a;
-                p0 = p1;
-            }
-
-            if (doubleArea != 0)
-                return p * (1 / (3 * doubleArea) ); //Operator / does not exist for cv::Point
-        }*/
-
         if (count() < 2)
             return center();
 
@@ -113,6 +133,7 @@ public class Contour extends Detectable {
         Point[] points = this.getPoints();
 
         for (int i = 0; i < points.length - 1; i++) {
+            //cross product, (signed) double area of triangle of vertices (origin,p0,p1)
             double signedArea = (points[i].x * points[i + 1].y) - (points[i + 1].x * points[i].y);
             xSum += (points[i].x + points[i + 1].x) * signedArea;
             ySum += (points[i].y + points[i + 1].y) * signedArea;
@@ -128,42 +149,42 @@ public class Contour extends Detectable {
 
     /**
      * Get the center of the object
+     *
      * @return Center of the object as a point
      */
     public Point center() {
-        double xSum = 0.0;
-        double ySum = 0.0;
-        Point[] points = this.getPoints();
-
-        for (Point p : points) {
-            xSum += p.x;
-            ySum += p.y;
-        }
-        return new Point(xSum / points.length, ySum / points.length);
+        calculate();
+        return new Point(topLeft.x + (size.width / 2), topLeft.y + (size.height / 2));
     }
 
     public double height() {
-        return (int) size().height;
+        calculate();
+        return (int) size.height;
     }
 
     public double width() {
-        return (int) size().width;
+        calculate();
+        return (int) size.width;
     }
 
     public double top() {
-        return topLeft().y;
+        calculate();
+        return topLeft.y;
     }
 
     public double bottom() {
-        return topLeft().y + size().height;
+        calculate();
+        return topLeft.y + size.height;
     }
 
     public double left() {
-        return topLeft().x;
+        calculate();
+        return topLeft.x;
     }
 
     public double right() {
-        return topLeft().x + size().width;
+        calculate();
+        return topLeft.x + size.width;
     }
 
     /**
@@ -173,6 +194,16 @@ public class Contour extends Detectable {
      */
     public Rect getBoundingRect() {
         return new Rect((int) top(), (int) left(), (int) width(), (int) height());
+    }
+
+    /**
+     * Get a bounding rectangle surrounding the contour
+     *
+     * @return Returns an FTCVision rectangle
+     */
+    public Rectangle getBoundingRectangle() {
+        calculate();
+        return new Rectangle(center(), size.width, size.height);
     }
 
     public Point bottomRight() {
@@ -185,53 +216,49 @@ public class Contour extends Detectable {
      * @return The top left corner of the contour
      */
     public Point topLeft() {
-        double minX = Double.MAX_VALUE;
-        double minY = Double.MAX_VALUE;
-
-        Point[] points = getPoints();
-        for (Point p : points) {
-            if (p.x < minX) {
-                minX = p.x;
-            }
-            if (p.y < minY) {
-                minY = p.y;
-            }
-        }
-
-        return new Point(minX, minY);
+        calculate();
+        return topLeft;
     }
 
     /**
      * Get the size of the contour i.e. a width and height
+     *
      * @return Size as (width, height)
      */
     public Size size() {
-        double minX = Double.MAX_VALUE;
-        double maxX = Double.MIN_VALUE;
-        double minY = Double.MAX_VALUE;
-        double maxY = Double.MIN_VALUE;
+        calculate();
+        return size;
+    }
 
-        Point[] points = getPoints();
-        for (Point p : points) {
-            if (p.x < minX) {
-                minX = p.x;
-            }
-            if (p.y < minY) {
-                minY = p.y;
-            }
-            if (p.x > maxX) {
-                maxX = p.x;
-            }
-            if (p.y > maxY) {
-                maxY = p.y;
-            }
-        }
+    /**
+     * Offset the object, translating it by a specific offset point
+     *
+     * @param offset Point to offset by, e.g. (1, 0) would move object 1 px right
+     */
+    @Override
+    public void offset(Point offset) {
+        Point[] points = this.getPoints();
 
-        return new Size(maxX - minX, maxY - minY);
+        for (int i = 0; i < points.length; i++)
+            points[i] = new Point(points[i].x + offset.x, points[i].y + offset.y);
+
+        mat.fromArray(points);
+    }
+
+    /**
+     * Returns true if the contour is MOSTLY inside a given area
+     * That is, the centroid is within the bounded area
+     *
+     * @param rect Rectangle to check agains
+     * @return True if the contour is mostly inside the rectangle, false otherwise
+     */
+    public boolean isMostlyInside(Rectangle rect) {
+        return centroid().inside(rect.getBoundingRect());
     }
 
     /**
      * Get the arc length of the contour
+     *
      * @param closed True if the contour should be calculated as closed
      * @return Arc length
      */
@@ -241,6 +268,7 @@ public class Contour extends Detectable {
 
     /**
      * Get the point array of the contour
+     *
      * @return Point array of contour
      */
     private Point[] getPoints() {

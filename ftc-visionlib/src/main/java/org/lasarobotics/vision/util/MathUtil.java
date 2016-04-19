@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2016 Arthur Pachachura, LASA Robotics, and contributors
+ * MIT licensed
+ *
+ * Thank you to FTCLib contributors.
+ */
+
 package org.lasarobotics.vision.util;
 
 import org.opencv.core.Point;
@@ -90,10 +97,24 @@ public final class MathUtil {
         return (value < max) && (value > min);
     }
 
-    private static double distance(double deltaX, double deltaY) {
+    /**
+     * Get the distance between two deltas
+     *
+     * @param deltaX Change in first variable
+     * @param deltaY Change in second variable
+     * @return Distance formula, sqrt(dx^2 + y^2)
+     */
+    public static double distance(double deltaX, double deltaY) {
         return Math.sqrt((deltaX * deltaX) + (deltaY * deltaY));
     }
 
+    /**
+     * Get the distance between two points
+     *
+     * @param p1 Point one
+     * @param p2 Point two
+     * @return Distance formula, sqrt(dx^2 + dy^2)
+     */
     public static double distance(Point p1, Point p2) {
         return distance(Math.abs(p2.x - p1.x), Math.abs(p2.y - p1.y));
     }

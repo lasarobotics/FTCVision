@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2016 Arthur Pachachura, LASA Robotics, and contributors
+ * MIT licensed
+ */
 package org.lasarobotics.vision.util.color;
 
 import org.opencv.imgproc.Imgproc;
@@ -32,6 +36,7 @@ public enum ColorSpace {
 
     /**
      * Each conversions array contains a list of int[], one for each other ColorSpace to convert to.
+     * <p/>
      * Each int[] contains a list of operations and sizes, as such:
      * { operation, input scalar dimension, output scalar dimension, ... }
      */
@@ -60,7 +65,6 @@ public enum ColorSpace {
      * @param to The color space to convert to
      * @return True if convertable, false otherwise
      */
-    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean canConvertTo(ColorSpace to) {
         return (to == this) || (getConversionsTo(to) != null);
     }

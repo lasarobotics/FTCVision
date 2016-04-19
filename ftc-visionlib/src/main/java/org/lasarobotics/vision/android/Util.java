@@ -1,12 +1,21 @@
+/*
+ * Copyright (c) 2016 Arthur Pachachura, LASA Robotics, and contributors
+ * MIT licensed
+ */
 package org.lasarobotics.vision.android;
 
+import android.annotation.TargetApi;
+import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Environment;
+import android.util.ArrayMap;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 /**
@@ -29,6 +38,39 @@ public final class Util {
             // handle exception
             throw new IllegalArgumentException("No context could be retrieved!");
         }
+    }
+
+    /**
+     * Gets the primary activity without calling from an Activity class
+     *
+     * @return the main Activity
+     */
+    @SuppressWarnings("unchecked")
+    @TargetApi(Build.VERSION_CODES.KITKAT)
+    public static Activity getActivity() {
+        /*ActivityManager am = (ActivityManager)getContext().getSystemService(Context.ACTIVITY_SERVICE);
+        ComponentName cn = am.getRunningTasks(1).get(0).topActivity;*/
+        try {
+            Class activityThreadClass = Class.forName("android.app.ActivityThread");
+            Object activityThread = activityThreadClass.getMethod("currentActivityThread").invoke(null);
+            Field activitiesField = activityThreadClass.getDeclaredField("mActivities");
+            activitiesField.setAccessible(true);
+            ArrayMap activities = (ArrayMap) activitiesField.get(activityThread);
+            for (Object activityRecord : activities.values()) {
+                Class activityRecordClass = activityRecord.getClass();
+                Field pausedField = activityRecordClass.getDeclaredField("paused");
+                pausedField.setAccessible(true);
+                if (!pausedField.getBoolean(activityRecord)) {
+                    Field activityField = activityRecordClass.getDeclaredField("activity");
+                    activityField.setAccessible(true);
+                    return (Activity) activityField.get(activityRecord);
+                }
+            }
+        } catch (final java.lang.Throwable e) {
+            // handle exception
+            throw new IllegalArgumentException("No activity could be retrieved!");
+        }
+        throw new IllegalArgumentException("No activity could be found!");
     }
 
     /**

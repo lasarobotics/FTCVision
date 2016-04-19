@@ -24,7 +24,7 @@
 
 /**
  * LASA Robotics FIRST Tech Challenge Vision Library
- *
+ * <p/>
  * Based on OpenCV and written by FIRST teams for FIRST teams
  */
 package org.lasarobotics.vision;

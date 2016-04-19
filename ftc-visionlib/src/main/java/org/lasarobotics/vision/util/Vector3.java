@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2016 Arthur Pachachura, LASA Robotics, and contributors
+ * MIT licensed
+ *
+ * Thank you to FTCLib contributors.
+ */
 package org.lasarobotics.vision.util;
 
 /**
@@ -39,7 +45,7 @@ public class Vector3<T> {
 
         // Illegal State Exception errors can be thrown if x, y, or z is null
         public Vector3<T> build() {
-            return new Vector3<T>(x, y, z);
+            return new Vector3<>(x, y, z);
         }
     }
 }

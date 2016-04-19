@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2016 Arthur Pachachura, LASA Robotics, and contributors
+ * MIT licensed
+ */
+
 package org.lasarobotics.vision.opmode;
 
 import android.app.Activity;
@@ -24,74 +29,138 @@ import org.opencv.core.Size;
  */
 abstract class VisionOpModeCore extends OpMode implements CameraBridgeViewBase.CvCameraViewListener2 {
     private static final int initialMaxSize = 1200;
-    static JavaCameraView openCVCamera;
+    public static JavaCameraView openCVCamera;
     private static boolean initialized = false;
     private static boolean openCVInitialized = false;
-    private final BaseLoaderCallback openCVLoaderCallback = new BaseLoaderCallback(hardwareMap.appContext) {
-        @Override
-        public void onManagerConnected(int status) {
-            switch (status) {
-                case LoaderCallbackInterface.SUCCESS: {
-                    //Woohoo!
-                    Log.d("OpenCV", "OpenCV Manager connected!");
-                    openCVInitialized = true;
-                }
-                break;
-                default: {
-                    super.onManagerConnected(status);
-                }
-                break;
-            }
-        }
-    };
     public int width, height;
     public FPS fps;
     public Sensors sensors;
+
+    public VisionOpModeCore() {
+        initialized = false;
+        openCVCamera = null;
+    }
 
     boolean isInitialized() {
         return initialized;
     }
 
+    private void error(String message) {
+        Log.e("FTCVision", message);
+        telemetry.addData("Vision Status", message);
+    }
+
+    /**
+     * Set the camera to use
+     * This method may fail if the camera is locked.
+     *
+     * @param camera Camera to use
+     */
     public void setCamera(Cameras camera) {
         if (openCVCamera == null)
             return;
         openCVCamera.disableView();
         if (initialized) openCVCamera.disconnectCamera();
         openCVCamera.setCameraIndex(camera.getID());
-        if (initialized) openCVCamera.connectCamera(width, height);
+        if (initialized)
+            if (!openCVCamera.connectCamera(width, height))
+                error("Could not initialize camera!\r\n" +
+                        "This may occur because the OpenCV Manager is not installed,\r\n" +
+                        "CAMERA permission is not allowed in AndroidManifest.xml,\r\n" +
+                        "or because another app is currently locking it.");
         openCVCamera.enableView();
     }
 
-    public void setFrameSize(Size frameSize) {
+    /**
+     * Set the maximum frame size that the camera uses
+     * This method will fail if the camera is locked - it is recommended to check the result.
+     *
+     * @param frameSize Maximum (target) frame size
+     * @return Actual frame size or null if cannot be set
+     */
+    public Size setFrameSize(Size frameSize) {
         if (openCVCamera == null)
-            return;
+            return null;
 
         openCVCamera.disableView();
         if (initialized) openCVCamera.disconnectCamera();
         openCVCamera.setMaxFrameSize((int) frameSize.width, (int) frameSize.height);
-        if (initialized) openCVCamera.connectCamera((int) frameSize.width, (int) frameSize.height);
+        if (initialized)
+            if (!openCVCamera.connectCamera((int) frameSize.width, (int) frameSize.height))
+                error("Could not initialize camera!\r\n" +
+                        "This may occur because the OpenCV Manager is not installed,\r\n" +
+                        "CAMERA permission is not allowed in AndroidManifest.xml,\r\n" +
+                        "or because another app is currently locking it.");
         openCVCamera.enableView();
 
         width = openCVCamera.getFrameWidth();
         height = openCVCamera.getFrameHeight();
+        if (width == 0 || height == 0) {
+            Log.w("FTCVision", "OpenCV Camera failed to initialize width and height properties on startup.\r\n" +
+                    "This is generally okay, but if you use width or height during init() you may\r\n" +
+                    "run into a problem.");
+        }
+
+        return new Size(width, height);
+    }
+
+    /**
+     * Get the actual frame size
+     *
+     * @return Actual frame size in pixels
+     */
+    public Size getFrameSize() {
+        return new Size(width, height);
     }
 
     @Override
     public void init() {
         //Initialize camera view
+        BaseLoaderCallback openCVLoaderCallback = null;
+        try {
+            openCVLoaderCallback = new BaseLoaderCallback(hardwareMap.appContext) {
+                @Override
+                public void onManagerConnected(int status) {
+                    switch (status) {
+                        case LoaderCallbackInterface.SUCCESS: {
+                            //Woohoo!
+                            Log.d("OpenCV", "OpenCV Manager connected!");
+                            openCVInitialized = true;
+                        }
+                        break;
+                        default: {
+                            super.onManagerConnected(status);
+                        }
+                        break;
+                    }
+                }
+            };
+        } catch (NullPointerException e) {
+            error("Could not find OpenCV Manager!\r\n" +
+                    "Please install the app from the Google Play Store.");
+        }
+
         final Activity activity = (Activity) hardwareMap.appContext;
         final VisionOpModeCore t = this;
 
         if (!OpenCVLoader.initDebug()) {
             Log.d("OpenCV", "Internal OpenCV library not found. Using OpenCV Manager for initialization");
             boolean success = OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_0_0, hardwareMap.appContext, openCVLoaderCallback);
-            if (!success)
+            if (!success) {
                 Log.e("OpenCV", "Asynchronous initialization failed!");
-            else
+                error("Could not initialize OpenCV!\r\n" +
+                        "Did you install the OpenCV Manager from the Play Store?");
+            } else {
                 Log.d("OpenCV", "Asynchronous initialization succeeded!");
+            }
         } else {
             Log.d("OpenCV", "OpenCV library found inside package. Using it!");
-            openCVLoaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
+            if (openCVLoaderCallback != null)
+                openCVLoaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
+            else {
+                Log.e("OpenCV", "Failed to load OpenCV from package!");
+                return;
+            }
         }
 
         while (!openCVInitialized) {
@@ -120,7 +189,11 @@ abstract class VisionOpModeCore extends OpMode implements CameraBridgeViewBase.C
                 if (openCVCamera != null)
                     openCVCamera.disableView();
                 openCVCamera.enableView();
-                openCVCamera.connectCamera(initialMaxSize, initialMaxSize);
+                if (!openCVCamera.connectCamera(initialMaxSize, initialMaxSize))
+                    error("Could not initialize camera!\r\n" +
+                            "This may occur because the OpenCV Manager is not installed,\r\n" +
+                            "CAMERA permission is not allowed in AndroidManifest.xml,\r\n" +
+                            "or because another app is currently locking it.");
 
                 //Initialize FPS counter and sensors
                 fps = new FPS();
@@ -149,21 +222,30 @@ abstract class VisionOpModeCore extends OpMode implements CameraBridgeViewBase.C
 
     @Override
     public void stop() {
-        super.stop();
-
-        if (openCVCamera != null)
+        if (openCVCamera != null) {
             openCVCamera.disableView();
+            openCVCamera.disconnectCamera();
+        }
+
+        if (sensors != null)
+            sensors.stop();
+
+        initialized = false;
+        openCVCamera = null;
+
+        super.stop();
     }
 
     @Override
     public void onCameraViewStarted(int width, int height) {
         this.width = width;
         this.height = height;
+        Log.d("CAMERA", "STARTED");
     }
 
     @Override
     public void onCameraViewStopped() {
-
+        Log.d("CAMERA", "STOPPED");
     }
 
     @Override

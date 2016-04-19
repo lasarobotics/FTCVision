@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2016 Arthur Pachachura, LASA Robotics, and contributors
+ * MIT licensed
+ *
+ * Some code from FIRST library, Copyright (C) Qualcomm
+ *
+ * Thank you to Russell Coleman (LASA).
+ */
 package org.lasarobotics.vision.opmode;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -52,6 +60,10 @@ public abstract class LinearVisionOpMode extends VisionOpMode {
     public abstract void runOpMode() throws InterruptedException;
 
     public final void waitForVisionStart() throws InterruptedException {
+        //Give some status info
+        telemetry.addData("Vision Status", "Initializing...\r\n" +
+                "Please wait, do not stop the OpMode.");
+
         while (!this.isInitialized()) {
             synchronized (this) {
                 this.wait();

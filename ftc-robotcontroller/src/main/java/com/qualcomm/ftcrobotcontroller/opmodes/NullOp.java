@@ -39,36 +39,36 @@ import java.util.Date;
 
 /**
  * TeleOp Mode
- * <p>
- *Enables control of the robot via the gamepad
+ * <p/>
+ * Enables control of the robot via the gamepad
  */
 public class NullOp extends OpMode {
 
-  private String startDate;
-  private ElapsedTime runtime = new ElapsedTime();
+    private String startDate;
+    private ElapsedTime runtime = new ElapsedTime();
 
-  @Override
-  public void init() {
-  }
+    @Override
+    public void init() {
+    }
 
-  /*
-     * Code to run when the op mode is first enabled goes here
-     * @see com.qualcomm.robotcore.eventloop.opmode.OpMode#start()
+    /*
+       * Code to run when the op mode is first enabled goes here
+       * @see com.qualcomm.robotcore.eventloop.opmode.OpMode#start()
+       */
+    @Override
+    public void init_loop() {
+        startDate = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date());
+        runtime.reset();
+        telemetry.addData("Null Op Init Loop", runtime.toString());
+    }
+
+    /*
+     * This method will be called repeatedly in a loop
+     * @see com.qualcomm.robotcore.eventloop.opmode.OpMode#loop()
      */
-  @Override
-  public void init_loop() {
-    startDate = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date());
-    runtime.reset();
-    telemetry.addData("Null Op Init Loop", runtime.toString());
-  }
-
-  /*
-   * This method will be called repeatedly in a loop
-   * @see com.qualcomm.robotcore.eventloop.opmode.OpMode#loop()
-   */
-  @Override
-  public void loop() {
-    telemetry.addData("1 Start", "NullOp started at " + startDate);
-    telemetry.addData("2 Status", "running for " + runtime.toString());
-  }
+    @Override
+    public void loop() {
+        telemetry.addData("1 Start", "NullOp started at " + startDate);
+        telemetry.addData("2 Status", "running for " + runtime.toString());
+    }
 }
