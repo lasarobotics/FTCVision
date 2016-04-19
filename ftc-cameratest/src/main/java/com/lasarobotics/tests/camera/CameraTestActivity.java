@@ -12,7 +12,7 @@ public class CameraTestActivity extends VisionEnabledActivity {
         super();
     }
 
-    TestableVisionOpMode opmode;
+    private TestableVisionOpMode opmode;
 
     /**
      * Called when the activity is first created.

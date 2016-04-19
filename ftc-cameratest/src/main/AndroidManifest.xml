@@ -2,13 +2,14 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.lasarobotics.tests.camera"
-    android:versionCode="301"
-    android:versionName="3.01">
+    android:versionCode="1000"
+    android:versionName="1.0">
 
     <application
         android:label="@string/app_name"
         android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
-        tools:replace="android:theme">
+        tools:replace="android:theme"
+        android:icon="@mipmap/ic_launcher">
 
         <activity
             android:name="com.lasarobotics.tests.camera.CameraTestActivity"
