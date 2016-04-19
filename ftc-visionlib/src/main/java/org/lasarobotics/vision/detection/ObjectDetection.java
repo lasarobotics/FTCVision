@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2016 Arthur Pachachura, LASA Robotics, and contributors
+ * MIT licensed
+ *
+ * Some code from OpenCV samples, license at http://opencv.org/license.html.
+ */
 package org.lasarobotics.vision.detection;
 
 import android.util.Log;

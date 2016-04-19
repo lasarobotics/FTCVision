@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2016 Arthur Pachachura, LASA Robotics, and contributors
+ * MIT licensed
+ *
+ * Thank you to Brendan Hollaway (Venom) for parts of the algorithm.
+ */
 package org.lasarobotics.vision.opmode.extensions;
 
 import android.hardware.Camera;

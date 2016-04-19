@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2016 Arthur Pachachura, LASA Robotics, and contributors
+ * MIT licensed
+ *
+ * Thank you to Will Fisher (LASA), Brendan Hollaway (FTC Venom), and Arnav Mohan (LASA).
+ */
 package org.lasarobotics.vision.ftc.resq;
 
 import org.lasarobotics.vision.detection.ColorBlobDetector;

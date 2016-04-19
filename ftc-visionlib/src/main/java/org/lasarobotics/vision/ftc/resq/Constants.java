@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2016 Arthur Pachachura, LASA Robotics, and contributors
+ * MIT licensed
+ */
+
 package org.lasarobotics.vision.ftc.resq;
 
 import org.lasarobotics.vision.util.color.ColorHSV;

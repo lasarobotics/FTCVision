@@ -1,5 +1,6 @@
-/**
- * Detectable primitives which can be analyzed
+/*
+ * Copyright (c) 2016 Arthur Pachachura, LASA Robotics, and contributors
+ * MIT licensed
  */
 package org.lasarobotics.vision.detection.objects;
 

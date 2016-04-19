@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2016 Arthur Pachachura, LASA Robotics, and contributors
+ * MIT licensed
+ *
+ * Thank you to Brendan Hollaway (FTC Venom).
+ */
+
 package org.lasarobotics.vision.ftc.resq;
 
 import android.util.Log;

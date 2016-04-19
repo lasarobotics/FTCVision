@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2015 LASA Robotics and Contributors
+ * MIT licensed
+ */
+
 package com.lasarobotics.tests.camera;
 
 import org.lasarobotics.vision.android.Cameras;
@@ -71,12 +76,15 @@ public class CameraTestVisionOpMode extends TestableVisionOpMode {
          * First, tell the extension whether you are using a secondary camera
          * (or in some devices, a front-facing camera that reverses some colors).
          *
+         * If you have a weird phone, you can set the "zero" orientation here as well.
+         *
          * For TestableVisionOpModes, changing other settings may break the app. See other examples
          * for normal OpModes.
          */
         rotation.setIsUsingSecondaryCamera(false);
         rotation.disableAutoRotate();
         rotation.setActivityOrientationFixed(ScreenOrientation.LANDSCAPE);
+        //rotation.setZeroOrientation(ScreenOrientation.LANDSCAPE_REVERSE);
 
         /**
          * Set camera control extension preferences

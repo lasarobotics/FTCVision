@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2016 Arthur Pachachura, LASA Robotics, and contributors
+ * MIT licensed
+ *
+ * Thank you to Ehsan Asdar (LASA).
+ */
+
 package org.lasarobotics.vision.util;
 
 import android.os.Environment;

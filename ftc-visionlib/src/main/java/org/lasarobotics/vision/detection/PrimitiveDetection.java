@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2016 Arthur Pachachura, LASA Robotics, and contributors
+ * MIT licensed
+ *
+ * Thank you to Brendan Hollaway from FTC team Venom for comment updates
+ * to locateRectangles().
+ */
+
 package org.lasarobotics.vision.detection;
 
 import org.lasarobotics.vision.detection.objects.Contour;

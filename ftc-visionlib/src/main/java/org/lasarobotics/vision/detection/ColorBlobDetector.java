@@ -1,3 +1,12 @@
+/*
+ * Copyright (c) 2016 Arthur Pachachura, LASA Robotics, and contributors
+ * MIT licensed
+ *
+ * Some code from OpenCV samples, license at http://opencv.org/license.html.
+ *
+ * Learn more at
+ * http://www.learnopencv.com/blob-detection-using-opencv-python-c/
+ */
 package org.lasarobotics.vision.detection;
 
 import org.lasarobotics.vision.detection.objects.Contour;

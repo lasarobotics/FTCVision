@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2015 LASA Robotics and Contributors
+ * MIT licensed
+ */
+
 package com.lasarobotics.tests.camera;
 
 import android.os.Bundle;
