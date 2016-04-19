@@ -4,6 +4,7 @@ import org.lasarobotics.vision.android.Cameras;
 import org.lasarobotics.vision.ftc.resq.Beacon;
 import org.lasarobotics.vision.opmode.LinearVisionOpMode;
 import org.lasarobotics.vision.opmode.extensions.CameraControlExtension;
+import org.lasarobotics.vision.util.ScreenOrientation;
 import org.opencv.core.Mat;
 import org.opencv.core.Size;
 
@@ -89,7 +90,7 @@ public class LinearVisionSample extends LinearVisionOpMode {
          */
         rotation.setIsUsingSecondaryCamera(false);
         rotation.disableAutoRotate();
-        rotation.setActivityOrientationAutoRotate();
+        rotation.setActivityOrientationFixed(ScreenOrientation.PORTRAIT);
 
         /**
          * Set camera control extension preferences
@@ -112,7 +113,6 @@ public class LinearVisionSample extends LinearVisionOpMode {
             telemetry.addData("Beacon Center", beacon.getAnalysis().getLocationString());
             telemetry.addData("Beacon Confidence", beacon.getAnalysis().getConfidenceString());
             telemetry.addData("Beacon Buttons", beacon.getAnalysis().getButtonString());
-            telemetry.addData("Rotation Compensation", rotation.getRotationCompensationAngle());
             telemetry.addData("Screen Rotation", rotation.getScreenOrientationActual());
             telemetry.addData("Frame Rate", fps.getFPSString() + " FPS");
             telemetry.addData("Frame Size", "Width: " + width + " Height: " + height);
