@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2016 Arthur Pachachura, LASA Robotics, and contributors
+ * MIT licensed
+ */
 package org.lasarobotics.vision.util.color;
 
 import org.opencv.core.Scalar;
@@ -18,6 +22,7 @@ public class ColorGRAY extends Color {
 
     /**
      * Instantiate a Grayscale (8-bit) color from an integer
+     *
      * @param v Value (0-255)
      */
     public ColorGRAY(int v) {
@@ -26,12 +31,19 @@ public class ColorGRAY extends Color {
 
     /**
      * Get the GRAY colorspace
+     *
      * @return Colorspace.GRAY
      */
     public ColorSpace getColorSpace() {
         return ColorSpace.GRAY;
     }
 
+    /**
+     * Parse a scalar value into the colorspace
+     *
+     * @param s Scalar value
+     * @return Colorspace scalar value
+     */
     @Override
     protected Scalar parseScalar(Scalar s) {
         if (s.val.length < 1)
@@ -41,6 +53,7 @@ public class ColorGRAY extends Color {
 
     /**
      * Get brightness value
+     *
      * @return Value (0-255)
      */
     public int value() {

@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2016 Arthur Pachachura, LASA Robotics, and contributors
+ * MIT licensed
+ */
 package org.lasarobotics.vision.util;
 
 import java.text.DecimalFormat;
@@ -35,6 +39,7 @@ public class FPS {
 
     /**
      * Get the frames per second count, as a double (prefer using getFPSString() instead).
+     *
      * @return The FPS, as a double in frames/second.
      */
     private double getFPS() {
@@ -53,7 +58,7 @@ public class FPS {
 
     /**
      * Pause the FPS counter.
-     *
+     * <p/>
      * Call this when you're not going to use it for a while
      */
     public void pause() {

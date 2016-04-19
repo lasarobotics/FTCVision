@@ -1,14 +1,18 @@
-package org.lasarobotics.vision.detection;
+/*
+ * Copyright (c) 2016 Arthur Pachachura, LASA Robotics, and contributors
+ * MIT licensed
+ *
+ * Thank you to Brendan Hollaway from FTC team Venom for comment updates
+ * to locateRectangles().
+ */
 
-import com.qualcomm.robotcore.util.Range;
+package org.lasarobotics.vision.detection;
 
 import org.lasarobotics.vision.detection.objects.Contour;
 import org.lasarobotics.vision.detection.objects.Ellipse;
 import org.lasarobotics.vision.detection.objects.Rectangle;
-import org.lasarobotics.vision.image.Drawing;
 import org.lasarobotics.vision.image.Filter;
 import org.lasarobotics.vision.util.MathUtil;
-import org.lasarobotics.vision.util.color.ColorRGBA;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.MatOfPoint2f;
@@ -26,6 +30,56 @@ public class PrimitiveDetection {
     private static final int APERTURE_CANNY = 3;
     private static final double MAX_COSINE_VALUE = 0.5;
     private static final double EPLISON_APPROX_TOLERANCE_FACTOR = 0.02;
+
+    /**
+     * Locate ellipses within an image
+     *
+     * @param grayImage Grayscale image
+     * @return Ellipse locations
+     */
+    public static EllipseLocationResult locateEllipses(Mat grayImage) {
+        Mat gray = grayImage.clone();
+
+        Filter.downsample(gray, 2);
+        Filter.upsample(gray, 2);
+
+        Imgproc.Canny(gray, gray, 5, 75, 3, true);
+        Filter.dilate(gray, 2);
+
+        Mat cacheHierarchy = new Mat();
+
+        List<MatOfPoint> contoursTemp = new ArrayList<>();
+        //Find contours - the parameters here are very important to compression and retention
+        Imgproc.findContours(gray, contoursTemp, cacheHierarchy, Imgproc.CV_RETR_TREE, Imgproc.CHAIN_APPROX_TC89_KCOS);
+
+        //List contours
+        List<Contour> contours = new ArrayList<>();
+        for (MatOfPoint co : contoursTemp) {
+            contours.add(new Contour(co));
+        }
+
+        //Find ellipses by finding fit
+        List<Ellipse> ellipses = new ArrayList<>();
+        for (MatOfPoint co : contoursTemp) {
+            contours.add(new Contour(co));
+            //Contour must have at least 6 points for fitEllipse
+            if (co.toArray().length < 6)
+                continue;
+            //Copy MatOfPoint to MatOfPoint2f
+            MatOfPoint2f matOfPoint2f = new MatOfPoint2f(co.toArray());
+            //Fit an ellipse to the current contour
+            Ellipse ellipse = new Ellipse(Imgproc.fitEllipse(matOfPoint2f));
+
+            //Draw ellipse
+            ellipses.add(ellipse);
+        }
+
+        return new EllipseLocationResult(contours, ellipses);
+    }
+
+
+    //TODO convert this to locatePolygons() with n sides
+    //TODO see http://opencv-code.com/tutorials/detecting-simple-shapes-in-an-image/
 
     /**
      * Locate rectangles in an image
@@ -117,56 +171,6 @@ public class PrimitiveDetection {
         return new RectangleLocationResult(contours, rectangles);
     }
 
-
-    //TODO convert this to locatePolygons() with n sides
-    //TODO see http://opencv-code.com/tutorials/detecting-simple-shapes-in-an-image/
-
-    /**
-     * Locate ellipses within an image
-     *
-     * @param grayImage Grayscale image
-     * @return Ellipse locations
-     */
-    public static EllipseLocationResult locateEllipses(Mat grayImage) {
-        Mat gray = grayImage.clone();
-
-        Filter.downsample(gray, 2);
-        Filter.upsample(gray, 2);
-
-        Imgproc.Canny(gray, gray, 5, 75, 3, true);
-        Filter.dilate(gray, 2);
-
-        Mat cacheHierarchy = new Mat();
-
-        List<MatOfPoint> contoursTemp = new ArrayList<>();
-        //Find contours - the parameters here are very important to compression and retention
-        Imgproc.findContours(gray, contoursTemp, cacheHierarchy, Imgproc.CV_RETR_TREE, Imgproc.CHAIN_APPROX_TC89_KCOS);
-
-        //List contours
-        List<Contour> contours = new ArrayList<>();
-        for (MatOfPoint co : contoursTemp) {
-            contours.add(new Contour(co));
-        }
-
-        //Find ellipses by finding fit
-        List<Ellipse> ellipses = new ArrayList<>();
-        for (MatOfPoint co : contoursTemp) {
-            contours.add(new Contour(co));
-            //Contour must have at least 6 points for fitEllipse
-            if (co.toArray().length < 6)
-                continue;
-            //Copy MatOfPoint to MatOfPoint2f
-            MatOfPoint2f matOfPoint2f = new MatOfPoint2f(co.toArray());
-            //Fit an ellipse to the current contour
-            Ellipse ellipse = new Ellipse(Imgproc.fitEllipse(matOfPoint2f));
-
-            //Draw ellipse
-            ellipses.add(ellipse);
-        }
-
-        return new EllipseLocationResult(contours, ellipses);
-    }
-
     /**
      * Contains the list of rectangles retrieved from locateRectangles()
      */
@@ -181,6 +185,7 @@ public class PrimitiveDetection {
 
         /**
          * Gets list of contours in the image , as processed by Canny detection
+         *
          * @return List of contours in the image
          */
         public List<Contour> getContours() {
@@ -189,6 +194,7 @@ public class PrimitiveDetection {
 
         /**
          * Gets list of rectangles detected in the image
+         *
          * @return List of rectangles detected in the image
          */
         public List<Rectangle> getRectangles() {
@@ -210,6 +216,7 @@ public class PrimitiveDetection {
 
         /**
          * Gets list of contours in the image, as processed by Canny detection
+         *
          * @return List of contours in the image
          */
         public List<Contour> getContours() {
@@ -218,6 +225,7 @@ public class PrimitiveDetection {
 
         /**
          * Get list of ellipses located in the image
+         *
          * @return List of ellipses detected in the image
          */
         public List<Ellipse> getEllipses() {

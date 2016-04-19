@@ -1,17 +1,21 @@
+/*
+ * Copyright (c) 2016 Arthur Pachachura, LASA Robotics, and contributors
+ * MIT licensed
+ *
+ * Thank you to Brendan Hollaway (Venom) for parts of the algorithm.
+ */
 package org.lasarobotics.vision.opmode.extensions;
 
 import android.hardware.Camera;
-import android.test.PerformanceTestCase;
 import android.util.Log;
 
 import org.lasarobotics.vision.opmode.VisionOpMode;
 import org.lasarobotics.vision.util.MathUtil;
-import org.lasarobotics.vision.util.color.Color;
 import org.opencv.core.Mat;
 
 /**
  * Camera control extension
- *
+ * <p/>
  * Allows manual control of white balance, exposure, etc.
  */
 @SuppressWarnings("deprecation")
@@ -24,52 +28,10 @@ public class CameraControlExtension implements VisionExtension {
     private int maxExpo = 0;
     private boolean autoExpoComp = true;
 
-    @SuppressWarnings("deprecation")
-    /**
-     * Approximate color temperature
-     */
-    public enum ColorTemperature
-    {
-        AUTO(Camera.Parameters.WHITE_BALANCE_AUTO, false),
-        K10000_TWILIGHT(Camera.Parameters.WHITE_BALANCE_TWILIGHT, 10000),
-        K8000_SHADE(Camera.Parameters.WHITE_BALANCE_SHADE, 8000),
-        K3000_WARM_FLOURESCENT(Camera.Parameters.WHITE_BALANCE_WARM_FLUORESCENT, 3000),
-        K5000_FLOURESCENT(Camera.Parameters.WHITE_BALANCE_FLUORESCENT, 5000),
-        K2400_INCANDESCENT(Camera.Parameters.WHITE_BALANCE_INCANDESCENT, 2400),
-        K6500_DAYLIGHT(Camera.Parameters.WHITE_BALANCE_DAYLIGHT, 6500),
-        K4000_CLOUDY_DAYLIGHT(Camera.Parameters.WHITE_BALANCE_CLOUDY_DAYLIGHT, 4000);
-
-        String s;
-        boolean lock;
-        int kelvin;
-        ColorTemperature(String s, int kelvin)
-        {
-            this.s = s;
-            this.lock = true;
-            this.kelvin = kelvin;
-        }
-        ColorTemperature(String s, boolean lock)
-        {
-            this.s = s;
-            this.lock = lock;
-            this.kelvin = 0;
-        }
-
-        public int getApproxTemperatureKelvin()
-        {
-            return kelvin;
-        }
-        public boolean isAutomatic()
-        {
-            return this.kelvin == 0;
-        }
-    }
-
     /**
      * Enable automatic exposure compensation
      */
-    public void setAutoExposureCompensation()
-    {
+    public void setAutoExposureCompensation() {
         this.expoComp = 0;
         this.autoExpoComp = true;
         paramsSet = false;
@@ -77,17 +39,16 @@ public class CameraControlExtension implements VisionExtension {
 
     /**
      * Set a manual exposure compensation value
-     *
+     * <p/>
      * Use getMinExposureCompensation() and getMaxExposureCompensation()
      * to figure this out. If using these two variables, be sure to run this method
      * AFTER init to ensure they are non-zero.
-     *
+     * <p/>
      * Typically, this is a value from -12 to 12, with 12 being bright.
      *
      * @param expoComp Exposure compensation value
      */
-    public void setManualExposureCompensation(int expoComp)
-    {
+    public void setManualExposureCompensation(int expoComp) {
         this.expoComp = expoComp;
         this.autoExpoComp = false;
         paramsSet = false;
@@ -95,38 +56,39 @@ public class CameraControlExtension implements VisionExtension {
 
     /**
      * Set a target color temperature
+     *
      * @param colorTemp Target color temperature
      */
-    public void setColorTemperature(ColorTemperature colorTemp)
-    {
+    public void setColorTemperature(ColorTemperature colorTemp) {
         this.colorTemp = colorTemp;
         paramsSet = false;
     }
 
     /**
      * Get a minimum exposure compensation value, typically -12.
-     *
+     * <p/>
      * Be sure to run this method AFTER init to ensure it is non-zero.
+     *
      * @return Minimum exposure compensation value
      */
-    public int getMinExposureCompensation()
-    {
+    public int getMinExposureCompensation() {
         return minExpo;
     }
 
     /**
      * Get a maximum exposure compensation value, typically 12.
-     *
+     * <p/>
      * Be sure to run this method AFTER init to ensure it is non-zero.
+     *
      * @return Maximum exposure compensation value
      */
-    public int getMaxExposureCompensation()
-    {
+    public int getMaxExposureCompensation() {
         return maxExpo;
     }
 
     /**
      * Get color temperature setting
+     *
      * @return Color temperature
      */
     public ColorTemperature getColorTemp() {
@@ -135,6 +97,7 @@ public class CameraControlExtension implements VisionExtension {
 
     /**
      * Get current exposure compensation
+     *
      * @return Current exposure compensation or zero if not present
      */
     public int getExposureCompensation() {
@@ -143,10 +106,10 @@ public class CameraControlExtension implements VisionExtension {
 
     /**
      * Gets whether exposure compensation is automated
+     *
      * @return True if exposure compensation is automatic, false if manual
      */
-    public boolean isAutomaticExposureCompensation()
-    {
+    public boolean isAutomaticExposureCompensation() {
         return autoExpoComp;
     }
 
@@ -157,7 +120,6 @@ public class CameraControlExtension implements VisionExtension {
         expoComp = 0;
         autoExpoComp = true;
     }
-
 
     @Override
     public void loop(VisionOpMode opmode) {
@@ -176,14 +138,14 @@ public class CameraControlExtension implements VisionExtension {
         //Get camera info
         this.minExpo = p.getMinExposureCompensation();
         this.maxExpo = p.getMaxExposureCompensation();
-        expoComp = (int)MathUtil.coerce(minExpo, maxExpo, expoComp);
+        expoComp = (int) MathUtil.coerce(minExpo, maxExpo, expoComp);
 
         //Set white balance
         p.setWhiteBalance(colorTemp.s);
         if (p.isAutoWhiteBalanceLockSupported())
             p.setAutoWhiteBalanceLock(colorTemp.lock);
         else
-            Log.w("Vision","Manual white balance not supported.");
+            Log.w("Vision", "Manual white balance not supported.");
 
         //Set exposure compensation
         if (!autoExpoComp)
@@ -191,13 +153,12 @@ public class CameraControlExtension implements VisionExtension {
         if (p.isAutoExposureLockSupported())
             p.setAutoExposureLock(!autoExpoComp);
         else
-            Log.w("Vision","Manual exposure compensation not supported.");
+            Log.w("Vision", "Manual exposure compensation not supported.");
 
         //Update camera parameters
         try {
             opmode.openCVCamera.getCamera().setParameters(p);
-        } catch (RuntimeException e)
-        {
+        } catch (RuntimeException e) {
             //Sometimes, we fail to set the parameters
             e.printStackTrace();
             paramsSet = false;
@@ -224,10 +185,48 @@ public class CameraControlExtension implements VisionExtension {
         //Update camera parameters
         try {
             opmode.openCVCamera.getCamera().setParameters(p);
-        } catch (RuntimeException e)
-        {
+        } catch (RuntimeException e) {
             //Sometimes, we fail to set the parameters
             e.printStackTrace();
+        }
+    }
+
+    @SuppressWarnings("deprecation")
+    /**
+     * Approximate color temperature
+     */
+    public enum ColorTemperature {
+        AUTO(Camera.Parameters.WHITE_BALANCE_AUTO, false),
+        K10000_TWILIGHT(Camera.Parameters.WHITE_BALANCE_TWILIGHT, 10000),
+        K8000_SHADE(Camera.Parameters.WHITE_BALANCE_SHADE, 8000),
+        K3000_WARM_FLOURESCENT(Camera.Parameters.WHITE_BALANCE_WARM_FLUORESCENT, 3000),
+        K5000_FLOURESCENT(Camera.Parameters.WHITE_BALANCE_FLUORESCENT, 5000),
+        K2400_INCANDESCENT(Camera.Parameters.WHITE_BALANCE_INCANDESCENT, 2400),
+        K6500_DAYLIGHT(Camera.Parameters.WHITE_BALANCE_DAYLIGHT, 6500),
+        K4000_CLOUDY_DAYLIGHT(Camera.Parameters.WHITE_BALANCE_CLOUDY_DAYLIGHT, 4000);
+
+        final String s;
+        final boolean lock;
+        final int kelvin;
+
+        ColorTemperature(String s, int kelvin) {
+            this.s = s;
+            this.lock = true;
+            this.kelvin = kelvin;
+        }
+
+        ColorTemperature(String s, boolean lock) {
+            this.s = s;
+            this.lock = lock;
+            this.kelvin = 0;
+        }
+
+        public int getApproxTemperatureKelvin() {
+            return kelvin;
+        }
+
+        public boolean isAutomatic() {
+            return this.kelvin == 0;
         }
     }
 }

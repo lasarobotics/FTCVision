@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2016 Arthur Pachachura, LASA Robotics, and contributors
+ * MIT licensed
+ */
 package org.lasarobotics.vision.opmode;
 
 import org.lasarobotics.vision.opmode.extensions.BeaconExtension;
@@ -58,6 +62,7 @@ public abstract class VisionOpMode extends VisionOpModeCore {
 
     /**
      * Disable a particular Vision Extension
+     *
      * @param extension Extension ID
      */
     private void disableExtension(Extensions extension) {

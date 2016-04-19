@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2016 Arthur Pachachura, LASA Robotics, and contributors
+ * MIT licensed
+ */
 package org.lasarobotics.vision.util.color;
 
 import org.opencv.core.Scalar;
@@ -20,6 +24,7 @@ public class ColorRGBA extends Color {
 
     /**
      * Instantiate a 4-channel RGBA color
+     *
      * @param r Red channel (0-255)
      * @param g Green channel (0-255)
      * @param b Blue channel (0-255)
@@ -31,6 +36,7 @@ public class ColorRGBA extends Color {
 
     /**
      * Instantiate a 3- or 4-channel RGB(A) color from a Scalar value
+     *
      * @param scalar Scalar value with 3-4 channels
      */
     public ColorRGBA(Scalar scalar) {
@@ -39,6 +45,7 @@ public class ColorRGBA extends Color {
 
     /**
      * Instantiate a 3- or 4-channel RGB(A) color from a hex code
+     *
      * @param hexCode Hex code, such as #ffffff (white) or #0000ffaa (partially transparent blue)
      *                Code must be 6 or 8 characters long
      */
@@ -62,6 +69,12 @@ public class ColorRGBA extends Color {
                 android.graphics.Color.alpha(color));
     }
 
+    /**
+     * Parse a scalar value into the colorspace
+     *
+     * @param s Scalar value
+     * @return Colorspace scalar value
+     */
     @Override
     protected Scalar parseScalar(Scalar s) {
         if (s.val.length < 3)
@@ -72,6 +85,7 @@ public class ColorRGBA extends Color {
 
     /**
      * Get the red value
+     *
      * @return Red channel (0-255)
      */
     public int red() {
@@ -80,6 +94,7 @@ public class ColorRGBA extends Color {
 
     /**
      * Get the green value
+     *
      * @return Green channel (0-255)
      */
     public int green() {
@@ -88,6 +103,7 @@ public class ColorRGBA extends Color {
 
     /**
      * Get the blue value
+     *
      * @return Blue channel (0-255)
      */
     public int blue() {
@@ -96,6 +112,7 @@ public class ColorRGBA extends Color {
 
     /**
      * Get the alpha value
+     *
      * @return Alpha channel (0-255)
      */
     public int alpha() {
@@ -104,6 +121,7 @@ public class ColorRGBA extends Color {
 
     /**
      * Get the RGBA colorspace
+     *
      * @return ColorSpace.RGBA
      */
     @Override
@@ -113,6 +131,7 @@ public class ColorRGBA extends Color {
 
     /**
      * Get the color as an android.graphics.Color-friendly integer
+     *
      * @return android.graphics.Color-based integer
      */
     public int getInteger() {

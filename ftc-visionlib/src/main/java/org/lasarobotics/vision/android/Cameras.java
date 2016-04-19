@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2016 Arthur Pachachura, LASA Robotics, and contributors
+ * MIT licensed
+ */
 package org.lasarobotics.vision.android;
 
 import android.content.Context;
@@ -43,6 +47,7 @@ public enum Cameras {
 
     /**
      * Returns a Camera instance from this Camera ID
+     *
      * @return The camera instance
      */
     public Camera createCamera() {

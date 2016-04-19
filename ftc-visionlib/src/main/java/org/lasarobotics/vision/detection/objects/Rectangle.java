@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2016 Arthur Pachachura, LASA Robotics, and contributors
+ * MIT licensed
+ */
 package org.lasarobotics.vision.detection.objects;
 
 import org.opencv.core.Point;
@@ -55,6 +59,7 @@ public class Rectangle extends Detectable {
 
     /**
      * Create a rectangle based on an OpenCV rectangle
+     *
      * @param rect OpenCV rectangle
      */
     public Rectangle(Rect rect) {
@@ -63,25 +68,26 @@ public class Rectangle extends Detectable {
 
     /**
      * Create a rectangle of specified size with top = 0 and left = 0
+     *
      * @param rectSize Rectangle size
      */
-    public Rectangle(Size rectSize)
-    {
-        setRect(new Rect(0, 0, (int)rectSize.width, (int)rectSize.height));
+    public Rectangle(Size rectSize) {
+        setRect(new Rect(0, 0, (int) rectSize.width, (int) rectSize.height));
     }
 
     /**
      * Create a rectangle of specified size positioned at a specified location
+     *
      * @param rectSize Rectangle size
-     * @param topLeft Top left corner of the rectangle
+     * @param topLeft  Top left corner of the rectangle
      */
-    public Rectangle(Size rectSize, Point topLeft)
-    {
-        setRect(new Rect(0, 0, (int)rectSize.width, (int)rectSize.height));
+    public Rectangle(Size rectSize, Point topLeft) {
+        setRect(new Rect(0, 0, (int) rectSize.width, (int) rectSize.height));
     }
 
     /**
      * Create a rectangle based on a set of points
+     *
      * @param points Set of points (at least 4) defining the rectangle
      */
     public Rectangle(Point[] points) {
@@ -112,6 +118,7 @@ public class Rectangle extends Detectable {
 
     /**
      * Get the OpenCV rotated rectangle
+     *
      * @return OpenCV rotated rectangle
      */
     public RotatedRect getRotatedRect() {
@@ -120,6 +127,7 @@ public class Rectangle extends Detectable {
 
     /**
      * Get the OpenCV rectangle
+     *
      * @return OpenCV rectangle
      */
     public Rect getBoundingRect() {
@@ -136,6 +144,7 @@ public class Rectangle extends Detectable {
 
     /**
      * Offset the object, translating it by a specific offset point
+     *
      * @param offset Point to offset by, e.g. (1, 0) would move object 1 px right
      */
     @Override
@@ -150,6 +159,7 @@ public class Rectangle extends Detectable {
 
     /**
      * Get the angle of inclination of the rectangle
+     *
      * @return Angle of inclination
      */
     public double angle() {
@@ -158,6 +168,7 @@ public class Rectangle extends Detectable {
 
     /**
      * Get the center of the rectangle
+     *
      * @return Center of the rectangle
      */
     public Point center() {
@@ -182,6 +193,7 @@ public class Rectangle extends Detectable {
 
     /**
      * Get the area of the rectangle
+     *
      * @return Area of the rectangle = w * h
      */
     public double area() {
@@ -190,15 +202,15 @@ public class Rectangle extends Detectable {
 
     /**
      * Clip this rectangle to be entirely within a selected rectangle
+     *
      * @param rectangle Rectangle to clip to
      * @return The clipped rectangle
      */
-    public Rectangle clip(Rectangle rectangle)
-    {
+    public Rectangle clip(Rectangle rectangle) {
         return new Rectangle(Math.max(rectangle.top(), this.top()),
-                             Math.max(rectangle.left(), this.left()),
-                             Math.min(rectangle.bottom(), this.bottom()),
-                             Math.min(rectangle.right(), this.right()));
+                Math.max(rectangle.left(), this.left()),
+                Math.min(rectangle.bottom(), this.bottom()),
+                Math.min(rectangle.right(), this.right()));
     }
 
     /**

@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2016 Arthur Pachachura, LASA Robotics, and contributors
+ * MIT licensed
+ */
 package org.lasarobotics.vision.util;
 
 import android.view.Surface;
@@ -51,6 +55,7 @@ public enum ScreenOrientation {
 
     /**
      * Get a ScreenOrientation value from an android.view.Surface ID
+     *
      * @param id android.view.Surface ID
      * @return ScreenOrientation instance
      */
@@ -71,6 +76,7 @@ public enum ScreenOrientation {
 
     /**
      * Get the angle of this ScreenOrientation in degrees
+     *
      * @return Angle, in degrees
      */
     public double getAngle() {

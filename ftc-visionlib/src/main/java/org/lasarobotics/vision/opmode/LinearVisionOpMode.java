@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2016 Arthur Pachachura, LASA Robotics, and contributors
+ * MIT licensed
+ *
+ * Some code from FIRST library, Copyright (C) Qualcomm
+ *
+ * Thank you to Russell Coleman (LASA).
+ */
 package org.lasarobotics.vision.opmode;
 
 import com.qualcomm.robotcore.util.ElapsedTime;

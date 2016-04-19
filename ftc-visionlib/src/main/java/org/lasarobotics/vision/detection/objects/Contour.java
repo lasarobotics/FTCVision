@@ -1,5 +1,6 @@
-/**
- * Detectable primitives which can be analyzed
+/*
+ * Copyright (c) 2016 Arthur Pachachura, LASA Robotics, and contributors
+ * MIT licensed
  */
 package org.lasarobotics.vision.detection.objects;
 
@@ -7,7 +8,6 @@ import org.opencv.core.MatOfPoint;
 import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
-import org.opencv.core.RotatedRect;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
@@ -16,7 +16,7 @@ import org.opencv.imgproc.Imgproc;
  */
 public class Contour extends Detectable {
 
-    private MatOfPoint mat;
+    private final MatOfPoint mat;
     private Point topLeft = null;
     private Size size = null;
 
@@ -70,6 +70,7 @@ public class Contour extends Detectable {
 
     /**
      * Get data as a float
+     *
      * @return OpenCV matrix of points
      */
     public MatOfPoint getData() {
@@ -96,8 +97,9 @@ public class Contour extends Detectable {
 
     /**
      * Get the area of the contour
-     *
+     * <p/>
      * A highly precise method that integrates the contour with respect to its arc length.
+     *
      * @return Area of the contour
      */
     public double area() {
@@ -147,6 +149,7 @@ public class Contour extends Detectable {
 
     /**
      * Get the center of the object
+     *
      * @return Center of the object as a point
      */
     public Point center() {
@@ -229,13 +232,14 @@ public class Contour extends Detectable {
 
     /**
      * Offset the object, translating it by a specific offset point
+     *
      * @param offset Point to offset by, e.g. (1, 0) would move object 1 px right
      */
     @Override
     public void offset(Point offset) {
         Point[] points = this.getPoints();
 
-        for (int i=0; i<points.length; i++)
+        for (int i = 0; i < points.length; i++)
             points[i] = new Point(points[i].x + offset.x, points[i].y + offset.y);
 
         mat.fromArray(points);
@@ -254,6 +258,7 @@ public class Contour extends Detectable {
 
     /**
      * Get the arc length of the contour
+     *
      * @param closed True if the contour should be calculated as closed
      * @return Arc length
      */
@@ -263,6 +268,7 @@ public class Contour extends Detectable {
 
     /**
      * Get the point array of the contour
+     *
      * @return Point array of contour
      */
     private Point[] getPoints() {

@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2016 Arthur Pachachura, LASA Robotics, and contributors
+ * MIT licensed
+ *
+ * Thank you to FTCLib contributors.
+ */
 package org.lasarobotics.vision.util;
 
 import java.util.LinkedList;
@@ -24,6 +30,7 @@ class RollingAverage<T extends Number> {
 
     /**
      * Add a value to the averager
+     *
      * @param value Value to add
      */
     public void addValue(T value) {
@@ -40,6 +47,7 @@ class RollingAverage<T extends Number> {
 
     /**
      * Get the capacity of the averager
+     *
      * @return Capacity of the averager
      */
     public int getCapacity() {
@@ -48,6 +56,7 @@ class RollingAverage<T extends Number> {
 
     /**
      * Set a capacity of the averager
+     *
      * @param capacity New capacity
      */
     public void setCapacity(int capacity) {
@@ -63,6 +72,7 @@ class RollingAverage<T extends Number> {
 
     /**
      * Get the current count of the items in the underlying array
+     *
      * @return Current count of items in the averaging array
      */
     public int getSize() {
@@ -71,6 +81,7 @@ class RollingAverage<T extends Number> {
 
     /**
      * Get the average of the items currently in the array
+     *
      * @return Average
      */
     public double getAverage() {
@@ -79,6 +90,7 @@ class RollingAverage<T extends Number> {
 
     /**
      * Get the sum of the numbers in the array
+     *
      * @return Sum of values
      */
     public double getTotal() {

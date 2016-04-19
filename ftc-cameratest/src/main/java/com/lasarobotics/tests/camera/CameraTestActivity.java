@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2015 LASA Robotics and Contributors
+ * MIT licensed
+ */
+
 package com.lasarobotics.tests.camera;
 
 import android.os.Bundle;
@@ -8,11 +13,11 @@ import org.lasarobotics.vision.opmode.VisionEnabledActivity;
 
 public class CameraTestActivity extends VisionEnabledActivity {
 
+    private TestableVisionOpMode opmode;
+
     public CameraTestActivity() {
         super();
     }
-
-    TestableVisionOpMode opmode;
 
     /**
      * Called when the activity is first created.

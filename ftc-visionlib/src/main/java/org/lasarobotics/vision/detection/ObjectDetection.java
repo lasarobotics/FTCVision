@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2016 Arthur Pachachura, LASA Robotics, and contributors
+ * MIT licensed
+ *
+ * Some code from OpenCV samples, license at http://opencv.org/license.html.
+ */
 package org.lasarobotics.vision.detection;
 
 import android.util.Log;
@@ -24,7 +30,7 @@ import java.util.List;
 /**
  * Object Detector - searches a scene for keypoints then can match keypoints in the object
  * to keypoints in the scene, effectively locating an object within a scene
- *
+ * <p/>
  * This class is designed to detect a single object at a time in an image
  */
 public class ObjectDetection {
@@ -130,7 +136,8 @@ public class ObjectDetection {
 
     /**
      * Draw debug info onto screen
-     * @param output Image to draw on
+     *
+     * @param output        Image to draw on
      * @param sceneAnalysis Scene analysis object
      */
     public static void drawDebugInfo(Mat output, SceneAnalysis sceneAnalysis) {
@@ -211,7 +218,7 @@ public class ObjectDetection {
 
     /**
      * Feature detector types
-     *
+     * <p/>
      * Feature detectors search the images for features - typically corners - that are then
      * extracted and processed to locate an object in a scene.
      */
@@ -256,7 +263,7 @@ public class ObjectDetection {
 
     /**
      * Descriptor extractor types
-     *
+     * <p/>
      * Descriptor extractors get information from the feature detector and analyze
      * it in various ways - these descriptors are then stored in the object analysis
      * to later search for the same descriptors in the scene.
@@ -292,7 +299,7 @@ public class ObjectDetection {
 
     /**
      * Descriptor matcher types
-     *
+     * <p/>
      * Descriptor matchers match descriptors found from the object
      * to descriptors in an image - they effectively locate the object in the scene.
      */

@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2016 Arthur Pachachura, LASA Robotics, and contributors
+ * MIT licensed
+ */
 package org.lasarobotics.vision.android;
 
 import android.content.Context;
@@ -120,6 +124,7 @@ public final class Sensors implements SensorEventListener {
 
     /**
      * Get the activity's screen orientation, which can be locked by the activity
+     *
      * @return The activity's screen orietnation
      */
     public ScreenOrientation getActivityScreenOrientation() {
@@ -128,15 +133,20 @@ public final class Sensors implements SensorEventListener {
         return ScreenOrientation.getFromSurface(rotation);
     }
 
+    /**
+     * Get the natural orientation of the device. For larger phones it is often LANDSCAPE - for smaller, PORTRAIT.
+     *
+     * @return LANDSCAPE or PORTRAIT, based on the screen information
+     */
     public ScreenOrientation getDeviceDefaultOrientation() {
 
-        WindowManager windowManager =  (WindowManager) Util.getContext().getSystemService(Context.WINDOW_SERVICE);
+        WindowManager windowManager = (WindowManager) Util.getContext().getSystemService(Context.WINDOW_SERVICE);
 
         Configuration config = Util.getContext().getResources().getConfiguration();
 
         int rotation = windowManager.getDefaultDisplay().getRotation();
 
-        if ( ((rotation == Surface.ROTATION_0 || rotation == Surface.ROTATION_180) &&
+        if (((rotation == Surface.ROTATION_0 || rotation == Surface.ROTATION_180) &&
                 config.orientation == Configuration.ORIENTATION_LANDSCAPE)
                 || ((rotation == Surface.ROTATION_90 || rotation == Surface.ROTATION_270) &&
                 config.orientation == Configuration.ORIENTATION_PORTRAIT)) {
@@ -148,6 +158,7 @@ public final class Sensors implements SensorEventListener {
 
     /**
      * Get the screen orientation compensation, in degrees, between the activity and the target screen orientation
+     *
      * @return Sensor orientation - Activity orientation + Zero orientation (typically 90 degrees)
      */
     public double getScreenOrientationCompensation() {
@@ -190,6 +201,7 @@ public final class Sensors implements SensorEventListener {
 
     /**
      * Event that fires when sensor data is updated
+     *
      * @param event Event data
      */
     public void onSensorChanged(SensorEvent event) {
