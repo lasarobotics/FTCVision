@@ -16,7 +16,7 @@ include ':opencv-java'
 include ':ftc-visionlib'
 ```
 - Find the `AndroidManifest.xml` file in your app's `FTCRobotController/src/main` folder.
-- Insert the following `uses-permission` tag in the appropriate location (look at the rest of the file for context - you should see another `uses-permission` tag somewhere in the document) in `AndroidMainfest.xml`:
+- Insert the following `uses-permission` tag in `AndroidManifest.xml` just below the `<mainfest ...>` tag and just before the `application` tag:
 ```
 <uses-permission android:name="android.permission.CAMERA" android:required="true" />
 ```
@@ -31,15 +31,6 @@ compile project(':opencv-java')
 - Run and test the code! Let us know if you encounter any difficulties. *Note: depending on your version of the FIRST app, you may need to modify the OpModes slightly (such as adding `@Autonomous`) in order to get them to work for your version of the SDK.*
 - You can now write your custom `VisionOpMode`!
 - *(Optional)* Add Vision testing app (see pictures of it below!) by copying all files from `ftc-cameratest` into the root of your project. Then, add `include ':ftc-cameratest'` to your `settings.gradle` in the root of your project. To run the camera test app, click the green "Sync Project with Gradle Files" button to update your project, then select `ftc-cameratest` from the dropdown next to the run button.
-
-## Installing from Scratch *(for testing)*
-
-1. Clone FTCVision into a clean directory (outside your robot controller app) using the following command: `git clone --depth=1 https://github.com/lasarobotics/ftcvision`.
-2. Open the FTCVision project using Android Studio
-3. Copy your OpModes from your robot controller directory into the appropriate directory within `ftc-robotcontroller`. Then, modify the `FtcOpModeRegister` appropriately to add your custom OpModes.
-4. Before running the app for the first time, install the "OpenCV Manager" from the Google Play Store to enable Vision processing.
-5. Run and test the code! Let us know if you encounter any difficulties.
-6. You can now write your own `VisionOpMode`!
 
 ## Installing via Git Submodule *(advanced)*
 When installing via Git submodule, **every person cloning your repo will need to run `git submodule init` and `git subomodule update` for every new clone.** However, you also get the advantage of not copying all the files yourself and you can update the project to the latest version easily by navigating inside the `ftc-vision` folder then running `git pull`.
@@ -56,6 +47,15 @@ project(':ftc-visionlib').projectDir = new File('ftc-vision/ftc-visionlib')
 project(':ftc-cameratest').projectDir = new File('ftc-vision/ftc-cameratest') <- only if you want to enable the camera testing app
 ```
 - You can now write your custom `VisionOpMode`!
+
+## Installing from Scratch *(for testing only - deprecated)*
+
+1. Clone FTCVision into a clean directory (outside your robot controller app) using the following command: `git clone --depth=1 https://github.com/lasarobotics/ftcvision`.
+2. Open the FTCVision project using Android Studio
+3. Copy your OpModes from your robot controller directory into the appropriate directory within `ftc-robotcontroller`. Then, modify the `FtcOpModeRegister` appropriately to add your custom OpModes.
+4. Before running the app for the first time, install the "OpenCV Manager" from the Google Play Store to enable Vision processing.
+5. Run and test the code! Let us know if you encounter any difficulties.
+6. You can now write your own `VisionOpMode`!
 
 ## Status
 This library is complete as of World Championship 2016. If you have any questions or would like to help, send a note to `smo-key` (contact info on profile) or open an issue. Thank you!
