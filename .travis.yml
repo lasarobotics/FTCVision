@@ -5,4 +5,8 @@ android:
     - tools
     - build-tools-23.0.3
     - android-23
-    - extra
+before_script:
+    - wget http://services.gradle.org/distributions/gradle-2.14.1-bin.zip
+    - unzip gradle-2.14.1-bin.zip
+    - export GRADLE_HOME=$PWD/gradle-2.14.1
+    - export PATH=$GRADLE_HOME/bin:$PATH
