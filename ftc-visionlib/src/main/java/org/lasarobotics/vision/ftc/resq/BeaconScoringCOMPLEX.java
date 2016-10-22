@@ -5,8 +5,6 @@
 
 package org.lasarobotics.vision.ftc.resq;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.lasarobotics.vision.detection.objects.Contour;
 import org.lasarobotics.vision.detection.objects.Ellipse;
 import org.lasarobotics.vision.util.MathUtil;
@@ -52,8 +50,8 @@ class BeaconScoringCOMPLEX {
     }
 
     List<ScoredContour> scoreContours(List<Contour> contours,
-                                      @Nullable Point estimateLocation,
-                                      @Nullable Double estimateDistance,
+                                      Point estimateLocation,
+                                      Double estimateDistance,
                                       Mat rgba,
                                       Mat gray) {
         List<ScoredContour> scores = new ArrayList<>();
@@ -86,8 +84,8 @@ class BeaconScoringCOMPLEX {
 
     @SuppressWarnings("unchecked")
     List<ScoredEllipse> scoreEllipses(List<Ellipse> ellipses,
-                                      @Nullable Point estimateLocation,
-                                      @Nullable Double estimateDistance,
+                                      Point estimateLocation,
+                                      Double estimateDistance,
                                       Mat gray) {
         List<ScoredEllipse> scores = new ArrayList<>();
 
@@ -181,7 +179,7 @@ class BeaconScoringCOMPLEX {
             return finalEllipses;
         }
 
-        public int compareTo(@NotNull Scorable another) {
+        public int compareTo(Scorable another) {
             //This is an inverted sort - largest first
             return this.score > another.score ? -1 : this.score < another.score ? 1 : 0;
         }
