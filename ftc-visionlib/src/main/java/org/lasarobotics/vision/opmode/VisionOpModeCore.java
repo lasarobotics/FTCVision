@@ -254,8 +254,6 @@ abstract class VisionOpModeCore extends OpMode implements CameraBridgeViewBase.C
             return inputFrame.rgba();
         }
 
-        telemetry.addData("Vision Status", "Ready!");
-
         fps.update();
         return frame(inputFrame.rgba(), inputFrame.gray());
     }
