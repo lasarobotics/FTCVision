@@ -289,6 +289,7 @@ public final class Beacon {
         //TODO Color and CONFIDENCE should make up the results
 
         //TODO add Distance distanceApprox
+        private final double distanceApprox;
 
         /**
          * Instantiate a blank analysis
@@ -300,6 +301,7 @@ public final class Beacon {
             this.location = new Rectangle();
             this.leftButton = null;
             this.rightButton = null;
+            this.distanceApprox = 0.0;
         }
 
         BeaconAnalysis(BeaconColor left, BeaconColor right, Rectangle location, double confidence) {
@@ -309,17 +311,26 @@ public final class Beacon {
             this.location = location;
             this.leftButton = null;
             this.rightButton = null;
+            this.distanceApprox = 0.0;
         }
 
         BeaconAnalysis(BeaconColor left, BeaconColor right, Rectangle location, double confidence,
-                       Ellipse leftButton, Ellipse rightButton) {
+                       Ellipse leftButton, Ellipse rightButton, double distanceApprox) {
             this.left = left;
             this.right = right;
             this.confidence = confidence;
             this.location = location;
             this.leftButton = leftButton;
             this.rightButton = rightButton;
+            this.distanceApprox = distanceApprox;
         }
+
+        /**
+         * Get the approximate distance away the phone camera is from the beacon
+         *
+         * @return Approximate distance, measured in millimeters.
+         */
+        public double getDistanceApprox () { return distanceApprox; }
 
         /**
          * Get the ellipse containing the left button, if found
