@@ -9,6 +9,7 @@ package org.lasarobotics.vision.ftc.resq;
 
 import android.util.Log;
 
+import org.lasarobotics.vision.android.Phone;
 import org.lasarobotics.vision.detection.ColorBlobDetector;
 import org.lasarobotics.vision.detection.PrimitiveDetection;
 import org.lasarobotics.vision.detection.objects.Contour;
@@ -497,12 +498,15 @@ class BeaconAnalyzer {
         if (readOppositeAxis)
             boundingBox = boundingBox.transpose();
 
+        // Formula is taken from : http://photo.stackexchange.com/questions/12434/how-do-i-calculate-the-distance-of-an-object-in-a-photo
+        double approximateDistance = (Phone.getPhoneType().focalLength * 144.78 * gray.height()) / (boundingBox.height() * Phone.getPhoneType().sensorSize);
+
         if (leftIsRed)
             return new Beacon.BeaconAnalysis(Beacon.BeaconColor.RED, Beacon.BeaconColor.BLUE, boundingBox, confidence
-                    , leftEllipse, rightEllipse);
+                    , leftEllipse, rightEllipse, approximateDistance);
         else
             return new Beacon.BeaconAnalysis(Beacon.BeaconColor.BLUE, Beacon.BeaconColor.RED, boundingBox, confidence
-                    , leftEllipse, rightEllipse);
+                    , leftEllipse, rightEllipse, approximateDistance);
     }
 
     private static List<BeaconScoringCOMPLEX.ScoredEllipse> filterEllipses(List<BeaconScoringCOMPLEX.ScoredEllipse> ellipses) {
@@ -815,10 +819,15 @@ class BeaconAnalyzer {
         if (readOppositeAxis)
             boundingBox = boundingBox.transpose();
 
+        // Find the distance
+        // Formula is taken from : http://photo.stackexchange.com/questions/12434/how-do-i-calculate-the-distance-of-an-object-in-a-photo
+        double approximateDistance = (Phone.getPhoneType().focalLength * 144.78 * gray.height()) / (boundingBox.height() * Phone.getPhoneType().sensorSize);
+
+
         //If this is not true, then neither part of the beacon is highly lit
         if (leftIsRed)
-            return new Beacon.BeaconAnalysis(Beacon.BeaconColor.RED, Beacon.BeaconColor.BLUE, boundingBox, confidence, leftEllipse, rightEllipse);
+            return new Beacon.BeaconAnalysis(Beacon.BeaconColor.RED, Beacon.BeaconColor.BLUE, boundingBox, confidence, leftEllipse, rightEllipse, approximateDistance);
         else
-            return new Beacon.BeaconAnalysis(Beacon.BeaconColor.BLUE, Beacon.BeaconColor.RED, boundingBox, confidence, leftEllipse, rightEllipse);
+            return new Beacon.BeaconAnalysis(Beacon.BeaconColor.BLUE, Beacon.BeaconColor.RED, boundingBox, confidence, leftEllipse, rightEllipse, approximateDistance);
     }
 }

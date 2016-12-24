@@ -12,8 +12,9 @@ import org.lasarobotics.vision.util.color.ColorHSV;
  */
 public abstract class Constants {
     //BEACON
-    public static final double BEACON_WIDTH = 21.8;     //entire beacon width
-    public static final double BEACON_HEIGHT = 14.5;    //entire beacon height
+    //http://files.andymark.com/LayoutPrints/am-3416+FTC+16-17+Beacon.PDF
+    public static final double BEACON_WIDTH = 21.59;     //entire beacon width
+    public static final double BEACON_HEIGHT = 14.478;    //entire beacon height
     public static final double BEACON_WH_RATIO = BEACON_WIDTH / BEACON_HEIGHT; //entire beacon ratio
     public static final ColorHSV COLOR_RED_LOWER = new ColorHSV((int) (300.0 / 360.0 * 255.0), (int) (0.090 * 255.0), (int) (0.500 * 255.0));
     public static final ColorHSV COLOR_RED_UPPER = new ColorHSV((int) (400.0 / 360.0 * 255.0), 255, 255);
