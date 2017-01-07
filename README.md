@@ -30,7 +30,7 @@ compile project(':opencv-java')
 - Before running the app for the first time, install the "OpenCV Manager" from the Google Play Store to enable Vision processing.
 - Run and test the code! Let us know if you encounter any difficulties. *Note: depending on your version of the FIRST app, you may need to modify the OpModes slightly (such as adding `@Autonomous`) in order to get them to work for your version of the SDK.*
 - You can now write your custom `VisionOpMode`!
-- *(Optional)* Add Vision testing app (see pictures of it below!) by copying all files from `ftc-cameratest` into the root of your project. Then, add `include ':ftc-cameratest'` to your `settings.gradle` in the root of your project. To run the camera test app, click the green "Sync Project with Gradle Files" button to update your project, then select `ftc-cameratest` from the dropdown next to the run button.
+- *(Optional)* Add Vision testing app (see pictures of it below!) by copying the `ftc-cameratest` folder into the root of your project. Then, add `include ':ftc-cameratest'` to your `settings.gradle` in the root of your project. To run the camera test app, click the green "Sync Project with Gradle Files" button to update your project, then select `ftc-cameratest` from the dropdown next to the run button.
 
 ## Installing via Git Submodule *(advanced)*
 When installing via Git submodule, **every person cloning your repo will need to run `git submodule init` and `git subomodule update` for every new clone.** However, you also get the advantage of not copying all the files yourself and you can update the project to the latest version easily by navigating inside the `ftc-vision` folder then running `git pull`.
